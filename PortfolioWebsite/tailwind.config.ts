@@ -15,10 +15,11 @@ const config: Config = {
         white: "#ffffff",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "sans-serif"],
-        serif: ["var(--font-noto-serif)", "serif"],
-        display: ["var(--font-inter)", "sans-serif"],
-        mono: ["Space Mono", "monospace"],
+        sans: ["var(--font-futura)", "Futura", "sans-serif"],
+        serif: ["var(--font-noto-serif)", "Noto Serif SC", "serif"],
+        display: ["var(--font-noto-serif)", "Noto Serif SC", "serif"],
+        mono: ["var(--font-han-yi-qi-hei)", "HanYiQiHei", "monospace"],
+        body: ["var(--font-futura)", "Futura", "sans-serif"],
       },
       aspectRatio: {
         "cinema": "21 / 9",
