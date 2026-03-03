@@ -1,0 +1,241 @@
+
+---PAGE---
+PART 01 灯光氛围
+2
+Protfolio  2025
+---PAGE---
+灯光氛围
+3
+Protfolio  2025
+---PAGE---
+灯光氛围
+4
+Protfolio  2025
+---PAGE---
+灯光氛围
+5
+Protfolio  2025
+---PAGE---
+灯光氛围
+6
+Protfolio  2025
+---PAGE---
+灯光氛围
+7
+Protfolio  2025
+---PAGE---
+灯光氛围
+8
+Protfolio  2025
+---PAGE---
+灯光氛围 白天
+9
+Protfolio  2025
+---PAGE---
+灯光氛围 黄昏
+10
+Protfolio  2025
+---PAGE---
+灯光氛围 雾天
+11
+Protfolio  2025
+---PAGE---
+灯光氛围 夜晚
+12
+Protfolio  2025
+---PAGE---
+灯光氛围 无光照
+13
+Protfolio  2025
+---PAGE---
+灯光氛围 白天
+14
+Protfolio  2025
+---PAGE---
+灯光氛围 黄昏
+15
+Protfolio  2025
+---PAGE---
+灯光氛围 夜晚
+16
+Protfolio  2025
+---PAGE---
+灯光氛围 无光照
+17
+Protfolio  2025
+---PAGE---
+灯光氛围 白天
+18
+Protfolio  2025
+---PAGE---
+灯光氛围 黄昏
+19
+Protfolio  2025
+---PAGE---
+灯光氛围 夜晚
+20
+Protfolio  2025
+---PAGE---
+灯光氛围 无光照
+21
+Protfolio  2025
+---PAGE---
+灯光氛围 白天
+22
+Protfolio  2025
+---PAGE---
+灯光氛围 黄昏
+23
+Protfolio  2025
+---PAGE---
+灯光氛围 夜晚
+24
+Protfolio  2025
+---PAGE---
+灯光氛围 无光照
+25
+Protfolio  2025
+---PAGE---
+PART 02 游戏设计
+Protfolio  2025
+---PAGE---
+Protfolio  2025
+---PAGE---
+INSIGHT
+INSIGHT 是一款轻交互的互动叙事游戏。
+玩家在游戏中扮演一位网络舆情监管员。
+通过浏览各类的互联网舆论和帖子，判
+断这些内容应该被推流或者限流，在悄
+无声息中改变整个世界。
+在这个项目中我主要负责策划、程序、
+和剧本编写。游戏最初的灵感来自于《不
+予播出》、《接线疑云》。
+游戏内截图
+实机演示链接：https://www.bilibili.com/video/BV1gQbDzQEUL预告链接：https://www.bilibili.com/video/BV1DAuizbE91
+28
+Protfolio  2025
+---PAGE---
+INSIGHT
+在这个项目中我主要负责策划、程序、
+和剧本编写。游戏最初的灵感来自于《不
+予播出》、《接线疑云》。
+蓝图节选截图剧本写作使用了 Articy Draft 这款软件
+并配合 Articy Draft Importer 将分支
+剧情导入到 UE 中。通过其提供的一些
+节点，我可以较为方便的实现分支剧情
+的流程管理。
+实机演示链接：https://www.bilibili.com/video/BV1gQbDzQEUL预告链接：https://www.bilibili.com/video/BV1DAuizbE91
+29
+Protfolio  2025
+---PAGE---
+Protfolio  2025
+---PAGE---
+Slay the Virus 是一款结合背包管理的
+卡牌游戏。玩家在游戏中扮演一位需要
+智慧细胞战斗的医生，在病人体内同病
+毒作战。Slay the Virus
+在这个项目中，我主要负责 UI 布局设
+计和总体的美术风格把控。组内两个美
+术的风格略有差异，我主要负责统一双
+方的风格差距并对整体风格的大方向进
+行把控。
+游戏内截图 预告与实机演示链接：https://www.bilibili.com/video/BV1QfgzzrE3J/
+31
+Protfolio  2025
+---PAGE---
+Slay the Virus
+原稿
+精修我先对画面整体做调整，进一步突出原
+来存在的光感。接着我再替换原来的字
+体，并在海报中加入组员信息。每张海
+报的字体都会经过多轮迭代才最终定
+型。
+原稿 精修这是我参与设计的游戏海报。原稿为负
+责美术的同学绘制而成，精修是我在
+Photoshop 中调整而成。
+预告与实机演示链接：https://www.bilibili.com/video/BV1QfgzzrE3J/
+32
+Protfolio  2025
+---PAGE---
+Protfolio  2025
+---PAGE---
+The Prometheus Project 是一款潜
+行游戏。玩家在其中扮演一位记者潜入
+一栋政府大楼，却意外发现了其中的秘
+密计划。THE Prometheus Project
+游戏内截图我主要担任系统策划、关卡策划以及灯
+光师。我完成白盒的搭建以及关卡可行
+性的验证后，交由负责美术的组员完成
+整个场景的搭建。最后由我进行灯光氛
+围的布置。
+预告片链接：https://www.bilibili.com/video/BV1GSGmzBEx8
+34
+Protfolio  2025
+---PAGE---
+帅油桶
+Protfolio  2025
+---PAGE---
+影片链接：https://www.bilibili.com/video/BV1GqkRYxEWM/《帅油桶》是一个类似《Florance》的
+互动叙事游戏，在游戏中玩家扮演一个
+残疾人，生活在充满敌意建筑的城市中。帅油桶
+整个游戏创新性的使用轨迹球进行交
+互，通过轨迹球的操作感觉模拟残疾人
+控制轮椅的过程。这让玩家在体验时变
+相和游戏中的角色达到同频。在这个项
+目中我主要负责设计游戏玩法。
+36
+Protfolio  2025
+---PAGE---
+PART 03 平时练习以及课余作品
+Protfolio  2025
+---PAGE---
+Houdini 程序化生成小镇
+Protfolio  2025
+---PAGE---
+Houdini 程序化生成
+这是我使用 Houdini 配合虚幻做的程序
+化生成小镇，整个小镇通过指定小镇边
+界、道路和河流样条线即可完成生成。
+整个小镇提供了从房屋数量、房屋朝向、
+房屋朝向偏移到植被与杂物的各项参数
+共 70 余项参数，为精细调整整个小镇
+提供了充分的空间和能力。
+39
+Protfolio  2025
+---PAGE---
+氛围练习
+Protfolio  2025
+---PAGE---
+氛围练习
+41
+Protfolio  2025
+---PAGE---
+氛围练习
+---PAGE---
+43
+Protfolio  2025
+---PAGE---
+氛围练习
+44
+Protfolio  2025
+---PAGE---
+舞台灯光设计
+Protfolio  2025
+---PAGE---
+舞台灯光设计
+这是我独立完成的舞台设计短片。音乐
+源自概念专辑音乐剧《Epic》。我自主
+完成了舞台设计，演员走位调度和灯光
+设计。
+影片链接：https://www.bilibili.com/video/BV1oSDTYJEi2/整个片子的人物调度使用定格动画的方
+式表达，进一步凸显出灯光的存在感。
+在《Epic》中有不同的神，我为每个神
+选择了各自主题色来和曲子中每个神对
+应的主题旋律相呼应。同时我在舞台后
+方设计了两个大理石雕像，当有神的力
+量在影响着故事的时候，便会有相应颜
+色的光打亮这两个雕像。
+46
+Protfolio  2025
+---PAGE---
+
