@@ -177,7 +177,7 @@ export default function ClientBreakdown({ data }: { data: any }) {
           href={`/works/${data.nextId}`}
           className="group block relative h-[40vh] md:h-[60vh] overflow-hidden w-full interactive bg-black"
         >
-          <div className="absolute inset-0 bg-black z-10 transition-colors duration-500"></div>
+          <div className="absolute inset-0 bg-black/60 z-10 transition-colors duration-500 pointer-events-none"></div>
           <img
             src={data.nextBg}
             alt="Next Project"

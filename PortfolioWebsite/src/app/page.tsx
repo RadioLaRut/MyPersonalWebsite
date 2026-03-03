@@ -5,7 +5,7 @@ export default function Home() {
   const projects = [
     {
       title: "INSIGHT",
-      subtitle: "First-Person Puzzle / Unity",
+      subtitle: "First-Person Puzzle / Unreal Engine 5",
       imageSrc: "/images/Insight/InsightCover.png",
       link: "/works/insight",
     },

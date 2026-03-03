@@ -65,8 +65,8 @@ export default function ContactPage() {
           className="text-xl lg:text-3xl leading-[2] font-medium text-center max-w-3xl mix-blend-normal"
         >
           中国传媒大学 2028届 <br />
-          数字娱乐方向 / 游戏设计与技术美术 <br /> <br />
-          致力于在硬性技术瓶颈与电影级叙事美学之间，构筑无可跨越的极致浪漫。
+          游戏设计系<br /> <br />
+          艺术与科技（数字娱乐方向）
         </motion.p>
       </section>
 
