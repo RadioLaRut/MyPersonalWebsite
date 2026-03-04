@@ -15,11 +15,14 @@ const config: Config = {
         white: "#ffffff",
       },
       fontFamily: {
-        sans: ["var(--font-futura)", "Futura", "sans-serif"],
+        sans: ["var(--font-futura)", "var(--font-han-yi-qi-hei)", "sans-serif"],
         serif: ["var(--font-noto-serif)", "Noto Serif SC", "serif"],
-        display: ["var(--font-noto-serif)", "Noto Serif SC", "serif"],
-        mono: ["var(--font-han-yi-qi-hei)", "HanYiQiHei", "monospace"],
-        body: ["var(--font-futura)", "Futura", "sans-serif"],
+        display: ["var(--font-gothic)", "var(--font-noto-serif)", "serif"],
+        mono: ["var(--font-han-yi-qi-hei)", "monospace"],
+        body: ["var(--font-futura)", "var(--font-noto-serif)", "sans-serif"],
+        luna: ["var(--font-luna)", "var(--font-noto-serif)", "sans-serif"],
+        gothic: ["var(--font-gothic)", "var(--font-noto-serif)", "sans-serif"],
+        futura: ["var(--font-futura)", "var(--font-han-yi-qi-hei)", "sans-serif"],
       },
       aspectRatio: {
         "cinema": "21 / 9",

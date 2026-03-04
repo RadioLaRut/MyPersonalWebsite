@@ -59,11 +59,11 @@ export default function ProjectSection({
         className="relative z-20 flex flex-col items-center justify-center px-4 mix-blend-difference pointer-events-none"
       >
         {subtitle && (
-          <p className="text-white/80 font-serif tracking-widest mb-4 text-base sm:text-2xl font-medium uppercase max-w-2xl text-center">
+          <p className="text-white/70 font-gothic tracking-[0.4em] mb-4 text-sm sm:text-xl font-medium uppercase max-w-2xl text-center">
             {subtitle}
           </p>
         )}
-        <h2 className="text-[12vw] sm:text-[9rem] font-black tracking-tighter leading-none text-white transition-opacity duration-300">
+        <h2 className="text-[12vw] sm:text-[9rem] font-futura font-black tracking-tighter leading-none text-white transition-opacity duration-300 antialiased [transform:translateZ(0)]">
           {title}
         </h2>
       </motion.div>

@@ -34,7 +34,7 @@ export default function ClientBreakdown({ data }: { data: any }) {
   }, [data]);
 
   return (
-    <main className="w-full min-h-screen bg-black text-white pb-0 overflow-x-hidden mx-auto font-display selection:bg-white selection:text-black">
+    <main className="w-full min-h-screen bg-black text-white pb-0 overflow-x-hidden mx-auto font-sans selection:bg-white selection:text-black">
       {/* Top Nav Overlay */}
       <nav className="fixed top-0 left-0 w-full z-50 mix-blend-difference px-8 py-8 flex justify-between items-center pointer-events-none">
         <a
@@ -75,7 +75,7 @@ export default function ClientBreakdown({ data }: { data: any }) {
           <span className="font-mono text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.4em] uppercase text-white/50">
             Project {data.idNum}
           </span>
-          <h1 className="text-white text-[12vw] sm:text-[8vw] font-black tracking-tighter uppercase leading-none mix-blend-overlay">
+          <h1 className="text-white text-[12vw] sm:text-[8vw] font-black tracking-tighter uppercase leading-none mix-blend-overlay font-futura">
             {data.title}
           </h1>
           {data.navLink && (
@@ -94,7 +94,7 @@ export default function ClientBreakdown({ data }: { data: any }) {
       {/* 2. Commentary Block */}
       <article className="max-w-screen-xl mx-auto px-6 py-24 md:py-32 relative z-20 bg-black">
         <div className="max-w-[70ch] mx-auto text-center fade-in-section opacity-0 translate-y-8 transition-all duration-1000 ease-out">
-          <p className="text-lg md:text-[22px] font-light leading-[2] text-white/80 text-justify sm:text-center tracking-wide font-sans">
+          <p className="text-lg md:text-[22px] font-medium leading-[2] text-white/90 text-justify sm:text-center tracking-wide font-futura">
             {data.description}
           </p>
         </div>
@@ -104,10 +104,10 @@ export default function ClientBreakdown({ data }: { data: any }) {
       <section className="max-w-[1920px] mx-auto px-8 md:px-16 pb-32 relative z-20 bg-black">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 fade-in-section opacity-0 translate-y-8 transition-all duration-1000 ease-out pt-12 border-t border-white/10">
           <div className="space-y-4">
-            <h4 className="text-white text-base font-bold tracking-widest uppercase border-l-2 pl-3 border-white/80 leading-none">
+            <h4 className="text-white text-base font-bold tracking-widest uppercase border-l-2 pl-3 border-white/80 leading-none font-futura">
               {data.col1.title}
             </h4>
-            <p className="text-white/60 text-sm font-normal leading-[1.8] font-sans">
+            <p className="text-white text-sm font-medium leading-[1.8] font-futura">
               {data.col1.text}
             </p>
             <div className="aspect-cinema w-full relative overflow-hidden mt-4 border border-white/10 group">
@@ -120,10 +120,10 @@ export default function ClientBreakdown({ data }: { data: any }) {
           </div>
 
           <div className="space-y-4">
-            <h4 className="text-white text-base font-bold tracking-widest uppercase border-l-2 pl-3 border-white/80 leading-none">
+            <h4 className="text-white text-base font-bold tracking-widest uppercase border-l-2 pl-3 border-white/80 leading-none font-futura">
               {data.col2.title}
             </h4>
-            <p className="text-white/60 text-sm font-normal leading-[1.8] font-sans">
+            <p className="text-white text-sm font-medium leading-[1.8] font-futura">
               {data.col2.text}
             </p>
             <div className="aspect-cinema w-full relative overflow-hidden mt-4 border border-white/10 group">
@@ -136,10 +136,10 @@ export default function ClientBreakdown({ data }: { data: any }) {
           </div>
 
           <div className="space-y-4">
-            <h4 className="text-white text-base font-bold tracking-widest uppercase border-l-2 pl-3 border-white/80 leading-none">
+            <h4 className="text-white text-base font-bold tracking-widest uppercase border-l-2 pl-3 border-white/80 leading-none font-futura">
               {data.col3.title}
             </h4>
-            <p className="text-white/60 text-sm font-normal leading-[1.8] font-sans">
+            <p className="text-white text-sm font-medium leading-[1.8] font-futura">
               {data.col3.text}
             </p>
             <div className="aspect-cinema w-full relative overflow-hidden mt-4 border border-white/10 group">
@@ -177,18 +177,18 @@ export default function ClientBreakdown({ data }: { data: any }) {
           href={`/works/${data.nextId}`}
           className="group block relative h-[40vh] md:h-[60vh] overflow-hidden w-full interactive bg-black"
         >
-          <div className="absolute inset-0 bg-black/60 z-10 transition-colors duration-500 pointer-events-none"></div>
+          <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 z-10 transition-colors duration-700 pointer-events-none"></div>
           <img
             src={data.nextBg}
             alt="Next Project"
-            className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-[2s] ease-out opacity-40 group-hover:opacity-60"
+            className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-105 transition-all duration-700 ease-out opacity-40 group-hover:opacity-100"
           />
 
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-20 mix-blend-difference pointer-events-none">
-            <span className="font-mono text-xs text-white/50 tracking-[0.3em] uppercase mb-4 opacity-70 group-hover:opacity-100 transition-opacity">
-              Next Project (下一项)
+            <span className="font-mono text-xs text-white/50 tracking-[0.3em] uppercase mb-4 opacity-70 group-hover:opacity-100 transition-all duration-700">
+              NEXT PROJECT
             </span>
-            <h2 className="text-4xl md:text-[6vw] text-white font-black uppercase tracking-tighter transition-all duration-700 leading-none">
+            <h2 className="text-4xl md:text-[6vw] text-white font-black uppercase tracking-tighter transition-all duration-700 leading-none font-futura">
               {data.nextName}
             </h2>
           </div>

@@ -54,16 +54,16 @@ export default function HeroSection() {
         {/* Title Overlay */}
         <div className="absolute inset-0 flex flex-col items-center justify-center z-20 p-6 mix-blend-normal">
           <motion.h1
-            className="font-display font-light text-3xl md:text-5xl lg:text-7xl tracking-[0.2em] text-white uppercase text-center interactive"
+            className="font-gothic font-light text-3xl md:text-5xl lg:text-7xl tracking-[0.2em] text-white uppercase text-center interactive"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
           >
-            JIANG CHENGYAN <span className="opacity-20 mx-2 sm:mx-4">|</span>{" "}
+            JIANG CHENGYAN <span className="inline-block opacity-20 mx-2 sm:mx-4 align-middle -translate-y-[0.1em] text-[0.8em] font-sans font-thin scale-y-110">|</span>{" "}
             PORTFOLIO
           </motion.h1>
           <motion.p
-            className="mt-6 font-display text-white/40 text-xs md:text-sm tracking-[0.3em] uppercase"
+            className="mt-6 font-futura text-white/40 text-xs md:text-sm tracking-[0.3em] uppercase"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.5, delay: 1, ease: "easeOut" }}

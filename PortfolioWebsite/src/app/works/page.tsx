@@ -135,7 +135,7 @@ export default function WorksPage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.8, ease: [0.25, 1, 0.5, 1] }}
                     className="absolute inset-0 z-0 overflow-hidden pointer-events-none"
                   >
                     <div className="absolute inset-0 bg-black/40 z-10 custom-blend" />
@@ -143,7 +143,7 @@ export default function WorksPage() {
                     <motion.img
                       initial={{ scale: 1.05 }}
                       animate={{ scale: 1 }}
-                      transition={{ duration: 4, ease: "easeOut" }}
+                      transition={{ duration: 5, ease: "easeOut" }}
                       src={work.imageSrc}
                       alt={work.title}
                       className="w-full h-full object-cover"
@@ -154,7 +154,7 @@ export default function WorksPage() {
 
               <div className="relative z-10 flex items-center justify-between px-8 sm:px-16 py-8 mix-blend-difference pointer-events-none">
                 <h2
-                  className={`text-4xl sm:text-[6.5vw] font-black tracking-tighter uppercase leading-none whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-500 ease-out font-display ${isActive ? "text-white [-webkit-text-stroke:1px_transparent]" : "text-transparent [-webkit-text-stroke:1px_#888]"}`}
+                  className={`py-2 pr-4 -my-2 text-4xl sm:text-[6.5vw] font-black tracking-tighter uppercase leading-none whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-700 ease-out font-luna ${isActive ? "text-white [-webkit-text-stroke:1px_transparent]" : "text-transparent [-webkit-text-stroke:1px_#888]"}`}
                 >
                   {work.title}
                 </h2>
@@ -169,7 +169,7 @@ export default function WorksPage() {
                   height: isActive ? (isMobile ? "30vh" : "40vh") : "0vh",
                   opacity: isActive ? 1 : 0,
                 }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.8, ease: [0.25, 1, 0.5, 1] }}
                 className="relative z-10 px-8 sm:px-16 overflow-hidden pointer-events-none"
               >
                 <div className="h-full flex flex-col justify-end pb-8 mix-blend-difference">
