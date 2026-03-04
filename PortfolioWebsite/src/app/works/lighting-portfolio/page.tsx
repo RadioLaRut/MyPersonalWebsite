@@ -1,6 +1,6 @@
 "use client";
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React from "react";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import CustomCursor from "@/components/layout/CustomCursor";
 import Navigation from "@/components/layout/Navigation";
@@ -52,7 +52,7 @@ const collections: LightingCollection[] = [
 ];
 
 export default function LightingPortfolioPage() {
-    const [hoveredId, setHoveredId] = useState<string | null>(null);
+    // const [hoveredId, setHoveredId] = useState<string | null>(null);
 
     return (
         <main className="min-h-screen bg-black text-white selection:bg-white/20">
@@ -88,8 +88,6 @@ export default function LightingPortfolioPage() {
                         <div
                             key={item.id}
                             className="col-span-12 md:col-start-3 md:col-span-8 relative group interactive flex flex-col items-center"
-                            onMouseEnter={() => setHoveredId(item.id)}
-                            onMouseLeave={() => setHoveredId(null)}
                         >
                             <Link href={`/works/lighting-portfolio/${item.id}`} className="block w-full">
                                 {/* Typography decoupled from image border */}
@@ -102,12 +100,12 @@ export default function LightingPortfolioPage() {
                                     </h3>
                                 </div>
 
-                                {/* High-End Gallery Frame: Image dictates container height, touching all borders */}
-                                <div className="relative w-full bg-[#050505] border border-white/10 flex items-center justify-center overflow-hidden">
+                                {/* High-End Gallery Frame: Strict 21:9 container with horizontal alignment */}
+                                <div className="relative w-full aspect-[21/9] bg-[#050505] border border-white/10 flex items-center justify-center overflow-hidden">
                                     <motion.img
                                         src={item.coverImage}
                                         alt={item.title}
-                                        className="w-full h-auto object-contain block"
+                                        className="w-full h-full object-cover block"
                                     />
                                 </div>
                             </Link>

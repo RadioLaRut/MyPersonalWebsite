@@ -55,6 +55,7 @@ const notoSerif = localFont({
   ],
   variable: "--font-noto-serif",
   display: "swap",
+  adjustFontFallback: false,
 });
 
 const hanYiQiHei = localFont({
@@ -97,6 +98,7 @@ const hanYiQiHei = localFont({
   ],
   variable: "--font-han-yi-qi-hei",
   display: "swap",
+  adjustFontFallback: false,
 });
 
 const futura = localFont({
@@ -119,6 +121,7 @@ const futura = localFont({
   ],
   variable: "--font-futura",
   display: "swap",
+  adjustFontFallback: false,
 });
 
 const luna = localFont({
@@ -136,6 +139,7 @@ const luna = localFont({
   ],
   variable: "--font-luna",
   display: "swap",
+  adjustFontFallback: false,
 });
 
 const gothic = localFont({
@@ -163,6 +167,7 @@ const gothic = localFont({
   ],
   variable: "--font-gothic",
   display: "swap",
+  adjustFontFallback: false,
 });
 
 export default function RootLayout({
