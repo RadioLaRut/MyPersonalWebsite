@@ -81,34 +81,34 @@ export default function LightingPortfolioPage() {
                 </div>
             </section>
 
-            {/* Grid Collections */}
+            {/* Strict Grid Layout: Modular Framing */}
             <section className="px-4 md:px-12 pb-32">
-                <div className="grid-container gap-y-24">
+                <div className="grid grid-cols-12 gap-y-32">
                     {collections.map((item) => (
                         <div
                             key={item.id}
-                            className={`${item.colSpanClass} relative group interactive`}
+                            className="col-span-12 md:col-start-3 md:col-span-8 relative group interactive flex flex-col items-center"
                             onMouseEnter={() => setHoveredId(item.id)}
                             onMouseLeave={() => setHoveredId(null)}
                         >
                             <Link href={`/works/lighting-portfolio/${item.id}`} className="block w-full">
-                                {/* Number identifier */}
-                                <div className="absolute -top-6 left-0 font-mono text-xs text-white/30 tracking-[0.3em] group-hover:text-white transition-colors duration-500 z-10">
-                                    {item.number} — {item.title}
+                                {/* Typography decoupled from image border */}
+                                <div className="mb-6 flex justify-between items-end w-full border-b border-white/20 pb-2">
+                                    <p className="font-mono text-xs text-white/50 tracking-[0.3em] group-hover:text-white transition-colors duration-500">
+                                        NO. {item.number}
+                                    </p>
+                                    <h3 className="font-serif text-sm tracking-widest text-white/80 uppercase">
+                                        {item.title}
+                                    </h3>
                                 </div>
 
-                                {/* Image Container preserving original aspect ratio */}
-                                <div className="relative w-full overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center p-4">
-
+                                {/* High-End Gallery Frame: Image dictates container height, touching all borders */}
+                                <div className="relative w-full bg-[#050505] border border-white/10 flex items-center justify-center overflow-hidden">
                                     <motion.img
                                         src={item.coverImage}
                                         alt={item.title}
-                                        className="w-full h-auto object-contain transition-all duration-700 ease-out"
+                                        className="w-full h-auto object-contain block"
                                     />
-
-                                    {/* Decorative corner accents */}
-                                    <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/20 z-20" />
-                                    <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/20 z-20" />
                                 </div>
                             </Link>
                         </div>

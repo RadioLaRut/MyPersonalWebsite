@@ -82,6 +82,7 @@ export default function BeforeAfterSlider({
                 alt={afterAlt}
                 className="block w-full h-auto object-contain pointer-events-none"
                 draggable={false}
+                decoding="async"
             />
 
             {/* Overlay Image (Before / Unlit) */}
@@ -100,6 +101,7 @@ export default function BeforeAfterSlider({
                         }
                     }}
                     draggable={false}
+                    decoding="async"
                 />
             </div>
 
