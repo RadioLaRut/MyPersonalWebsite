@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function ClientBreakdown({ data }: { data: any }) {
   const containerRef = useRef<HTMLDivElement>(null);
 

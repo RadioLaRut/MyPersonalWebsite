@@ -2,6 +2,7 @@ import React from "react";
 import ClientBreakdown from "@/components/works/ClientBreakdown";
 
 // 添加了图库数组，并将所有文案翻译为中文
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const projectsData: Record<string, any> = {
   "lighting-atmosphere": {
     title: "灯光氛围",

@@ -18,6 +18,7 @@ export default function SmoothScroll({
       smoothTouch: false,
       touchMultiplier: 2,
       infinite: false,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
     function raf(time: number) {

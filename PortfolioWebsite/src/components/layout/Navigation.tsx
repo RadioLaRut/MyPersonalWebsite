@@ -19,6 +19,7 @@ export default function Navigation() {
   const menuItems = [
     { label: "HOME", href: "/" },
     { label: "WORKS", href: "/works" },
+    { label: "PLAYGROUND", href: "/playground" },
     { label: "CONTACT", href: "/contact" },
   ];
 
@@ -32,7 +33,7 @@ export default function Navigation() {
             animate={{ opacity: 1 }}
             transition={{ duration: 1.5, delay: 1 }}
           >
-            <span className="opacity-40 mr-2">//</span>
+            <span className="opacity-40 mr-2">{"//"}</span>
             PORTFOLIO_2026
           </motion.div>
         ) : (
