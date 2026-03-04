@@ -1,0 +1,105 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+  /* Next.js default scrollbar hiding might be needed for cinematic feel */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+body::-webkit-scrollbar {
+  display: none;
+  /* Chrome/Safari */
+}
+
+/* Global 12-Column Grid System */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  width: 100%;
+  padding-left: 4vw;
+  padding-right: 4vw;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 768px) {
+  .grid-container {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+::selection {
+  background: rgba(255, 255, 255, 0.99);
+  color: #000;
+}
+
+* {
+  cursor: none !important;
+}
+
+/* Custom Cursor */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease-out, height 0.3s ease-out, background-color 0.3s ease-out, border 0.3s ease-out, opacity 0.3s ease-out;
+  mix-blend-mode: difference;
+}
+
+.custom-cursor.hovering-text {
+  width: 80px;
+  height: 80px;
+  background-color: transparent;
+  border: 1px solid white;
+}
+
+.custom-cursor.hovering-interactive {
+  width: 60px;
+  height: 60px;
+  background-color: transparent;
+  border: 1px solid white;
+}
+
+/* Lenis smooth scroll global styles */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
