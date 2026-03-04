@@ -549,6 +549,14 @@
 # 电子书，Book
 # chm
 *.[cC][hH][mM] filter=lfs diff=lfs merge=binary -text
+
+# Project-specific overrides: do NOT store web fonts/favicon in LFS
+PortfolioWebsite/src/app/fonts/** -filter -diff -merge -text
+PortfolioWebsite/src/app/**/*.ttf -filter -diff -merge -text
+PortfolioWebsite/src/app/**/*.otf -filter -diff -merge -text
+PortfolioWebsite/src/app/**/*.woff2 -filter -diff -merge -text
+PortfolioWebsite/public/favicon.ico -filter -diff -merge -text
+PortfolioWebsite/src/app/favicon.ico -filter -diff -merge -text
 # mobi
 *.[mM][oO][bB][iI] filter=lfs diff=lfs merge=binary -text
 # epub
