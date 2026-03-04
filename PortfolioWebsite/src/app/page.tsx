@@ -4,34 +4,64 @@ import ProjectSection from "@/components/home/ProjectSection";
 export default function Home() {
   const projects = [
     {
-      title: "INSIGHT",
-      subtitle: "First-Person Puzzle / Unreal Engine 5",
-      imageSrc: "/images/Insight/InsightCover.png",
-      link: "/works/insight",
-    },
-    {
-      title: "PENGUIN TRADING",
-      subtitle: "Multiplayer Coop / Unreal Engine 5",
-      imageSrc: "/images/Others/CyberRestaurant.png",
-      link: "/works/penguin",
+      title: "LIGHTING PORTFOLIO",
+      subtitle: "Lighting Art / Level Mood",
+      imageSrc: "/images/TrainStation/2Day.png",
+      link: "/works/lighting-portfolio",
     },
     {
       title: "SLAY THE VIRUS",
-      subtitle: "Action Roguelike / Unity",
+      subtitle: "UI / Poster Design / Game Design",
       imageSrc: "/images/STV/STVTitle.png",
       link: "/works/slay-the-virus",
     },
     {
-      title: "PROMETHEUS",
-      subtitle: "Sci-Fi Horror / Unreal Engine 5",
+      title: "WOW, OTTO!",
+      subtitle: "Lead Designer / Trackball Narrative",
+      imageSrc: "/images/Others/CyberRestaurant.png", // Placeholder
+      link: "/works/wow-otto",
+    },
+    {
+      title: "I'M EXPLODE WITH U",
+      subtitle: "Lead Designer / Multiplayer Platformer",
+      imageSrc: "/images/Others/CyberRestaurant.png", // Placeholder
+      link: "/works/im-explode",
+    },
+    {
+      title: "THE PROMETHEUS",
+      subtitle: "Lead Designer / Lighting / Stealth",
       imageSrc: "/images/Prometheus/PrometheusTitle.png",
       link: "/works/prometheus",
     },
     {
-      title: "LIGHTING & TECH",
-      subtitle: "Environment Art / Procedural Generation",
+      title: "SOMEWHERE BETWEEN PARALLAX",
+      subtitle: "UI Design / Interactive VR",
+      imageSrc: "/images/Others/CyberRestaurant.png", // Placeholder
+      link: "/works/parallax",
+    },
+    {
+      title: "INSIGHT",
+      subtitle: "Lead Designer / Programmer / Writer",
+      imageSrc: "/images/Insight/InsightCover.png",
+      link: "/works/insight",
+    },
+    {
+      title: "PENGUIN TRADING CO.",
+      subtitle: "Lead Designer / Tech Art / PM",
+      imageSrc: "/images/Others/CyberRestaurant.png", // Placeholder
+      link: "/works/penguin",
+    },
+    {
+      title: "HOUDINI PROCEDURAL GENERATION",
+      subtitle: "Procedural Env / PCG",
       imageSrc: "/images/Others/PCG/PCG01.png",
-      link: "/works/lighting-atmosphere",
+      link: "/works/houdini-pcg",
+    },
+    {
+      title: "EPIC STAGE LIGHTING",
+      subtitle: "Stage Lighting / Sequencer",
+      imageSrc: "/images/Others/Epic.png",
+      link: "/works/epic-stage",
     },
   ];
 
