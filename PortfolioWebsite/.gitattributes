@@ -4,5 +4,12 @@ src/app/fonts/** -filter -diff -merge -text
 src/app/**/*.ttf -filter -diff -merge -text
 src/app/**/*.otf -filter -diff -merge -text
 src/app/**/*.woff2 -filter -diff -merge -text
+public/images/** -filter -diff -merge -text
+public/assets/images/** -filter -diff -merge -text
+public/**/*.png -filter -diff -merge -text
+public/**/*.jpg -filter -diff -merge -text
+public/**/*.jpeg -filter -diff -merge -text
+public/**/*.webp -filter -diff -merge -text
+public/**/*.gif -filter -diff -merge -text
 public/favicon.ico -filter -diff -merge -text
 src/app/favicon.ico -filter -diff -merge -text
