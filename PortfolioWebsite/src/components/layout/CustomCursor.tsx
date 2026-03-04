@@ -25,7 +25,7 @@ export default function CustomCursor() {
       const isInteractive = target.closest(
         "a, button, input, [role='button'], .interactive",
       );
-      const isText = target.closest("h1, h2, p, span, .hover-text");
+      const isText = target.closest(".hover-text");
 
       if (isInteractive) {
         cursor.classList.add("hovering-interactive");

@@ -71,85 +71,93 @@ export default function ClientBreakdown({ data }: { data: any }) {
         </motion.div>
 
         {/* Title Overlay */}
-        <div className="relative z-10 text-center flex flex-col items-center gap-4 fade-in-section opacity-0 translate-y-8 transition-all duration-1000">
-          <span className="font-mono text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.4em] uppercase text-white/50">
-            Project {data.idNum}
-          </span>
-          <h1 className="text-white text-[12vw] sm:text-[8vw] font-black tracking-tighter uppercase leading-none mix-blend-overlay font-futura">
-            {data.title}
-          </h1>
-          {data.navLink && (
-            <a
-              href={data.navLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-8 border border-white/30 px-6 py-3 text-xs tracking-widest hover:bg-white hover:text-black transition-colors uppercase font-mono interactive mix-blend-difference"
-            >
-              播放演示视频 (Bilibili)
-            </a>
-          )}
+        <div className="absolute inset-0 z-10 flex flex-col justify-end pb-24 md:pb-32 pointer-events-none">
+          <div className="grid-container w-full fade-in-section opacity-0 translate-y-8 transition-all duration-1000 mix-blend-difference pointer-events-auto">
+            <div className="col-span-4 md:col-start-2 md:col-span-10 flex flex-col items-start gap-4">
+              <span className="font-mono text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.4em] uppercase text-white/50">
+                Project {data.idNum}
+              </span>
+              <h1 className="text-white text-[12vw] sm:text-[7vw] font-black tracking-normal uppercase leading-[0.85] font-futura">
+                {data.title}
+              </h1>
+              {data.navLink && (
+                <a
+                  href={data.navLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-8 border border-white/30 px-6 py-3 text-xs tracking-widest hover:bg-white hover:text-black transition-colors uppercase font-mono interactive mix-blend-normal"
+                >
+                  播放演示视频 (Bilibili)
+                </a>
+              )}
+            </div>
+          </div>
         </div>
       </header>
 
       {/* 2. Commentary Block */}
-      <article className="max-w-screen-xl mx-auto px-6 py-24 md:py-32 relative z-20 bg-black">
-        <div className="max-w-[70ch] mx-auto text-center fade-in-section opacity-0 translate-y-8 transition-all duration-1000 ease-out">
-          <p className="text-lg md:text-[22px] font-medium leading-[2] text-white/90 text-justify sm:text-center tracking-wide font-futura">
-            {data.description}
-          </p>
+      <article className="w-full py-24 md:py-32 relative z-20 bg-black">
+        <div className="grid-container w-full">
+          <div className="col-span-4 md:col-start-3 md:col-span-8 fade-in-section opacity-0 translate-y-8 transition-all duration-1000 ease-out">
+            <p className="text-xl md:text-[24px] font-medium leading-[2.2] text-white/90 text-justify font-futura tracking-wide">
+              {data.description}
+            </p>
+          </div>
         </div>
       </article>
 
       {/* 3. Technical Deep Dive Grid */}
-      <section className="max-w-[1920px] mx-auto px-8 md:px-16 pb-32 relative z-20 bg-black">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 fade-in-section opacity-0 translate-y-8 transition-all duration-1000 ease-out pt-12 border-t border-white/10">
-          <div className="space-y-4">
+      <section className="w-full relative z-20 bg-black pb-32">
+        <div className="grid-container w-full fade-in-section opacity-0 translate-y-8 transition-all duration-1000 ease-out pt-16 border-t border-white/10">
+
+          <div className="col-span-4 md:col-span-3 space-y-4">
             <h4 className="text-white text-base font-bold tracking-widest uppercase border-l-2 pl-3 border-white/80 leading-none font-futura">
               {data.col1.title}
             </h4>
-            <p className="text-white text-sm font-medium leading-[1.8] font-futura">
+            <p className="text-white/70 text-sm font-medium leading-[2] font-futura">
               {data.col1.text}
             </p>
-            <div className="aspect-cinema w-full relative overflow-hidden mt-4 border border-white/10 group">
+            <div className="w-full relative overflow-hidden mt-6 border border-white/10">
               <img
                 src={data.col1.img}
                 alt={data.col1.title}
-                className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-700"
+                className="w-full h-auto object-contain block"
               />
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="col-span-4 md:col-start-5 md:col-span-4 space-y-4 mt-16 md:mt-0">
             <h4 className="text-white text-base font-bold tracking-widest uppercase border-l-2 pl-3 border-white/80 leading-none font-futura">
               {data.col2.title}
             </h4>
-            <p className="text-white text-sm font-medium leading-[1.8] font-futura">
+            <p className="text-white/70 text-sm font-medium leading-[2] font-futura">
               {data.col2.text}
             </p>
-            <div className="aspect-cinema w-full relative overflow-hidden mt-4 border border-white/10 group">
+            <div className="w-full relative overflow-hidden mt-6 border border-white/10">
               <img
                 src={data.col2.img}
                 alt={data.col2.title}
-                className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-700"
+                className="w-full h-auto object-contain block"
               />
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="col-span-4 md:col-start-10 md:col-span-3 space-y-4 mt-16 md:mt-0">
             <h4 className="text-white text-base font-bold tracking-widest uppercase border-l-2 pl-3 border-white/80 leading-none font-futura">
               {data.col3.title}
             </h4>
-            <p className="text-white text-sm font-medium leading-[1.8] font-futura">
+            <p className="text-white/70 text-sm font-medium leading-[2] font-futura">
               {data.col3.text}
             </p>
-            <div className="aspect-cinema w-full relative overflow-hidden mt-4 border border-white/10 group">
+            <div className="w-full relative overflow-hidden mt-6 border border-white/10">
               <img
                 src={data.col3.img}
                 alt={data.col3.title}
-                className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-700"
+                className="w-full h-auto object-contain block"
               />
             </div>
           </div>
+
         </div>
       </section>
 
@@ -164,7 +172,7 @@ export default function ClientBreakdown({ data }: { data: any }) {
               <img
                 src={imgSrc}
                 alt={`${data.title} Gallery ${index}`}
-                className="absolute inset-0 w-full h-full object-cover opacity-100 pointer-events-none"
+                className="absolute inset-0 w-full h-full object-contain opacity-100 pointer-events-none"
               />
             </div>
           ))}

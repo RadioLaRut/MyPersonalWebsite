@@ -46,6 +46,7 @@ export default function Home() {
           subtitle={project.subtitle}
           imageSrc={project.imageSrc}
           link={project.link}
+          index={index}
         />
       ))}
     </main>

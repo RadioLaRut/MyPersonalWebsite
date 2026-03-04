@@ -125,7 +125,7 @@ export default function WorksPage() {
           return (
             <div
               key={work.id}
-              className="relative w-full border-b border-white/10 group interactive cursor-pointer flex flex-col justify-end h-[250px]"
+              className="relative w-full border-b border-white/10 group interactive cursor-pointer min-h-[30vh] sm:min-h-[40vh] flex flex-col justify-center"
               onMouseEnter={() => handleMouseEnter(index)}
               onClick={() => handleInteraction(index)}
             >
@@ -138,7 +138,7 @@ export default function WorksPage() {
                     transition={{ duration: 0.8, ease: [0.25, 1, 0.5, 1] }}
                     className="absolute inset-0 z-0 overflow-hidden pointer-events-none"
                   >
-                    <div className="absolute inset-0 bg-black/40 z-10 custom-blend" />
+                    <div className="absolute inset-0 bg-black/60 z-10 custom-blend" />
 
                     <motion.img
                       initial={{ scale: 1.05 }}
@@ -152,40 +152,44 @@ export default function WorksPage() {
                 )}
               </AnimatePresence>
 
-              <div className="relative z-10 flex items-center justify-between px-8 sm:px-16 py-8 mix-blend-difference pointer-events-none">
-                <h2
-                  className={`py-2 pr-4 -my-2 text-4xl sm:text-[6.5vw] font-black tracking-tighter uppercase leading-none whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-700 ease-out font-luna ${isActive ? "text-white [-webkit-text-stroke:1px_transparent]" : "text-transparent [-webkit-text-stroke:1px_#888]"}`}
-                >
-                  {work.title}
-                </h2>
-                <div className="hidden sm:block text-white/50 font-serif text-[2vw] tracking-widest">
+              <div className="grid-container relative z-10 pointer-events-none items-center py-12">
+                {/* Index Number - Col 1 */}
+                <div className="hidden md:block col-span-1 text-white/40 font-serif text-xl tracking-widest">
                   0{index + 1}
                 </div>
-              </div>
 
-              <motion.div
-                initial={false}
-                animate={{
-                  height: isActive ? (isMobile ? "30vh" : "40vh") : "0vh",
-                  opacity: isActive ? 1 : 0,
-                }}
-                transition={{ duration: 0.8, ease: [0.25, 1, 0.5, 1] }}
-                className="relative z-10 px-8 sm:px-16 overflow-hidden pointer-events-none"
-              >
-                <div className="h-full flex flex-col justify-end pb-8 mix-blend-difference">
+                {/* Title - Col 2-8 */}
+                <div className="col-span-4 md:col-start-2 md:col-span-7 flex flex-col justify-center py-4">
+                  <h2
+                    className={`text-6xl sm:text-[4vw] font-black tracking-tighter uppercase leading-none font-luna transition-all duration-700 ease-out whitespace-normal break-words py-2 ${isActive ? "text-white [-webkit-text-stroke:1px_transparent] translate-x-4" : "text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.3)]"}`}
+                  >
+                    {work.title}
+                  </h2>
+                </div>
+
+                {/* Details - Col 9-12 */}
+                <motion.div
+                  initial={false}
+                  animate={{
+                    opacity: isActive ? 1 : 0,
+                    x: isActive ? 0 : -20
+                  }}
+                  transition={{ duration: 0.8, ease: [0.25, 1, 0.5, 1] }}
+                  className="col-span-4 md:col-start-9 md:col-span-4 flex flex-col justify-center md:border-l md:border-white/20 md:pl-8 mt-6 md:mt-0"
+                >
                   {isMobile && (
-                    <p className="text-white/70 text-sm tracking-widest uppercase mb-2">
+                    <p className="text-white/40 text-[10px] tracking-widest uppercase mb-4">
                       Tap again to view details
                     </p>
                   )}
-                  <p className="font-serif tracking-widest text-lg sm:text-2xl text-white/80 uppercase">
+                  <p className="font-serif tracking-widest text-sm sm:text-base text-white/90 uppercase">
                     {work.category}
                   </p>
-                  <p className="mt-2 text-sm text-white/50 font-mono tracking-wider uppercase">
+                  <p className="mt-3 text-[10px] sm:text-xs text-white/50 font-mono tracking-widest uppercase leading-loose">
                     {work.desc}
                   </p>
-                </div>
-              </motion.div>
+                </motion.div>
+              </div>
             </div>
           );
         })}
