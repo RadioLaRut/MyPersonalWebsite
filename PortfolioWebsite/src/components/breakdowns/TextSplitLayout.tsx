@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { type ReactNode } from 'react';
 import Image from 'next/image';
 
 interface TextSplitLayoutProps {
-    heading: string;
-    paragraphs: string[];
+    heading: ReactNode;
+    paragraphs: ReactNode[];
     imageSrc?: string;
     layoutVariant?: 'split-left' | 'split-right' | 'stack';
 }
@@ -16,6 +16,8 @@ export default function TextSplitLayout({
     imageSrc,
     layoutVariant = 'split-left'
 }: TextSplitLayoutProps) {
+    const imageAlt = typeof heading === 'string' ? heading : 'TextSplitLayout image';
+
     return (
         <div className="w-full my-32">
             <div className="grid-container items-start">
@@ -24,13 +26,13 @@ export default function TextSplitLayout({
                     <>
                         {/* Heading Left */}
                         <div className="col-span-4 md:col-span-5 md:col-start-1 mb-12 md:mb-0">
-                            <h3 className="text-[10vw] md:text-[5vw] font-luna leading-[0.85] tracking-tighter uppercase break-words text-white mb-8">
+                            <h3 className="text-5xl sm:text-6xl md:text-[5vw] font-luna leading-[0.95] tracking-tighter uppercase break-words hyphens-auto text-white mb-8">
                                 {heading}
                             </h3>
                             {imageSrc && (
                                 <div className="w-full aspect-[4/3] relative opacity-90 hover:opacity-100 transition-opacity duration-700">
                                     <div className="absolute inset-0 bg-neutral-900" />
-                                    <Image src={imageSrc} alt={heading} fill className="object-cover" />
+                                    <Image src={imageSrc} alt={imageAlt} fill className="object-cover" />
                                     <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] pointer-events-none" />
                                 </div>
                             )}
@@ -58,13 +60,13 @@ export default function TextSplitLayout({
                         </div>
                         {/* Heading Right */}
                         <div className="col-span-4 md:col-span-5 md:col-start-8 order-1 md:order-2">
-                            <h3 className="text-[10vw] md:text-[5vw] font-luna leading-[0.85] tracking-tighter uppercase break-words text-white mb-8 text-right">
+                            <h3 className="text-5xl sm:text-6xl md:text-[5vw] font-luna leading-[0.95] tracking-tighter uppercase break-words hyphens-auto text-white mb-8 text-right">
                                 {heading}
                             </h3>
                             {imageSrc && (
                                 <div className="w-full aspect-[4/3] relative opacity-90 hover:opacity-100 transition-opacity duration-700">
                                     <div className="absolute inset-0 bg-neutral-900" />
-                                    <Image src={imageSrc} alt={heading} fill className="object-cover" />
+                                    <Image src={imageSrc} alt={imageAlt} fill className="object-cover" />
                                     <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] pointer-events-none" />
                                 </div>
                             )}
@@ -74,7 +76,7 @@ export default function TextSplitLayout({
 
                 {layoutVariant === 'stack' && (
                     <div className="col-span-4 md:col-start-3 md:col-span-8 flex flex-col items-center text-center">
-                        <h3 className="text-[8vw] md:text-[6vw] font-luna leading-[0.85] tracking-tighter uppercase text-white mb-16">
+                        <h3 className="text-5xl sm:text-6xl md:text-[6vw] font-luna leading-[0.95] tracking-tighter uppercase break-words hyphens-auto text-white mb-16 px-4">
                             {heading}
                         </h3>
                         <div className="font-serif text-white/60 tracking-wide text-lg md:text-xl leading-[1.8] space-y-8 max-w-3xl border-white/5 border-t pt-12">
@@ -85,7 +87,7 @@ export default function TextSplitLayout({
                         {imageSrc && (
                             <div className="w-full relative aspect-[21/9] mt-16 opacity-90 hover:opacity-100 transition-opacity duration-700">
                                 <div className="absolute inset-0 bg-neutral-900" />
-                                <Image src={imageSrc} alt={heading} fill className="object-cover" />
+                                <Image src={imageSrc} alt={imageAlt} fill className="object-cover" />
                                 <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] pointer-events-none" />
                             </div>
                         )}

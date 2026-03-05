@@ -1,0 +1,64 @@
+{
+    "root": {
+        "props": {
+            "title": "Lighting Portfolio"
+        }
+    },
+    "content": [
+        {
+            "type": "PortfolioHeroHeader",
+            "props": {
+                "id": "hero-1",
+                "title": "LIGHTING",
+                "subtitle": "PORTFOLIO",
+                "descriptionLine1": "A Curated Selection",
+                "descriptionLine2": "Unreal Engine 5"
+            }
+        },
+        {
+            "type": "LightingProjectCard",
+            "props": {
+                "id": "collection-1",
+                "number": "01",
+                "title": "CITY ADD",
+                "coverImage": "/images/City2026Add/002.PNG"
+            }
+        },
+        {
+            "type": "LightingProjectCard",
+            "props": {
+                "id": "collection-2",
+                "number": "02",
+                "title": "RAINFOREST ECHO",
+                "coverImage": "/images/雨林/Version2Output.0029.png"
+            }
+        },
+        {
+            "type": "LightingProjectCard",
+            "props": {
+                "id": "collection-3",
+                "number": "03",
+                "title": "TRAIN STATION",
+                "coverImage": "/images/TrainStation/2Day.png"
+            }
+        },
+        {
+            "type": "LightingProjectCard",
+            "props": {
+                "id": "collection-4",
+                "number": "04",
+                "title": "WEST - DOUBLE COMPOSITION",
+                "coverImage": "/images/West/CDay.jpeg"
+            }
+        },
+        {
+            "type": "LightingProjectCard",
+            "props": {
+                "id": "collection-5",
+                "number": "05",
+                "title": "ATMOSPHERE PRACTICE",
+                "coverImage": "/images/Others/01.png"
+            }
+        }
+    ]
+}

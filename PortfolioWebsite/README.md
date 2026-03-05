@@ -34,3 +34,15 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Slug 验收
+
+运行：
+
+```bash
+pnpm test:slug
+```
+
+预期：
+- `normalizePuckSlugInput` 的根路径映射、大小写归一、多级路径、`//` 归一化用例通过
+- 高危输入（`..`、`%2e%2e`、`%2f`、反斜杠、空字节、坏编码）抛出 `SlugValidationError`（`status=400`, `code=BAD_REQUEST`）

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface WorkItem {
   id: string;
+  href?: string;
   title: string;
   category: string;
   imageSrc: string;
@@ -13,6 +14,7 @@ interface WorkItem {
 const works: WorkItem[] = [
   {
     id: "lighting-portfolio",
+    href: "/p/lighting-portfolio",
     title: "LIGHTING PORTFOLIO",
     category: "Lighting Art",
     imageSrc: "/images/TrainStation/2Day.png",
@@ -96,14 +98,15 @@ export default function WorksPage() {
   }, []);
 
   const handleInteraction = (index: number) => {
+    const targetHref = works[index].href ?? `/works/${works[index].id}`;
     if (isMobile) {
       if (expandedIndex === index) {
-        window.location.href = `/works/${works[index].id}`;
+        window.location.href = targetHref;
       } else {
         setExpandedIndex(index);
       }
     } else {
-      window.location.href = `/works/${works[index].id}`;
+      window.location.href = targetHref;
     }
   };
 

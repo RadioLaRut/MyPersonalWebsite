@@ -9,12 +9,18 @@ export default function Navigation() {
   const isBreakdownPage = pathname?.startsWith("/works/");
 
   useEffect(() => {
+    if (pathname?.startsWith("/admin")) {
+      return;
+    }
+
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setIsOpen(false);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [pathname]);
+
+  if (pathname?.startsWith("/admin")) return null;
 
   const menuItems = [
     { label: "HOME", href: "/" },

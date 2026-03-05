@@ -6,9 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:puck-preview-css": "tailwindcss -i src/app/globals.css -o public/puck-preview.css",
+    "test:slug": "node --test src/lib/puck-slug.test.ts"
   },
   "dependencies": {
+    "@measured/puck": "^0.20.2",
     "@studio-freight/lenis": "^1.0.42",
     "clsx": "^2.1.1",
     "framer-motion": "^12.35.0",

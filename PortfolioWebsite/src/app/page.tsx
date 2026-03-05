@@ -7,7 +7,7 @@ export default function Home() {
       title: "LIGHTING PORTFOLIO",
       subtitle: "Lighting Art / Level Mood",
       imageSrc: "/images/TrainStation/2Day.png",
-      link: "/works/lighting-portfolio",
+      link: "/p/lighting-portfolio",
     },
     {
       title: "SLAY THE VIRUS",

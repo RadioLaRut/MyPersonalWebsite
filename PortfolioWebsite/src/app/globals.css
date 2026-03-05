@@ -49,6 +49,10 @@ body::-webkit-scrollbar {
 }
 
 * {
+  cursor: inherit;
+}
+
+html:not([data-admin-mode]) * {
   cursor: none !important;
 }
 

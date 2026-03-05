@@ -1,0 +1,125 @@
+{
+    "root": {
+        "props": {
+            "title": "Home"
+        }
+    },
+    "content": [
+        {
+            "type": "HeroSection",
+            "props": {
+                "id": "hero-section-1"
+            }
+        },
+        {
+            "type": "ProjectSection",
+            "props": {
+                "id": "proj-1",
+                "title": "LIGHTING PORTFOLIO",
+                "subtitle": "Lighting Art / Level Mood",
+                "imageSrc": "/images/TrainStation/2Day.png",
+                "link": "/p/works/lighting-portfolio",
+                "index": 0
+            }
+        },
+        {
+            "type": "ProjectSection",
+            "props": {
+                "id": "proj-2",
+                "title": "SLAY THE VIRUS",
+                "subtitle": "UI / Poster Design / Game Design",
+                "imageSrc": "/images/STV/STVTitle.png",
+                "link": "/works/slay-the-virus",
+                "index": 1
+            }
+        },
+        {
+            "type": "ProjectSection",
+            "props": {
+                "id": "proj-3",
+                "title": "WOW, OTTO!",
+                "subtitle": "Lead Designer / Trackball Narrative",
+                "imageSrc": "/images/Others/CyberRestaurant.png",
+                "link": "/works/wow-otto",
+                "index": 2
+            }
+        },
+        {
+            "type": "ProjectSection",
+            "props": {
+                "id": "proj-4",
+                "title": "I'M EXPLODE WITH U",
+                "subtitle": "Lead Designer / Multiplayer Platformer",
+                "imageSrc": "/images/Others/CyberRestaurant.png",
+                "link": "/works/im-explode",
+                "index": 3
+            }
+        },
+        {
+            "type": "ProjectSection",
+            "props": {
+                "id": "proj-5",
+                "title": "THE PROMETHEUS",
+                "subtitle": "Lead Designer / Lighting / Stealth",
+                "imageSrc": "/images/Prometheus/PrometheusTitle.png",
+                "link": "/works/prometheus",
+                "index": 4
+            }
+        },
+        {
+            "type": "ProjectSection",
+            "props": {
+                "id": "proj-6",
+                "title": "SOMEWHERE BETWEEN PARALLAX",
+                "subtitle": "UI Design / Interactive VR",
+                "imageSrc": "/images/Others/CyberRestaurant.png",
+                "link": "/works/parallax",
+                "index": 5
+            }
+        },
+        {
+            "type": "ProjectSection",
+            "props": {
+                "id": "proj-7",
+                "title": "INSIGHT",
+                "subtitle": "Lead Designer / Programmer / Writer",
+                "imageSrc": "/images/Insight/InsightCover.png",
+                "link": "/works/insight",
+                "index": 6
+            }
+        },
+        {
+            "type": "ProjectSection",
+            "props": {
+                "id": "proj-8",
+                "title": "PENGUIN TRADING CO.",
+                "subtitle": "Lead Designer / Tech Art / PM",
+                "imageSrc": "/images/Others/CyberRestaurant.png",
+                "link": "/works/penguin",
+                "index": 7
+            }
+        },
+        {
+            "type": "ProjectSection",
+            "props": {
+                "id": "proj-9",
+                "title": "HOUDINI PROCEDURAL GENERATION",
+                "subtitle": "Procedural Env / PCG",
+                "imageSrc": "/images/Others/PCG/PCG01.png",
+                "link": "/works/houdini-pcg",
+                "index": 8
+            }
+        },
+        {
+            "type": "ProjectSection",
+            "props": {
+                "id": "proj-10",
+                "title": "EPIC STAGE LIGHTING",
+                "subtitle": "Stage Lighting / Sequencer",
+                "imageSrc": "/images/Others/Epic.png",
+                "link": "/works/epic-stage",
+                "index": 9
+            }
+        }
+    ]
+}
