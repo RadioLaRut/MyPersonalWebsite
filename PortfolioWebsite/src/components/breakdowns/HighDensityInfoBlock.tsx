@@ -22,9 +22,9 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3 }: HighDen
                 {/* Phase 1 Column (Dense text + metadata) */}
                 <div className="col-span-4 md:col-span-3 pr-4 mb-12 md:mb-0 border-r border-white/5">
                     <div className="font-mono text-white/40 text-[10px] tracking-[0.2em] mb-4">PHASE 01 / CONTEXT</div>
-                    <h3 className="text-xl md:text-2xl font-serif text-white/90 mb-2">{phase1.title}</h3>
-                    {phase1.subtitle && <h4 className="text-sm font-serif italic text-white/50 mb-6">{phase1.subtitle}</h4>}
-                    <p className="font-serif text-white/60 text-sm leading-[1.8] mb-8 pr-4">
+                    <h3 className="text-xl md:text-2xl font-futura text-white/90 mb-2">{phase1.title}</h3>
+                    {phase1.subtitle && <h4 className="text-sm font-futura italic text-white/50 mb-6">{phase1.subtitle}</h4>}
+                    <p className="font-futura text-white/60 text-sm leading-[1.8] mb-8 pr-4">
                         {phase1.content}
                     </p>
 
@@ -43,9 +43,9 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3 }: HighDen
                 {/* Phase 2 Column (Dense text + architecture abstract) */}
                 <div className="col-span-4 md:col-span-4 px-0 md:px-8 mb-12 md:mb-0 border-r border-transparent md:border-white/5">
                     <div className="font-mono text-white/40 text-[10px] tracking-[0.2em] mb-4">PHASE 02 / SYSTEM ARCHITECTURE</div>
-                    <h3 className="text-xl md:text-2xl font-serif text-white/90 mb-2">{phase2.title}</h3>
-                    {phase2.subtitle && <h4 className="text-sm font-serif italic text-white/50 mb-6">{phase2.subtitle}</h4>}
-                    <p className="font-serif text-white/60 text-sm leading-[1.8] mb-8">
+                    <h3 className="text-xl md:text-2xl font-futura text-white/90 mb-2">{phase2.title}</h3>
+                    {phase2.subtitle && <h4 className="text-sm font-futura italic text-white/50 mb-6">{phase2.subtitle}</h4>}
+                    <p className="font-futura text-white/60 text-sm leading-[1.8] mb-8">
                         {phase2.content}
                     </p>
 
@@ -73,7 +73,7 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3 }: HighDen
                             {phase2.items.map((item, i) => (
                                 <div key={i} className="flex flex-col gap-1 text-xs">
                                     <span className="font-mono text-white/40">{item.label}</span>
-                                    <span className="font-serif text-white/80 leading-relaxed">{item.value}</span>
+                                    <span className="font-futura text-white/80 leading-relaxed">{item.value}</span>
                                 </div>
                             ))}
                         </div>
@@ -83,9 +83,9 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3 }: HighDen
                 {/* Phase 3 Column (Execution & Visual Result) */}
                 <div className="col-span-4 md:col-span-5 pl-0 md:pl-8">
                     <div className="font-mono text-white/40 text-[10px] tracking-[0.2em] mb-4">PHASE 03 / EXECUTION & RESULTS</div>
-                    <h3 className="text-xl md:text-2xl font-serif text-white/90 mb-2">{phase3.title}</h3>
-                    {phase3.subtitle && <h4 className="text-sm font-serif italic text-white/50 mb-6">{phase3.subtitle}</h4>}
-                    <p className="font-serif text-white/60 text-sm leading-[1.8] mb-8">
+                    <h3 className="text-xl md:text-2xl font-futura text-white/90 mb-2">{phase3.title}</h3>
+                    {phase3.subtitle && <h4 className="text-sm font-futura italic text-white/50 mb-6">{phase3.subtitle}</h4>}
+                    <p className="font-futura text-white/60 text-sm leading-[1.8] mb-8">
                         {phase3.content}
                     </p>
 

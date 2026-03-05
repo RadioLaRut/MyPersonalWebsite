@@ -29,7 +29,7 @@
                 "title": "SLAY THE VIRUS",
                 "subtitle": "UI / Poster Design / Game Design",
                 "imageSrc": "/images/STV/STVTitle.png",
-                "link": "/works/slay-the-virus",
+                "link": "/p/works/slay-the-virus",
                 "index": 1
             }
         },
@@ -40,7 +40,7 @@
                 "title": "WOW, OTTO!",
                 "subtitle": "Lead Designer / Trackball Narrative",
                 "imageSrc": "/images/Others/CyberRestaurant.png",
-                "link": "/works/wow-otto",
+                "link": "/p/works/wow-otto",
                 "index": 2
             }
         },
@@ -51,7 +51,7 @@
                 "title": "I'M EXPLODE WITH U",
                 "subtitle": "Lead Designer / Multiplayer Platformer",
                 "imageSrc": "/images/Others/CyberRestaurant.png",
-                "link": "/works/im-explode",
+                "link": "/p/works/im-explode",
                 "index": 3
             }
         },
@@ -62,7 +62,7 @@
                 "title": "THE PROMETHEUS",
                 "subtitle": "Lead Designer / Lighting / Stealth",
                 "imageSrc": "/images/Prometheus/PrometheusTitle.png",
-                "link": "/works/prometheus",
+                "link": "/p/works/prometheus",
                 "index": 4
             }
         },
@@ -73,7 +73,7 @@
                 "title": "SOMEWHERE BETWEEN PARALLAX",
                 "subtitle": "UI Design / Interactive VR",
                 "imageSrc": "/images/Others/CyberRestaurant.png",
-                "link": "/works/parallax",
+                "link": "/p/works/parallax",
                 "index": 5
             }
         },
@@ -84,7 +84,7 @@
                 "title": "INSIGHT",
                 "subtitle": "Lead Designer / Programmer / Writer",
                 "imageSrc": "/images/Insight/InsightCover.png",
-                "link": "/works/insight",
+                "link": "/p/works/insight",
                 "index": 6
             }
         },
@@ -95,7 +95,7 @@
                 "title": "PENGUIN TRADING CO.",
                 "subtitle": "Lead Designer / Tech Art / PM",
                 "imageSrc": "/images/Others/CyberRestaurant.png",
-                "link": "/works/penguin",
+                "link": "/p/works/penguin",
                 "index": 7
             }
         },
@@ -106,7 +106,7 @@
                 "title": "HOUDINI PROCEDURAL GENERATION",
                 "subtitle": "Procedural Env / PCG",
                 "imageSrc": "/images/Others/PCG/PCG01.png",
-                "link": "/works/houdini-pcg",
+                "link": "/p/works/pcg-town",
                 "index": 8
             }
         },
@@ -117,7 +117,7 @@
                 "title": "EPIC STAGE LIGHTING",
                 "subtitle": "Stage Lighting / Sequencer",
                 "imageSrc": "/images/Others/Epic.png",
-                "link": "/works/epic-stage",
+                "link": "/p/works/epic-stage",
                 "index": 9
             }
         }

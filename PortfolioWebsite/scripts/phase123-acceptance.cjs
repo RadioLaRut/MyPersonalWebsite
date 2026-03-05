@@ -159,7 +159,7 @@ function testUploadPolicy() {
 
 function testRequiredFilesExist() {
   assert.ok(fs.existsSync(path.join(projectRoot, "content/pages/index.json")));
-  assert.ok(fs.existsSync(path.join(projectRoot, "content/pages/lighting-portfolio.json")));
+  assert.ok(fs.existsSync(path.join(projectRoot, "content/pages/works/lighting-portfolio.json")));
   assert.ok(fs.existsSync(path.join(projectRoot, "public/puck-preview.css")));
 }
 

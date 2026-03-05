@@ -17,6 +17,8 @@ export interface WorksListProps {
 }
 
 export default function WorksList({ heading = "All Selected Works", works = [] }: WorksListProps) {
+    const isCmsPreviewEnabled =
+        process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" || process.env.NEXT_PUBLIC_USE_JSON === "true";
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const [isMobile, setIsMobile] = useState(false);
     const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
@@ -29,7 +31,8 @@ export default function WorksList({ heading = "All Selected Works", works = [] }
     }, []);
 
     const handleInteraction = (index: number) => {
-        const targetHref = works[index].href ?? `/works/${works[index].id}`;
+        const fallbackHref = isCmsPreviewEnabled ? `/p/works/${works[index].id}` : `/works/${works[index].id}`;
+        const targetHref = works[index].href ?? fallbackHref;
         if (isMobile) {
             if (expandedIndex === index) {
                 window.location.href = targetHref;
@@ -105,7 +108,7 @@ export default function WorksList({ heading = "All Selected Works", works = [] }
                             </AnimatePresence>
 
                             <div className="grid-container relative z-10 pointer-events-none items-center py-12">
-                                <div className="hidden md:block col-span-1 text-white/40 font-serif text-xl tracking-widest">
+                                <div className="hidden md:block col-span-1 text-white/40 font-futura text-xl tracking-widest">
                                     0{index + 1}
                                 </div>
 
@@ -134,10 +137,10 @@ export default function WorksList({ heading = "All Selected Works", works = [] }
                                             Tap again to view details
                                         </p>
                                     )}
-                                    <p className="font-serif tracking-widest text-sm sm:text-base text-white/90 uppercase">
+                                    <p className="font-serif font-semibold tracking-widest text-sm sm:text-base text-white/90 uppercase">
                                         {work.category}
                                     </p>
-                                    <p className="mt-3 text-[10px] sm:text-xs text-white/50 font-mono tracking-widest uppercase leading-loose">
+                                    <p className="mt-3 text-[10px] sm:text-xs text-white/60 font-futura font-medium tracking-[0.14em] uppercase leading-loose">
                                         {work.desc}
                                     </p>
                                 </motion.div>

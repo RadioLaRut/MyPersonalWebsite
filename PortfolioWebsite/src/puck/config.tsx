@@ -1,10 +1,12 @@
 import type { Config } from "@measured/puck";
 import HighDensityInfoBlock from "../components/breakdowns/HighDensityInfoBlock";
+import BreakdownTriptych from "../components/breakdowns/BreakdownTriptych";
 import ImageSlider from "../components/breakdowns/ImageSlider";
 import MediaTextCard from "../components/breakdowns/MediaTextCard";
 import MosaicGallery from "../components/breakdowns/MosaicGallery";
 import ParameterGrid from "../components/breakdowns/ParameterGrid";
 import TextSplitLayout from "../components/breakdowns/TextSplitLayout";
+import BreakdownHeadline from "../components/breakdowns/BreakdownHeadline";
 import BeforeAfterSlider from "../components/works/BeforeAfterSlider";
 import ContactFlashlightBlock from "../components/blocks/ContactFlashlightBlock";
 import ProjectSection from "../components/home/ProjectSection";
@@ -14,25 +16,46 @@ import LightingProjectCard from "../components/works/LightingProjectCard";
 import PortfolioHeroHeader from "../components/works/PortfolioHeroHeader";
 import WorksList from "../components/works/WorksList";
 
-function toEditorAwareHref(href: string | undefined, editMode?: boolean): string | undefined {
-  if (!href || !editMode || !href.startsWith("/")) {
-    return href;
-  }
+const isCmsPreviewEnabled =
+  process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" || process.env.NEXT_PUBLIC_USE_JSON === "true";
 
+function toCmsPreviewHref(href: string): string {
   if (href === "/") {
-    return "/admin";
+    return "/p";
   }
 
-  if (href.startsWith("/admin")) {
+  if (href === "/p" || href.startsWith("/p/") || href.startsWith("/admin")) {
     return href;
   }
 
-  if (href.startsWith("/p/")) {
-    const cmsPath = href.slice(3);
-    return cmsPath ? `/admin/${cmsPath}` : "/admin";
+  return `/p${href}`;
+}
+
+function toEditorAwareHref(href: string | undefined, editMode?: boolean): string | undefined {
+  if (!href || !href.startsWith("/")) {
+    return href;
   }
 
-  return `/admin${href}`;
+  const normalizedHref = isCmsPreviewEnabled ? toCmsPreviewHref(href) : href;
+
+  if (editMode) {
+    if (normalizedHref === "/p" || normalizedHref === "/") {
+      return "/admin";
+    }
+
+    if (normalizedHref.startsWith("/admin")) {
+      return normalizedHref;
+    }
+
+    if (normalizedHref.startsWith("/p/")) {
+      const cmsPath = normalizedHref.slice(3);
+      return cmsPath ? `/admin/${cmsPath}` : "/admin";
+    }
+
+    return `/admin${normalizedHref}`;
+  }
+
+  return normalizedHref;
 }
 
 export const config: Config = {
@@ -45,19 +68,55 @@ export const config: Config = {
         eyebrow: { type: "text", contentEditable: true },
         title: { type: "text", contentEditable: true },
         subtitle: { type: "textarea", contentEditable: true },
+        heroImage: { type: "text" },
+        navLink: { type: "text" },
       },
       defaultProps: {
         eyebrow: "Portfolio",
         title: "Build your page with Puck",
         subtitle: "This is a local editor scaffold for the staged migration.",
+        heroImage: "/images/TrainStation/2Day.png",
+        navLink: "",
       },
-      render: ({ eyebrow, title, subtitle }) => {
+      render: ({ eyebrow, title, subtitle, heroImage, navLink }) => {
         return (
-          <section className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-6 py-16 md:px-8">
-            <p className="font-futura text-xs uppercase tracking-[0.2em] text-white/65">{eyebrow}</p>
-            <h1 className="font-display text-4xl leading-tight md:text-6xl">{title}</h1>
-            <p className="max-w-3xl text-base leading-relaxed text-white/80 md:text-lg">{subtitle}</p>
-          </section>
+          <header className="relative w-full h-[85vh] flex items-center justify-center overflow-hidden bg-black">
+            {heroImage ? (
+              <div className="absolute inset-0 w-full h-full">
+                <img src={heroImage} alt={title} className="w-full h-full object-cover opacity-70" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,1)_140%)] pointer-events-none" />
+              </div>
+            ) : null}
+
+            <div className="absolute inset-0 z-10 flex flex-col justify-end pb-24 md:pb-32 pointer-events-none">
+              <div className="grid-container w-full mix-blend-difference pointer-events-auto">
+                <div className="col-span-4 md:col-start-2 md:col-span-10 flex flex-col items-start gap-4">
+                  <span className="font-mono text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.4em] uppercase text-white/50">
+                    {eyebrow}
+                  </span>
+                  <h1 className="text-white text-[12vw] sm:text-[7vw] font-black tracking-normal uppercase leading-[0.85] font-futura">
+                    {title}
+                  </h1>
+                  {subtitle ? (
+                    <p className="text-white/75 text-sm md:text-base font-medium leading-[1.9] font-futura tracking-wide max-w-3xl">
+                      {subtitle}
+                    </p>
+                  ) : null}
+                  {navLink ? (
+                    <a
+                      href={navLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-8 border border-white/30 px-6 py-3 text-xs tracking-widest hover:bg-white hover:text-black transition-colors uppercase font-mono interactive mix-blend-normal"
+                    >
+                      播放演示视频 (Bilibili)
+                    </a>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          </header>
         );
       },
     },
@@ -71,9 +130,15 @@ export const config: Config = {
       },
       render: ({ content }) => {
         return (
-          <section className="mx-auto w-full max-w-5xl px-6 py-10 md:px-8">
-            <p className="font-body text-base leading-8 text-white/85 md:text-lg">{content}</p>
-          </section>
+          <article className="w-full py-24 md:py-32 relative z-20 bg-black">
+            <div className="grid-container w-full">
+              <div className="col-span-4 md:col-start-3 md:col-span-8">
+                <p className="text-xl md:text-[24px] font-medium leading-[2.2] text-white/90 text-justify font-futura tracking-wide">
+                  {content}
+                </p>
+              </div>
+            </div>
+          </article>
         );
       },
     },
@@ -107,6 +172,16 @@ export const config: Config = {
     // --------------------------------------------------------
     // Advanced UI Breakdown Components
     // --------------------------------------------------------
+    BreakdownHeadline: {
+      fields: {
+        title: { type: "text", contentEditable: true }
+      },
+      defaultProps: {
+        title: "BREAKDOWN SECTION"
+      },
+      render: ({ title }) => <BreakdownHeadline title={title} />
+    },
+
     BeforeAfterSlider: {
       fields: {
         beforeImage: { type: "text" },
@@ -190,6 +265,53 @@ export const config: Config = {
           description={description}
           imageSrc={imageSrc}
           tags={(tags as any)?.map((t: any) => t.tag)}
+        />
+      )
+    },
+    BreakdownTriptych: {
+      fields: {
+        col1Title: { type: "text" },
+        col1Text: { type: "textarea" },
+        col1Img: { type: "text" },
+        col2Title: { type: "text" },
+        col2Text: { type: "textarea" },
+        col2Img: { type: "text" },
+        col3Title: { type: "text" },
+        col3Text: { type: "textarea" },
+        col3Img: { type: "text" },
+      },
+      defaultProps: {
+        col1Title: "Column 1",
+        col1Text: "Column 1 description",
+        col1Img: "/images/TrainStation/2Day.png",
+        col2Title: "Column 2",
+        col2Text: "Column 2 description",
+        col2Img: "/images/TrainStation/2Night.png",
+        col3Title: "Column 3",
+        col3Text: "Column 3 description",
+        col3Img: "/images/City2026Add/001.PNG",
+      },
+      render: ({
+        col1Title,
+        col1Text,
+        col1Img,
+        col2Title,
+        col2Text,
+        col2Img,
+        col3Title,
+        col3Text,
+        col3Img,
+      }) => (
+        <BreakdownTriptych
+          col1Title={col1Title}
+          col1Text={col1Text}
+          col1Img={col1Img}
+          col2Title={col2Title}
+          col2Text={col2Text}
+          col2Img={col2Img}
+          col3Title={col3Title}
+          col3Text={col3Text}
+          col3Img={col3Img}
         />
       )
     },
@@ -324,7 +446,7 @@ export const config: Config = {
         title: "NEW PROJECT",
         subtitle: "Design / Development",
         imageSrc: "/images/TrainStation/2Day.png",
-        link: "/works",
+        link: "/p/works",
         index: 0
       },
       render: ({ title, subtitle, imageSrc, link, index, editMode }) => (
@@ -371,21 +493,23 @@ export const config: Config = {
         id: { type: "text" },
         number: { type: "text" },
         title: { type: "text" },
-        coverImage: { type: "text" }
+        coverImage: { type: "text" },
+        href: { type: "text" },
       },
       defaultProps: {
         id: "collection-1",
         number: "01",
         title: "NEW COLLECTION",
-        coverImage: "/images/City2026Add/002.PNG"
+        coverImage: "/images/City2026Add/002.PNG",
+        href: "/p/works/lighting-atmosphere",
       },
-      render: ({ id, number, title, coverImage, editMode }) => (
+      render: ({ id, number, title, coverImage, href, editMode }) => (
         <LightingProjectCard
           id={id}
           number={number}
           title={title}
           coverImage={coverImage}
-          href={toEditorAwareHref(`/works/lighting-portfolio/${id}`, editMode)}
+          href={toEditorAwareHref(href ?? `/p/works/lighting-portfolio/${id}`, editMode)}
         />
       )
     },
@@ -421,7 +545,7 @@ export const config: Config = {
       render: ({ heading, works, editMode }) => {
         const normalizedWorks = (works as any[])?.map((work) => ({
           ...work,
-          href: toEditorAwareHref(work?.href ?? `/works/${work?.id ?? ""}`, editMode),
+          href: toEditorAwareHref(work?.href ?? `/p/works/${work?.id ?? ""}`, editMode),
         }));
 
         return <WorksList heading={heading} works={normalizedWorks as any[]} />;
@@ -444,7 +568,7 @@ export const config: Config = {
           nextId={nextId}
           nextName={nextName}
           nextBg={nextBg}
-          href={toEditorAwareHref(`/works/${nextId}`, editMode)}
+          href={toEditorAwareHref(`/p/works/${nextId}`, editMode)}
         />
       )
     },

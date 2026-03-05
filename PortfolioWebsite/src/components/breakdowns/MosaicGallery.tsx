@@ -1,82 +1,35 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Image from 'next/image';
+import React from "react";
 
 interface MosaicGalleryProps {
-    images: {
-        src: string;
-        caption?: string;
-    }[];
+  images: {
+    src: string;
+    caption?: string;
+  }[];
 }
 
 export default function MosaicGallery({ images }: MosaicGalleryProps) {
-    if (!images || images.length === 0) return null;
+  if (!images || images.length === 0) {
+    return null;
+  }
 
-    return (
-        <div className="w-full my-32">
-            <div className="grid-container gap-y-6 md:gap-y-0">
-
-                {/* Main Large Image (Left Side) */}
-                {images[0] && (
-                    <div className="col-span-4 md:col-span-8 group relative overflow-hidden">
-                        <Image
-                            src={images[0].src}
-                            alt={images[0].caption || 'Iteration Main'}
-                            width={0}
-                            height={0}
-                            sizes="100vw"
-                            className="w-full h-auto transition-opacity duration-1000"
-                        />
-                        {images[0].caption && (
-                            <div className="absolute bottom-6 left-6 bg-black/80 backdrop-blur-md px-4 py-2 text-white font-mono text-xs tracking-widest translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 border border-white/10">
-                                {images[0].caption}
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {/* Secondary Smaller Images (Right Side Stack) */}
-                <div className="col-span-4 md:col-span-4 flex flex-col gap-6">
-
-                    {images[1] && (
-                        <div className="relative group overflow-hidden">
-                            <Image
-                                src={images[1].src}
-                                alt={images[1].caption || 'Iteration Step 2'}
-                                width={0}
-                                height={0}
-                                sizes="100vw"
-                                className="w-full h-auto opacity-60 grayscale transition-all duration-700 group-hover:opacity-100 group-hover:grayscale-0"
-                            />
-                            {images[1].caption && (
-                                <div className="absolute bottom-4 left-4 bg-black/80 px-3 py-1 text-white font-mono text-[10px] tracking-widest border border-white/10">
-                                    {images[1].caption}
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                    {images[2] && (
-                        <div className="relative group overflow-hidden">
-                            <Image
-                                src={images[2].src}
-                                alt={images[2].caption || 'Iteration Step 3'}
-                                width={0}
-                                height={0}
-                                sizes="100vw"
-                                className="w-full h-auto opacity-60 grayscale transition-all duration-700 group-hover:opacity-100 group-hover:grayscale-0"
-                            />
-                            {images[2].caption && (
-                                <div className="absolute bottom-4 left-4 bg-black/80 px-3 py-1 text-white font-mono text-[10px] tracking-widest border border-white/10">
-                                    {images[2].caption}
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                </div>
+  return (
+    <section className="w-full flex flex-col pt-0 pb-0 gap-y-1 bg-black relative z-10">
+      {images.map((image, index) => (
+        <div key={`${image.src}-${index}`} className="w-full h-screen relative bg-black">
+          <img
+            src={image.src}
+            alt={image.caption || `Gallery ${index + 1}`}
+            className="absolute inset-0 w-full h-full object-contain opacity-100 pointer-events-none"
+          />
+          {image.caption ? (
+            <div className="absolute bottom-8 right-8 bg-black/65 border border-white/15 px-4 py-2">
+              <span className="font-futura text-xs tracking-[0.2em] uppercase text-white/80">{image.caption}</span>
             </div>
+          ) : null}
         </div>
-    );
+      ))}
+    </section>
+  );
 }

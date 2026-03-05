@@ -79,6 +79,8 @@ const collectionData: Record<string, { title: string; number: string; images: { 
 };
 
 export default function LightingBreakdownPage() {
+    const isCmsPreviewEnabled =
+        process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" || process.env.NEXT_PUBLIC_USE_JSON === "true";
     const params = useParams();
     const id = params?.id as string;
     const [data, setData] = useState(collectionData["collection-1"]); // Default fallback
@@ -98,7 +100,7 @@ export default function LightingBreakdownPage() {
 
             {/* Header section */}
             <section className="pt-40 pb-20 px-8 md:px-16 border-b border-white/10">
-                <Link href="/works/lighting-portfolio" className="inline-flex items-center text-white/40 hover:text-white transition-colors uppercase tracking-widest text-xs font-mono mb-12">
+                <Link href={isCmsPreviewEnabled ? "/p/works/lighting-portfolio" : "/works/lighting-portfolio"} className="inline-flex items-center text-white/40 hover:text-white transition-colors uppercase tracking-widest text-xs font-mono mb-12">
                     BACK TO PORTFOLIO
                 </Link>
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
@@ -108,7 +110,7 @@ export default function LightingBreakdownPage() {
                             {data.title}
                         </h1>
                     </div>
-                    <p className="font-serif tracking-widest text-white/60 text-sm max-w-sm">
+                    <p className="font-futura tracking-widest text-white/60 text-sm max-w-sm">
                         A detailed breakdown of lighting setup, mood exploration, and before/after comparisons for {data.title.toLowerCase()}.
                     </p>
                 </div>
@@ -150,7 +152,7 @@ export default function LightingBreakdownPage() {
                                     <p className="font-mono text-[10px] text-white/40 tracking-[0.2em] uppercase">
                                         SLIDE {index + 1} OF {data.images.length}
                                     </p>
-                                    <p className="font-serif text-xs md:text-sm tracking-widest text-white/80">
+                                    <p className="font-futura text-xs md:text-sm tracking-widest text-white/80">
                                         {img.caption}
                                     </p>
                                 </div>

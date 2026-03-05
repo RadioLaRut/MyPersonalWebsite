@@ -1,0 +1,51 @@
+{
+    "root": {
+        "props": {
+            "title": "PENGUIN TRADING CO."
+        }
+    },
+    "content": [
+        {
+            "type": "HeroHeadline",
+            "props": {
+                "id": "hero-1",
+                "eyebrow": "Project / 主策划 · Tech Art · PM",
+                "title": "PENGUIN TRADING CO.",
+                "subtitle": "企鹅贸易公司 — Colony Simulation & Management",
+                "heroImage": "/images/Others/CyberRestaurant.png",
+                "navLink": ""
+            }
+        },
+        {
+            "type": "RichParagraph",
+            "props": {
+                "id": "desc-1",
+                "content": "《企鹅贸易公司》是一款以「贱萌」企鹅为主角，融合模拟经营、资源管理与遗传培育的黑色幽默游戏。玩家作为企鹅太空殖民地总督，在外星冰川上指挥企鹅采集资源、转化热能、扩张基地，并培育更高效的企鹅品种以应对总部指标与荒诞事件。我身兼主策划、技术美术与项目管理三重职能，在团队缺乏完整 3D 流程经验的前提下从零搭建全套研发规范。"
+            }
+        },
+        {
+            "type": "BreakdownTriptych",
+            "props": {
+                "id": "triptych-1",
+                "col1Title": "项目管理与推进",
+                "col1Text": "负责里程碑拆解与排期，使用飞书多维表格搭建可追踪迭代节奏的项目管理体系，跟踪延期风险与关键阻塞点，推动跨岗位对齐。",
+                "col1Img": "/images/Others/CyberRestaurant.png",
+                "col2Title": "UE 资产锁系统",
+                "col2Text": "设计并实现基于 UE 编辑器的资产锁系统：监听变更自动上锁/解锁，缩略图标识与 UI 提示增强协作可视化，整体体验接近 Perforce 独占锁。",
+                "col2Img": "/images/Others/CyberRestaurant.png",
+                "col3Title": "编辑器效率工具链",
+                "col3Text": "实现快速切换地图/语言/重启 UE 等编辑器工具，撰写 Git 自动编译脚本，制定美术规范，降低沟通成本与返工率。",
+                "col3Img": "/images/Others/CyberRestaurant.png"
+            }
+        },
+        {
+            "type": "NextProjectBlock",
+            "props": {
+                "id": "next-1",
+                "nextId": "wow-otto",
+                "nextName": "WOW, OTTO!",
+                "nextBg": "/images/HolyTank/7d9ca92e5ade09bfc1c349a49001b2eb.png"
+            }
+        }
+    ]
+}

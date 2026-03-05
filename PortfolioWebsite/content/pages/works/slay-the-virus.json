@@ -1,0 +1,80 @@
+{
+    "root": {
+        "props": {
+            "title": "SLAY THE VIRUS"
+        }
+    },
+    "content": [
+        {
+            "type": "HeroHeadline",
+            "props": {
+                "id": "hero-1",
+                "eyebrow": "Project 03",
+                "title": "SLAY THE VIRUS",
+                "subtitle": "",
+                "heroImage": "/images/STV/STVTitle.png",
+                "navLink": "https://www.bilibili.com/video/BV1QfgzzrE3J/"
+            }
+        },
+        {
+            "type": "RichParagraph",
+            "props": {
+                "id": "desc-1",
+                "content": "结合背包管理的肉鸽卡牌游戏。玩家扮演一位需要运用智慧引导细胞战斗的医生，在病人体内同棘手的病毒群落做殊死搏斗。我主要负责 UI 的整体布局框架与视觉美术风格把控。平衡小组成员差异并推进风格统一迭代。"
+            }
+        },
+        {
+            "type": "BreakdownTriptych",
+            "props": {
+                "id": "triptych-1",
+                "col1Title": "UI 布局",
+                "col1Text": "基于网格的空间资源背包管理交互系统架构。",
+                "col1Img": "/images/STV/01.jpg",
+                "col2Title": "卡牌设计",
+                "col2Text": "在 Photoshop 中精修由组员绘制的草稿与技能特效资产组合。",
+                "col2Img": "/images/STV/02.jpg",
+                "col3Title": "后期处理",
+                "col3Text": "拉升整体视觉的电影感对比度及文字图形的易读性。",
+                "col3Img": "/images/STV/PosterLandscapeOrigine.jpg"
+            }
+        },
+        {
+            "type": "MosaicGallery",
+            "props": {
+                "id": "gallery-1",
+                "images": [
+                    {
+                        "src": "/images/STV/03.jpg",
+                        "caption": "图 03",
+                        "_arrayItem": {
+                            "id": "img-1"
+                        }
+                    },
+                    {
+                        "src": "/images/STV/04.jpg",
+                        "caption": "图 04",
+                        "_arrayItem": {
+                            "id": "img-2"
+                        }
+                    },
+                    {
+                        "src": "/images/STV/05.jpg",
+                        "caption": "图 05",
+                        "_arrayItem": {
+                            "id": "img-3"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "NextProjectBlock",
+            "props": {
+                "id": "next-1",
+                "nextId": "prometheus",
+                "nextName": "PROMETHEUS PROJECT",
+                "nextBg": "/images/Prometheus/PrometheusTitle.png"
+            }
+        }
+    ]
+}

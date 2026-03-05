@@ -52,6 +52,15 @@ const collections: LightingCollection[] = [
 ];
 
 export default function LightingPortfolioPage() {
+    const isCmsPreviewEnabled =
+        process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" || process.env.NEXT_PUBLIC_USE_JSON === "true";
+    const cmsCollectionHref: Record<string, string> = {
+        "collection-1": "/p/works/lighting-atmosphere",
+        "collection-2": "/p/works/atmosphere-practice",
+        "collection-3": "/p/works/lighting-atmosphere",
+        "collection-4": "/p/works/atmosphere-practice",
+        "collection-5": "/p/works/atmosphere-practice",
+    };
     // const [hoveredId, setHoveredId] = useState<string | null>(null);
 
     return (
@@ -64,7 +73,7 @@ export default function LightingPortfolioPage() {
                 <div className="col-span-4 md:col-start-1 md:col-span-12 border-b border-white/10 pb-8">
                     <div className="mb-8">
                         <Link
-                            href="/p/lighting-portfolio"
+                            href="/p/works/lighting-portfolio"
                             className="inline-flex items-center border border-white/30 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/85 transition-colors hover:bg-white hover:text-black"
                         >
                             Open CMS Version (/p)
@@ -81,7 +90,7 @@ export default function LightingPortfolioPage() {
                             <p className="font-mono text-xs uppercase tracking-[0.3em] text-white/40">
                                 A Curated Selection
                             </p>
-                            <p className="font-serif text-sm tracking-widest text-white/70 mt-2">
+                            <p className="font-futura text-sm tracking-widest text-white/70 mt-2">
                                 Unreal Engine 5
                             </p>
                         </div>
@@ -92,18 +101,23 @@ export default function LightingPortfolioPage() {
             {/* Strict Grid Layout: Modular Framing */}
             <section className="px-4 md:px-12 pb-32">
                 <div className="grid grid-cols-12 gap-y-32">
-                    {collections.map((item) => (
+                    {collections.map((item) => {
+                        const targetHref = isCmsPreviewEnabled
+                            ? (cmsCollectionHref[item.id] ?? "/p/works/lighting-portfolio")
+                            : `/works/lighting-portfolio/${item.id}`;
+
+                        return (
                         <div
                             key={item.id}
                             className="col-span-12 md:col-start-3 md:col-span-8 relative group interactive flex flex-col items-center"
                         >
-                            <Link href={`/works/lighting-portfolio/${item.id}`} className="block w-full">
+                            <Link href={targetHref} className="block w-full">
                                 {/* Typography decoupled from image border */}
                                 <div className="mb-6 flex justify-between items-end w-full border-b border-white/20 pb-2">
                                     <p className="font-mono text-xs text-white/50 tracking-[0.3em] group-hover:text-white transition-colors duration-500">
                                         NO. {item.number}
                                     </p>
-                                    <h3 className="font-serif text-sm tracking-widest text-white/80 uppercase">
+                                    <h3 className="font-futura text-sm tracking-widest text-white/80 uppercase">
                                         {item.title}
                                     </h3>
                                 </div>
@@ -118,7 +132,8 @@ export default function LightingPortfolioPage() {
                                 </div>
                             </Link>
                         </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </section>
         </main>

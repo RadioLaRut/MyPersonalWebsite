@@ -50,6 +50,9 @@ const initialData: Data = {
 };
 
 function PuckIframeOverride({ children, document }: IframeOverrideProps) {
+  const { appState } = usePuck();
+  const isEditMode = appState.ui.previewMode !== "interactive";
+
   useEffect(() => {
     if (!document) {
       return;
@@ -73,7 +76,7 @@ function PuckIframeOverride({ children, document }: IframeOverrideProps) {
 
   return (
     <>
-      <CustomCursor isWithinIframe={true} targetDocument={document} />
+      {isEditMode && <CustomCursor isWithinIframe={true} targetDocument={document} />}
       {children}
     </>
   );
@@ -119,7 +122,7 @@ function PreviewModeToggle() {
           }`}
         title="Switch to Edit mode"
       >
-        EDIT
+        {!isInteractive ? "EDIT" : "EDIT"}
       </button>
       <button
         type="button"
@@ -131,7 +134,7 @@ function PreviewModeToggle() {
           }`}
         title="Switch to Preview mode (same as Cmd+I)"
       >
-        PREVIEW
+        {isInteractive ? "PREVIEW" : "PREVIEW"}
       </button>
       <span className="px-1 text-[10px] font-mono text-white/35">⌘I</span>
     </div>

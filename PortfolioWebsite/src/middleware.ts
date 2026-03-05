@@ -5,6 +5,9 @@ const NO_STORE_HEADER = {
   "Cache-Control": "no-store",
 } as const;
 
+const isCmsPreviewEnabled =
+  process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" || process.env.NEXT_PUBLIC_USE_JSON === "true";
+
 function isInvalidPuckPath(request: NextRequest) {
   const rawUrl = request.url.toLowerCase();
   if (rawUrl.includes("%2e%2e") || rawUrl.includes("\\")) {
@@ -24,8 +27,47 @@ function isInvalidPuckPath(request: NextRequest) {
   }
 }
 
+function toCmsRedirectPath(pathname: string): string | null {
+  if (pathname === "/works") {
+    return "/p/works";
+  }
+
+  if (pathname === "/works/lighting-portfolio") {
+    return "/p/works/lighting-portfolio";
+  }
+
+  if (pathname.startsWith("/works/lighting-portfolio/")) {
+    return "/p/works/lighting-portfolio";
+  }
+
+  if (pathname.startsWith("/works/")) {
+    return `/p${pathname}`;
+  }
+
+  if (pathname === "/contact") {
+    return "/p/contact";
+  }
+
+  if (pathname === "/playground") {
+    return "/p";
+  }
+
+  return null;
+}
+
 export function middleware(request: NextRequest) {
-  if (isInvalidPuckPath(request)) {
+  const { pathname } = request.nextUrl;
+
+  if (isCmsPreviewEnabled) {
+    const redirectPath = toCmsRedirectPath(pathname);
+    if (redirectPath && redirectPath !== pathname) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = redirectPath;
+      return NextResponse.redirect(redirectUrl, 307);
+    }
+  }
+
+  if ((pathname === "/p" || pathname.startsWith("/p/")) && isInvalidPuckPath(request)) {
     return NextResponse.json(
       {
         error: {
@@ -44,5 +86,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/p/:path*"],
+  matcher: ["/p/:path*", "/works/:path*", "/works", "/contact", "/playground"],
 };

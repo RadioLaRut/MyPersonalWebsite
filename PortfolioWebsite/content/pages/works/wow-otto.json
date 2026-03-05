@@ -1,0 +1,51 @@
+{
+    "root": {
+        "props": {
+            "title": "WOW, OTTO!"
+        }
+    },
+    "content": [
+        {
+            "type": "HeroHeadline",
+            "props": {
+                "id": "hero-1",
+                "eyebrow": "Project / 主策划",
+                "title": "WOW, OTTO!",
+                "subtitle": "帅油桶 — Trackball Narrative Experience",
+                "heroImage": "/images/HolyTank/7d9ca92e5ade09bfc1c349a49001b2eb.png",
+                "navLink": ""
+            }
+        },
+        {
+            "type": "RichParagraph",
+            "props": {
+                "id": "desc-1",
+                "content": "使用轨迹球进行叙事交互的互动叙事游戏。玩家扮演行动不便者，在充满敌意的城市空间中生存与前进。游戏抛弃传统键鼠，完全绑定实体「轨迹球」模拟轮椅推移操作，将玩家的操作难度与角色身体残障体验深度绑定，在无声处实现通感共鸣。灵感源自《Florence》，以极简而精准的交互语言，探讨城市建筑「无障碍」命题背后的隐性敌意。"
+            }
+        },
+        {
+            "type": "BreakdownTriptych",
+            "props": {
+                "id": "triptych-1",
+                "col1Title": "交互方案设计",
+                "col1Text": "对比键鼠与轨迹球输入差异，提出并落地轨迹球交互方案，将「轮椅操控感」精准映射为游戏的核心操作体验。",
+                "col1Img": "/images/HolyTank/7d9ca92e5ade09bfc1c349a49001b2eb.png",
+                "col2Title": "机制服务叙事",
+                "col2Text": "围绕轨迹球的物理阻力操控体验设计交互逻辑，使玩法机制直接服务于情绪表达与叙事目标。",
+                "col2Img": "/images/HolyTank/f0f6239817a545ccad2f7dc47aff8acc.png",
+                "col3Title": "通感与批判",
+                "col3Text": "针对带有显性恶意的公共城市建筑体系，通过游戏语言发起系统性探究与社会批判。",
+                "col3Img": "/images/HolyTank/7d9ca92e5ade09bfc1c349a49001b2eb.png"
+            }
+        },
+        {
+            "type": "NextProjectBlock",
+            "props": {
+                "id": "next-1",
+                "nextId": "im-explode",
+                "nextName": "I'M EXPLODE WITH U",
+                "nextBg": "/images/Others/CyberRestaurant.png"
+            }
+        }
+    ]
+}

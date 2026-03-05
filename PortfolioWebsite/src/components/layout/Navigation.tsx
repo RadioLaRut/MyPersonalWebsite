@@ -6,7 +6,10 @@ import { usePathname } from "next/navigation";
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const isBreakdownPage = pathname?.startsWith("/works/");
+  const isCmsPreviewEnabled =
+    process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" || process.env.NEXT_PUBLIC_USE_JSON === "true";
+  const isBreakdownPage =
+    pathname?.startsWith("/works/") || pathname?.startsWith("/p/works/");
 
   useEffect(() => {
     if (pathname?.startsWith("/admin")) {
@@ -22,12 +25,18 @@ export default function Navigation() {
 
   if (pathname?.startsWith("/admin")) return null;
 
-  const menuItems = [
-    { label: "HOME", href: "/" },
-    { label: "WORKS", href: "/works" },
-    { label: "PLAYGROUND", href: "/playground" },
-    { label: "CONTACT", href: "/contact" },
-  ];
+  const menuItems = isCmsPreviewEnabled
+    ? [
+      { label: "HOME", href: "/p" },
+      { label: "WORKS", href: "/p/works" },
+      { label: "CONTACT", href: "/p/contact" },
+    ]
+    : [
+      { label: "HOME", href: "/" },
+      { label: "WORKS", href: "/works" },
+      { label: "PLAYGROUND", href: "/playground" },
+      { label: "CONTACT", href: "/contact" },
+    ];
 
   return (
     <>
@@ -94,7 +103,7 @@ export default function Navigation() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
-                className="absolute bottom-16 left-16 text-white/30 text-sm tracking-widest font-serif"
+                className="absolute bottom-16 left-16 text-white/30 text-sm tracking-widest font-futura"
               >
                 JIANG CHENGYAN © 2026
               </motion.div>

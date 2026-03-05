@@ -8,7 +8,9 @@ interface NextProjectBlockProps {
 }
 
 export default function NextProjectBlock({ nextId, nextName, nextBg, href }: NextProjectBlockProps) {
-    const nextHref = href ?? `/works/${nextId}`;
+    const isCmsPreviewEnabled =
+        process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" || process.env.NEXT_PUBLIC_USE_JSON === "true";
+    const nextHref = href ?? (isCmsPreviewEnabled ? `/p/works/${nextId}` : `/works/${nextId}`);
 
     return (
         <footer className="mt-0 border-t border-white/20 relative z-20">

@@ -27,7 +27,7 @@ export default function PortfolioHeroHeader({
                         <p className="font-mono text-xs uppercase tracking-[0.3em] text-white/40">
                             {descriptionLine1 || "Description Line 1"}
                         </p>
-                        <p className="font-serif text-sm tracking-widest text-white/70 mt-2">
+                        <p className="font-futura text-sm tracking-widest text-white/70 mt-2">
                             {descriptionLine2 || "Description Line 2"}
                         </p>
                     </div>

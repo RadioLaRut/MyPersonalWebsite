@@ -4,6 +4,10 @@ import { motion, useScroll, useTransform } from "framer-motion";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function ClientBreakdown({ data }: { data: any }) {
+  const isCmsPreviewEnabled =
+    process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" || process.env.NEXT_PUBLIC_USE_JSON === "true";
+  const worksIndexHref = isCmsPreviewEnabled ? "/p/works" : "/works";
+  const nextProjectHref = isCmsPreviewEnabled ? `/p/works/${data.nextId}` : `/works/${data.nextId}`;
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -39,7 +43,7 @@ export default function ClientBreakdown({ data }: { data: any }) {
       {/* Top Nav Overlay */}
       <nav className="fixed top-0 left-0 w-full z-50 mix-blend-difference px-8 py-8 flex justify-between items-center pointer-events-none">
         <a
-          href="/works"
+          href={worksIndexHref}
           className="flex items-center gap-4 pointer-events-auto hover:opacity-70 transition-opacity interactive"
         >
           <div className="w-8 h-[1px] bg-white relative">
@@ -183,7 +187,7 @@ export default function ClientBreakdown({ data }: { data: any }) {
       {/* Footer / Next Project */}
       <footer className="mt-0 border-t border-white/20 relative z-20">
         <a
-          href={`/works/${data.nextId}`}
+          href={nextProjectHref}
           className="group block relative h-[40vh] md:h-[60vh] overflow-hidden w-full interactive bg-black"
         >
           <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 z-10 transition-colors duration-700 pointer-events-none"></div>

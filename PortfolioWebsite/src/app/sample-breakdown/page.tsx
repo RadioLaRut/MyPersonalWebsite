@@ -32,7 +32,7 @@ export default function SampleBreakdownPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="font-serif text-white/70 tracking-wide text-lg md:text-xl max-w-2xl"
+                        className="font-futura text-white/70 tracking-wide text-lg md:text-xl max-w-2xl"
                     >
                         这是一个向您展示如何使用预制组件拼接出一个完整项目 Breakdown 的样板页面。这里展示了能够适应从宏观灯光氛围、到具体工具开发流的排版组合逻辑。
                     </motion.p>

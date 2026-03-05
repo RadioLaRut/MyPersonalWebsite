@@ -1,0 +1,51 @@
+{
+    "root": {
+        "props": {
+            "title": "舞台灯光叙事概念设计"
+        }
+    },
+    "content": [
+        {
+            "type": "HeroHeadline",
+            "props": {
+                "id": "hero-1",
+                "eyebrow": "Project 08",
+                "title": "舞台灯光叙事概念设计",
+                "subtitle": "",
+                "heroImage": "/images/Others/Epic.png",
+                "navLink": "https://www.bilibili.com/video/BV1oSDTYJEi2/"
+            }
+        },
+        {
+            "type": "RichParagraph",
+            "props": {
+                "id": "desc-1",
+                "content": "这是一支我在课外自主且独立发起的概念性舞台灯光设计短片。音乐内核来源于史诗概念音乐剧《Epic》。我全权接管并包揽了概念舞台的设计搭置、虚拟镜头的追踪位移，并创造性地使用粗粝但力量感十足的【黏土定格动画（Stop-motion）】形式来表达演员的走位与调度起伏。这种舍弃平滑过渡的独特手法，反而更加凶悍地凸显了灯光作为本作「绝对第一主角」的视觉存在感。我也通过大量研读剧本，运用独特的色彩语言为希腊诸神铺排了带有强烈性格象征的灯光阵列系统映射——当剧情高潮来临，主宰神力倾泻全场时，相对应颜色的强光便会雷厉风行地骤然点亮后方的巨型大理石雕像，构筑极致的舞台神圣张力视听奇观。"
+            }
+        },
+        {
+            "type": "BreakdownTriptych",
+            "props": {
+                "id": "triptych-1",
+                "col1Title": "舞台编排",
+                "col1Text": "虚拟演播室的大型光机结构铺设统筹布置及长镜头的游机位走位逻辑演算。",
+                "col1Img": "/images/Others/Epic02.png",
+                "col2Title": "神座点亮策略",
+                "col2Text": "后场巨大主神大理石雕塑通过复杂的材质发光指令随着音轨爆破而启动。",
+                "col2Img": "/images/Others/Epic.png",
+                "col3Title": "定格镜头呈现",
+                "col3Text": "极具侵略性的丢帧人物位移调度系统编排技术栈落地方案。",
+                "col3Img": "/images/Others/Epic02.png"
+            }
+        },
+        {
+            "type": "NextProjectBlock",
+            "props": {
+                "id": "next-1",
+                "nextId": "lighting-atmosphere",
+                "nextName": "LIGHTING ATMOSPHERE",
+                "nextBg": "/images/TrainStation/2Day.png"
+            }
+        }
+    ]
+}

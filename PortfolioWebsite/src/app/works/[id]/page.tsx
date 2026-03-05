@@ -1,5 +1,6 @@
 import React from "react";
 import ClientBreakdown from "@/components/works/ClientBreakdown";
+import { loadWorkData } from "@/lib/load-work-data";
 
 // 添加了图库数组，并将所有文案翻译为中文
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -162,6 +163,32 @@ const projectsData: Record<string, any> = {
     nextName: "HOUDINI 驱动生成村镇",
     nextBg: "/images/Others/PCG/PCG01.png",
   },
+  "wow-otto": {
+    title: "WOW, OTTO!",
+    idNum: "05",
+    heroImage: "/images/HolyTank/7d9ca92e5ade09bfc1c349a49001b2eb.png",
+    description:
+      "使用轨迹球进行叙事交互的互动叙事游戏。玩家扮演行动不便者，在充满敌意的城市空间中生存与前进。游戏抛弃传统键鼠，完全绑定实体「轨迹球」模拟轮椅推移操作，将玩家的操作难度与角色身体残障体验深度绑定，在无声处实现通感共鸣。灵感源自《Florence》，以极简而精准的交互语言，探讨城市建筑「无障碍」命题背后的隐性敌意。",
+    col1: {
+      title: "交互方案设计",
+      text: "对比键鼠与轨迹球输入差异，提出并落地轨迹球交互方案，将「轮椅操控感」精准映射为游戏的核心操作体验。",
+      img: "/images/HolyTank/7d9ca92e5ade09bfc1c349a49001b2eb.png",
+    },
+    col2: {
+      title: "机制服务叙事",
+      text: "围绕轨迹球的物理阻力操控体验设计交互逻辑，使玩法机制直接服务于情绪表达与叙事目标。",
+      img: "/images/HolyTank/f0f6239817a545ccad2f7dc47aff8acc.png",
+    },
+    col3: {
+      title: "通感与批判",
+      text: "针对带有显性恶意的公共城市建筑体系，通过游戏语言发起系统性探究与社会批判。",
+      img: "/images/HolyTank/7d9ca92e5ade09bfc1c349a49001b2eb.png",
+    },
+    gallery: [],
+    nextId: "im-explode",
+    nextName: "I'M EXPLODE WITH U",
+    nextBg: "/images/Others/CyberRestaurant.png",
+  },
   "pcg-town": {
     title: "HOUDINI 驱动的小镇生成管线",
     idNum: "06",
@@ -258,7 +285,8 @@ const projectsData: Record<string, any> = {
 };
 
 export default function BreakdownPage({ params }: { params: { id: string } }) {
-  const data = projectsData[params.id] || projectsData["insight"];
+  const jsonData = loadWorkData(params.id);
+  const data = jsonData || projectsData[params.id] || projectsData["insight"];
 
   return <ClientBreakdown data={data} />;
 }

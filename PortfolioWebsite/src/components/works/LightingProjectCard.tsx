@@ -11,7 +11,9 @@ interface LightingProjectCardProps {
 }
 
 export default function LightingProjectCard({ id, number, title, coverImage, href }: LightingProjectCardProps) {
-    const cardHref = href ?? `/works/lighting-portfolio/${id}`;
+    const isCmsPreviewEnabled =
+        process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" || process.env.NEXT_PUBLIC_USE_JSON === "true";
+    const cardHref = href ?? (isCmsPreviewEnabled ? `/p/works/lighting-portfolio/${id}` : `/works/lighting-portfolio/${id}`);
 
     return (
         <section className="px-4 md:px-12 pb-32">
@@ -23,7 +25,7 @@ export default function LightingProjectCard({ id, number, title, coverImage, hre
                             <p className="font-mono text-xs text-white/50 tracking-[0.3em] group-hover:text-white transition-colors duration-500">
                                 NO. {number || "00"}
                             </p>
-                            <h3 className="font-serif text-sm tracking-widest text-white/80 uppercase">
+                            <h3 className="font-futura text-sm tracking-widest text-white/80 uppercase">
                                 {title || "UNTITLED PROJECT"}
                             </h3>
                         </div>

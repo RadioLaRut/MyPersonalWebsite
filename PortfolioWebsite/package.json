@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:json": "NEXT_PUBLIC_USE_JSON=true NEXT_PUBLIC_ENABLE_PUCK=true next dev",
+    "dev:hardcode": "NEXT_PUBLIC_USE_JSON=false next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

@@ -1,0 +1,143 @@
+{
+    "root": {
+        "props": {
+            "title": "灯光氛围"
+        }
+    },
+    "content": [
+        {
+            "type": "HeroHeadline",
+            "props": {
+                "id": "hero-1",
+                "eyebrow": "Project 01",
+                "title": "灯光氛围",
+                "subtitle": "",
+                "heroImage": "/images/TrainStation/2Day.png",
+                "navLink": ""
+            }
+        },
+        {
+            "type": "RichParagraph",
+            "props": {
+                "id": "desc-1",
+                "content": "火车站与城市环境。专注于真实的灯光衰减和符合物理规律的深邃大气密度。探索了白天、黄昏、雾天和夜晚等不一样的光照条件方案。所有场景灯光均为动态全时段演算并构建，展现了极为扎实的渲染理论基础与极高的美术审美修养。"
+            }
+        },
+        {
+            "type": "BreakdownTriptych",
+            "props": {
+                "id": "triptych-1",
+                "col1Title": "白天 / 雾天",
+                "col1Text": "应用体积雾渐变增加画面的景深感。",
+                "col1Img": "/images/TrainStation/2Fog.png",
+                "col2Title": "夜晚",
+                "col2Text": "光影对比的张力由自发光材质与高光反射驱动。",
+                "col2Img": "/images/TrainStation/2Dust.png",
+                "col3Title": "过程",
+                "col3Text": "测试了多个 HDRI 贴图结合平行光的渲染管线。",
+                "col3Img": "/images/City2026Add/001.PNG"
+            }
+        },
+        {
+            "type": "MosaicGallery",
+            "props": {
+                "id": "gallery-1",
+                "images": [
+                    {
+                        "src": "/images/TrainStation/Day.png",
+                        "caption": "白天",
+                        "_arrayItem": {
+                            "id": "img-1"
+                        }
+                    },
+                    {
+                        "src": "/images/TrainStation/Dusk.png",
+                        "caption": "黄昏",
+                        "_arrayItem": {
+                            "id": "img-2"
+                        }
+                    },
+                    {
+                        "src": "/images/TrainStation/Night.png",
+                        "caption": "夜晚",
+                        "_arrayItem": {
+                            "id": "img-3"
+                        }
+                    },
+                    {
+                        "src": "/images/TrainStation/NoLight.png",
+                        "caption": "无光",
+                        "_arrayItem": {
+                            "id": "img-4"
+                        }
+                    },
+                    {
+                        "src": "/images/TrainStation/2Day.png",
+                        "caption": "白天 2",
+                        "_arrayItem": {
+                            "id": "img-5"
+                        }
+                    },
+                    {
+                        "src": "/images/TrainStation/2Dust.png",
+                        "caption": "尘土 2",
+                        "_arrayItem": {
+                            "id": "img-6"
+                        }
+                    },
+                    {
+                        "src": "/images/TrainStation/2Fog.png",
+                        "caption": "雾天 2",
+                        "_arrayItem": {
+                            "id": "img-7"
+                        }
+                    },
+                    {
+                        "src": "/images/TrainStation/2Night.png",
+                        "caption": "夜晚 2",
+                        "_arrayItem": {
+                            "id": "img-8"
+                        }
+                    },
+                    {
+                        "src": "/images/TrainStation/2NoLight.png",
+                        "caption": "无光 2",
+                        "_arrayItem": {
+                            "id": "img-9"
+                        }
+                    },
+                    {
+                        "src": "/images/City2026Add/001.PNG",
+                        "caption": "城市 001",
+                        "_arrayItem": {
+                            "id": "img-10"
+                        }
+                    },
+                    {
+                        "src": "/images/City2026Add/002.PNG",
+                        "caption": "城市 002",
+                        "_arrayItem": {
+                            "id": "img-11"
+                        }
+                    },
+                    {
+                        "src": "/images/City2026Add/003.PNG",
+                        "caption": "城市 003",
+                        "_arrayItem": {
+                            "id": "img-12"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "NextProjectBlock",
+            "props": {
+                "id": "next-1",
+                "nextId": "insight",
+                "nextName": "INSIGHT",
+                "nextBg": "/images/Insight/InsightCover.png"
+            }
+        }
+    ]
+}

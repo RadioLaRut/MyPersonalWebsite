@@ -44,7 +44,7 @@ export default function PlaygroundPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="font-serif text-white/70 tracking-wide text-lg md:text-xl max-w-2xl"
+                        className="font-futura text-white/70 tracking-wide text-lg md:text-xl max-w-2xl"
                     >
                         预制“作品分解（Breakdown）”组件的测试阅览区。向下滚动以查看带有占位文案的各个预制件的排版与交互效果。
                     </motion.p>

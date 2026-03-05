@@ -26,7 +26,7 @@ export default function TextSplitLayout({
                     <>
                         {/* Heading Left */}
                         <div className="col-span-4 md:col-span-5 md:col-start-1 mb-12 md:mb-0">
-                            <h3 className="text-5xl sm:text-6xl md:text-[5vw] font-luna leading-[0.95] tracking-tighter uppercase break-words hyphens-auto text-white mb-8">
+                            <h3 className="text-5xl sm:text-6xl md:text-[5vw] leading-[0.95] tracking-tighter uppercase break-words hyphens-auto text-white mb-8 font-futura">
                                 {heading}
                             </h3>
                             {imageSrc && (
@@ -39,7 +39,7 @@ export default function TextSplitLayout({
                         </div>
                         {/* Text Right */}
                         <div className="col-span-4 md:col-span-6 md:col-start-7 flex flex-col justify-center">
-                            <div className="font-serif text-white/60 tracking-wide text-lg md:text-xl leading-[1.8] space-y-8 pl-0 md:pl-8 border-l border-white/5">
+                            <div className="font-futura text-white/60 tracking-wide text-lg md:text-xl leading-[1.8] space-y-8 pl-0 md:pl-8 border-l border-white/5">
                                 {paragraphs.map((p, i) => (
                                     <p key={i}>{p}</p>
                                 ))}
@@ -52,7 +52,7 @@ export default function TextSplitLayout({
                     <>
                         {/* Text Left */}
                         <div className="col-span-4 md:col-span-6 md:col-start-1 flex flex-col justify-center mb-12 md:mb-0 order-2 md:order-1 mt-12 md:mt-0">
-                            <div className="font-serif text-white/60 tracking-wide text-lg md:text-xl leading-[1.8] space-y-8 pr-0 md:pr-8 border-r border-white/5 text-right md:text-left">
+                            <div className="font-futura text-white/60 tracking-wide text-lg md:text-xl leading-[1.8] space-y-8 pr-0 md:pr-8 border-r border-white/5 text-right md:text-left">
                                 {paragraphs.map((p, i) => (
                                     <p key={i}>{p}</p>
                                 ))}
@@ -60,7 +60,7 @@ export default function TextSplitLayout({
                         </div>
                         {/* Heading Right */}
                         <div className="col-span-4 md:col-span-5 md:col-start-8 order-1 md:order-2">
-                            <h3 className="text-5xl sm:text-6xl md:text-[5vw] font-luna leading-[0.95] tracking-tighter uppercase break-words hyphens-auto text-white mb-8 text-right">
+                            <h3 className="text-5xl sm:text-6xl md:text-[5vw] font-futura leading-[0.95] tracking-tighter uppercase break-words hyphens-auto text-white mb-8 text-right">
                                 {heading}
                             </h3>
                             {imageSrc && (
@@ -76,10 +76,10 @@ export default function TextSplitLayout({
 
                 {layoutVariant === 'stack' && (
                     <div className="col-span-4 md:col-start-3 md:col-span-8 flex flex-col items-center text-center">
-                        <h3 className="text-5xl sm:text-6xl md:text-[6vw] font-luna leading-[0.95] tracking-tighter uppercase break-words hyphens-auto text-white mb-16 px-4">
+                        <h3 className="text-5xl sm:text-6xl md:text-[6vw] font-futura leading-[0.95] tracking-tighter uppercase break-words hyphens-auto text-white mb-16 px-4">
                             {heading}
                         </h3>
-                        <div className="font-serif text-white/60 tracking-wide text-lg md:text-xl leading-[1.8] space-y-8 max-w-3xl border-white/5 border-t pt-12">
+                        <div className="font-futura text-white/60 tracking-wide text-lg md:text-xl leading-[1.8] space-y-8 max-w-3xl border-white/5 border-t pt-12">
                             {paragraphs.map((p, i) => (
                                 <p key={i}>{p}</p>
                             ))}

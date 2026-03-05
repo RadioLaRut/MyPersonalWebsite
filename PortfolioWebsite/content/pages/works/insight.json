@@ -1,0 +1,80 @@
+{
+    "root": {
+        "props": {
+            "title": "INSIGHT"
+        }
+    },
+    "content": [
+        {
+            "type": "HeroHeadline",
+            "props": {
+                "id": "hero-1",
+                "eyebrow": "Project 02",
+                "title": "INSIGHT",
+                "subtitle": "",
+                "heroImage": "/images/Insight/InsightCover.png",
+                "navLink": "https://www.bilibili.com/video/BV1gQbDzQEUL"
+            }
+        },
+        {
+            "type": "RichParagraph",
+            "props": {
+                "id": "desc-1",
+                "content": "INSIGHT 是一款轻交互的互动叙事游戏。玩家在游戏中扮演一位网络舆情监管员。通过浏览各类的互联网舆论和帖子，判断这些内容应该被推流或者限流，在悄无声息中改变整个世界。我主要负责策划、程序、和剧本编写。灵感来自于《不予播出》、《接线疑云》。"
+            }
+        },
+        {
+            "type": "BreakdownTriptych",
+            "props": {
+                "id": "triptych-1",
+                "col1Title": "Articy Draft",
+                "col1Text": "剧本写作使用了 Articy Draft，通过节点极为方便地实现多分支剧情流程树的管理。",
+                "col1Img": "/images/Insight/Code01.jpg",
+                "col2Title": "框架逻辑",
+                "col2Text": "Unreal Engine 蓝图深度结合对话树系统，驱动复杂的叙事逻辑表现。",
+                "col2Img": "/images/Insight/Code02.jpg",
+                "col3Title": "UI 设计",
+                "col3Text": "拟真桌面操作系统 UI 设计，精准重现复古操作终端的压抑美学感。",
+                "col3Img": "/images/Insight/Shot01.jpg"
+            }
+        },
+        {
+            "type": "MosaicGallery",
+            "props": {
+                "id": "gallery-1",
+                "images": [
+                    {
+                        "src": "/images/Insight/Shot02.jpg",
+                        "caption": "截图 02",
+                        "_arrayItem": {
+                            "id": "img-1"
+                        }
+                    },
+                    {
+                        "src": "/images/Insight/Shot03.jpg",
+                        "caption": "截图 03",
+                        "_arrayItem": {
+                            "id": "img-2"
+                        }
+                    },
+                    {
+                        "src": "/images/Insight/Shot04.jpg",
+                        "caption": "截图 04",
+                        "_arrayItem": {
+                            "id": "img-3"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "NextProjectBlock",
+            "props": {
+                "id": "next-1",
+                "nextId": "slay-the-virus",
+                "nextName": "SLAY THE VIRUS",
+                "nextBg": "/images/STV/STVTitle.png"
+            }
+        }
+    ]
+}

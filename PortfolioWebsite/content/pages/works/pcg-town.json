@@ -1,0 +1,66 @@
+{
+    "root": {
+        "props": {
+            "title": "HOUDINI 驱动的小镇生成管线"
+        }
+    },
+    "content": [
+        {
+            "type": "HeroHeadline",
+            "props": {
+                "id": "hero-1",
+                "eyebrow": "Project 06",
+                "title": "HOUDINI 驱动的小镇生成管线",
+                "subtitle": "",
+                "heroImage": "/images/Others/PCG/PCG01.png",
+                "navLink": ""
+            }
+        },
+        {
+            "type": "RichParagraph",
+            "props": {
+                "id": "desc-1",
+                "content": "采用 Houdini 节点化开发，高度整合至 Unreal Engine 内部的程序化小镇管线原型工具。美术或关卡设计师仅需要框定场景边界，随意绘制道路脉络和自然水域样条线（Spline）并一键执行。我将其封装为拥有 70 余项深层扩展参数的面板：支持精编房屋簇密度、建筑物受水景与主路的影响朝向、随机风化的墙体倾角误差，以及环境地坪的高阶植被撒点体系（Scattering Rules），极大扩展了虚幻场景生产链的空间与产能下限。"
+            }
+        },
+        {
+            "type": "BreakdownTriptych",
+            "props": {
+                "id": "triptych-1",
+                "col1Title": "HDA 封装逻辑",
+                "col1Text": "在 UE5 中内置调用 Houdini Engine 的数据数字资产。处理大量网格的实时更迭。",
+                "col1Img": "/images/Others/PCG/PCG02.png",
+                "col2Title": "样条线路网",
+                "col2Text": "由任意贝塞尔曲线动态分割计算的智能土路及河流系统。",
+                "col2Img": "/images/Others/PCG/PCG03.png",
+                "col3Title": "环境撒布引擎",
+                "col3Text": "基于规则的高速碰撞规避算法用于树木与房舍周边杂物的植被生成。",
+                "col3Img": "/images/Others/PCG/PCG05.png"
+            }
+        },
+        {
+            "type": "MosaicGallery",
+            "props": {
+                "id": "gallery-1",
+                "images": [
+                    {
+                        "src": "/images/Others/PCG/PCG04png.png",
+                        "caption": "PCG 04",
+                        "_arrayItem": {
+                            "id": "img-1"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "NextProjectBlock",
+            "props": {
+                "id": "next-1",
+                "nextId": "atmosphere-practice",
+                "nextName": "ATMOSPHERE PRACTICE",
+                "nextBg": "/images/Others/01.png"
+            }
+        }
+    ]
+}

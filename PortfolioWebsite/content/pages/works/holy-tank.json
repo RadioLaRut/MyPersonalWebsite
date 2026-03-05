@@ -1,0 +1,51 @@
+{
+    "root": {
+        "props": {
+            "title": "帅油桶 (HOLY TANK)"
+        }
+    },
+    "content": [
+        {
+            "type": "HeroHeadline",
+            "props": {
+                "id": "hero-1",
+                "eyebrow": "Project 05",
+                "title": "帅油桶 (HOLY TANK)",
+                "subtitle": "",
+                "heroImage": "/images/HolyTank/7d9ca92e5ade09bfc1c349a49001b2eb.png",
+                "navLink": "https://www.bilibili.com/video/BV1GqkRYxEWM/"
+            }
+        },
+        {
+            "type": "RichParagraph",
+            "props": {
+                "id": "desc-1",
+                "content": "受《Florence》启发的互动碎片化叙事游戏项目。玩家在游戏中扮演一名残疾人士，深刻体验生活在这座充满「敌意甚至刁难建筑」城市中的寸步难行。游戏最核心的创新点，即是抛弃传统键鼠并完全绑定了一台实体「轨迹球」进行轮椅推移的操作，极深地绑定了玩家操作难度与角色身体残障体验上的通感频率。我主要负责游戏整体系统与前沿交互玩法的逻辑设计。"
+            }
+        },
+        {
+            "type": "BreakdownTriptych",
+            "props": {
+                "id": "triptych-1",
+                "col1Title": "通感设计",
+                "col1Text": "纯轨迹球物理阻力操控模拟系统架构设计研讨。",
+                "col1Img": "/images/HolyTank/f0f6239817a545ccad2f7dc47aff8acc.png",
+                "col2Title": "叙事体验",
+                "col2Text": "环境叙事 (Environmental Storytelling) 展现社会隐性偏见。",
+                "col2Img": "/images/HolyTank/f0f6239817a545ccad2f7dc47aff8acc.png",
+                "col3Title": "概念方向",
+                "col3Text": "针对带有显性恶意的公共城市建筑体系发起的探究与批判。",
+                "col3Img": "/images/HolyTank/7d9ca92e5ade09bfc1c349a49001b2eb.png"
+            }
+        },
+        {
+            "type": "NextProjectBlock",
+            "props": {
+                "id": "next-1",
+                "nextId": "pcg-town",
+                "nextName": "HOUDINI 驱动生成村镇",
+                "nextBg": "/images/Others/PCG/PCG01.png"
+            }
+        }
+    ]
+}

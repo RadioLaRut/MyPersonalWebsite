@@ -55,11 +55,11 @@ export default function ParameterGrid({
                                 {param.name}
                             </h4>
                             {param.value && (
-                                <div className="text-4xl md:text-5xl font-luna font-black text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.4)] transition-all duration-300 group-hover:[-webkit-text-stroke:1px_rgba(255,255,255,1)] group-hover:ml-2 mb-4">
+                                <div className="text-4xl md:text-5xl font-black text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.4)] transition-all duration-300 group-hover:[-webkit-text-stroke:1px_rgba(255,255,255,1)] group-hover:ml-2 mb-4 font-futura">
                                     {param.value}
                                 </div>
                             )}
-                            <p className="font-serif text-white/50 text-sm md:text-base leading-relaxed">
+                            <p className="font-futura text-white/50 text-sm md:text-base leading-relaxed">
                                 {param.description}
                             </p>
                         </div>

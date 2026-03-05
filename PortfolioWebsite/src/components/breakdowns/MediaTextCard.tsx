@@ -30,11 +30,11 @@ export default function MediaTextCard({
                     </div>
                 )}
 
-                <h3 className="text-4xl md:text-5xl font-luna font-black tracking-tighter mb-8 leading-[0.9]">
+                <h3 className="text-4xl md:text-5xl font-black tracking-tighter mb-8 leading-[0.9] font-futura">
                     {title}
                 </h3>
 
-                <div className="font-serif text-white/60 tracking-wide leading-relaxed space-y-4">
+                <div className="font-futura text-white/60 tracking-wide leading-relaxed space-y-4">
                     {description.split('\\n').map((paragraph, i) => (
                         <p key={i}>{paragraph}</p>
                     ))}
