@@ -1,7 +1,7 @@
 "use client";
 
 import { type ReactNode, useEffect, useMemo, useState } from "react";
-import { Puck, type Data, type PuckAction, usePuck } from "@measured/puck";
+import { Puck, type Data, usePuck } from "@measured/puck";
 import "@measured/puck/puck.css";
 
 import config from "@/puck/config";

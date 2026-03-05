@@ -1,10 +1,13 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const menuPanelRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
   const pathname = usePathname();
   const isCmsPreviewEnabled =
     process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" || process.env.NEXT_PUBLIC_USE_JSON === "true";
@@ -12,16 +15,92 @@ export default function Navigation() {
     pathname?.startsWith("/works/") || pathname?.startsWith("/p/works/");
 
   useEffect(() => {
-    if (pathname?.startsWith("/admin")) {
+    if (pathname?.startsWith("/admin")) return;
+    setIsOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (pathname?.startsWith("/admin") || !isOpen) {
       return;
     }
 
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsOpen(false);
+    const panelElement = menuPanelRef.current;
+    if (!panelElement) {
+      return;
+    }
+    const menuButtonElement = menuButtonRef.current;
+
+    previousFocusRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    const previousOverflow = document.body.style.overflow;
+    const previousPaddingRight = document.body.style.paddingRight;
+    const scrollbarCompensation = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.overflow = "hidden";
+    if (scrollbarCompensation > 0) {
+      document.body.style.paddingRight = `${scrollbarCompensation}px`;
+    }
+
+    const focusableSelector =
+      "a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex='-1'])";
+
+    const getFocusableElements = () =>
+      Array.from(panelElement.querySelectorAll<HTMLElement>(focusableSelector)).filter(
+        (element) => !element.hasAttribute("disabled"),
+      );
+
+    const firstFocusable = getFocusableElements()[0];
+    (firstFocusable ?? panelElement).focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setIsOpen(false);
+        return;
+      }
+
+      if (event.key !== "Tab") {
+        return;
+      }
+
+      const focusableElements = getFocusableElements();
+      if (focusableElements.length === 0) {
+        event.preventDefault();
+        panelElement.focus();
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+      const activeElement = document.activeElement;
+
+      if (event.shiftKey) {
+        if (activeElement === firstElement || !panelElement.contains(activeElement)) {
+          event.preventDefault();
+          lastElement.focus();
+        }
+        return;
+      }
+
+      if (activeElement === lastElement || !panelElement.contains(activeElement)) {
+        event.preventDefault();
+        firstElement.focus();
+      }
     };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [pathname]);
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+      document.body.style.paddingRight = previousPaddingRight;
+
+      if (previousFocusRef.current && document.contains(previousFocusRef.current)) {
+        previousFocusRef.current.focus();
+      } else if (menuButtonElement) {
+        menuButtonElement.focus();
+      }
+    };
+  }, [isOpen, pathname]);
 
   if (pathname?.startsWith("/admin")) return null;
 
@@ -57,8 +136,11 @@ export default function Navigation() {
 
         <button
           onClick={() => setIsOpen(true)}
+          ref={menuButtonRef}
           className="group pointer-events-auto flex flex-col items-end gap-1.5 interactive p-4"
           aria-label="Menu"
+          aria-expanded={isOpen}
+          aria-controls="site-navigation-drawer"
         >
           <span className="w-8 h-[1px] bg-white group-hover:w-12 transition-all duration-300"></span>
           <span className="w-5 h-[1px] bg-white group-hover:w-12 transition-all duration-300 delay-75"></span>
@@ -73,11 +155,18 @@ export default function Navigation() {
             exit={{ x: "100%" }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="fixed top-0 right-0 w-full sm:w-[40vw] h-screen bg-black/80 backdrop-blur-2xl z-[99] border-l border-white/10"
+            id="site-navigation-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Main navigation"
+            tabIndex={-1}
+            ref={menuPanelRef}
           >
             <div className="h-full flex flex-col justify-center px-16 relative">
               <button
                 onClick={() => setIsOpen(false)}
                 className="absolute top-8 right-8 text-white/50 hover:text-white interactive p-4 tracking-widest text-sm"
+                aria-label="Close menu"
               >
                 CLOSE
               </button>

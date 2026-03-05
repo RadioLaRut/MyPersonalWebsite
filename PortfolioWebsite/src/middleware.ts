@@ -48,10 +48,6 @@ function toCmsRedirectPath(pathname: string): string | null {
     return "/p/contact";
   }
 
-  if (pathname === "/playground") {
-    return "/p";
-  }
-
   return null;
 }
 

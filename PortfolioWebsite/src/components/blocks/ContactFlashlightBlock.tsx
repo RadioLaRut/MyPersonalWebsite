@@ -32,6 +32,18 @@ export default function ContactFlashlightBlock({
     const containerRef = useRef<HTMLDivElement>(null);
     const [mousePos, setMousePos] = useState({ x: "50%", y: "50%" });
 
+    const handleCopy = async (value: string) => {
+        if (typeof navigator === "undefined" || !navigator.clipboard) {
+            return;
+        }
+
+        try {
+            await navigator.clipboard.writeText(value);
+        } catch {
+            // Ignore clipboard failures to keep interaction non-blocking.
+        }
+    };
+
     useEffect(() => {
         let lastClientX = window.innerWidth / 2;
         let lastClientY = window.innerHeight / 2;
@@ -71,7 +83,7 @@ export default function ContactFlashlightBlock({
         };
     }, [maskRadius]);
 
-    const contentData = (
+    const renderContentData = (isInteractiveLayer: boolean) => (
         <div className="grid-container w-full py-16 sm:py-32">
             <section className="col-span-4 md:col-start-3 md:col-span-8 flex flex-col gap-6 mb-16 sm:mb-24">
                 <motion.h1
@@ -139,37 +151,58 @@ export default function ContactFlashlightBlock({
                     <span className="text-xs uppercase tracking-[0.4em] font-mono opacity-40 mix-blend-normal">
                         WeChat / Social
                     </span>
-                    <div className="text-2xl sm:text-3xl font-medium mix-blend-normal tracking-tight font-serif">
-                        {wechat}
-                    </div>
+                    {isInteractiveLayer ? (
+                        <button
+                            type="button"
+                            onClick={() => void handleCopy(wechat)}
+                            className="text-2xl sm:text-3xl font-medium mix-blend-normal tracking-tight font-serif text-left break-all interactive hover-text underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/60 rounded-sm"
+                            aria-label="Copy WeChat ID"
+                        >
+                            {wechat}
+                        </button>
+                    ) : (
+                        <span className="text-2xl sm:text-3xl font-medium mix-blend-normal tracking-tight font-serif text-left break-all">
+                            {wechat}
+                        </span>
+                    )}
                 </div>
 
                 <div className="space-y-6">
                     <span className="text-xs uppercase tracking-[0.4em] font-mono opacity-40 mix-blend-normal">
                         Email / Contact
                     </span>
-                    <div className="text-xl sm:text-2xl font-medium mix-blend-normal tracking-tight font-serif break-all">
-                        {email}
-                    </div>
+                    {isInteractiveLayer ? (
+                        <a
+                            href={`mailto:${email}`}
+                            className="text-xl sm:text-2xl font-medium mix-blend-normal tracking-tight font-serif break-all interactive hover-text underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/60 rounded-sm"
+                        >
+                            {email}
+                        </a>
+                    ) : (
+                        <span className="text-xl sm:text-2xl font-medium mix-blend-normal tracking-tight font-serif break-all">
+                            {email}
+                        </span>
+                    )}
                 </div>
             </motion.section>
         </div>
     );
 
     return (
-        <div className="relative w-full overflow-hidden font-luna selection:bg-white selection:text-black cursor-none">
+        <div className="relative w-full overflow-hidden font-luna selection:bg-white selection:text-black">
             <div ref={containerRef} className="relative w-full mx-auto pb-12">
                 {/* Base Layer (Dark Text) */}
                 <div
-                    className="z-10 select-none pointer-events-none transition-colors duration-300"
+                    className="z-10 transition-colors duration-300"
                     style={{ color: darkTextColor }}
                 >
-                    {contentData}
+                    {renderContentData(true)}
                 </div>
 
                 {/* Reveal Layer (White Text masked by cursor) */}
                 <div
                     className="absolute inset-0 z-20 pointer-events-none drop-shadow-[0_0_15px_rgba(255,255,255,0.45)]"
+                    aria-hidden="true"
                     style={{
                         color: lightTextColor,
                         WebkitMaskImage: `radial-gradient(${maskRadius}px circle at ${mousePos.x} ${mousePos.y}, black 0%, black ${maskSmoothness}%, transparent 100%)`,
@@ -178,7 +211,7 @@ export default function ContactFlashlightBlock({
                         maskRepeat: "no-repeat",
                     }}
                 >
-                    {contentData}
+                    {renderContentData(false)}
                 </div>
             </div>
         </div>

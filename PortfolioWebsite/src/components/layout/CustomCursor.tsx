@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
 type CustomCursorProps = {
@@ -10,34 +10,73 @@ type CustomCursorProps = {
 export default function CustomCursor({ isWithinIframe, targetDocument }: CustomCursorProps = {}) {
   const cursorRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const [isCursorEnabled, setIsCursorEnabled] = useState(false);
 
   useEffect(() => {
+    const htmlElement = document.documentElement;
+
     // Disable outer custom cursor in the admin dashboard completely
     if (!isWithinIframe && pathname?.startsWith("/admin")) {
-      document.documentElement.setAttribute("data-admin-mode", "true");
-      return;
+      htmlElement.setAttribute("data-admin-mode", "true");
+      setIsCursorEnabled(false);
+      return () => {
+        htmlElement.removeAttribute("data-admin-mode");
+      };
     }
 
     if (!isWithinIframe) {
-      document.documentElement.removeAttribute("data-admin-mode");
+      htmlElement.removeAttribute("data-admin-mode");
+    }
+
+    const win = targetDocument?.defaultView || window;
+    const pointerQuery = win.matchMedia("(pointer: fine)");
+    const reducedMotionQuery = win.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const updateCursorAvailability = () => {
+      setIsCursorEnabled(pointerQuery.matches && !reducedMotionQuery.matches);
+    };
+
+    const addMediaListener = (query: MediaQueryList, handler: () => void) => {
+      if (typeof query.addEventListener === "function") {
+        query.addEventListener("change", handler);
+        return () => query.removeEventListener("change", handler);
+      }
+
+      query.addListener(handler);
+      return () => query.removeListener(handler);
+    };
+
+    updateCursorAvailability();
+    const removePointerListener = addMediaListener(pointerQuery, updateCursorAvailability);
+    const removeMotionListener = addMediaListener(reducedMotionQuery, updateCursorAvailability);
+
+    return () => {
+      removePointerListener();
+      removeMotionListener();
+    };
+  }, [pathname, isWithinIframe, targetDocument]);
+
+  useEffect(() => {
+    if (!isCursorEnabled) {
+      return;
     }
 
     const cursor = cursorRef.current;
-    if (!cursor) return;
+    if (!cursor) {
+      return;
+    }
 
     const win = targetDocument?.defaultView || window;
     let rafId: number;
-    // Mouse coords updated by event listener
     let mouseX = win.innerWidth / 2;
     let mouseY = win.innerHeight / 2;
-    // Current rendered coords (for smoothing if desired, but here we just follow directly)
     let currentX = mouseX;
     let currentY = mouseY;
+    let isPressed = false;
 
     const onMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      // Also check the target under mouse for classes
       const target = e.target as Element;
 
       const isInteractive = target?.closest?.(
@@ -57,12 +96,12 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
     };
 
     const updateCursor = () => {
-      // Direct absolute position
       currentX += (mouseX - currentX) * 0.2;
       currentY += (mouseY - currentY) * 0.2;
 
       if (cursor) {
-        cursor.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+        const scale = isPressed ? 0.8 : 1;
+        cursor.style.transform = `translate(${currentX}px, ${currentY}px) translate(-50%, -50%) scale(${scale})`;
       }
       rafId = requestAnimationFrame(updateCursor);
     };
@@ -71,12 +110,10 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
     updateCursor();
 
     const onMouseDown = () => {
-      if (cursor)
-        cursor.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%) scale(0.8)`;
+      isPressed = true;
     };
     const onMouseUp = () => {
-      if (cursor)
-        cursor.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%) scale(1)`;
+      isPressed = false;
     };
 
     win.addEventListener("mousedown", onMouseDown);
@@ -88,9 +125,13 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
       win.removeEventListener("mouseup", onMouseUp);
       cancelAnimationFrame(rafId);
     };
-  }, [pathname, isWithinIframe, targetDocument]);
+  }, [isCursorEnabled, targetDocument]);
 
   if (!isWithinIframe && pathname?.startsWith("/admin")) {
+    return null;
+  }
+
+  if (!isCursorEnabled) {
     return null;
   }
 

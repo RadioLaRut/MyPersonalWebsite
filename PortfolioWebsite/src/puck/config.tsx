@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Config } from "@measured/puck";
 import HighDensityInfoBlock from "../components/breakdowns/HighDensityInfoBlock";
 import BreakdownTriptych from "../components/breakdowns/BreakdownTriptych";

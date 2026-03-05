@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { normalizePuckSlugInput, SlugValidationError } from "./puck-slug.ts";
+import { normalizePuckSlugInput, SlugValidationError } from "./puck-slug";
 
 type ValidCase = {
   expectedRelativePath: string;

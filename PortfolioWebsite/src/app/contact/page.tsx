@@ -8,6 +8,18 @@ export default function ContactPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mousePos, setMousePos] = useState({ x: "50%", y: "50%" });
 
+  const handleCopy = async (value: string) => {
+    if (typeof navigator === "undefined" || !navigator.clipboard) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(value);
+    } catch {
+      // Ignore clipboard failures to keep interaction non-blocking.
+    }
+  };
+
   useEffect(() => {
     let lastClientX = window.innerWidth / 2;
     let lastClientY = window.innerHeight / 2;
@@ -47,7 +59,7 @@ export default function ContactPage() {
     };
   }, []);
 
-  const contentData = (
+  const renderContentData = (isInteractiveLayer: boolean) => (
     <div className="grid-container w-full py-16 sm:py-32">
       <section className="col-span-4 md:col-start-3 md:col-span-8 flex flex-col gap-6 mb-16 sm:mb-24">
         <motion.h1
@@ -135,35 +147,56 @@ export default function ContactPage() {
           <span className="text-xs uppercase tracking-[0.4em] font-mono opacity-40 mix-blend-normal">
             WeChat / Social
           </span>
-          <div className="text-2xl sm:text-3xl font-medium mix-blend-normal tracking-tight font-serif">
-            radiowithouthead
-          </div>
+          {isInteractiveLayer ? (
+            <button
+              type="button"
+              onClick={() => void handleCopy("radiowithouthead")}
+              className="text-2xl sm:text-3xl font-medium mix-blend-normal tracking-tight font-serif text-left break-all interactive hover-text underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/60 rounded-sm"
+              aria-label="Copy WeChat ID"
+            >
+              radiowithouthead
+            </button>
+          ) : (
+            <span className="text-2xl sm:text-3xl font-medium mix-blend-normal tracking-tight font-serif text-left break-all">
+              radiowithouthead
+            </span>
+          )}
         </div>
 
         <div className="space-y-6">
           <span className="text-xs uppercase tracking-[0.4em] font-mono opacity-40 mix-blend-normal">
             Email / Contact
           </span>
-          <div className="text-xl sm:text-2xl font-medium mix-blend-normal tracking-tight font-serif break-all">
-            3115437519@qq.com
-          </div>
+          {isInteractiveLayer ? (
+            <a
+              href="mailto:3115437519@qq.com"
+              className="text-xl sm:text-2xl font-medium mix-blend-normal tracking-tight font-serif break-all interactive hover-text underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/60 rounded-sm"
+            >
+              3115437519@qq.com
+            </a>
+          ) : (
+            <span className="text-xl sm:text-2xl font-medium mix-blend-normal tracking-tight font-serif break-all">
+              3115437519@qq.com
+            </span>
+          )}
         </div>
       </motion.section>
     </div>
   );
 
   return (
-    <main className="relative w-full min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center overflow-x-hidden font-luna selection:bg-white selection:text-black cursor-none">
+    <main className="relative w-full min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center overflow-x-hidden font-luna selection:bg-white selection:text-black">
       {/* Scrollable Container for both layers */}
       <div ref={containerRef} className="relative w-full mx-auto pb-12">
         {/* Base Layer (Dark Text) */}
-        <div className="text-white/40 z-10 select-none pointer-events-none transition-colors duration-300">
-          {contentData}
+        <div className="text-white/40 z-10 transition-colors duration-300">
+          {renderContentData(true)}
         </div>
 
         {/* Reveal Layer (White Text masked by cursor) */}
         <div
           className="absolute inset-0 text-white z-20 pointer-events-none drop-shadow-[0_0_15px_rgba(255,255,255,0.45)]"
+          aria-hidden="true"
           style={{
             WebkitMaskImage: `radial-gradient(${MASK_RADIUS}px circle at ${mousePos.x} ${mousePos.y}, black 0%, black 40%, transparent 100%)`,
             maskImage: `radial-gradient(${MASK_RADIUS}px circle at ${mousePos.x} ${mousePos.y}, black 0%, black 40%, transparent 100%)`,
@@ -171,7 +204,7 @@ export default function ContactPage() {
             maskRepeat: "no-repeat",
           }}
         >
-          {contentData}
+          {renderContentData(false)}
         </div>
       </div>
     </main>
