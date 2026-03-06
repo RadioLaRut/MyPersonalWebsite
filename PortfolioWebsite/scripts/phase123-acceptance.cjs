@@ -16,7 +16,9 @@ const projectRoot = process.cwd();
 function withEnv(nextEnv, run) {
   const keys = [
     "NODE_ENV",
+    "NEXT_PUBLIC_SITE_MODE",
     "NEXT_PUBLIC_ENABLE_PUCK",
+    "NEXT_PUBLIC_USE_JSON",
     "CI",
     "VERCEL",
     "VERCEL_ENV",
@@ -55,13 +57,13 @@ function testGuard() {
     assert.equal(denied.headers.get("Cache-Control"), "no-store");
   });
 
-  withEnv({ NODE_ENV: "development", NEXT_PUBLIC_ENABLE_PUCK: "true", CI: "1" }, () => {
+  withEnv({ NODE_ENV: "development", NEXT_PUBLIC_SITE_MODE: "testing", CI: "1" }, () => {
     const denied = assertLocalEditorAccess("api");
     assert.equal(denied.status, 403);
     assert.equal(denied.headers.get("Cache-Control"), "no-store");
   });
 
-  withEnv({ NODE_ENV: "development", NEXT_PUBLIC_ENABLE_PUCK: "true" }, () => {
+  withEnv({ NODE_ENV: "development", NEXT_PUBLIC_SITE_MODE: "testing" }, () => {
     const allowedApi = assertLocalEditorAccess("api");
     assert.equal(allowedApi, undefined);
     assert.equal(assertLocalEditorAccess("page"), undefined);

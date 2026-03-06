@@ -29,20 +29,10 @@ export default function ContactFlashlightBlock({
     experienceHistory = [],
     creativeDirection = []
 }: ContactFlashlightBlockProps) {
+    const wechatTextClass = "copyable-contact block whitespace-nowrap text-[clamp(1.35rem,1.9vw,2.2rem)] font-medium mix-blend-normal tracking-tight leading-[1] font-serif text-left";
+    const emailTextClass = "copyable-contact block whitespace-nowrap text-[clamp(1.25rem,1.75vw,2rem)] font-medium mix-blend-normal tracking-tight leading-[1] font-serif";
     const containerRef = useRef<HTMLDivElement>(null);
     const [mousePos, setMousePos] = useState({ x: "50%", y: "50%" });
-
-    const handleCopy = async (value: string) => {
-        if (typeof navigator === "undefined" || !navigator.clipboard) {
-            return;
-        }
-
-        try {
-            await navigator.clipboard.writeText(value);
-        } catch {
-            // Ignore clipboard failures to keep interaction non-blocking.
-        }
-    };
 
     useEffect(() => {
         let lastClientX = window.innerWidth / 2;
@@ -83,7 +73,7 @@ export default function ContactFlashlightBlock({
         };
     }, [maskRadius]);
 
-    const renderContentData = (isInteractiveLayer: boolean) => (
+    const renderContentData = () => (
         <div className="grid-container w-full py-16 sm:py-32">
             <section className="col-span-4 md:col-start-3 md:col-span-8 flex flex-col gap-6 mb-16 sm:mb-24">
                 <motion.h1
@@ -145,44 +135,24 @@ export default function ContactFlashlightBlock({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.9, duration: 1 }}
-                className="col-span-4 md:col-start-6 md:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-16 text-left border-t border-current pt-16 mt-24"
+                className="col-span-4 md:col-start-4 md:col-span-8 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-12 lg:gap-20 text-left border-t border-current pt-16 mt-24 items-start"
             >
                 <div className="space-y-6">
                     <span className="text-xs uppercase tracking-[0.4em] font-mono opacity-40 mix-blend-normal">
                         WeChat / Social
                     </span>
-                    {isInteractiveLayer ? (
-                        <button
-                            type="button"
-                            onClick={() => void handleCopy(wechat)}
-                            className="text-2xl sm:text-3xl font-medium mix-blend-normal tracking-tight font-serif text-left break-all interactive hover-text underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/60 rounded-sm"
-                            aria-label="Copy WeChat ID"
-                        >
-                            {wechat}
-                        </button>
-                    ) : (
-                        <span className="text-2xl sm:text-3xl font-medium mix-blend-normal tracking-tight font-serif text-left break-all">
-                            {wechat}
-                        </span>
-                    )}
+                    <span className={wechatTextClass}>
+                        {wechat}
+                    </span>
                 </div>
 
                 <div className="space-y-6">
                     <span className="text-xs uppercase tracking-[0.4em] font-mono opacity-40 mix-blend-normal">
                         Email / Contact
                     </span>
-                    {isInteractiveLayer ? (
-                        <a
-                            href={`mailto:${email}`}
-                            className="text-xl sm:text-2xl font-medium mix-blend-normal tracking-tight font-serif break-all interactive hover-text underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/60 rounded-sm"
-                        >
-                            {email}
-                        </a>
-                    ) : (
-                        <span className="text-xl sm:text-2xl font-medium mix-blend-normal tracking-tight font-serif break-all">
-                            {email}
-                        </span>
-                    )}
+                    <span className={emailTextClass}>
+                        {email}
+                    </span>
                 </div>
             </motion.section>
         </div>
@@ -196,7 +166,7 @@ export default function ContactFlashlightBlock({
                     className="z-10 transition-colors duration-300"
                     style={{ color: darkTextColor }}
                 >
-                    {renderContentData(true)}
+                    {renderContentData()}
                 </div>
 
                 {/* Reveal Layer (White Text masked by cursor) */}
@@ -211,7 +181,7 @@ export default function ContactFlashlightBlock({
                         maskRepeat: "no-repeat",
                     }}
                 >
-                    {renderContentData(false)}
+                    {renderContentData()}
                 </div>
             </div>
         </div>

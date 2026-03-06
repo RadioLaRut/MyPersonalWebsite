@@ -65,8 +65,8 @@ export default function SampleBreakdownPage() {
 
                 <div className="col-span-4 md:col-span-12">
                     <ImageSlider
-                        unlitSrc="/images/Test/unlit.jpg"
-                        litSrc="/images/Test/lit.jpg"
+                        unlitSrc="/images/lighting/unlit.jpg"
+                        litSrc="/images/lighting/lit.jpg"
                         alt="Blockout vs Final Lighting"
                     />
                 </div>
@@ -76,13 +76,13 @@ export default function SampleBreakdownPage() {
                         title="灯光绑定与自动曝光体验系统"
                         description="不仅是静态的美术调整，我还开发了一套蓝图工具，用于根据不同的镜头焦段和机位自动校准 Auto Exposure。\\n这样可以确保在切换特写与远景时，高光不会溢出，暗部始终保持克制的细节。"
                         tags={["蓝图", "TA", "灯光管线"]}
-                        imageSrc="/images/Test/unlit.jpg"
+                        imageSrc="/images/lighting/unlit.jpg"
                     />
                 </div>
 
                 <div className="col-span-4 md:col-span-12 mt-16">
                     <ParameterGrid
-                        mediaSrc="/images/Test/lit.jpg"
+                        mediaSrc="/images/lighting/lit.jpg"
                         parameters={[
                             { name: "体积雾消散系数 (VOLUMETRIC SCATTER)", value: "0.25", description: "控制光线在空气中传播时的衰减，实现更密集的‘丁达尔’效应。" },
                             { name: "曝光补偿 (EV100)", value: "-2.0", description: "全局降低曝光基准，强制使场景大部分处于非常昏暗甚至死黑的阴影之中。" },
@@ -104,9 +104,9 @@ export default function SampleBreakdownPage() {
                 <div className="col-span-4 md:col-span-12">
                     <MosaicGallery
                         images={[
-                            { src: "/images/Test/lit.jpg", caption: "最终输出 / 电影感色彩调色" },
-                            { src: "/images/Test/unlit.jpg", caption: "色温尝试：偏暖的钨丝灯效果" },
-                            { src: "/images/Test/unlit.jpg", caption: "高反差测试：极端的剪影效果" }
+                            { src: "/images/lighting/lit.jpg", caption: "最终输出 / 电影感色彩调色" },
+                            { src: "/images/lighting/unlit.jpg", caption: "色温尝试：偏暖的钨丝灯效果" },
+                            { src: "/images/lighting/unlit.jpg", caption: "高反差测试：极端的剪影效果" }
                         ]}
                     />
                 </div>
@@ -131,7 +131,7 @@ export default function SampleBreakdownPage() {
                         phase3={{
                             title: "彻底解决协作痛点",
                             content: "由于 Data Asset 非常轻量且支持粒度更细的锁定，灯光师的参数调整不再与场景构建人员互相干扰，开发效率显著提升。",
-                            imageSrc: "/images/Test/lit.jpg"
+                            imageSrc: "/images/lighting/lit.jpg"
                         }}
                     />
                 </div>

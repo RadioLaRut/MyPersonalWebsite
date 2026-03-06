@@ -1,18 +1,18 @@
 import React from "react";
 
-interface PortfolioHeroHeaderProps {
+interface LightingCollectionHeroHeaderProps {
     title: string;
     subtitle: string;
     descriptionLine1: string;
     descriptionLine2: string;
 }
 
-export default function PortfolioHeroHeader({
+export default function LightingCollectionHeroHeader({
     title,
     subtitle,
     descriptionLine1,
     descriptionLine2,
-}: PortfolioHeroHeaderProps) {
+}: LightingCollectionHeroHeaderProps) {
     return (
         <section className="pt-40 pb-20 px-4 md:px-12 grid-container">
             <div className="col-span-4 md:col-start-1 md:col-span-12 border-b border-white/10 pb-8">

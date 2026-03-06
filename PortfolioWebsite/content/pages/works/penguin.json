@@ -12,7 +12,7 @@
                 "eyebrow": "Project / 主策划 · Tech Art · PM",
                 "title": "PENGUIN TRADING CO.",
                 "subtitle": "企鹅贸易公司 — Colony Simulation & Management",
-                "heroImage": "/images/Others/CyberRestaurant.png",
+                "heroImage": "/images/penguin/CyberRestaurant.png",
                 "navLink": ""
             }
         },
@@ -29,13 +29,13 @@
                 "id": "triptych-1",
                 "col1Title": "项目管理与推进",
                 "col1Text": "负责里程碑拆解与排期，使用飞书多维表格搭建可追踪迭代节奏的项目管理体系，跟踪延期风险与关键阻塞点，推动跨岗位对齐。",
-                "col1Img": "/images/Others/CyberRestaurant.png",
+                "col1Img": "/images/penguin/CyberRestaurant.png",
                 "col2Title": "UE 资产锁系统",
                 "col2Text": "设计并实现基于 UE 编辑器的资产锁系统：监听变更自动上锁/解锁，缩略图标识与 UI 提示增强协作可视化，整体体验接近 Perforce 独占锁。",
-                "col2Img": "/images/Others/CyberRestaurant.png",
+                "col2Img": "/images/penguin/CyberRestaurant.png",
                 "col3Title": "编辑器效率工具链",
                 "col3Text": "实现快速切换地图/语言/重启 UE 等编辑器工具，撰写 Git 自动编译脚本，制定美术规范，降低沟通成本与返工率。",
-                "col3Img": "/images/Others/CyberRestaurant.png"
+                "col3Img": "/images/penguin/CyberRestaurant.png"
             }
         },
         {
@@ -44,7 +44,7 @@
                 "id": "next-1",
                 "nextId": "wow-otto",
                 "nextName": "WOW, OTTO!",
-                "nextBg": "/images/HolyTank/7d9ca92e5ade09bfc1c349a49001b2eb.png"
+                "nextBg": "/images/holy-tank/7d9ca92e5ade09bfc1c349a49001b2eb.png"
             }
         }
     ]

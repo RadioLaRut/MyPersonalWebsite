@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { OptimizedImage } from "@/components/common/OptimizedImage";
 
 interface MosaicGalleryProps {
   images: {
@@ -18,9 +19,11 @@ export default function MosaicGallery({ images }: MosaicGalleryProps) {
     <section className="w-full flex flex-col pt-0 pb-0 gap-y-1 bg-black relative z-10">
       {images.map((image, index) => (
         <div key={`${image.src}-${index}`} className="w-full h-screen relative bg-black">
-          <img
+          <OptimizedImage
             src={image.src}
             alt={image.caption || `Gallery ${index + 1}`}
+            fill
+            sizes="100vw"
             className="absolute inset-0 w-full h-full object-contain opacity-100 pointer-events-none"
           />
           {image.caption ? (

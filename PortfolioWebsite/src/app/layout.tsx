@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import SmoothScroll from "@/components/layout/SmoothScroll";
 import CustomCursor from "@/components/layout/CustomCursor";
 import Navigation from "@/components/layout/Navigation";
+import { isTestingMode } from "@/lib/site-mode";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -173,8 +174,10 @@ const gothic = localFont({
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const testingMode = isTestingMode();
+
   return (
-    <html lang="en">
+    <html lang="en" data-site-mode={testingMode ? "testing" : "normal"}>
       <body className={`bg-black text-white antialiased ${notoSerif.variable} ${hanYiQiHei.variable} ${futura.variable} ${luna.variable} ${gothic.variable}`}>
         <SmoothScroll>
           <CustomCursor />

@@ -72,7 +72,21 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
     let mouseY = win.innerHeight / 2;
     let currentX = mouseX;
     let currentY = mouseY;
+    let magnetX = mouseX;
+    let magnetY = mouseY;
+    let magnetStrength = 0;
     let isPressed = false;
+    let activeMagnet: HTMLElement | null = null;
+
+    const clearMagnet = () => {
+      magnetStrength = 0;
+      cursor.classList.remove("cursor-magnetized");
+      cursor.style.removeProperty("--cursor-magnet-size");
+      if (activeMagnet) {
+        activeMagnet.removeAttribute("data-cursor-magnet-active");
+        activeMagnet = null;
+      }
+    };
 
     const onMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
@@ -83,6 +97,45 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
         "a, button, input, [role='button'], .interactive",
       );
       const isText = target?.closest?.(".hover-text");
+      const magnetElements = Array.from(
+        (targetDocument ?? document).querySelectorAll<HTMLElement>("[data-cursor-magnet]"),
+      );
+      let nearestMagnet: HTMLElement | null = null;
+      let nearestDistance = Number.POSITIVE_INFINITY;
+
+      for (const magnetElement of magnetElements) {
+        const rect = magnetElement.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const distance = Math.hypot(centerX - e.clientX, centerY - e.clientY);
+
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestMagnet = magnetElement;
+        }
+      }
+
+      if (nearestMagnet && nearestDistance < 34) {
+        const rect = nearestMagnet.getBoundingClientRect();
+        magnetX = rect.left + rect.width / 2;
+        magnetY = rect.top + rect.height / 2;
+        magnetStrength = 0.42 + (1 - nearestDistance / 34) * 0.38;
+        cursor.classList.add("cursor-magnetized");
+        cursor.style.setProperty(
+          "--cursor-magnet-size",
+          `${nearestMagnet.dataset.cursorMagnetSize ?? Math.max(rect.width, rect.height)}px`,
+        );
+
+        if (activeMagnet !== nearestMagnet) {
+          if (activeMagnet) {
+            activeMagnet.removeAttribute("data-cursor-magnet-active");
+          }
+          activeMagnet = nearestMagnet;
+          activeMagnet.setAttribute("data-cursor-magnet-active", "true");
+        }
+      } else {
+        clearMagnet();
+      }
 
       if (isInteractive) {
         cursor.classList.add("hovering-interactive");
@@ -96,8 +149,10 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
     };
 
     const updateCursor = () => {
-      currentX += (mouseX - currentX) * 0.2;
-      currentY += (mouseY - currentY) * 0.2;
+      const targetX = mouseX + (magnetX - mouseX) * magnetStrength;
+      const targetY = mouseY + (magnetY - mouseY) * magnetStrength;
+      currentX += (targetX - currentX) * 0.34;
+      currentY += (targetY - currentY) * 0.34;
 
       if (cursor) {
         const scale = isPressed ? 0.8 : 1;
@@ -120,6 +175,7 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
     win.addEventListener("mouseup", onMouseUp);
 
     return () => {
+      clearMagnet();
       win.removeEventListener("mousemove", onMouseMove);
       win.removeEventListener("mousedown", onMouseDown);
       win.removeEventListener("mouseup", onMouseUp);

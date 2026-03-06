@@ -12,7 +12,7 @@
                 "eyebrow": "Project 04",
                 "title": "THE PROMETHEUS PROJECT",
                 "subtitle": "",
-                "heroImage": "/images/Prometheus/PrometheusTitle.png",
+                "heroImage": "/images/prometheus/PrometheusTitle.png",
                 "navLink": "https://www.bilibili.com/video/BV1GSGmzBEx8"
             }
         },
@@ -29,13 +29,13 @@
                 "id": "triptych-1",
                 "col1Title": "关卡设计 (Level Design)",
                 "col1Text": "白盒封块与秘密潜行的死角巡逻路径编排构建。",
-                "col1Img": "/images/Prometheus/Shot01.jpg",
+                "col1Img": "/images/prometheus/Shot01.jpg",
                 "col2Title": "沉浸式打光 (Lighting)",
                 "col2Text": "通过高对比阴影叙述视觉重量，直接辅助潜行潜藏机制的判断基准。",
-                "col2Img": "/images/Prometheus/Shot02.jpg",
+                "col2Img": "/images/prometheus/Shot02.jpg",
                 "col3Title": "智能系统 (Systems)",
                 "col3Text": "编写了 AI 视觉感知锥与多环境表面声响探测事件体系。",
-                "col3Img": "/images/Prometheus/Shot04.jpg"
+                "col3Img": "/images/prometheus/Shot04.jpg"
             }
         },
         {
@@ -44,21 +44,21 @@
                 "id": "gallery-1",
                 "images": [
                     {
-                        "src": "/images/Prometheus/Shot03.jpg",
+                        "src": "/images/prometheus/Shot03.jpg",
                         "caption": "截图 03",
                         "_arrayItem": {
                             "id": "img-1"
                         }
                     },
                     {
-                        "src": "/images/Prometheus/Shot05.jpg",
+                        "src": "/images/prometheus/Shot05.jpg",
                         "caption": "截图 05",
                         "_arrayItem": {
                             "id": "img-2"
                         }
                     },
                     {
-                        "src": "/images/Prometheus/Shot06.jpg",
+                        "src": "/images/prometheus/Shot06.jpg",
                         "caption": "截图 06",
                         "_arrayItem": {
                             "id": "img-3"
@@ -73,7 +73,7 @@
                 "id": "next-1",
                 "nextId": "holy-tank",
                 "nextName": "HOLY TANK (帅油桶)",
-                "nextBg": "/images/HolyTank/7d9ca92e5ade09bfc1c349a49001b2eb.png"
+                "nextBg": "/images/holy-tank/7d9ca92e5ade09bfc1c349a49001b2eb.png"
             }
         }
     ]

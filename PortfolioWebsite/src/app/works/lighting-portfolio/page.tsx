@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import CustomCursor from "@/components/layout/CustomCursor";
 import Navigation from "@/components/layout/Navigation";
+import { isCmsPreviewEnabled } from "@/lib/site-mode";
 
 interface LightingCollection {
     id: string;
@@ -19,41 +20,40 @@ const collections: LightingCollection[] = [
         number: "01",
         title: "CITY ADD",
         colSpanClass: "col-span-12 md:col-start-2 md:col-span-4",
-        coverImage: "/images/City2026Add/002.PNG",
+        coverImage: "/images/city-2026/002.PNG",
     },
     {
         id: "collection-2",
         number: "02",
         title: "RAINFOREST ECHO",
         colSpanClass: "col-span-12 md:col-start-7 md:col-span-5",
-        coverImage: "/images/雨林/Version2Output.0029.png",
+        coverImage: "/images/rainforest/Version2Output.0029.png",
     },
     {
         id: "collection-3",
         number: "03",
         title: "TRAIN STATION",
         colSpanClass: "col-span-12 md:col-start-3 md:col-span-8",
-        coverImage: "/images/TrainStation/2Day.png",
+        coverImage: "/images/train-station/2Day.png",
     },
     {
         id: "collection-4",
         number: "04",
         title: "WEST - DOUBLE COMPOSITION",
         colSpanClass: "col-span-12 md:col-start-1 md:col-span-5",
-        coverImage: "/images/West/CDay.jpeg",
+        coverImage: "/images/west/CDay.jpeg",
     },
     {
         id: "collection-5",
         number: "05",
         title: "ATMOSPHERE PRACTICE",
         colSpanClass: "col-span-12 md:col-start-7 md:col-span-5",
-        coverImage: "/images/Others/01.png",
+        coverImage: "/images/penguin/01.png",
     },
 ];
 
 export default function LightingPortfolioPage() {
-    const isCmsPreviewEnabled =
-        process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" || process.env.NEXT_PUBLIC_USE_JSON === "true";
+    const cmsPreviewEnabled = isCmsPreviewEnabled();
     const cmsCollectionHref: Record<string, string> = {
         "collection-1": "/p/works/lighting-atmosphere",
         "collection-2": "/p/works/atmosphere-practice",
@@ -102,7 +102,7 @@ export default function LightingPortfolioPage() {
             <section className="px-4 md:px-12 pb-32">
                 <div className="grid grid-cols-12 gap-y-32">
                     {collections.map((item) => {
-                        const targetHref = isCmsPreviewEnabled
+                        const targetHref = cmsPreviewEnabled
                             ? (cmsCollectionHref[item.id] ?? "/p/works/lighting-portfolio")
                             : `/works/lighting-portfolio/${item.id}`;
 

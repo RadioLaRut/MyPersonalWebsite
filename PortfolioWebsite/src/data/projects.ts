@@ -18,7 +18,7 @@ export const projects: ProjectData[] = [
     id: 'insight',
     title: 'INSIGHT',
     subtitle: 'INTERACTIVE NARRATIVE GAME',
-    coverUrl: '/assets/images/insight-cover.jpg', // Placeholder
+    coverUrl: '/images/insight/InsightCover.png',
     blocks: [
       {
         type: 'Text',
@@ -41,7 +41,7 @@ export const projects: ProjectData[] = [
     id: 'penguin',
     title: 'PENGUIN TRADING',
     subtitle: 'MANAGEMENT SIMULATION',
-    coverUrl: '/assets/images/penguin-cover.jpg',
+    coverUrl: '/images/penguin/Epic.png',
     blocks: [
       {
         type: 'Text',
@@ -54,7 +54,7 @@ export const projects: ProjectData[] = [
     id: 'slay-the-virus',
     title: 'SLAY THE VIRUS',
     subtitle: 'DECK-BUILDING & INVENTORY MANAGEMENT',
-    coverUrl: '/assets/images/virus-cover.jpg',
+    coverUrl: '/images/slay-the-virus/STVTitle.png',
     blocks: [
       {
         type: 'Text',
@@ -67,7 +67,7 @@ export const projects: ProjectData[] = [
     id: 'prometheus',
     title: 'THE PROMETHEUS PROJECT',
     subtitle: 'STEALTH & TACTICAL',
-    coverUrl: '/assets/images/prometheus-cover.jpg',
+    coverUrl: '/images/prometheus/PrometheusTitle.png',
     blocks: [
       {
         type: 'TextWithAside',
@@ -80,7 +80,7 @@ export const projects: ProjectData[] = [
     id: 'lighting',
     title: 'LIGHTING & TECH',
     subtitle: 'HOUDINI & UNREAL ENGINE 5',
-    coverUrl: '/assets/images/lighting-cover.jpg',
+    coverUrl: '/images/lighting/lit.jpg',
     blocks: [
       {
         type: 'Text',

@@ -16,7 +16,7 @@
                         "href": "/p/works/lighting-portfolio",
                         "title": "LIGHTING PORTFOLIO",
                         "category": "Lighting Art",
-                        "imageSrc": "/images/TrainStation/2Day.png",
+                        "imageSrc": "/images/train-station/2Day.png",
                         "desc": "A curated collection of lighting and mood practices",
                         "_arrayItem": {
                             "id": "w1"
@@ -27,7 +27,7 @@
                         "href": "/p/works/slay-the-virus",
                         "title": "SLAY THE VIRUS",
                         "category": "UI / Poster / Game Design",
-                        "imageSrc": "/images/STV/STVTitle.png",
+                        "imageSrc": "/images/slay-the-virus/STVTitle.png",
                         "desc": "A deck-building and inventory management game",
                         "_arrayItem": {
                             "id": "w2"
@@ -38,7 +38,7 @@
                         "href": "/p/works/wow-otto",
                         "title": "WOW, OTTO!",
                         "category": "Lead Designer",
-                        "imageSrc": "/images/Others/CyberRestaurant.png",
+                        "imageSrc": "/images/penguin/CyberRestaurant.png",
                         "desc": "Trackball narrative experience",
                         "_arrayItem": {
                             "id": "w3"
@@ -49,7 +49,7 @@
                         "href": "/p/works/im-explode",
                         "title": "I'M EXPLODE WITH U",
                         "category": "Lead Designer",
-                        "imageSrc": "/images/Others/CyberRestaurant.png",
+                        "imageSrc": "/images/penguin/CyberRestaurant.png",
                         "desc": "Multiplayer platformer with pushback mechanics",
                         "_arrayItem": {
                             "id": "w4"
@@ -60,7 +60,7 @@
                         "href": "/p/works/prometheus",
                         "title": "THE PROMETHEUS",
                         "category": "Lead Designer / Lighting",
-                        "imageSrc": "/images/Prometheus/PrometheusTitle.png",
+                        "imageSrc": "/images/prometheus/PrometheusTitle.png",
                         "desc": "Stealth tactical game with dramatic lighting contrasts",
                         "_arrayItem": {
                             "id": "w5"
@@ -71,7 +71,7 @@
                         "href": "/p/works/parallax",
                         "title": "SOMEWHERE BETWEEN PARALLAX",
                         "category": "UI Design",
-                        "imageSrc": "/images/Others/CyberRestaurant.png",
+                        "imageSrc": "/images/penguin/CyberRestaurant.png",
                         "desc": "Interactive VR experience in fragmented memory",
                         "_arrayItem": {
                             "id": "w6"
@@ -82,7 +82,7 @@
                         "href": "/p/works/insight",
                         "title": "INSIGHT",
                         "category": "Lead Designer / Programmer",
-                        "imageSrc": "/images/Insight/InsightCover.png",
+                        "imageSrc": "/images/insight/InsightCover.png",
                         "desc": "Play as an internet opinion regulator controlling the narrative",
                         "_arrayItem": {
                             "id": "w7"
@@ -93,7 +93,7 @@
                         "href": "/p/works/penguin",
                         "title": "PENGUIN TRADING CO.",
                         "category": "Lead Designer / PM / Tech Art",
-                        "imageSrc": "/images/Others/CyberRestaurant.png",
+                        "imageSrc": "/images/penguin/CyberRestaurant.png",
                         "desc": "Simulation management game with asset lock systems",
                         "_arrayItem": {
                             "id": "w8"
@@ -104,7 +104,7 @@
                         "href": "/p/works/pcg-town",
                         "title": "HOUDINI PROCEDURAL GENERATION",
                         "category": "Tech Art",
-                        "imageSrc": "/images/Others/PCG/PCG01.png",
+                        "imageSrc": "/images/penguin/PCG/PCG01.png",
                         "desc": "Procedural environment generation with Houdini and UE5",
                         "_arrayItem": {
                             "id": "w9"
@@ -115,7 +115,7 @@
                         "href": "/p/works/epic-stage",
                         "title": "EPIC STAGE LIGHTING",
                         "category": "Tech Art / Lighting",
-                        "imageSrc": "/images/Others/Epic.png",
+                        "imageSrc": "/images/penguin/Epic.png",
                         "desc": "Musical theatre concept lighting choreography",
                         "_arrayItem": {
                             "id": "w10"

@@ -2,11 +2,11 @@
 
 import React from 'react';
 
-interface BreakdownHeadlineProps {
+interface SectionHeadlineProps {
     title: string;
 }
 
-export default function BreakdownHeadline({ title }: BreakdownHeadlineProps) {
+export default function BreakdownSectionHeadline({ title }: SectionHeadlineProps) {
     return (
         <div className="w-full my-16 grid-container">
             <div className="col-span-4 md:col-span-12">

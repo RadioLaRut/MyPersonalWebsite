@@ -1,7 +1,9 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { isCmsPreviewEnabled, isTestingMode } from "@/lib/site-mode";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,10 +11,9 @@ export default function Navigation() {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const pathname = usePathname();
-  const isCmsPreviewEnabled =
-    process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" || process.env.NEXT_PUBLIC_USE_JSON === "true";
-  const isBreakdownPage =
-    pathname?.startsWith("/works/") || pathname?.startsWith("/p/works/");
+  const cmsPreviewEnabled = isCmsPreviewEnabled();
+  const testingMode = isTestingMode();
+  const keepsSpotlightVisible = pathname === "/contact" || pathname === "/p/contact";
 
   useEffect(() => {
     if (pathname?.startsWith("/admin")) return;
@@ -104,35 +105,26 @@ export default function Navigation() {
 
   if (pathname?.startsWith("/admin")) return null;
 
-  const menuItems = isCmsPreviewEnabled
+  const closeMenu = () => setIsOpen(false);
+
+  const menuItems = cmsPreviewEnabled
     ? [
       { label: "HOME", href: "/p" },
       { label: "WORKS", href: "/p/works" },
+      ...(testingMode ? [{ label: "PLAYGROUND", href: "/playground" }] : []),
       { label: "CONTACT", href: "/p/contact" },
     ]
     : [
       { label: "HOME", href: "/" },
       { label: "WORKS", href: "/works" },
-      { label: "PLAYGROUND", href: "/playground" },
+      ...(testingMode ? [{ label: "PLAYGROUND", href: "/playground" }] : []),
       { label: "CONTACT", href: "/contact" },
     ];
 
   return (
     <>
       <header className="fixed top-0 left-0 w-full z-40 px-8 py-8 flex justify-between items-center pointer-events-none mix-blend-difference">
-        {!isBreakdownPage ? (
-          <motion.div
-            className="text-xs font-mono text-white/70 tracking-widest uppercase"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1.5, delay: 1 }}
-          >
-            <span className="opacity-40 mr-2">{"//"}</span>
-            PORTFOLIO_2026
-          </motion.div>
-        ) : (
-          <div />
-        )}
+        <div />
 
         <button
           onClick={() => setIsOpen(true)}
@@ -150,53 +142,76 @@ export default function Navigation() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed top-0 right-0 w-full sm:w-[40vw] h-screen bg-black/80 backdrop-blur-2xl z-[99] border-l border-white/10"
-            id="site-navigation-drawer"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Main navigation"
-            tabIndex={-1}
-            ref={menuPanelRef}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="fixed inset-0 z-[99] flex justify-end"
           >
-            <div className="h-full flex flex-col justify-center px-16 relative">
-              <button
-                onClick={() => setIsOpen(false)}
-                className="absolute top-8 right-8 text-white/50 hover:text-white interactive p-4 tracking-widest text-sm"
-                aria-label="Close menu"
-              >
-                CLOSE
-              </button>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              className={`absolute inset-0 ${keepsSpotlightVisible ? "bg-black/5" : "bg-black/18 backdrop-blur-sm"}`}
+              onClick={closeMenu}
+              onWheel={closeMenu}
+              onTouchMove={closeMenu}
+              aria-hidden="true"
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="relative w-full sm:w-[40vw] h-screen border-l border-white/10 bg-black/92 backdrop-blur-2xl shadow-[-20px_0_60px_rgba(0,0,0,0.2)]"
+              id="site-navigation-drawer"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Main navigation"
+              tabIndex={-1}
+              ref={menuPanelRef}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="h-full flex flex-col justify-center px-16 relative">
+                <button
+                  onClick={closeMenu}
+                  className="absolute top-8 right-8 text-white/50 hover:text-white interactive p-4 tracking-widest text-sm"
+                  aria-label="Close menu"
+                >
+                  CLOSE
+                </button>
 
-              <nav className="flex flex-col gap-8">
-                {menuItems.map((item, i) => (
-                  <motion.a
-                    key={item.label}
-                    href={item.href}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                    transition={{ delay: 0.1 + i * 0.1, duration: 0.4 }}
-                    className="text-4xl sm:text-5xl font-bold tracking-tighter hover-text"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {item.label}
-                  </motion.a>
-                ))}
-              </nav>
+                <nav className="flex flex-col gap-8">
+                  {menuItems.map((item, i) => (
+                    <motion.div
+                      key={item.label}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ delay: 0.1 + i * 0.1, duration: 0.4 }}
+                    >
+                      <Link
+                        href={item.href}
+                        className="text-4xl sm:text-5xl font-bold tracking-tighter hover-text"
+                        onClick={closeMenu}
+                      >
+                        {item.label}
+                      </Link>
+                    </motion.div>
+                  ))}
+                </nav>
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="absolute bottom-16 left-16 text-white/30 text-sm tracking-widest font-futura"
-              >
-                JIANG CHENGYAN © 2026
-              </motion.div>
-            </div>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="absolute bottom-16 left-16 text-white/30 text-sm tracking-widest font-futura"
+                >
+                  JIANG CHENGYAN © 2026
+                </motion.div>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

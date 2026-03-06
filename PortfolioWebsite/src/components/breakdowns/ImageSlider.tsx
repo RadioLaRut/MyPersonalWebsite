@@ -1,15 +1,16 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
+import { OptimizedImage } from '@/components/common/OptimizedImage';
 
 interface ImageSliderProps {
     unlitSrc: string;
     litSrc: string;
     alt?: string;
+    className?: string;
 }
 
-export default function ImageSlider({ unlitSrc, litSrc, alt = 'Image Comparison' }: ImageSliderProps) {
+export default function ImageSlider({ unlitSrc, litSrc, alt = 'Image Comparison', className = "" }: ImageSliderProps) {
     const [sliderPosition, setSliderPosition] = useState(50);
     const [isDragging, setIsDragging] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -43,7 +44,7 @@ export default function ImageSlider({ unlitSrc, litSrc, alt = 'Image Comparison'
     }, []);
 
     return (
-        <div className="w-full flex justify-center my-16">
+        <div className={`w-full flex justify-center my-16 ${className}`}>
             <div className="w-full max-w-5xl">
                 <div
                     ref={containerRef}
@@ -58,7 +59,7 @@ export default function ImageSlider({ unlitSrc, litSrc, alt = 'Image Comparison'
                         {/* Fallback color/placeholder if no image */}
                         <div className="absolute inset-0 bg-neutral-900" />
                         {litSrc && (
-                            <Image
+                            <OptimizedImage
                                 src={litSrc}
                                 alt={`${alt} Lit`}
                                 fill
@@ -78,7 +79,7 @@ export default function ImageSlider({ unlitSrc, litSrc, alt = 'Image Comparison'
                     >
                         <div className="absolute inset-0 bg-neutral-800" />
                         {unlitSrc && (
-                            <Image
+                            <OptimizedImage
                                 src={unlitSrc}
                                 alt={`${alt} Unlit`}
                                 fill
@@ -96,7 +97,11 @@ export default function ImageSlider({ unlitSrc, litSrc, alt = 'Image Comparison'
                         className="absolute top-0 bottom-0 w-0.5 bg-white pointer-events-none"
                         style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
                     >
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg">
+                        <div
+                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg transition-shadow duration-150"
+                            data-cursor-magnet="slider-handle"
+                            data-cursor-magnet-size="32"
+                        >
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <polyline points="15 18 9 12 15 6"></polyline>
                             </svg>

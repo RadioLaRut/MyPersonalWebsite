@@ -1,6 +1,7 @@
 "use client";
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { OptimizedImage } from "@/components/common/OptimizedImage";
 
 interface ProjectSectionProps {
   title: string;
@@ -49,9 +50,12 @@ export default function ProjectSection({
 
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40 z-10" />
 
-        <img
+        <OptimizedImage
           src={imageSrc}
           alt={title}
+          width={1920}
+          height={1080}
+          priority={index === 0}
           className="w-full h-full object-contain select-none"
         />
       </motion.div>

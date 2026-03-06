@@ -12,7 +12,7 @@
                 "eyebrow": "Project 08",
                 "title": "舞台灯光叙事概念设计",
                 "subtitle": "",
-                "heroImage": "/images/Others/Epic.png",
+                "heroImage": "/images/penguin/Epic.png",
                 "navLink": "https://www.bilibili.com/video/BV1oSDTYJEi2/"
             }
         },
@@ -29,13 +29,13 @@
                 "id": "triptych-1",
                 "col1Title": "舞台编排",
                 "col1Text": "虚拟演播室的大型光机结构铺设统筹布置及长镜头的游机位走位逻辑演算。",
-                "col1Img": "/images/Others/Epic02.png",
+                "col1Img": "/images/penguin/Epic02.png",
                 "col2Title": "神座点亮策略",
                 "col2Text": "后场巨大主神大理石雕塑通过复杂的材质发光指令随着音轨爆破而启动。",
-                "col2Img": "/images/Others/Epic.png",
+                "col2Img": "/images/penguin/Epic.png",
                 "col3Title": "定格镜头呈现",
                 "col3Text": "极具侵略性的丢帧人物位移调度系统编排技术栈落地方案。",
-                "col3Img": "/images/Others/Epic02.png"
+                "col3Img": "/images/penguin/Epic02.png"
             }
         },
         {
@@ -44,7 +44,7 @@
                 "id": "next-1",
                 "nextId": "lighting-atmosphere",
                 "nextName": "LIGHTING ATMOSPHERE",
-                "nextBg": "/images/TrainStation/2Day.png"
+                "nextBg": "/images/train-station/2Day.png"
             }
         }
     ]

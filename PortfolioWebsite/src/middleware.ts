@@ -1,12 +1,10 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { isCmsPreviewEnabled } from "@/lib/site-mode";
 
 const NO_STORE_HEADER = {
   "Cache-Control": "no-store",
 } as const;
-
-const isCmsPreviewEnabled =
-  process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" || process.env.NEXT_PUBLIC_USE_JSON === "true";
 
 function isInvalidPuckPath(request: NextRequest) {
   const rawUrl = request.url.toLowerCase();
@@ -54,7 +52,7 @@ function toCmsRedirectPath(pathname: string): string | null {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (isCmsPreviewEnabled) {
+  if (isCmsPreviewEnabled()) {
     const redirectPath = toCmsRedirectPath(pathname);
     if (redirectPath && redirectPath !== pathname) {
       const redirectUrl = request.nextUrl.clone();

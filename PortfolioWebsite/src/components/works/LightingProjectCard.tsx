@@ -1,5 +1,7 @@
 import React from "react";
 import Link from "next/link";
+import { ProjectCover } from "@/components/common/ProjectCover";
+import { isCmsPreviewEnabled } from "@/lib/site-mode";
 
 interface LightingProjectCardProps {
     id: string;
@@ -10,9 +12,8 @@ interface LightingProjectCardProps {
 }
 
 export default function LightingProjectCard({ id, number, title, coverImage, href }: LightingProjectCardProps) {
-    const isCmsPreviewEnabled =
-        process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" || process.env.NEXT_PUBLIC_USE_JSON === "true";
-    const cardHref = href ?? (isCmsPreviewEnabled ? `/p/works/lighting-portfolio/${id}` : `/works/lighting-portfolio/${id}`);
+    const cmsPreviewEnabled = isCmsPreviewEnabled();
+    const cardHref = href ?? (cmsPreviewEnabled ? `/p/works/lighting-portfolio/${id}` : `/works/lighting-portfolio/${id}`);
 
     return (
         <section className="px-4 md:px-12 pb-32">
@@ -32,10 +33,10 @@ export default function LightingProjectCard({ id, number, title, coverImage, hre
                         {/* High-End Gallery Frame: Strict 21:9 container with horizontal alignment */}
                         <div className="relative w-full aspect-[21/9] bg-[#050505] border border-white/10 flex items-center justify-center overflow-hidden">
                             {coverImage ? (
-                                <img
+                                <ProjectCover
                                     src={coverImage}
                                     alt={title}
-                                    className="w-full h-full object-cover block opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+                                    className="h-full opacity-90 group-hover:opacity-100 transition-opacity duration-500"
                                 />
                             ) : (
                                 <div className="w-full h-full bg-neutral-900 flex items-center justify-center text-white/20 font-mono text-xs">

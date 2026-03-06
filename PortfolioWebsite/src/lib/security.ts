@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation.js";
 import { NextResponse } from "next/server.js";
+import { isTestingMode } from "@/lib/site-mode";
 
 type EditorAccessType = "page" | "api";
 
@@ -30,7 +31,7 @@ function hasBlockedRuntimeEnv(): boolean {
 function canAccessLocalEditor(): boolean {
   return (
     process.env.NODE_ENV === "development" &&
-    process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" &&
+    isTestingMode() &&
     !hasBlockedRuntimeEnv()
   );
 }

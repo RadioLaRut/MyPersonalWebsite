@@ -3,9 +3,11 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import CustomCursor from "@/components/layout/CustomCursor";
 import Navigation from "@/components/layout/Navigation";
-import BeforeAfterSlider from "@/components/works/BeforeAfterSlider";
+import ImageSlider from "@/components/breakdowns/ImageSlider";
+import { OptimizedImage } from "@/components/common/OptimizedImage";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { isCmsPreviewEnabled } from "@/lib/site-mode";
 
 // Demo data mapping for the breakdown pages
 const collectionData: Record<string, { title: string; number: string; images: { lit: string; unlit?: string; caption: string }[] }> = {
@@ -13,32 +15,32 @@ const collectionData: Record<string, { title: string; number: string; images: { 
         title: "CITY ADD",
         number: "01",
         images: [
-            { lit: "/images/City2026Add/001.PNG", caption: "DAY" },
-            { lit: "/images/City2026Add/002.PNG", caption: "DUSK" },
-            { lit: "/images/City2026Add/003.PNG", caption: "NIGHT" },
+            { lit: "/images/city-2026/001.PNG", caption: "DAY" },
+            { lit: "/images/city-2026/002.PNG", caption: "DUSK" },
+            { lit: "/images/city-2026/003.PNG", caption: "NIGHT" },
         ],
     },
     "collection-2": {
         title: "RAINFOREST ECHO",
         number: "02",
         images: [
-            { lit: "/images/雨林/Version2Output.0029.png", caption: "DAY" },
-            { lit: "/images/雨林/Shot005.0002.png", caption: "ATMOSPHERE 1" },
-            { lit: "/images/雨林/Output.0050.png", caption: "ATMOSPHERE 2" },
-            { lit: "/images/雨林/Output.0101.png", caption: "NIGHT" },
+            { lit: "/images/rainforest/Version2Output.0029.png", caption: "DAY" },
+            { lit: "/images/rainforest/Shot005.0002.png", caption: "ATMOSPHERE 1" },
+            { lit: "/images/rainforest/Output.0050.png", caption: "ATMOSPHERE 2" },
+            { lit: "/images/rainforest/Output.0101.png", caption: "NIGHT" },
         ],
     },
     "collection-3": {
         title: "TRAIN STATION",
         number: "03",
         images: [
-            { lit: "/images/TrainStation/2Day.png", caption: "DAY" },
-            { lit: "/images/TrainStation/2Dust.png", caption: "DUSK" },
-            { lit: "/images/TrainStation/2Fog.png", caption: "FOG" },
-            { lit: "/images/TrainStation/2Night.png", caption: "NIGHT" },
+            { lit: "/images/train-station/2Day.png", caption: "DAY" },
+            { lit: "/images/train-station/2Dust.png", caption: "DUSK" },
+            { lit: "/images/train-station/2Fog.png", caption: "FOG" },
+            { lit: "/images/train-station/2Night.png", caption: "NIGHT" },
             {
-                lit: "/images/TrainStation/2Day.png", // lit image (DAY)
-                unlit: "/images/TrainStation/2NoLight.png", // unlit image
+                lit: "/images/train-station/2Day.png", // lit image (DAY)
+                unlit: "/images/train-station/2NoLight.png", // unlit image
                 caption: "LIGHTING COMPARISON"
             },
         ],
@@ -48,21 +50,21 @@ const collectionData: Record<string, { title: string; number: string; images: { 
         number: "04",
         images: [
             // Composition 1
-            { lit: "/images/West/Day.jpeg", caption: "COMPOSITION ONE - DAY" },
-            { lit: "/images/West/Dust.jpeg", caption: "COMPOSITION ONE - DUSK" },
-            { lit: "/images/West/Night.jpeg", caption: "COMPOSITION ONE - NIGHT" },
+            { lit: "/images/west/Day.jpeg", caption: "COMPOSITION ONE - DAY" },
+            { lit: "/images/west/Dust.jpeg", caption: "COMPOSITION ONE - DUSK" },
+            { lit: "/images/west/Night.jpeg", caption: "COMPOSITION ONE - NIGHT" },
             {
-                lit: "/images/West/Day.jpeg",
-                unlit: "/images/West/NoLight.jpg",
+                lit: "/images/west/Day.jpeg",
+                unlit: "/images/west/NoLight.jpg",
                 caption: "COMPOSITION ONE - LIGHTING COMPARISON"
             },
             // Composition 2
-            { lit: "/images/West/CDay.jpeg", caption: "COMPOSITION TWO - DAY" },
-            { lit: "/images/West/CDust.jpeg", caption: "COMPOSITION TWO - DUSK" },
-            { lit: "/images/West/CNight.jpeg", caption: "COMPOSITION TWO - NIGHT" },
+            { lit: "/images/west/CDay.jpeg", caption: "COMPOSITION TWO - DAY" },
+            { lit: "/images/west/CDust.jpeg", caption: "COMPOSITION TWO - DUSK" },
+            { lit: "/images/west/CNight.jpeg", caption: "COMPOSITION TWO - NIGHT" },
             {
-                lit: "/images/West/CDay.jpeg",
-                unlit: "/images/West/CNoLight.jpg",
+                lit: "/images/west/CDay.jpeg",
+                unlit: "/images/west/CNoLight.jpg",
                 caption: "COMPOSITION TWO - LIGHTING COMPARISON"
             },
         ],
@@ -71,16 +73,15 @@ const collectionData: Record<string, { title: string; number: string; images: { 
         title: "ATMOSPHERE PRACTICE",
         number: "05",
         images: [
-            { lit: "/images/Others/01.png", caption: "CYBERPUNK ALLEY" },
-            { lit: "/images/Others/02.png", caption: "INTERIOR SCENE" },
-            { lit: "/images/Others/CyberRestaurant.png", caption: "CYBER RESTAURANT" },
+            { lit: "/images/penguin/01.png", caption: "CYBERPUNK ALLEY" },
+            { lit: "/images/penguin/02.png", caption: "INTERIOR SCENE" },
+            { lit: "/images/penguin/CyberRestaurant.png", caption: "CYBER RESTAURANT" },
         ],
     },
 };
 
 export default function LightingBreakdownPage() {
-    const isCmsPreviewEnabled =
-        process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" || process.env.NEXT_PUBLIC_USE_JSON === "true";
+    const cmsPreviewEnabled = isCmsPreviewEnabled();
     const params = useParams();
     const id = params?.id as string;
     const [data, setData] = useState(collectionData["collection-1"]); // Default fallback
@@ -100,7 +101,7 @@ export default function LightingBreakdownPage() {
 
             {/* Header section */}
             <section className="pt-40 pb-20 px-8 md:px-16 border-b border-white/10">
-                <Link href={isCmsPreviewEnabled ? "/p/works/lighting-portfolio" : "/works/lighting-portfolio"} className="inline-flex items-center text-white/40 hover:text-white transition-colors uppercase tracking-widest text-xs font-mono mb-12">
+                <Link href={cmsPreviewEnabled ? "/p/works/lighting-portfolio" : "/works/lighting-portfolio"} className="inline-flex items-center text-white/40 hover:text-white transition-colors uppercase tracking-widest text-xs font-mono mb-12">
                     BACK TO PORTFOLIO
                 </Link>
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
@@ -131,19 +132,19 @@ export default function LightingBreakdownPage() {
                             >
                                 <div className="w-full bg-white/5 border border-white/10 relative overflow-hidden group">
                                     {img.unlit ? (
-                                        <BeforeAfterSlider
-                                            beforeImage={img.unlit}
-                                            afterImage={img.lit}
-                                            beforeAlt="Unlit pass"
-                                            afterAlt="Lit pass"
+                                        <ImageSlider
+                                            unlitSrc={img.unlit}
+                                            litSrc={img.lit}
+                                            alt={img.caption}
+                                            className="my-0"
                                         />
                                     ) : (
-                                        <img
+                                        <OptimizedImage
                                             src={img.lit}
                                             alt={img.caption}
+                                            width={1920}
+                                            height={1080}
                                             className="w-full h-auto object-contain"
-                                            loading="lazy"
-                                            decoding="async"
                                         />
                                     )}
                                 </div>

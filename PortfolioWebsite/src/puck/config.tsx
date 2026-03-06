@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Config } from "@measured/puck";
+import { OptimizedImage } from "../components/common/OptimizedImage";
+import BilingualText from "../components/common/BilingualText";
 import HighDensityInfoBlock from "../components/breakdowns/HighDensityInfoBlock";
 import BreakdownTriptych from "../components/breakdowns/BreakdownTriptych";
 import ImageSlider from "../components/breakdowns/ImageSlider";
@@ -7,8 +9,7 @@ import MediaTextCard from "../components/breakdowns/MediaTextCard";
 import MosaicGallery from "../components/breakdowns/MosaicGallery";
 import ParameterGrid from "../components/breakdowns/ParameterGrid";
 import TextSplitLayout from "../components/breakdowns/TextSplitLayout";
-import BreakdownHeadline from "../components/breakdowns/BreakdownHeadline";
-import BeforeAfterSlider from "../components/works/BeforeAfterSlider";
+import BreakdownSectionHeadline from "../components/breakdowns/BreakdownHeadline";
 import ContactFlashlightBlock from "../components/blocks/ContactFlashlightBlock";
 import ProjectSection from "../components/home/ProjectSection";
 import HeroSection from "../components/home/HeroSection";
@@ -16,9 +17,7 @@ import NextProjectBlock from "../components/blocks/NextProjectBlock";
 import LightingProjectCard from "../components/works/LightingProjectCard";
 import PortfolioHeroHeader from "../components/works/PortfolioHeroHeader";
 import WorksList from "../components/works/WorksList";
-
-const isCmsPreviewEnabled =
-  process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" || process.env.NEXT_PUBLIC_USE_JSON === "true";
+import { isCmsPreviewEnabled } from "@/lib/site-mode";
 
 function toCmsPreviewHref(href: string): string {
   if (href === "/") {
@@ -37,7 +36,7 @@ function toEditorAwareHref(href: string | undefined, editMode?: boolean): string
     return href;
   }
 
-  const normalizedHref = isCmsPreviewEnabled ? toCmsPreviewHref(href) : href;
+  const normalizedHref = isCmsPreviewEnabled() ? toCmsPreviewHref(href) : href;
 
   if (editMode) {
     if (normalizedHref === "/p" || normalizedHref === "/") {
@@ -64,6 +63,7 @@ export const config: Config = {
     // --------------------------------------------------------
     // Basic Layout Components
     // --------------------------------------------------------
+    // Legacy Puck type name kept for existing JSON content.
     HeroHeadline: {
       fields: {
         eyebrow: { type: "text", contentEditable: true },
@@ -76,7 +76,7 @@ export const config: Config = {
         eyebrow: "Portfolio",
         title: "Build your page with Puck",
         subtitle: "This is a local editor scaffold for the staged migration.",
-        heroImage: "/images/TrainStation/2Day.png",
+        heroImage: "/images/train-station/2Day.png",
         navLink: "",
       },
       render: ({ eyebrow, title, subtitle, heroImage, navLink }) => {
@@ -84,7 +84,14 @@ export const config: Config = {
           <header className="relative w-full h-[85vh] flex items-center justify-center overflow-hidden bg-black">
             {heroImage ? (
               <div className="absolute inset-0 w-full h-full">
-                <img src={heroImage} alt={title} className="w-full h-full object-cover opacity-70" />
+                <OptimizedImage
+                  src={heroImage}
+                  alt={title}
+                  fill
+                  sizes="100vw"
+                  priority
+                  className="w-full h-full object-cover opacity-70"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,1)_140%)] pointer-events-none" />
               </div>
@@ -121,21 +128,40 @@ export const config: Config = {
         );
       },
     },
+    BreakdownIntroHeader: {
+      fields: {
+        eyebrow: { type: "text", contentEditable: true },
+        title: { type: "text", contentEditable: true },
+        subtitle: { type: "textarea", contentEditable: true },
+        heroImage: { type: "text" },
+        navLink: { type: "text" },
+      },
+      defaultProps: {
+        eyebrow: "Portfolio",
+        title: "Build your page with Puck",
+        subtitle: "This is a local editor scaffold for the staged migration.",
+        heroImage: "/images/train-station/2Day.png",
+        navLink: "",
+      },
+      render: ({ eyebrow, title, subtitle, heroImage, navLink }) => {
+        return config.components.HeroHeadline.render({ eyebrow, title, subtitle, heroImage, navLink });
+      },
+    },
     RichParagraph: {
       fields: {
         content: { type: "textarea", contentEditable: true },
       },
       defaultProps: {
         content:
-          "Use this block to draft content in the local visual editor. Data persistence will be wired in phase 3.",
+          "这一段用于承载完整的项目说明，既要说明设计判断，也要解释执行路径与结果反馈；当中文信息被拉长到四五行时，版面依然需要保持节奏、留白与网格秩序。 English copy should remain readable beside the Chinese paragraph so you can compare weight, rhythm, and spacing consistency in one block.",
       },
       render: ({ content }) => {
         return (
           <article className="w-full py-24 md:py-32 relative z-20 bg-black">
             <div className="grid-container w-full">
               <div className="col-span-4 md:col-start-3 md:col-span-8">
-                <p className="text-xl md:text-[24px] font-medium leading-[2.2] text-white/90 text-justify font-futura tracking-wide">
-                  {content}
+                <p className="text-xl md:text-[24px] leading-[2.2] text-white/90 text-justify tracking-wide">
+                  <BilingualText text={content} />
                 </p>
               </div>
             </div>
@@ -152,13 +178,13 @@ export const config: Config = {
       defaultProps: {
         alt: "Puck image",
         caption: "Visual block",
-        src: "/images/TrainStation/2Day.png",
+        src: "/images/train-station/2Day.png",
       },
       render: ({ alt, caption, src }) => {
         return (
           <section className="mx-auto w-full max-w-5xl px-6 py-10 md:px-8">
             <figure className="overflow-hidden border border-white/15 bg-white/[0.03]">
-              <img alt={alt} className="h-auto w-full object-cover" loading="lazy" src={src} />
+              <OptimizedImage alt={alt} className="h-auto w-full object-cover" src={src} width={1920} height={1080} />
               {caption ? (
                 <figcaption className="border-t border-white/15 px-4 py-3 text-xs uppercase tracking-[0.18em] text-white/70">
                   {caption}
@@ -173,6 +199,7 @@ export const config: Config = {
     // --------------------------------------------------------
     // Advanced UI Breakdown Components
     // --------------------------------------------------------
+    // Legacy Puck type name kept for existing JSON content.
     BreakdownHeadline: {
       fields: {
         title: { type: "text", contentEditable: true }
@@ -180,34 +207,7 @@ export const config: Config = {
       defaultProps: {
         title: "BREAKDOWN SECTION"
       },
-      render: ({ title }) => <BreakdownHeadline title={title} />
-    },
-
-    BeforeAfterSlider: {
-      fields: {
-        beforeImage: { type: "text" },
-        afterImage: { type: "text" },
-        beforeAlt: { type: "text" },
-        afterAlt: { type: "text" },
-      },
-      defaultProps: {
-        beforeImage: "/images/TrainStation/2Day.png",
-        afterImage: "/images/TrainStation/2Night.png",
-        beforeAlt: "Before",
-        afterAlt: "After",
-      },
-      render: ({ beforeImage, afterImage, beforeAlt, afterAlt }) => {
-        return (
-          <section className="mx-auto w-full max-w-5xl px-6 py-10 md:px-8 aspect-video relative">
-            <BeforeAfterSlider
-              beforeImage={beforeImage}
-              afterImage={afterImage}
-              beforeAlt={beforeAlt}
-              afterAlt={afterAlt}
-            />
-          </section>
-        );
-      }
+      render: ({ title }) => <BreakdownSectionHeadline title={title} />
     },
 
     ImageSlider: {
@@ -217,8 +217,8 @@ export const config: Config = {
         alt: { type: "text" },
       },
       defaultProps: {
-        unlitSrc: "/images/TrainStation/2Day.png",
-        litSrc: "/images/TrainStation/2Night.png",
+        unlitSrc: "/images/train-station/2Day.png",
+        litSrc: "/images/train-station/2Night.png",
         alt: "Lighting Comparison",
       },
       render: ({ unlitSrc, litSrc, alt }) => <ImageSlider unlitSrc={unlitSrc} litSrc={litSrc} alt={alt} />
@@ -236,9 +236,9 @@ export const config: Config = {
       },
       defaultProps: {
         images: [
-          { src: "/images/TrainStation/2Day.png", caption: "Main View", _arrayItem: { id: "img-1" } },
-          { src: "/images/TrainStation/1Day.png", caption: "Detail 1", _arrayItem: { id: "img-2" } },
-          { src: "/images/TrainStation/3Day.png", caption: "Detail 2", _arrayItem: { id: "img-3" } },
+          { src: "/images/train-station/2Day.png", caption: "Main View", _arrayItem: { id: "img-1" } },
+          { src: "/images/train-station/Day.png", caption: "Detail 1", _arrayItem: { id: "img-2" } },
+          { src: "/images/train-station/Cut2Day.png", caption: "Detail 2", _arrayItem: { id: "img-3" } },
         ] as any
       },
       render: ({ images }) => <MosaicGallery images={images as any} />
@@ -253,8 +253,8 @@ export const config: Config = {
       },
       defaultProps: {
         title: "Breakdown Title",
-        description: "Detailed description of the process goes here.",
-        imageSrc: "/images/TrainStation/2Day.png",
+        description: "这里用于承载更完整的拆解说明，包括为什么这样组织信息、为什么在这个节点切换视觉重点，以及不同素材如何共同服务于同一条阅读路径。 The English layer sits in the same paragraph block so you can compare Chinese and Latin weight matching under the same spacing system.\n\n当正文被拉长到四五行时，这个模块依然应该保持节奏稳定，让标题、标签、图像与文字之间的重心关系不被打散。 A longer bilingual paragraph should still hold the grid without collapsing the visual hierarchy.",
+        imageSrc: "/images/train-station/2Day.png",
         tags: [
           { tag: "Lighting", _arrayItem: { id: "tag-1" } },
           { tag: "Unreal Engine", _arrayItem: { id: "tag-2" } }
@@ -282,15 +282,15 @@ export const config: Config = {
         col3Img: { type: "text" },
       },
       defaultProps: {
-        col1Title: "Column 1",
-        col1Text: "Column 1 description",
-        col1Img: "/images/TrainStation/2Day.png",
-        col2Title: "Column 2",
-        col2Text: "Column 2 description",
-        col2Img: "/images/TrainStation/2Night.png",
-        col3Title: "Column 3",
-        col3Text: "Column 3 description",
-        col3Img: "/images/City2026Add/001.PNG",
+        col1Title: "Context Mapping",
+        col1Text: "这一列用于说明问题的起点与观察维度，例如我首先锁定了哪些视觉矛盾、哪些叙事信息必须被优先传达，以及哪些环境元素会直接影响玩家的第一印象与阅读入口。 This first column defines the reading anchor and establishes what the viewer should notice before any system detail appears.",
+        col1Img: "/images/train-station/2Day.png",
+        col2Title: "System Decision",
+        col2Text: "这一列承接具体方法论，解释我如何在镜头、节奏、界面密度和情绪表达之间做取舍，并通过多次迭代把抽象概念转化成更清晰、更可执行的系统判断。 This middle block translates intention into method so Chinese and English can be checked side by side within the same weight logic.",
+        col2Img: "/images/train-station/2Night.png",
+        col3Title: "Visual Outcome",
+        col3Text: "最后一列聚焦结果与反馈，强调方案落地后带来的整体感受变化，以及为什么最终呈现能够同时满足氛围、功能性和画面秩序三方面的目标。 The final column closes the loop and verifies whether the implemented result still preserves hierarchy, contrast, and atmosphere.",
+        col3Img: "/images/city-2026/001.PNG",
       },
       render: ({
         col1Title,
@@ -337,10 +337,16 @@ export const config: Config = {
         }
       },
       defaultProps: {
-        mediaSrc: "/images/TrainStation/2Night.png",
+        mediaSrc: "/images/train-station/2Night.png",
         isVideo: "false",
         parameters: [
-          { name: "Global Illumination", value: "Lumen", description: "Real-time GI", _arrayItem: { id: "param-1" } }
+          {
+            name: "Global Illumination",
+            value: "Lumen",
+            description: "使用实时全局光照维持空间中的连续反弹与明暗过渡，让场景在长时间观察和多角度移动下依旧保持可信的体积关系与情绪稳定性。",
+            
+            _arrayItem: { id: "param-1" }
+          }
         ] as any
       },
       render: ({ mediaSrc, isVideo, parameters }) => (
@@ -372,7 +378,14 @@ export const config: Config = {
       defaultProps: {
         heading: "CORE CONCEPT",
         paragraphs: [
-          { text: "Detailing the creative approach behind the layout.", _arrayItem: { id: "para-1" } }
+          {
+            text: "这一段用于解释版式背后的核心判断：为什么标题需要先建立压倒性的识别度，为什么正文要在更克制的节奏里展开，以及图像、留白与信息密度之间如何共同形成一条稳定的阅读路径。",
+            _arrayItem: { id: "para-1" }
+          },
+          {
+            text: "当说明文字增长到四五行之后，模块不应该因为内容变长就失去秩序；相反，它应该通过网格、行高和段落间距的控制，把阅读压力重新转化成更明确的层次与更自然的浏览节奏。 The bilingual paragraph here is intentionally longer so you can inspect whether HanYi QiHei and Futura still feel balanced in the same block.",
+            _arrayItem: { id: "para-2" }
+          }
         ] as any,
         layoutVariant: "split-left"
       },
@@ -403,13 +416,13 @@ export const config: Config = {
       },
       defaultProps: {
         phase1Title: "Context",
-        phase1Content: "Information here.",
+        phase1Content: "这一部分用于交代问题背景与起始约束，说明项目在视觉、交互或系统层面最先暴露出的矛盾点，以及我为什么判断它值得被优先拆开分析。 This opening paragraph defines the problem frame before the implementation logic appears.",
         phase1Items: [] as any,
         phase2Title: "Architecture",
-        phase2Content: "Information here.",
+        phase2Content: "这一部分用于展开具体方案结构，强调我如何把复杂目标拆成更可执行的层级，并通过更清楚的步骤、参数与依赖关系来维持整体实现的可控性。 The English line is kept in the same tone so bilingual text can stress-test the layout.",
         phase2Items: [] as any,
         phase3Title: "Execution",
-        phase3Content: "Information here."
+        phase3Content: "这一部分用于回收方法与结果，说明在真正落地之后，哪些判断被验证、哪些问题被修正，以及最终呈现为什么能够同时满足氛围、功能与叙事表达。 This concluding paragraph checks whether the final composition still reads clearly under longer mixed-language content."
       },
       render: (props) => {
         // Construct the phase objects required by the component
@@ -446,7 +459,7 @@ export const config: Config = {
       defaultProps: {
         title: "NEW PROJECT",
         subtitle: "Design / Development",
-        imageSrc: "/images/TrainStation/2Day.png",
+        imageSrc: "/images/train-station/2Day.png",
         link: "/p/works",
         index: 0
       },
@@ -488,6 +501,28 @@ export const config: Config = {
         />
       )
     },
+    LightingCollectionHeroHeader: {
+      fields: {
+        title: { type: "text" },
+        subtitle: { type: "text" },
+        descriptionLine1: { type: "text" },
+        descriptionLine2: { type: "text" },
+      },
+      defaultProps: {
+        title: "LIGHTING",
+        subtitle: "PORTFOLIO",
+        descriptionLine1: "A Curated Selection",
+        descriptionLine2: "Unreal Engine 5",
+      },
+      render: ({ title, subtitle, descriptionLine1, descriptionLine2 }) => (
+        <PortfolioHeroHeader
+          title={title}
+          subtitle={subtitle}
+          descriptionLine1={descriptionLine1}
+          descriptionLine2={descriptionLine2}
+        />
+      )
+    },
 
     LightingProjectCard: {
       fields: {
@@ -501,7 +536,7 @@ export const config: Config = {
         id: "collection-1",
         number: "01",
         title: "NEW COLLECTION",
-        coverImage: "/images/City2026Add/002.PNG",
+        coverImage: "/images/city-2026/002.PNG",
         href: "/p/works/lighting-atmosphere",
       },
       render: ({ id, number, title, coverImage, href, editMode }) => (
@@ -538,7 +573,7 @@ export const config: Config = {
             href: "/p/works/lighting-portfolio",
             title: "LIGHTING PORTFOLIO",
             category: "Lighting Art",
-            imageSrc: "/images/TrainStation/2Day.png",
+            imageSrc: "/images/train-station/2Day.png",
             desc: "A curated collection of lighting and mood practices"
           }
         ]
@@ -562,7 +597,7 @@ export const config: Config = {
       defaultProps: {
         nextId: "penguin",
         nextName: "PENGUIN TRADING CO.",
-        nextBg: "/images/Others/CyberRestaurant.png"
+        nextBg: "/images/penguin/CyberRestaurant.png"
       },
       render: ({ nextId, nextName, nextBg, editMode }) => (
         <NextProjectBlock

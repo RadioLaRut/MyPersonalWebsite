@@ -1,13 +1,14 @@
 "use client";
 import React, { useEffect, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { OptimizedImage } from "@/components/common/OptimizedImage";
+import { isCmsPreviewEnabled } from "@/lib/site-mode";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function ClientBreakdown({ data }: { data: any }) {
-  const isCmsPreviewEnabled =
-    process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" || process.env.NEXT_PUBLIC_USE_JSON === "true";
-  const worksIndexHref = isCmsPreviewEnabled ? "/p/works" : "/works";
-  const nextProjectHref = isCmsPreviewEnabled ? `/p/works/${data.nextId}` : `/works/${data.nextId}`;
+  const cmsPreviewEnabled = isCmsPreviewEnabled();
+  const worksIndexHref = cmsPreviewEnabled ? "/p/works" : "/works";
+  const nextProjectHref = cmsPreviewEnabled ? `/p/works/${data.nextId}` : `/works/${data.nextId}`;
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -65,9 +66,12 @@ export default function ClientBreakdown({ data }: { data: any }) {
           className="absolute inset-0 w-full h-full"
           style={{ y: heroY }}
         >
-          <img
+          <OptimizedImage
             src={data.heroImage}
             alt={data.title}
+            fill
+            sizes="100vw"
+            priority
             className="w-full h-full object-cover opacity-70"
           />
 
@@ -123,9 +127,11 @@ export default function ClientBreakdown({ data }: { data: any }) {
               {data.col1.text}
             </p>
             <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-              <img
+              <OptimizedImage
                 src={data.col1.img}
                 alt={data.col1.title}
+                width={1920}
+                height={1080}
                 className="w-full h-auto object-contain block"
               />
             </div>
@@ -139,9 +145,11 @@ export default function ClientBreakdown({ data }: { data: any }) {
               {data.col2.text}
             </p>
             <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-              <img
+              <OptimizedImage
                 src={data.col2.img}
                 alt={data.col2.title}
+                width={1920}
+                height={1080}
                 className="w-full h-auto object-contain block"
               />
             </div>
@@ -155,9 +163,11 @@ export default function ClientBreakdown({ data }: { data: any }) {
               {data.col3.text}
             </p>
             <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-              <img
+              <OptimizedImage
                 src={data.col3.img}
                 alt={data.col3.title}
+                width={1920}
+                height={1080}
                 className="w-full h-auto object-contain block"
               />
             </div>
@@ -174,9 +184,11 @@ export default function ClientBreakdown({ data }: { data: any }) {
               key={index}
               className="w-full h-screen relative bg-black fade-in-section opacity-0 translate-y-8 transition-all duration-1000 ease-out"
             >
-              <img
+              <OptimizedImage
                 src={imgSrc}
                 alt={`${data.title} Gallery ${index}`}
+                fill
+                sizes="100vw"
                 className="absolute inset-0 w-full h-full object-contain opacity-100 pointer-events-none"
               />
             </div>
@@ -191,9 +203,11 @@ export default function ClientBreakdown({ data }: { data: any }) {
           className="group block relative h-[40vh] md:h-[60vh] overflow-hidden w-full interactive bg-black"
         >
           <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 z-10 transition-colors duration-700 pointer-events-none"></div>
-          <img
+          <OptimizedImage
             src={data.nextBg}
             alt="Next Project"
+            fill
+            sizes="100vw"
             className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-105 transition-all duration-700 ease-out opacity-40 group-hover:opacity-100"
           />
 
@@ -206,9 +220,8 @@ export default function ClientBreakdown({ data }: { data: any }) {
             </h2>
           </div>
         </a>
-        <div className="bg-black py-8 px-8 md:px-12 flex flex-col md:flex-row justify-between items-center text-[10px] sm:text-xs font-mono text-white/40 tracking-widest border-t border-white/10">
-          <span className="mb-2 md:mb-0">© 2026 江承彦 / JIANG CHENGYAN</span>
-          <span>Designed for Darkness</span>
+        <div className="bg-black py-8 px-8 md:px-12 flex justify-center items-center text-[10px] sm:text-xs font-mono text-white/40 tracking-widest border-t border-white/10">
+          <span>© 2026 江承彦 / JIANG CHENGYAN</span>
         </div>
       </footer>
     </main>

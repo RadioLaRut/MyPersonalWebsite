@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { usesJsonContent } from '@/lib/site-mode';
 
 type WorkBlockProps = Record<string, unknown>;
 type WorkContentItem = {
@@ -50,7 +51,7 @@ export function loadWorkData(id: string) {
     return null;
   }
 
-  const useJson = process.env.NEXT_PUBLIC_USE_JSON === 'true';
+  const useJson = usesJsonContent();
 
   if (!useJson) {
     return null;

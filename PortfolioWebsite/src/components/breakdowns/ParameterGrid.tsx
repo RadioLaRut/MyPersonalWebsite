@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
+import BilingualText from '@/components/common/BilingualText';
+import { OptimizedImage } from '@/components/common/OptimizedImage';
 
 interface Parameter {
     name: string;
@@ -34,7 +35,7 @@ export default function ParameterGrid({
                         className="w-full h-full object-cover opacity-80"
                     />
                 ) : (
-                    <Image
+                    <OptimizedImage
                         src={mediaSrc}
                         alt="PCG Generation Overview"
                         fill
@@ -50,17 +51,17 @@ export default function ParameterGrid({
             {parameters && parameters.length > 0 && (
                 <div className="grid-container">
                     {parameters.map((param, i) => (
-                        <div key={i} className="col-span-2 md:col-span-3 border-t border-white/20 pt-6 group">
-                            <h4 className="font-mono text-white/50 text-[10px] md:text-xs tracking-[0.3em] uppercase mb-4 transition-colors group-hover:text-white">
+                        <div key={i} className="col-span-4 md:col-span-3 border-t border-white/20 pt-6 group">
+                            <h4 className="font-mono text-white/50 text-[10px] md:text-xs tracking-[0.24em] uppercase mb-4 transition-colors group-hover:text-white break-words">
                                 {param.name}
                             </h4>
                             {param.value && (
-                                <div className="text-4xl md:text-5xl font-black text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.4)] transition-all duration-300 group-hover:[-webkit-text-stroke:1px_rgba(255,255,255,1)] group-hover:ml-2 mb-4 font-futura">
+                                <div className="text-3xl md:text-5xl font-black text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.4)] transition-all duration-300 group-hover:[-webkit-text-stroke:1px_rgba(255,255,255,1)] group-hover:ml-2 mb-4 font-futura break-words leading-[1.05]">
                                     {param.value}
                                 </div>
                             )}
-                            <p className="font-futura text-white/50 text-sm md:text-base leading-relaxed">
-                                {param.description}
+                            <p className="text-white/50 text-sm md:text-base leading-[1.9] break-words max-w-[32ch]">
+                                <BilingualText text={param.description} />
                             </p>
                         </div>
                     ))}

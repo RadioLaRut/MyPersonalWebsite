@@ -12,7 +12,7 @@
                 "eyebrow": "Project 07",
                 "title": "环境与灯光氛围试炼",
                 "subtitle": "",
-                "heroImage": "/images/Others/01.png",
+                "heroImage": "/images/penguin/01.png",
                 "navLink": ""
             }
         },
@@ -29,13 +29,13 @@
                 "id": "triptych-1",
                 "col1Title": "霓虹折射",
                 "col1Text": "湿润材质上的全实时屏幕空间反射及高强对比人造主光源布置。",
-                "col1Img": "/images/Others/CyberRestaurant.png",
+                "col1Img": "/images/penguin/CyberRestaurant.png",
                 "col2Title": "体积情绪",
                 "col2Text": "使用厚度极高且带有物理色散的粒子雾系统勾勒极端的空间剪影之美。",
-                "col2Img": "/images/Others/02.png",
+                "col2Img": "/images/penguin/02.png",
                 "col3Title": "破败微距",
                 "col3Text": "探索贴图与模型瑕疵如何在微妙斜侧光的照耀下获得照片级的张力。",
-                "col3Img": "/images/Others/01.png"
+                "col3Img": "/images/penguin/01.png"
             }
         },
         {
@@ -44,84 +44,84 @@
                 "id": "gallery-1",
                 "images": [
                     {
-                        "src": "/images/West/CDay.jpeg",
+                        "src": "/images/west/CDay.jpeg",
                         "caption": "West CDay",
                         "_arrayItem": {
                             "id": "img-1"
                         }
                     },
                     {
-                        "src": "/images/West/CDust.jpeg",
+                        "src": "/images/west/CDust.jpeg",
                         "caption": "West CDust",
                         "_arrayItem": {
                             "id": "img-2"
                         }
                     },
                     {
-                        "src": "/images/West/CNight.jpeg",
+                        "src": "/images/west/CNight.jpeg",
                         "caption": "West CNight",
                         "_arrayItem": {
                             "id": "img-3"
                         }
                     },
                     {
-                        "src": "/images/West/CNoLight.jpg",
+                        "src": "/images/west/CNoLight.jpg",
                         "caption": "West CNoLight",
                         "_arrayItem": {
                             "id": "img-4"
                         }
                     },
                     {
-                        "src": "/images/West/Day.jpeg",
+                        "src": "/images/west/Day.jpeg",
                         "caption": "West Day",
                         "_arrayItem": {
                             "id": "img-5"
                         }
                     },
                     {
-                        "src": "/images/West/Dust.jpeg",
+                        "src": "/images/west/Dust.jpeg",
                         "caption": "West Dust",
                         "_arrayItem": {
                             "id": "img-6"
                         }
                     },
                     {
-                        "src": "/images/West/Night.jpeg",
+                        "src": "/images/west/Night.jpeg",
                         "caption": "West Night",
                         "_arrayItem": {
                             "id": "img-7"
                         }
                     },
                     {
-                        "src": "/images/West/NoLight.jpg",
+                        "src": "/images/west/NoLight.jpg",
                         "caption": "West NoLight",
                         "_arrayItem": {
                             "id": "img-8"
                         }
                     },
                     {
-                        "src": "/images/雨林/Output.0050.png",
+                        "src": "/images/rainforest/Output.0050.png",
                         "caption": "雨林 0050",
                         "_arrayItem": {
                             "id": "img-9"
                         }
                     },
                     {
-                        "src": "/images/雨林/Output.0101.png",
+                        "src": "/images/rainforest/Output.0101.png",
                         "caption": "雨林 0101",
                         "_arrayItem": {
                             "id": "img-10"
                         }
                     },
                     {
-                        "src": "/images/雨林/Shot005.0002.png",
+                        "src": "/images/rainforest/Shot005.0002.png",
                         "caption": "雨林 Shot005",
                         "_arrayItem": {
                             "id": "img-11"
                         }
                     },
                     {
-                        "src": "/images/雨林/Version2Output.0029.png",
+                        "src": "/images/rainforest/Version2Output.0029.png",
                         "caption": "雨林 V2 0029",
                         "_arrayItem": {
                             "id": "img-12"
@@ -136,7 +136,7 @@
                 "id": "next-1",
                 "nextId": "epic-stage",
                 "nextName": "STAGE LIGHTING (EPIC)",
-                "nextBg": "/images/Others/Epic.png"
+                "nextBg": "/images/penguin/Epic.png"
             }
         }
     ]

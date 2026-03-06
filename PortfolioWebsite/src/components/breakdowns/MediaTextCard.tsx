@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
+import BilingualText from '@/components/common/BilingualText';
+import { OptimizedImage } from '@/components/common/OptimizedImage';
 
 interface MediaTextCardProps {
     title: string;
@@ -16,10 +17,15 @@ export default function MediaTextCard({
     imageSrc,
     tags
 }: MediaTextCardProps) {
+    const paragraphs = description
+        .split('\n')
+        .map((paragraph) => paragraph.trim())
+        .filter(Boolean);
+
     return (
         <div className="w-full my-24 grid-container">
             {/* Left Column: Text & Context */}
-            <div className="col-span-4 md:col-span-4 flex flex-col justify-center">
+            <div className="col-span-4 md:col-span-4 flex flex-col justify-start">
                 {tags && tags.length > 0 && (
                     <div className="flex flex-wrap gap-3 mb-6">
                         {tags.map((tag, i) => (
@@ -30,13 +36,15 @@ export default function MediaTextCard({
                     </div>
                 )}
 
-                <h3 className="text-4xl md:text-5xl font-black tracking-tighter mb-8 leading-[0.9] font-futura">
+                <h3 className="text-4xl md:text-5xl font-black tracking-tighter mb-8 leading-[0.95] font-futura break-words">
                     {title}
                 </h3>
 
-                <div className="font-futura text-white/60 tracking-wide leading-relaxed space-y-4">
-                    {description.split('\\n').map((paragraph, i) => (
-                        <p key={i}>{paragraph}</p>
+                <div className="text-white/60 tracking-[0.02em] text-base md:text-lg leading-[1.95] space-y-5 max-w-none md:max-w-[36ch]">
+                    {paragraphs.map((paragraph, i) => (
+                        <p key={i} className="text-balance">
+                            <BilingualText text={paragraph} />
+                        </p>
                     ))}
                 </div>
             </div>
@@ -45,7 +53,7 @@ export default function MediaTextCard({
             <div className="col-span-4 md:col-span-8 mt-12 md:mt-0 relative group">
                 {imageSrc ? (
                     <div className="relative w-full overflow-hidden rounded-sm">
-                        <Image
+                        <OptimizedImage
                             src={imageSrc}
                             alt={title}
                             width={0}

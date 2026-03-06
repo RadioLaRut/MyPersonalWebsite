@@ -17,7 +17,7 @@
                 "id": "proj-1",
                 "title": "LIGHTING PORTFOLIO",
                 "subtitle": "Lighting Art / Level Mood",
-                "imageSrc": "/images/TrainStation/2Day.png",
+                "imageSrc": "/images/train-station/2Day.png",
                 "link": "/p/works/lighting-portfolio",
                 "index": 0
             }
@@ -28,7 +28,7 @@
                 "id": "proj-2",
                 "title": "SLAY THE VIRUS",
                 "subtitle": "UI / Poster Design / Game Design",
-                "imageSrc": "/images/STV/STVTitle.png",
+                "imageSrc": "/images/slay-the-virus/STVTitle.png",
                 "link": "/p/works/slay-the-virus",
                 "index": 1
             }
@@ -39,7 +39,7 @@
                 "id": "proj-3",
                 "title": "WOW, OTTO!",
                 "subtitle": "Lead Designer / Trackball Narrative",
-                "imageSrc": "/images/Others/CyberRestaurant.png",
+                "imageSrc": "/images/penguin/CyberRestaurant.png",
                 "link": "/p/works/wow-otto",
                 "index": 2
             }
@@ -50,7 +50,7 @@
                 "id": "proj-4",
                 "title": "I'M EXPLODE WITH U",
                 "subtitle": "Lead Designer / Multiplayer Platformer",
-                "imageSrc": "/images/Others/CyberRestaurant.png",
+                "imageSrc": "/images/penguin/CyberRestaurant.png",
                 "link": "/p/works/im-explode",
                 "index": 3
             }
@@ -61,7 +61,7 @@
                 "id": "proj-5",
                 "title": "THE PROMETHEUS",
                 "subtitle": "Lead Designer / Lighting / Stealth",
-                "imageSrc": "/images/Prometheus/PrometheusTitle.png",
+                "imageSrc": "/images/prometheus/PrometheusTitle.png",
                 "link": "/p/works/prometheus",
                 "index": 4
             }
@@ -72,7 +72,7 @@
                 "id": "proj-6",
                 "title": "SOMEWHERE BETWEEN PARALLAX",
                 "subtitle": "UI Design / Interactive VR",
-                "imageSrc": "/images/Others/CyberRestaurant.png",
+                "imageSrc": "/images/penguin/CyberRestaurant.png",
                 "link": "/p/works/parallax",
                 "index": 5
             }
@@ -83,7 +83,7 @@
                 "id": "proj-7",
                 "title": "INSIGHT",
                 "subtitle": "Lead Designer / Programmer / Writer",
-                "imageSrc": "/images/Insight/InsightCover.png",
+                "imageSrc": "/images/insight/InsightCover.png",
                 "link": "/p/works/insight",
                 "index": 6
             }
@@ -94,7 +94,7 @@
                 "id": "proj-8",
                 "title": "PENGUIN TRADING CO.",
                 "subtitle": "Lead Designer / Tech Art / PM",
-                "imageSrc": "/images/Others/CyberRestaurant.png",
+                "imageSrc": "/images/penguin/CyberRestaurant.png",
                 "link": "/p/works/penguin",
                 "index": 7
             }
@@ -105,7 +105,7 @@
                 "id": "proj-9",
                 "title": "HOUDINI PROCEDURAL GENERATION",
                 "subtitle": "Procedural Env / PCG",
-                "imageSrc": "/images/Others/PCG/PCG01.png",
+                "imageSrc": "/images/penguin/PCG/PCG01.png",
                 "link": "/p/works/pcg-town",
                 "index": 8
             }
@@ -116,7 +116,7 @@
                 "id": "proj-10",
                 "title": "EPIC STAGE LIGHTING",
                 "subtitle": "Stage Lighting / Sequencer",
-                "imageSrc": "/images/Others/Epic.png",
+                "imageSrc": "/images/penguin/Epic.png",
                 "link": "/p/works/epic-stage",
                 "index": 9
             }

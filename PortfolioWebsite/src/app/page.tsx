@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
+import { isCmsPreviewEnabled } from "@/lib/site-mode";
 
 export default function Home() {
-  if (process.env.NEXT_PUBLIC_ENABLE_PUCK === "true") {
+  if (isCmsPreviewEnabled()) {
     redirect("/p");
   }
 

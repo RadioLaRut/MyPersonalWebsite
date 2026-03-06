@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { isCmsPreviewEnabled } from "@/lib/site-mode";
 
 interface WorkItem {
     id: string;
@@ -17,8 +18,7 @@ export interface WorksListProps {
 }
 
 export default function WorksList({ heading = "All Selected Works", works = [] }: WorksListProps) {
-    const isCmsPreviewEnabled =
-        process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" || process.env.NEXT_PUBLIC_USE_JSON === "true";
+    const cmsPreviewEnabled = isCmsPreviewEnabled();
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const [isMobile, setIsMobile] = useState(false);
     const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
@@ -31,7 +31,7 @@ export default function WorksList({ heading = "All Selected Works", works = [] }
     }, []);
 
     const handleInteraction = (index: number) => {
-        const fallbackHref = isCmsPreviewEnabled ? `/p/works/${works[index].id}` : `/works/${works[index].id}`;
+        const fallbackHref = cmsPreviewEnabled ? `/p/works/${works[index].id}` : `/works/${works[index].id}`;
         const targetHref = works[index].href ?? fallbackHref;
         if (isMobile) {
             if (expandedIndex === index) {
