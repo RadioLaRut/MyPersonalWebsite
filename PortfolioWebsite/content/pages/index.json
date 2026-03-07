@@ -26,10 +26,10 @@
             "type": "ProjectSection",
             "props": {
                 "id": "proj-2",
-                "title": "SLAY THE VIRUS",
-                "subtitle": "UI / Poster Design / Game Design",
-                "imageSrc": "/images/slay-the-virus/STVTitle.png",
-                "link": "/p/works/slay-the-virus",
+                "title": "企鹅贸易公司",
+                "subtitle": "Lead Designer / Tech Art / Project Manager",
+                "imageSrc": "/images/penguin/placeholder.png",
+                "link": "/p/works/penguin-trading-company",
                 "index": 1
             }
         },
@@ -37,88 +37,11 @@
             "type": "ProjectSection",
             "props": {
                 "id": "proj-3",
-                "title": "WOW, OTTO!",
-                "subtitle": "Lead Designer / Trackball Narrative",
-                "imageSrc": "/images/penguin/CyberRestaurant.png",
-                "link": "/p/works/wow-otto",
-                "index": 2
-            }
-        },
-        {
-            "type": "ProjectSection",
-            "props": {
-                "id": "proj-4",
-                "title": "I'M EXPLODE WITH U",
-                "subtitle": "Lead Designer / Multiplayer Platformer",
-                "imageSrc": "/images/penguin/CyberRestaurant.png",
-                "link": "/p/works/im-explode",
-                "index": 3
-            }
-        },
-        {
-            "type": "ProjectSection",
-            "props": {
-                "id": "proj-5",
-                "title": "THE PROMETHEUS",
-                "subtitle": "Lead Designer / Lighting / Stealth",
-                "imageSrc": "/images/prometheus/PrometheusTitle.png",
-                "link": "/p/works/prometheus",
-                "index": 4
-            }
-        },
-        {
-            "type": "ProjectSection",
-            "props": {
-                "id": "proj-6",
-                "title": "SOMEWHERE BETWEEN PARALLAX",
-                "subtitle": "UI Design / Interactive VR",
-                "imageSrc": "/images/penguin/CyberRestaurant.png",
-                "link": "/p/works/parallax",
-                "index": 5
-            }
-        },
-        {
-            "type": "ProjectSection",
-            "props": {
-                "id": "proj-7",
                 "title": "INSIGHT",
                 "subtitle": "Lead Designer / Programmer / Writer",
-                "imageSrc": "/images/insight/InsightCover.png",
+                "imageSrc": "/images/insight/InsightOnlyCover.png",
                 "link": "/p/works/insight",
-                "index": 6
-            }
-        },
-        {
-            "type": "ProjectSection",
-            "props": {
-                "id": "proj-8",
-                "title": "PENGUIN TRADING CO.",
-                "subtitle": "Lead Designer / Tech Art / PM",
-                "imageSrc": "/images/penguin/CyberRestaurant.png",
-                "link": "/p/works/penguin",
-                "index": 7
-            }
-        },
-        {
-            "type": "ProjectSection",
-            "props": {
-                "id": "proj-9",
-                "title": "HOUDINI PROCEDURAL GENERATION",
-                "subtitle": "Procedural Env / PCG",
-                "imageSrc": "/images/penguin/PCG/PCG01.png",
-                "link": "/p/works/pcg-town",
-                "index": 8
-            }
-        },
-        {
-            "type": "ProjectSection",
-            "props": {
-                "id": "proj-10",
-                "title": "EPIC STAGE LIGHTING",
-                "subtitle": "Stage Lighting / Sequencer",
-                "imageSrc": "/images/penguin/Epic.png",
-                "link": "/p/works/epic-stage",
-                "index": 9
+                "index": 2
             }
         }
     ]

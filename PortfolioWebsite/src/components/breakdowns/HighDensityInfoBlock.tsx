@@ -50,25 +50,6 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3 }: HighDen
                         <BilingualText text={phase2.content} />
                     </p>
 
-                    {/* Abstract Data Flow Visual */}
-                    <div className="w-full mt-6 p-4 border border-white/10 bg-[#050505]">
-                        <div className="flex items-center justify-between mb-2">
-                            <div className="text-[9px] font-mono text-emerald-500/80">INPUT NODE</div>
-                            <div className="text-[9px] font-mono text-blue-500/80">PROCESSOR</div>
-                        </div>
-                        <div className="flex items-center gap-2 w-full h-8 opacity-60">
-                            <div className="h-full w-1/4 border border-emerald-500/20 bg-emerald-950/20"></div>
-                            <div className="flex-1 border-t border-dashed border-white/20"></div>
-                            <div className="h-full w-1/3 border border-blue-500/20 bg-blue-950/20"></div>
-                            <div className="flex-1 border-t border-dashed border-white/20"></div>
-                            <div className="h-full w-4 flex flex-col justify-between">
-                                <div className="w-full h-[2px] bg-white/40"></div>
-                                <div className="w-full h-[2px] bg-white/40"></div>
-                                <div className="w-full h-[2px] bg-white/40"></div>
-                            </div>
-                        </div>
-                    </div>
-
                     {phase2.items && (
                         <div className="space-y-3 mt-8 pt-6 border-t border-white/10">
                             {phase2.items.map((item, i) => (

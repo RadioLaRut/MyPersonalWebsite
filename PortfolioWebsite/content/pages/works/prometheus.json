@@ -8,10 +8,10 @@
         {
             "type": "HeroHeadline",
             "props": {
-                "id": "hero-1",
+                "id": "prometheus-hero-1",
                 "eyebrow": "Project 04",
                 "title": "THE PROMETHEUS PROJECT",
-                "subtitle": "",
+                "subtitle": "潜行拍摄游戏",
                 "heroImage": "/images/prometheus/PrometheusTitle.png",
                 "navLink": "https://www.bilibili.com/video/BV1GSGmzBEx8"
             }
@@ -19,50 +19,100 @@
         {
             "type": "RichParagraph",
             "props": {
-                "id": "desc-1",
-                "content": "一款在 Unreal Engine 5 中制作的硬核潜行游玩体验，玩家扮演一名记者深入隐秘的政府大楼，并意外发现了惊天秘密的「普罗米修斯」生化实验计划。我在其中身兼系统策划、关卡设计与全职灯光师。完成白盒测试与玩法闭环搭建后，交由美术细化并由我进行最终的电影感打光包装。"
+                "id": "prometheus-desc-1",
+                "content": "PROMETHEUS 是一款潜行拍摄游戏。在类似《万神殿》的科幻世界观中，各国政府秘密研发 Upload Intelligence 技术。玩家扮演一位记者，潜入政府大楼试图曝光这一惊人秘密。游戏的核心机制是资源管理与策略规划：玩家携带有限数量的胶卷，需要在躲避巡逻的同时，拍摄尽可能多的目标人物以获取更高分数。不同目标具有不同的优先级权重，玩家还可以操纵场景中的机关来创造拍摄机会或规避风险。这是一个在 1-2 周内完成的课程作业 Demo，我主要负责关卡设计、机制设计和项目管理。"
+            }
+        },
+        {
+            "type": "HighDensityInfoBlock",
+            "props": {
+                "id": "prometheus-info-1",
+                "phase1Title": "项目背景",
+                "phase1Subtitle": "Context",
+                "phase1Content": "作为虚幻引擎动画创作课程的结课作业，我与 2-3 人小团队在 1-2 周内完成了这个潜行拍摄游戏 Demo。项目灵感来自《万神殿》的科幻世界观，探索 Upload Intelligence 技术带来的伦理困境。",
+                "phase1Items": [
+                    { "label": "引擎", "value": "Unreal Engine 5", "_arrayItem": { "id": "item-1" } },
+                    { "label": "开发周期", "value": "1-2 周", "_arrayItem": { "id": "item-2" } },
+                    { "label": "团队规模", "value": "2-3 人", "_arrayItem": { "id": "item-3" } },
+                    { "label": "项目性质", "value": "课程作业", "_arrayItem": { "id": "item-4" } }
+                ],
+                "phase2Title": "核心机制",
+                "phase2Subtitle": "Core Mechanics",
+                "phase2Content": "游戏结合了资源管理、潜行和策略规划三大核心机制。玩家需要在有限的胶卷约束下，规划最优的拍摄路线，同时利用场景机关创造机会或规避风险。目标优先级系统鼓励玩家做出策略性选择。",
+                "phase2Items": [],
+                "phase3Title": "我的贡献",
+                "phase3Subtitle": "My Role",
+                "phase3Content": "我主要负责关卡设计和项目管理。设计了巡逻路径、拍摄点位布局和机关交互逻辑，确保玩家在紧张的潜行过程中有多种策略选择。同时协调团队分工，在短时间内完成了可玩的 Demo。",
+                "phase3ImageSrc": ""
+            }
+        },
+        {
+            "type": "BreakdownHeadline",
+            "props": {
+                "id": "prometheus-headline-1",
+                "title": "游戏机制设计"
+            }
+        },
+        {
+            "type": "MediaTextCard",
+            "props": {
+                "id": "prometheus-card-1",
+                "title": "资源管理与策略规划",
+                "description": "玩家携带有限数量的胶卷，每次拍摄都需要权衡：是拍摄当前目标，还是保留胶卷等待更高价值的目标？不同目标人物具有不同的分数权重，这要求玩家在探索过程中识别优先级，做出策略性决策。",
+                "imageSrc": "",
+                "tags": [
+                    { "tag": "资源管理", "_arrayItem": { "id": "tag-1" } },
+                    { "tag": "策略规划", "_arrayItem": { "id": "tag-2" } }
+                ]
+            }
+        },
+        {
+            "type": "MediaTextCard",
+            "props": {
+                "id": "prometheus-card-2",
+                "title": "场景机关与环境交互",
+                "description": "玩家可以操纵场景中的机关来改变环境状态，创造拍摄机会或规避巡逻敌人。这种类似 RTT 的机制增加了游戏的策略深度，玩家需要观察环境、规划行动路线，而不仅仅是简单的躲避。",
+                "imageSrc": "",
+                "tags": [
+                    { "tag": "环境交互", "_arrayItem": { "id": "tag-3" } },
+                    { "tag": "机关设计", "_arrayItem": { "id": "tag-4" } }
+                ]
             }
         },
         {
             "type": "BreakdownTriptych",
             "props": {
-                "id": "triptych-1",
-                "col1Title": "关卡设计 (Level Design)",
-                "col1Text": "白盒封块与秘密潜行的死角巡逻路径编排构建。",
+                "id": "prometheus-triptych-1",
+                "col1Title": "关卡设计",
+                "col1Text": "设计了巡逻路径、拍摄点位布局和机关交互逻辑，确保玩家有多种策略选择。",
                 "col1Img": "/images/prometheus/Shot01.jpg",
-                "col2Title": "沉浸式打光 (Lighting)",
-                "col2Text": "通过高对比阴影叙述视觉重量，直接辅助潜行潜藏机制的判断基准。",
+                "col2Title": "潜行机制",
+                "col2Text": "通过视觉和听觉系统，玩家需要躲避巡逻敌人，寻找最佳拍摄时机。",
                 "col2Img": "/images/prometheus/Shot02.jpg",
-                "col3Title": "智能系统 (Systems)",
-                "col3Text": "编写了 AI 视觉感知锥与多环境表面声响探测事件体系。",
+                "col3Title": "拍摄系统",
+                "col3Text": "玩家通过相机拍摄目标人物，不同目标具有不同的分数权重。",
                 "col3Img": "/images/prometheus/Shot04.jpg"
             }
         },
         {
             "type": "MosaicGallery",
             "props": {
-                "id": "gallery-1",
+                "id": "prometheus-gallery-1",
                 "images": [
                     {
                         "src": "/images/prometheus/Shot03.jpg",
-                        "caption": "截图 03",
-                        "_arrayItem": {
-                            "id": "img-1"
-                        }
+                        "caption": "游戏场景",
+                        "_arrayItem": { "id": "img-1" }
                     },
                     {
                         "src": "/images/prometheus/Shot05.jpg",
-                        "caption": "截图 05",
-                        "_arrayItem": {
-                            "id": "img-2"
-                        }
+                        "caption": "潜行拍摄",
+                        "_arrayItem": { "id": "img-2" }
                     },
                     {
                         "src": "/images/prometheus/Shot06.jpg",
-                        "caption": "截图 06",
-                        "_arrayItem": {
-                            "id": "img-3"
-                        }
+                        "caption": "环境交互",
+                        "_arrayItem": { "id": "img-3" }
                     }
                 ]
             }

@@ -1,0 +1,92 @@
+{
+    "root": {
+        "props": {
+            "title": "我跟你爆了"
+        }
+    },
+    "content": [
+        {
+            "type": "HeroHeadline",
+            "props": {
+                "id": "explod-hero-1",
+                "eyebrow": "Project 07",
+                "title": "我跟你爆了",
+                "subtitle": "I'm Explod With U",
+                "heroImage": "/images/explod/placeholder.png",
+                "navLink": ""
+            }
+        },
+        {
+            "type": "RichParagraph",
+            "props": {
+                "id": "explod-desc-1",
+                "content": "《我跟你爆了》是一款创新的物理驱动多人对战游戏，核心机制是利用子弹的后坐力控制角色移动。玩家需要通过射击产生的反冲力在场地中移动，并将对手推向地图上的尖刺物体以获得胜利。这种独特的移动机制将射击与位移深度结合，创造了紧张刺激的策略对抗体验。游戏在 Global Game Jam 2025 中完成，获得了站点第三名的成绩。"
+            }
+        },
+        {
+            "type": "HighDensityInfoBlock",
+            "props": {
+                "id": "explod-info-1",
+                "phase1Title": "项目背景",
+                "phase1Subtitle": "Context",
+                "phase1Content": "这是 Global Game Jam 2025 的参赛作品，在 48 小时内由 3 人团队完成。游戏获得了当时站点的第三名，并收到了玩家的积极反馈。项目使用 Unity 引擎开发，我在团队中负责游戏设计和关卡设计工作。",
+                "phase1Items": [
+                    { "label": "引擎", "value": "Unity", "_arrayItem": { "id": "item-1" } },
+                    { "label": "开发周期", "value": "48 小时 (GGJ)", "_arrayItem": { "id": "item-2" } },
+                    { "label": "团队规模", "value": "3 人", "_arrayItem": { "id": "item-3" } },
+                    { "label": "获奖", "value": "站点第三名", "_arrayItem": { "id": "item-4" } }
+                ],
+                "phase2Title": "核心机制",
+                "phase2Subtitle": "Core Mechanics",
+                "phase2Content": "游戏的核心创新在于将射击的后坐力作为唯一的移动方式。玩家发射带有冲击力的子弹时，自身会受到反向推力，通过控制射击方向和时机来精确控制移动。对战目标不是直接击杀对手，而是将对手推向地图上的尖刺物体。这种机制组合创造了独特的策略深度：玩家需要同时考虑自身位移、对手位置和环境危险区域。",
+                "phase2Items": [],
+                "phase3Title": "设计挑战",
+                "phase3Subtitle": "Design Challenges",
+                "phase3Content": "项目面临多重挑战：后坐力物理系统需要在有趣和可控之间找到平衡，关卡设计需要合理布置尖刺位置以创造紧张感，48 小时的时间压力要求快速迭代。此外，美术资产没有使用网格地图导致素材难以二次调整，这在后期调整关卡布局时带来了额外困难。",
+                "phase3ImageSrc": ""
+            }
+        },
+        {
+            "type": "BreakdownHeadline",
+            "props": {
+                "id": "explod-headline-1",
+                "title": "设计亮点"
+            }
+        },
+        {
+            "type": "MediaTextCard",
+            "props": {
+                "id": "explod-card-1",
+                "title": "后坐力移动机制",
+                "description": "游戏最核心的创新是将射击后坐力作为唯一的移动方式。玩家无法直接控制角色移动，必须通过射击方向和力度来间接控制位移。这种设计创造了独特的操作手感：每次射击都是一次策略决策，既要考虑攻击对手，又要规划自己的移动路径。物理系统的平衡调整是关键挑战，需要让后坐力既有足够的推力感，又不至于失控。",
+                "imageSrc": "",
+                "tags": [
+                    { "tag": "物理驱动", "_arrayItem": { "id": "tag-1" } },
+                    { "tag": "创新操作", "_arrayItem": { "id": "tag-2" } }
+                ]
+            }
+        },
+        {
+            "type": "MediaTextCard",
+            "props": {
+                "id": "explod-card-2",
+                "title": "环境击杀与关卡设计",
+                "description": "游戏的胜利条件不是直接击杀对手，而是将对手推向地图上的尖刺物体。这种环境击杀机制改变了传统射击游戏的对战逻辑，玩家需要时刻关注场地布局和对手位置。关卡设计需要合理布置尖刺的位置和密度，既要创造紧张感，又要给玩家留出操作空间。48 小时的开发时间内，通过快速迭代找到了平衡点。",
+                "imageSrc": "",
+                "tags": [
+                    { "tag": "环境交互", "_arrayItem": { "id": "tag-3" } },
+                    { "tag": "关卡设计", "_arrayItem": { "id": "tag-4" } }
+                ]
+            }
+        },
+        {
+            "type": "NextProjectBlock",
+            "props": {
+                "id": "next-1",
+                "nextId": "insight",
+                "nextName": "INSIGHT",
+                "nextBg": "/images/insight/InsightOnlyCover.png"
+            }
+        }
+    ]
+}
