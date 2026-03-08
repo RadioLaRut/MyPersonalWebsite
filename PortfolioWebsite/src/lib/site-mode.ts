@@ -3,23 +3,13 @@ function getSiteMode(): string {
 }
 
 export function isTestingMode(): boolean {
-  return (
-    getSiteMode() === "testing" ||
-    (
-      process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" &&
-      process.env.NEXT_PUBLIC_USE_JSON === "true"
-    )
-  );
+  return getSiteMode() === "testing";
 }
 
 export function isCmsPreviewEnabled(): boolean {
-  return (
-    isTestingMode() ||
-    process.env.NEXT_PUBLIC_ENABLE_PUCK === "true" ||
-    process.env.NEXT_PUBLIC_USE_JSON === "true"
-  );
+  return true;
 }
 
 export function usesJsonContent(): boolean {
-  return isTestingMode() || process.env.NEXT_PUBLIC_USE_JSON === "true";
+  return true;
 }

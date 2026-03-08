@@ -1,0 +1,66 @@
+{
+  "root": {
+    "props": {
+      "title": "HOUDINI 驱动的小镇生成管线"
+    }
+  },
+  "content": [
+    {
+      "type": "HeroHeadline",
+      "props": {
+        "id": "hero-1",
+        "eyebrow": "Project 06",
+        "title": "HOUDINI 驱动的小镇生成管线",
+        "subtitle": "",
+        "heroImage": "/images/penguin/PCG/PCG01.webp",
+        "navLink": ""
+      }
+    },
+    {
+      "type": "RichParagraph",
+      "props": {
+        "id": "desc-1",
+        "content": "这是一个基于 Houdini 的程序化小镇生成工具，通过节点化开发实现了与 Unreal Engine 的深度集成。设计师只需框定场景边界、绘制道路和水域样条线，即可一键生成完整的小镇场景。工具封装了 70 余项可调参数，支持房屋密度控制、建筑朝向、墙体风化效果以及植被撒布系统。这是我学习 Houdini 和探索程序化生成技术的实践项目，在 1-2 周内完成了从学习到实现的全过程。"
+      }
+    },
+    {
+      "type": "BreakdownTriptych",
+      "props": {
+        "id": "triptych-1",
+        "col1Title": "HDA 封装逻辑",
+        "col1Text": "在 UE5 中内置调用 Houdini Engine 的数据数字资产。处理大量网格的实时更迭。",
+        "col1Img": "/images/penguin/PCG/PCG02.webp",
+        "col2Title": "样条线路网",
+        "col2Text": "由任意贝塞尔曲线动态分割计算的智能土路及河流系统。",
+        "col2Img": "/images/penguin/PCG/PCG03.webp",
+        "col3Title": "环境撒布引擎",
+        "col3Text": "基于规则的高速碰撞规避算法用于树木与房舍周边杂物的植被生成。",
+        "col3Img": "/images/penguin/PCG/PCG05.webp"
+      }
+    },
+    {
+      "type": "MosaicGallery",
+      "props": {
+        "id": "gallery-1",
+        "images": [
+          {
+            "src": "/images/penguin/PCG/PCG04png.webp",
+            "caption": "PCG 04",
+            "_arrayItem": {
+              "id": "img-1"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "NextProjectBlock",
+      "props": {
+        "id": "next-1",
+        "nextId": "atmosphere-practice",
+        "nextName": "ATMOSPHERE PRACTICE",
+        "nextBg": "/images/penguin/01.webp"
+      }
+    }
+  ]
+}

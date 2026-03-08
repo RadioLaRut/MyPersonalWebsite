@@ -2,30 +2,43 @@
 
 import React from "react";
 import BilingualText from "@/components/common/BilingualText";
-import { OptimizedImage } from "@/components/common/OptimizedImage";
+import { PresetImage } from "@/components/common/PresetImage";
+import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 interface BreakdownTriptychProps {
   col1Title: string;
   col1Text: string;
   col1Img: string;
+  col1Preset?: ImagePreset;
+  col1FitMode?: ImageFitMode;
   col2Title: string;
   col2Text: string;
   col2Img: string;
+  col2Preset?: ImagePreset;
+  col2FitMode?: ImageFitMode;
   col3Title: string;
   col3Text: string;
   col3Img: string;
+  col3Preset?: ImagePreset;
+  col3FitMode?: ImageFitMode;
 }
 
 export default function BreakdownTriptych({
   col1Title,
   col1Text,
   col1Img,
+  col1Preset = "ratio-16-9",
+  col1FitMode = "x",
   col2Title,
   col2Text,
   col2Img,
+  col2Preset = "ratio-16-9",
+  col2FitMode = "x",
   col3Title,
   col3Text,
   col3Img,
+  col3Preset = "ratio-16-9",
+  col3FitMode = "x",
 }: BreakdownTriptychProps) {
   return (
     <section className="w-full relative z-20 bg-black pb-32">
@@ -36,7 +49,7 @@ export default function BreakdownTriptych({
           </h4>
           <p className="text-white/70 text-sm md:text-[15px] leading-[1.95] break-words"><BilingualText text={col1Text} /></p>
           <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-            <OptimizedImage src={col1Img} alt={col1Title} width={1920} height={1080} className="w-full h-auto object-contain block" />
+            <PresetImage src={col1Img} alt={col1Title} preset={col1Preset} fitMode={col1FitMode} />
           </div>
         </div>
 
@@ -46,7 +59,7 @@ export default function BreakdownTriptych({
           </h4>
           <p className="text-white/70 text-sm md:text-[15px] leading-[1.95] break-words"><BilingualText text={col2Text} /></p>
           <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-            <OptimizedImage src={col2Img} alt={col2Title} width={1920} height={1080} className="w-full h-auto object-contain block" />
+            <PresetImage src={col2Img} alt={col2Title} preset={col2Preset} fitMode={col2FitMode} />
           </div>
         </div>
 
@@ -56,7 +69,7 @@ export default function BreakdownTriptych({
           </h4>
           <p className="text-white/70 text-sm md:text-[15px] leading-[1.95] break-words"><BilingualText text={col3Text} /></p>
           <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-            <OptimizedImage src={col3Img} alt={col3Title} width={1920} height={1080} className="w-full h-auto object-contain block" />
+            <PresetImage src={col3Img} alt={col3Title} preset={col3Preset} fitMode={col3FitMode} />
           </div>
         </div>
       </div>

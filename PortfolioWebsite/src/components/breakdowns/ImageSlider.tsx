@@ -2,18 +2,41 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { OptimizedImage } from '@/components/common/OptimizedImage';
+import {
+    type ImageFitMode,
+    type ImagePreset,
+    getImageCanvasClassName,
+    getImageElementClassName,
+    getImagePresetFrameClassName,
+    normalizeImageFitMode,
+    normalizeImagePreset,
+} from '@/lib/image-presentation';
 
 interface ImageSliderProps {
     unlitSrc: string;
     litSrc: string;
     alt?: string;
     className?: string;
+    imagePreset?: ImagePreset;
+    imageFitMode?: ImageFitMode;
 }
 
-export default function ImageSlider({ unlitSrc, litSrc, alt = 'Image Comparison', className = "" }: ImageSliderProps) {
+export default function ImageSlider({
+    unlitSrc,
+    litSrc,
+    alt = 'Image Comparison',
+    className = "",
+    imagePreset = "ratio-16-9",
+    imageFitMode = "x",
+}: ImageSliderProps) {
     const [sliderPosition, setSliderPosition] = useState(50);
     const [isDragging, setIsDragging] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
+    const resolvedPreset = normalizeImagePreset(imagePreset);
+    const resolvedFitMode = normalizeImageFitMode(imageFitMode);
+    const frameClassName = getImagePresetFrameClassName(resolvedPreset);
+    const canvasClassName = getImageCanvasClassName(resolvedPreset);
+    const imageClassName = getImageElementClassName(resolvedPreset, resolvedFitMode);
 
     const handleMove = (clientX: number) => {
         if (!containerRef.current) return;
@@ -48,7 +71,7 @@ export default function ImageSlider({ unlitSrc, litSrc, alt = 'Image Comparison'
             <div className="w-full max-w-5xl">
                 <div
                     ref={containerRef}
-                    className="relative w-full aspect-video overflow-hidden cursor-ew-resize select-none"
+                    className={`${frameClassName} cursor-ew-resize select-none`}
                     onMouseMove={handleMouseMove}
                     onTouchMove={handleTouchMove}
                     onMouseDown={() => setIsDragging(true)}
@@ -59,13 +82,16 @@ export default function ImageSlider({ unlitSrc, litSrc, alt = 'Image Comparison'
                         {/* Fallback color/placeholder if no image */}
                         <div className="absolute inset-0 bg-neutral-900" />
                         {litSrc && (
-                            <OptimizedImage
-                                src={litSrc}
-                                alt={`${alt} Lit`}
-                                fill
-                                className="object-contain"
-                                draggable={false}
-                            />
+                            <div className={canvasClassName}>
+                                <OptimizedImage
+                                    src={litSrc}
+                                    alt={`${alt} Lit`}
+                                    width={1920}
+                                    height={1080}
+                                    className={imageClassName}
+                                    draggable={false}
+                                />
+                            </div>
                         )}
                         <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 text-white font-mono text-xs tracking-widest pointer-events-none">
                             STATUS: LIT
@@ -79,13 +105,16 @@ export default function ImageSlider({ unlitSrc, litSrc, alt = 'Image Comparison'
                     >
                         <div className="absolute inset-0 bg-neutral-800" />
                         {unlitSrc && (
-                            <OptimizedImage
-                                src={unlitSrc}
-                                alt={`${alt} Unlit`}
-                                fill
-                                className="object-contain"
-                                draggable={false}
-                            />
+                            <div className={canvasClassName}>
+                                <OptimizedImage
+                                    src={unlitSrc}
+                                    alt={`${alt} Unlit`}
+                                    width={1920}
+                                    height={1080}
+                                    className={imageClassName}
+                                    draggable={false}
+                                />
+                            </div>
                         )}
                         <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1 text-white/70 font-mono text-xs tracking-widest pointer-events-none">
                             STATUS: UNLIT

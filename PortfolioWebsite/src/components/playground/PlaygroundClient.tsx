@@ -4,9 +4,18 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import puckConfig from "@/puck/config";
+import { CANONICAL_PLACEHOLDER_PATH } from "@/lib/public-paths";
 
 const EXCLUDED_COMPONENT_KEYS = new Set(["ContactFlashlight"]);
-const HIDDEN_LEGACY_COMPONENT_KEYS = new Set(["HeroHeadline", "PortfolioHeroHeader"]);
+const HIDDEN_LEGACY_COMPONENT_KEYS = new Set([
+  "HeroHeadline",
+  "PortfolioHeroHeader",
+  "MetadataListItem",
+  "TextParagraphBlock",
+  "ContactExperienceItem",
+  "ContactDirectionItem",
+  "WorksListEntry",
+]);
 const COMPONENT_DISPLAY_NAMES: Record<string, string> = {
   BreakdownIntroHeader: "BreakdownIntroHeader",
   BreakdownHeadline: "BreakdownSectionHeadline",
@@ -31,9 +40,74 @@ const PLAYGROUND_GROUPS = [
   {
     label: "Page Blocks",
     description: "首页、作品流和跳转模块。",
-    keys: ["HeroSection", "ProjectSection", "WorksList", "LightingProjectCard", "NextProjectBlock"],
+    keys: ["HeroSection", "ProjectSection", "HomeEndcapSection", "WorksList", "LightingProjectCard", "NextProjectBlock", "LightingCollectionGallery"],
   },
 ] as const;
+
+const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
+  TextSplitLayout: {
+    imageSrc: "/images/train-station/2Day.webp",
+  },
+  HighDensityInfoBlock: {
+    phase3ImageSrc: "/images/train-station/2Day.webp",
+  },
+  ProjectSection: {
+    title: "PENGUIN TRADING CO.",
+    subtitle: "Lead Designer / PM / Tech Art",
+    imageSrc: CANONICAL_PLACEHOLDER_PATH,
+    link: "/works/penguin",
+    index: 1,
+    align: "auto",
+  },
+  WorksList: {
+    entries: [
+      {
+        type: "WorksListEntry",
+        props: {
+          id: "playground-work-1",
+          number: "01",
+          href: "/works/lighting-portfolio",
+          title: "LIGHTING PORTFOLIO",
+          category: "Lighting Art",
+          imageSrc: "/images/train-station/2Day.webp",
+          desc: "A curated collection of lighting and mood practices",
+        },
+      },
+      {
+        type: "WorksListEntry",
+        props: {
+          id: "playground-work-2",
+          number: "02",
+          href: "/works/penguin",
+          title: "PENGUIN TRADING CO.",
+          category: "Lead Designer / PM / Tech Art",
+          imageSrc: CANONICAL_PLACEHOLDER_PATH,
+          desc: "Simulation management game with asset lock systems",
+        },
+      },
+    ],
+  },
+  LightingProjectCard: {
+    href: "/works/lighting-portfolio/collection-1",
+    coverImage: "/images/city-2026/002.webp",
+  },
+  NextProjectBlock: {
+    nextId: "insight",
+    nextName: "INSIGHT",
+    nextBg: "/images/insight/InsightOnlyCover.webp",
+  },
+  LightingCollectionGallery: {
+    title: "CITY ADD",
+    number: "01",
+    description: "A detailed breakdown of lighting setup, mood exploration, and before/after comparisons for city add.",
+    backHref: "/works/lighting-portfolio",
+    images: [
+      { lit: "/images/city-2026/001.webp", caption: "DAY", _arrayItem: { id: "demo-1" } },
+      { lit: "/images/city-2026/002.webp", caption: "DUSK", _arrayItem: { id: "demo-2" } },
+      { lit: "/images/city-2026/003.webp", caption: "NIGHT", _arrayItem: { id: "demo-3" } },
+    ],
+  },
+};
 
 const playgroundComponents = Object.entries(puckConfig.components).filter(
   ([componentKey]) => !EXCLUDED_COMPONENT_KEYS.has(componentKey) && !HIDDEN_LEGACY_COMPONENT_KEYS.has(componentKey),
@@ -90,6 +164,7 @@ export default function PlaygroundClient() {
             {group.components.map(([componentKey, componentConfig], componentIndex) => {
               const componentProps = {
                 ...(componentConfig.defaultProps ?? {}),
+                ...(PLAYGROUND_PROPS[componentKey] ?? {}),
                 editMode: false,
               } as never;
 

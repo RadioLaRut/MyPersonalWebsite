@@ -1,21 +1,31 @@
-import { OptimizedImage } from "@/components/common/OptimizedImage";
+import { PresetImage } from "@/components/common/PresetImage";
+import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 interface ProjectCoverProps {
   src: string;
   alt: string;
   priority?: boolean;
   className?: string;
+  preset?: ImagePreset;
+  fitMode?: ImageFitMode;
 }
 
-export function ProjectCover({ src, alt, priority = false, className = "" }: ProjectCoverProps) {
+export function ProjectCover({
+  src,
+  alt,
+  priority = false,
+  className = "",
+  preset = "ratio-21-9",
+  fitMode = "x",
+}: ProjectCoverProps) {
   return (
-    <OptimizedImage
+    <PresetImage
       src={src}
       alt={alt}
-      width={1920}
-      height={1080}
       priority={priority}
-      className={`w-full h-auto object-cover ${className}`.trim()}
+      preset={preset}
+      fitMode={fitMode}
+      frameClassName={className}
     />
   );
 }

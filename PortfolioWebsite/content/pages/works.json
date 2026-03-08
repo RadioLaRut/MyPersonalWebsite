@@ -1,128 +1,150 @@
 {
-    "root": {
-        "props": {
-            "title": "Works"
-        }
-    },
-    "content": [
-        {
-            "type": "WorksList",
+  "root": {
+    "props": {
+      "title": "Works"
+    }
+  },
+  "content": [
+    {
+      "type": "WorksList",
+      "props": {
+        "entries": [
+          {
+            "type": "WorksListEntry",
             "props": {
-                "id": "workslist-1",
-                "heading": "All Selected Works",
-                "works": [
-                    {
-                        "id": "lighting-portfolio",
-                        "href": "/p/works/lighting-portfolio",
-                        "title": "LIGHTING PORTFOLIO",
-                        "category": "Lighting Art",
-                        "imageSrc": "/images/train-station/2Day.webp",
-                        "desc": "A curated collection of lighting and mood practices",
-                        "_arrayItem": {
-                            "id": "w1"
-                        }
-                    },
-                    {
-                        "id": "slay-the-virus",
-                        "href": "/p/works/slay-the-virus",
-                        "title": "SLAY THE VIRUS",
-                        "category": "UI / Poster / Game Design",
-                        "imageSrc": "/images/slay-the-virus/STVTitle.webp",
-                        "desc": "A deck-building and inventory management game",
-                        "_arrayItem": {
-                            "id": "w2"
-                        }
-                    },
-                    {
-                        "id": "wow-otto",
-                        "href": "/p/works/wow-otto",
-                        "title": "WOW, OTTO!",
-                        "category": "Lead Designer",
-                        "imageSrc": "/images/penguin/CyberRestaurant.webp",
-                        "desc": "Trackball narrative experience",
-                        "_arrayItem": {
-                            "id": "w3"
-                        }
-                    },
-                    {
-                        "id": "im-explode",
-                        "href": "/p/works/im-explode",
-                        "title": "I'M EXPLODE WITH U",
-                        "category": "Lead Designer",
-                        "imageSrc": "/images/penguin/CyberRestaurant.webp",
-                        "desc": "Multiplayer platformer with pushback mechanics",
-                        "_arrayItem": {
-                            "id": "w4"
-                        }
-                    },
-                    {
-                        "id": "prometheus",
-                        "href": "/p/works/prometheus",
-                        "title": "THE PROMETHEUS",
-                        "category": "Lead Designer / Lighting",
-                        "imageSrc": "/images/prometheus/PrometheusTitle.webp",
-                        "desc": "Stealth tactical game with dramatic lighting contrasts",
-                        "_arrayItem": {
-                            "id": "w5"
-                        }
-                    },
-                    {
-                        "id": "parallax",
-                        "href": "/p/works/parallax",
-                        "title": "SOMEWHERE BETWEEN PARALLAX",
-                        "category": "UI Design",
-                        "imageSrc": "/images/penguin/CyberRestaurant.webp",
-                        "desc": "Interactive VR experience in fragmented memory",
-                        "_arrayItem": {
-                            "id": "w6"
-                        }
-                    },
-                    {
-                        "id": "insight",
-                        "href": "/p/works/insight",
-                        "title": "INSIGHT",
-                        "category": "Lead Designer / Programmer",
-                        "imageSrc": "/images/insight/InsightCover.webp",
-                        "desc": "Play as an internet opinion regulator controlling the narrative",
-                        "_arrayItem": {
-                            "id": "w7"
-                        }
-                    },
-                    {
-                        "id": "penguin",
-                        "href": "/p/works/penguin",
-                        "title": "PENGUIN TRADING CO.",
-                        "category": "Lead Designer / PM / Tech Art",
-                        "imageSrc": "/images/penguin/CyberRestaurant.webp",
-                        "desc": "Simulation management game with asset lock systems",
-                        "_arrayItem": {
-                            "id": "w8"
-                        }
-                    },
-                    {
-                        "id": "pcg-town",
-                        "href": "/p/works/pcg-town",
-                        "title": "HOUDINI PROCEDURAL GENERATION",
-                        "category": "Tech Art",
-                        "imageSrc": "/images/penguin/PCG/PCG01.webp",
-                        "desc": "Procedural environment generation with Houdini and UE5",
-                        "_arrayItem": {
-                            "id": "w9"
-                        }
-                    },
-                    {
-                        "id": "epic-stage",
-                        "href": "/p/works/epic-stage",
-                        "title": "EPIC STAGE LIGHTING",
-                        "category": "Tech Art / Lighting",
-                        "imageSrc": "/images/penguin/Epic.webp",
-                        "desc": "Musical theatre concept lighting choreography",
-                        "_arrayItem": {
-                            "id": "w10"
-                        }
-                    }
-                ]
+              "id": "w1",
+              "number": "01",
+              "href": "/works/lighting-portfolio",
+              "title": "LIGHTING PORTFOLIO",
+              "category": "Lighting Art",
+              "imageSrc": "/images/train-station/2Day.webp",
+              "desc": "A curated collection of lighting and mood practices"
             }
-        }
-    ]
+          },
+          {
+            "type": "WorksListEntry",
+            "props": {
+              "id": "w2",
+              "number": "02",
+              "href": "/works/slay-the-virus",
+              "title": "SLAY THE VIRUS",
+              "category": "UI / Poster / Game Design",
+              "imageSrc": "/images/slay-the-virus/STVTitle.webp",
+              "desc": "A deck-building and inventory management game"
+            }
+          },
+          {
+            "type": "WorksListEntry",
+            "props": {
+              "id": "w3",
+              "number": "03",
+              "href": "/works/wow-otto",
+              "title": "WOW, OTTO!",
+              "category": "Lead Designer",
+              "imageSrc": "/assets/images/placeholder.svg",
+              "desc": "Trackball narrative experience"
+            }
+          },
+          {
+            "type": "WorksListEntry",
+            "props": {
+              "id": "w4",
+              "number": "04",
+              "href": "/works/im-explode",
+              "title": "I'M EXPLODE WITH U",
+              "category": "Lead Designer",
+              "imageSrc": "/assets/images/placeholder.svg",
+              "desc": "Multiplayer platformer with pushback mechanics"
+            }
+          },
+          {
+            "type": "WorksListEntry",
+            "props": {
+              "id": "w5",
+              "number": "05",
+              "href": "/works/prometheus",
+              "title": "THE PROMETHEUS",
+              "category": "Lead Designer / Lighting",
+              "imageSrc": "/images/prometheus/PrometheusTitle.webp",
+              "desc": "Stealth tactical game with dramatic lighting contrasts"
+            }
+          },
+          {
+            "type": "WorksListEntry",
+            "props": {
+              "id": "w6",
+              "number": "06",
+              "href": "/works/parallax",
+              "title": "SOMEWHERE BETWEEN PARALLAX",
+              "category": "UI Design",
+              "imageSrc": "/assets/images/placeholder.svg",
+              "desc": "Interactive VR experience in fragmented memory"
+            }
+          },
+          {
+            "type": "WorksListEntry",
+            "props": {
+              "id": "w7",
+              "number": "07",
+              "href": "/works/insight",
+              "title": "INSIGHT",
+              "category": "Lead Designer / Programmer",
+              "imageSrc": "/images/insight/InsightCover.webp",
+              "desc": "Play as an internet opinion regulator controlling the narrative"
+            }
+          },
+          {
+            "type": "WorksListEntry",
+            "props": {
+              "id": "w8",
+              "number": "08",
+              "href": "/works/penguin",
+              "title": "PENGUIN TRADING CO.",
+              "category": "Lead Designer / PM / Tech Art",
+              "imageSrc": "/assets/images/placeholder.svg",
+              "desc": "Simulation management game with asset lock systems"
+            }
+          },
+          {
+            "type": "WorksListEntry",
+            "props": {
+              "id": "w9",
+              "number": "09",
+              "href": "/works/houdini-pcg",
+              "title": "HOUDINI PROCEDURAL GENERATION",
+              "category": "Tech Art",
+              "imageSrc": "/images/penguin/PCG/PCG01.webp",
+              "desc": "Procedural environment generation with Houdini and UE5"
+            }
+          },
+          {
+            "type": "WorksListEntry",
+            "props": {
+              "id": "w10",
+              "number": "10",
+              "href": "/works/epic-stage",
+              "title": "EPIC STAGE LIGHTING",
+              "category": "Tech Art / Lighting",
+              "imageSrc": "/images/penguin/Epic.webp",
+              "desc": "Musical theatre concept lighting choreography"
+            }
+          }
+        ],
+        "id": "workslist-1",
+        "heading": "All Selected Works"
+      }
+    },
+    {
+      "type": "HomeEndcapSection",
+      "props": {
+        "eyebrow": "Selected Archive",
+        "title": "CONTACT ME",
+        "description": "A full index of interactive narrative, systems, lighting studies, and production experiments.",
+        "buttonLabel": "ENTER ARCHIVE",
+        "buttonHref": "/contact",
+        "id": "HomeEndcapSection-04d186c3-f24c-4767-bf9c-533ff520fe87"
+      }
+    }
+  ],
+  "zones": {}
 }

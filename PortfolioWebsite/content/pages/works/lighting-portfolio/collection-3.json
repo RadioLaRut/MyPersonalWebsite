@@ -1,0 +1,56 @@
+{
+  "root": {
+    "props": {
+      "title": "TRAIN STATION"
+    }
+  },
+  "content": [
+    {
+      "type": "LightingCollectionGallery",
+      "props": {
+        "title": "TRAIN STATION",
+        "number": "03",
+        "description": "A detailed breakdown of lighting setup, mood exploration, and before/after comparisons for train station.",
+        "backHref": "/works/lighting-portfolio",
+        "images": [
+          {
+            "lit": "/images/train-station/2Day.webp",
+            "caption": "DAY",
+            "_arrayItem": {
+              "id": "collection-3-image-1"
+            }
+          },
+          {
+            "lit": "/images/train-station/2Dust.webp",
+            "caption": "DUSK",
+            "_arrayItem": {
+              "id": "collection-3-image-2"
+            }
+          },
+          {
+            "lit": "/images/train-station/2Fog.webp",
+            "caption": "FOG",
+            "_arrayItem": {
+              "id": "collection-3-image-3"
+            }
+          },
+          {
+            "lit": "/images/train-station/2Night.webp",
+            "caption": "NIGHT",
+            "_arrayItem": {
+              "id": "collection-3-image-4"
+            }
+          },
+          {
+            "lit": "/images/train-station/2Day.webp",
+            "unlit": "/images/train-station/2NoLight.webp",
+            "caption": "LIGHTING COMPARISON",
+            "_arrayItem": {
+              "id": "collection-3-image-5"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

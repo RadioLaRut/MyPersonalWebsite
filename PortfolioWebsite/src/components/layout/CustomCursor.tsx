@@ -9,14 +9,21 @@ type CustomCursorProps = {
 
 export default function CustomCursor({ isWithinIframe, targetDocument }: CustomCursorProps = {}) {
   const cursorRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
   const [isCursorEnabled, setIsCursorEnabled] = useState(false);
+  const [isAdminShell, setIsAdminShell] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
-    const htmlElement = document.documentElement;
+    const activeDocument = targetDocument ?? document;
+    const htmlElement = activeDocument.documentElement;
+    const currentPathname = isWithinIframe
+      ? targetDocument?.defaultView?.location.pathname ?? ""
+      : pathname ?? "";
+    const adminShell = !isWithinIframe && currentPathname.startsWith("/admin");
+    setIsAdminShell(adminShell);
 
     // Disable outer custom cursor in the admin dashboard completely
-    if (!isWithinIframe && pathname?.startsWith("/admin")) {
+    if (adminShell) {
       htmlElement.setAttribute("data-admin-mode", "true");
       setIsCursorEnabled(false);
       return () => {
@@ -54,7 +61,7 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
       removePointerListener();
       removeMotionListener();
     };
-  }, [pathname, isWithinIframe, targetDocument]);
+  }, [isWithinIframe, pathname, targetDocument]);
 
   useEffect(() => {
     if (!isCursorEnabled) {
@@ -183,7 +190,7 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
     };
   }, [isCursorEnabled, targetDocument]);
 
-  if (!isWithinIframe && pathname?.startsWith("/admin")) {
+  if (isAdminShell) {
     return null;
   }
 

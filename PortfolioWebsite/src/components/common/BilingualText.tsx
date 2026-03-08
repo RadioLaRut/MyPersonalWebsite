@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { type ReactNode } from "react";
 
 interface BilingualTextProps {
-  text: string;
+  text: ReactNode | string | null | undefined;
 }
 
 const HAN_LIKE_REGEX = /[\p{Script=Han}\u3000-\u303F\uFF00-\uFFEF]/u;
@@ -62,6 +62,14 @@ function segmentText(text: string) {
 }
 
 export default function BilingualText({ text }: BilingualTextProps) {
+  if (text == null) {
+    return null;
+  }
+
+  if (typeof text !== "string") {
+    return <>{text}</>;
+  }
+
   const segments = segmentText(text);
 
   return (

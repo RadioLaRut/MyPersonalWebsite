@@ -1,51 +1,51 @@
 {
-    "root": {
-        "props": {
-            "title": "舞台灯光叙事概念设计"
-        }
+  "root": {
+    "props": {
+      "title": "舞台灯光叙事概念设计"
+    }
+  },
+  "content": [
+    {
+      "type": "HeroHeadline",
+      "props": {
+        "id": "hero-1",
+        "eyebrow": "Project 08",
+        "title": "舞台灯光叙事概念设计",
+        "subtitle": "",
+        "heroImage": "/images/penguin/Epic.webp",
+        "navLink": "https://www.bilibili.com/video/BV1oSDTYJEi2/"
+      }
     },
-    "content": [
-        {
-            "type": "HeroHeadline",
-            "props": {
-                "id": "hero-1",
-                "eyebrow": "Project 08",
-                "title": "舞台灯光叙事概念设计",
-                "subtitle": "",
-                "heroImage": "/images/penguin/Epic.webp",
-                "navLink": "https://www.bilibili.com/video/BV1oSDTYJEi2/"
-            }
-        },
-        {
-            "type": "RichParagraph",
-            "props": {
-                "id": "desc-1",
-                "content": "这是一个基于音乐剧《Epic》的虚拟舞台灯光设计项目，我独立完成了概念舞台的设计搭建、虚拟镜头调度和灯光系统设计。项目创造性地使用定格动画风格表现演员走位，这种舍弃平滑过渡的手法凸显了灯光作为视觉核心的存在感。通过研读剧本，我为希腊诸神设计了带有性格象征的色彩语言和灯光阵列系统——当剧情高潮来临时，对应颜色的强光会骤然点亮后方的巨型大理石雕像，构筑舞台的神圣张力。这是一个个人兴趣驱动的练习项目，在 1-2 周内完成。"
-            }
-        },
-        {
-            "type": "BreakdownTriptych",
-            "props": {
-                "id": "triptych-1",
-                "col1Title": "舞台编排",
-                "col1Text": "虚拟演播室的大型光机结构铺设统筹布置及长镜头的游机位走位逻辑演算。",
-                "col1Img": "/images/penguin/Epic02.webp",
-                "col2Title": "神座点亮策略",
-                "col2Text": "后场巨大主神大理石雕塑通过复杂的材质发光指令随着音轨爆破而启动。",
-                "col2Img": "/images/penguin/Epic.webp",
-                "col3Title": "定格镜头呈现",
-                "col3Text": "极具侵略性的丢帧人物位移调度系统编排技术栈落地方案。",
-                "col3Img": "/images/penguin/Epic02.webp"
-            }
-        },
-        {
-            "type": "NextProjectBlock",
-            "props": {
-                "id": "next-1",
-                "nextId": "lighting-atmosphere",
-                "nextName": "LIGHTING ATMOSPHERE",
-                "nextBg": "/images/train-station/2Day.webp"
-            }
-        }
-    ]
+    {
+      "type": "RichParagraph",
+      "props": {
+        "id": "desc-1",
+        "content": "这是一个基于音乐剧《Epic》的虚拟舞台灯光设计项目，我独立完成了概念舞台的设计搭建、虚拟镜头调度和灯光系统设计。项目创造性地使用定格动画风格表现演员走位，这种舍弃平滑过渡的手法凸显了灯光作为视觉核心的存在感。通过研读剧本，我为希腊诸神设计了带有性格象征的色彩语言和灯光阵列系统——当剧情高潮来临时，对应颜色的强光会骤然点亮后方的巨型大理石雕像，构筑舞台的神圣张力。这是一个个人兴趣驱动的练习项目，在 1-2 周内完成。"
+      }
+    },
+    {
+      "type": "BreakdownTriptych",
+      "props": {
+        "id": "triptych-1",
+        "col1Title": "舞台编排",
+        "col1Text": "虚拟演播室的大型光机结构铺设统筹布置及长镜头的游机位走位逻辑演算。",
+        "col1Img": "/images/penguin/Epic02.webp",
+        "col2Title": "神座点亮策略",
+        "col2Text": "后场巨大主神大理石雕塑通过复杂的材质发光指令随着音轨爆破而启动。",
+        "col2Img": "/images/penguin/Epic.webp",
+        "col3Title": "定格镜头呈现",
+        "col3Text": "极具侵略性的丢帧人物位移调度系统编排技术栈落地方案。",
+        "col3Img": "/images/penguin/Epic02.webp"
+      }
+    },
+    {
+      "type": "NextProjectBlock",
+      "props": {
+        "id": "next-1",
+        "nextId": "lighting-atmosphere",
+        "nextName": "LIGHTING ATMOSPHERE",
+        "nextBg": "/images/train-station/2Day.webp"
+      }
+    }
+  ]
 }

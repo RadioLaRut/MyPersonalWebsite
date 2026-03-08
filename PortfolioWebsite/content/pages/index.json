@@ -1,48 +1,66 @@
 {
-    "root": {
-        "props": {
-            "title": "Home"
-        }
+  "root": {
+    "props": {
+      "title": "Home"
+    }
+  },
+  "content": [
+    {
+      "type": "HeroSection",
+      "props": {
+        "id": "hero-section-1",
+        "title": "JIANG CHENGYAN",
+        "subtitle": "PORTFOLIO",
+        "description": "策划/技术美术",
+        "imageSrc": "/images/covers/2026/ShotForCrewWithoutWord.0004.webp",
+        "imageAlt": "Hero Background"
+      }
     },
-    "content": [
-        {
-            "type": "HeroSection",
-            "props": {
-                "id": "hero-section-1"
-            }
-        },
-        {
-            "type": "ProjectSection",
-            "props": {
-                "id": "proj-1",
-                "title": "LIGHTING PORTFOLIO",
-                "subtitle": "Lighting Art / Level Mood",
-                "imageSrc": "/images/train-station/2Day.webp",
-                "link": "/p/works/lighting-portfolio",
-                "index": 0
-            }
-        },
-        {
-            "type": "ProjectSection",
-            "props": {
-                "id": "proj-2",
-                "title": "企鹅贸易公司",
-                "subtitle": "Lead Designer / Tech Art / Project Manager",
-                "imageSrc": "/images/penguin/placeholder.png",
-                "link": "/p/works/penguin-trading-company",
-                "index": 1
-            }
-        },
-        {
-            "type": "ProjectSection",
-            "props": {
-                "id": "proj-3",
-                "title": "INSIGHT",
-                "subtitle": "Lead Designer / Programmer / Writer",
-                "imageSrc": "/images/insight/InsightOnlyCover.webp",
-                "link": "/p/works/insight",
-                "index": 2
-            }
-        }
-    ]
+    {
+      "type": "ProjectSection",
+      "props": {
+        "id": "proj-1",
+        "title": "LIGHTING PORTFOLIO",
+        "subtitle": "Lighting Art",
+        "imageSrc": "/images/train-station/2Day.webp",
+        "link": "/works/lighting-portfolio",
+        "index": 0
+      }
+    },
+    {
+      "type": "ProjectSection",
+      "props": {
+        "id": "proj-2",
+        "title": "企鹅贸易公司",
+        "subtitle": "Lead Designer / Tech Art / Project Manager",
+        "imageSrc": "/assets/images/placeholder.svg",
+        "link": "/works/penguin",
+        "index": 1,
+        "align": "left"
+      }
+    },
+    {
+      "type": "ProjectSection",
+      "props": {
+        "id": "proj-3",
+        "title": "INSIGHT",
+        "subtitle": "Lead Designer / Programmer / Writer",
+        "imageSrc": "/images/insight/InsightOnlyCover.webp",
+        "link": "/works/insight",
+        "index": 2
+      }
+    },
+    {
+      "type": "HomeEndcapSection",
+      "props": {
+        "id": "home-endcap-1",
+        "eyebrow": "Selected Archive",
+        "title": "ALL WORKS",
+        "description": "A full index of interactive narrative, systems, lighting studies, and production experiments.",
+        "buttonLabel": "ENTER ARCHIVE",
+        "buttonHref": "/works"
+      }
+    }
+  ],
+  "zones": {}
 }

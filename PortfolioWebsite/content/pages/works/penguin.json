@@ -1,0 +1,345 @@
+{
+  "root": {
+    "props": {
+      "title": "企鹅贸易公司"
+    }
+  },
+  "content": [
+    {
+      "type": "HeroHeadline",
+      "props": {
+        "id": "penguin-hero-1",
+        "eyebrow": "Project 06",
+        "title": "企鹅贸易公司",
+        "subtitle": "Penguin Trading Company",
+        "heroImage": "/assets/images/placeholder.svg",
+        "navLink": ""
+      }
+    },
+    {
+      "type": "RichParagraph",
+      "props": {
+        "id": "penguin-desc-1",
+        "content": "企鹅贸易公司是一款融合模拟经营、资源管理与遗传培育的黑色幽默游戏。玩家作为企鹅太空殖民地的总督，在遥远的外星冰川上指挥企鹅员工采集资源、转化热能、扩张由蒸汽朋克机器驱动的冰山基地。游戏的核心创新在于将企鹅设计为消耗品——玩家可以繁殖新企鹅、让其工作、吃掉、卖掉，甚至当作燃料燃烧。某些特性甚至能让企鹅被吃掉后为其他企鹅增加增益效果。通过这种荒诞的设计，游戏以黑色幽默的方式讽刺资本主义的剥削逻辑。这是我最重要的游戏项目，我在其中担任主策划、项目管理和 TA 三重角色。"
+      }
+    },
+    {
+      "type": "HighDensityInfoBlock",
+      "props": {
+        "id": "penguin-info-1",
+        "phase1Title": "项目背景",
+        "phase1Subtitle": "Context",
+        "phase1Content": "这是一个个人发起的长期游戏项目，目标是创作一款黑色幽默风格的模拟经营游戏。项目参考了《辐射避难所》和《动物园之星》的设计，由 8 人团队协作开发，目前已完成 30-50% 的开发进度，目标是实现 1 小时的完整可玩体验。",
+        "phase1Items": [
+          {
+            "type": "MetadataListItem",
+            "props": {
+              "id": "item-1",
+              "label": "引擎",
+              "value": "Unreal Engine 5",
+              "align": "end"
+            }
+          },
+          {
+            "type": "MetadataListItem",
+            "props": {
+              "id": "item-2",
+              "label": "开发周期",
+              "value": "3 个月以上",
+              "align": "end"
+            }
+          },
+          {
+            "type": "MetadataListItem",
+            "props": {
+              "id": "item-3",
+              "label": "团队规模",
+              "value": "8 人",
+              "align": "end"
+            }
+          },
+          {
+            "type": "MetadataListItem",
+            "props": {
+              "id": "item-4",
+              "label": "开发进度",
+              "value": "30-50%",
+              "align": "end"
+            }
+          }
+        ],
+        "phase2Title": "核心机制",
+        "phase2Subtitle": "Core Mechanics",
+        "phase2Content": "游戏包含三大核心系统：遗传繁育系统通过基因和性状组合产生不同样貌的企鹅，玩家需要在繁育与消耗之间做出策略选择；基地管理系统让玩家扩张蒸汽朋克风格的冰山基地；Q 币交易系统体现资本主义的经济逻辑。企鹅作为消耗品的设计是游戏的核心创新。",
+        "phase2Items": [],
+        "phase3Title": "团队构成",
+        "phase3Subtitle": "Team Structure",
+        "phase3Content": "团队由 8 人组成：我担任主策划、项目管理和 TA，3 人负责 3D 美术，1 人负责原画和 2D 美术，2 人负责程序开发，1 人负责音效。这是团队第一次完整的 3D 项目，大部分成员缺乏全流程经验，需要从零建立工作流程。",
+        "phase3ImageSrc": ""
+      }
+    },
+    {
+      "type": "BreakdownHeadline",
+      "props": {
+        "id": "penguin-headline-1",
+        "title": "系统设计"
+      }
+    },
+    {
+      "type": "MediaTextCard",
+      "props": {
+        "id": "penguin-card-1",
+        "title": "遗传繁育系统",
+        "description": "游戏最核心的创新系统。企鹅拥有基因系统，不同的性状会组合出不同样貌的企鹅。玩家需要策略性地繁育企鹅以获得特定特性，同时面临资源压力——企鹅可以被吃掉、卖掉或当作燃料。某些特性甚至能让企鹅被吃掉后为其他企鹅增加增益效果。这种设计以黑色幽默的方式展现了资本主义的剥削逻辑，玩家在繁育与消耗之间不断权衡。",
+        "imageSrc": "",
+        "tags": [
+          {
+            "tag": "遗传繁育",
+            "_arrayItem": {
+              "id": "tag-1"
+            }
+          },
+          {
+            "tag": "黑色幽默",
+            "_arrayItem": {
+              "id": "tag-2"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "MediaTextCard",
+      "props": {
+        "id": "penguin-card-2",
+        "title": "基地管理与 Q 币交易",
+        "description": "玩家需要管理蒸汽朋克风格的冰山基地，采集资源、转化热能、扩张建筑。Q 币交易系统体现了资本主义的经济逻辑，玩家需要应对公司总部的苛刻指标、内部阶级矛盾以及各种荒诞离奇的事件。游戏通过这些系统的结合，创造了一个既能高效运转又充满地狱笑话的企鹅血汗工厂。",
+        "imageSrc": "",
+        "tags": [
+          {
+            "tag": "基地管理",
+            "_arrayItem": {
+              "id": "tag-3"
+            }
+          },
+          {
+            "tag": "资源管理",
+            "_arrayItem": {
+              "id": "tag-4"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "BreakdownHeadline",
+      "props": {
+        "id": "penguin-headline-2",
+        "title": "TA 工作：从零建立 3D 管线"
+      }
+    },
+    {
+      "type": "TextSplitLayout",
+      "props": {
+        "id": "penguin-split-1",
+        "heading": "管线建设挑战",
+        "paragraphs": [
+          {
+            "type": "TextParagraphBlock",
+            "props": {
+              "id": "para-1",
+              "text": "这是我第一次完整的 3D 项目，也是团队第一次使用 C++ 开发。面对零经验的美术团队，我从零开始建立了完整的开发管线，制定了命名规范、资产导入流程和版本控制流程。"
+            }
+          },
+          {
+            "type": "TextParagraphBlock",
+            "props": {
+              "id": "para-2",
+              "text": "我开发了 Gitlock 工具，在 UE 中实现了类似 Perforce 的独占锁功能，解决了 UGit 工蜂的版本控制问题。同时开发了多个引擎工具和自动化脚本，提高团队效率。此外，我还负责了全部场景的灯光设计。"
+            }
+          }
+        ],
+        "imageSrc": "",
+        "layoutVariant": "split-left"
+      }
+    },
+    {
+      "type": "MediaTextCard",
+      "props": {
+        "id": "penguin-card-3",
+        "title": "Gitlock：独占锁工具",
+        "description": "为了解决团队协作中的版本控制问题，我开发了 Gitlock 工具。这是一个 UE 版本控制 Provider，能够在 UGit 工蜂上实现类似 Perforce 的独占锁功能。工具解决了多人同时编辑同一文件导致的冲突问题，特别是对于二进制资产的保护。开发过程中克服了 UE 版本控制接口的复杂性和 Git 分布式特性的挑战。",
+        "imageSrc": "",
+        "tags": [
+          {
+            "tag": "版本控制",
+            "_arrayItem": {
+              "id": "tag-5"
+            }
+          },
+          {
+            "tag": "工具开发",
+            "_arrayItem": {
+              "id": "tag-6"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "MediaTextCard",
+      "props": {
+        "id": "penguin-card-4",
+        "title": "美术流程建立",
+        "description": "面对零经验的美术团队，我从零和他们一起制定规范。中途遇到美术产出太慢的问题，我带着他们尝试解决：研究项目中什么可以用插件、什么可以更快地完成。试错的经验会在周会分享，同步信息差提高效率。过程中解决了法线反了、ORM 贴图通道错了、企鹅模型分部位但每个部位没有包含完整骨骼等问题。",
+        "imageSrc": "",
+        "tags": [
+          {
+            "tag": "流程建立",
+            "_arrayItem": {
+              "id": "tag-7"
+            }
+          },
+          {
+            "tag": "团队培训",
+            "_arrayItem": {
+              "id": "tag-8"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "BreakdownHeadline",
+      "props": {
+        "id": "penguin-headline-3",
+        "title": "项目管理：飞书系统与团队协作"
+      }
+    },
+    {
+      "type": "TextSplitLayout",
+      "props": {
+        "id": "penguin-split-2",
+        "heading": "飞书项目管理系统",
+        "paragraphs": [
+          {
+            "type": "TextParagraphBlock",
+            "props": {
+              "id": "para-3",
+              "text": "我使用飞书的多维表格搭建了项目管理系统，用来进行排期规划。系统根据团队习惯不断调整，每两周为一个迭代周期，每个周期会开会展示这个周期做的东西和规划下个周期的任务。"
+            }
+          },
+          {
+            "type": "TextParagraphBlock",
+            "props": {
+              "id": "para-4",
+              "text": "系统最大的亮点是阻塞任务设计：其他人若任务卡住可以迅速填入具体遇到了什么问题，这个任务会被置顶，能及时发现团队中可能的问题。这个设计大大提高了问题响应速度和团队协作效率。"
+            }
+          }
+        ],
+        "imageSrc": "",
+        "layoutVariant": "split-right"
+      }
+    },
+    {
+      "type": "BreakdownHeadline",
+      "props": {
+        "id": "penguin-headline-4",
+        "title": "开发挑战与解决方案"
+      }
+    },
+    {
+      "type": "MediaTextCard",
+      "props": {
+        "id": "penguin-card-5",
+        "title": "C++ 开发难题：蓝图丢失与自动化",
+        "description": "团队成员拉取版本控制的代码后发现打开丢失了蓝图功能。我写了调用 UBT 进行编译的 bat 脚本并在 UGit 的更新 Hook 绑定，同时也写了自动清理缓存文件并重新编译的批处理脚本。另一个问题是程序创建了一个 EditorSubsystem 并没有更改任何东西就上传了，导致后续引擎一启动就崩溃。当时项目中已有一个 EditorSubsystem，我们一直以为是已存在的出了问题，后面才发现是新增的有问题。",
+        "imageSrc": "",
+        "tags": [
+          {
+            "tag": "C++ 开发",
+            "_arrayItem": {
+              "id": "tag-9"
+            }
+          },
+          {
+            "tag": "自动化脚本",
+            "_arrayItem": {
+              "id": "tag-10"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "MediaTextCard",
+      "props": {
+        "id": "penguin-card-6",
+        "title": "版本控制危机与分支管理",
+        "description": "美术不小心把项目的插件删了上传，导致丢失了东西。我们当时不熟悉 Git 操作导致恢复了好长时间。后面强制启用 Art 分支并给程序用的 master 分支设置了权限避免美术误操作。在之后就开发了 Gitlock 工具。这次危机让我意识到必须建立更严格的权限管理和更友好的版本控制工具。",
+        "imageSrc": "",
+        "tags": [
+          {
+            "tag": "版本控制",
+            "_arrayItem": {
+              "id": "tag-11"
+            }
+          },
+          {
+            "tag": "危机处理",
+            "_arrayItem": {
+              "id": "tag-12"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "MediaTextCard",
+      "props": {
+        "id": "penguin-card-7",
+        "title": "美术资产问题：ORM 贴图排查",
+        "description": "美术传错了 ORM 贴图（他记成了 MOR，对应的是金属度、AO 和粗糙度），导致模型出现了死黑的问题。我先检查了模型本身确定是材质的问题，然后一个个贴图进行检查发现是 ORM 贴图的问题，再次对三张贴图单独启用发现是粗糙度和 AO 弄反了，而且美术没有保留源文件。后续就要求美术需要把所有内容上传到一个独立的新的仓库，用来备份和留档。",
+        "imageSrc": "",
+        "tags": [
+          {
+            "tag": "资产管理",
+            "_arrayItem": {
+              "id": "tag-13"
+            }
+          },
+          {
+            "tag": "问题排查",
+            "_arrayItem": {
+              "id": "tag-14"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "BreakdownTriptych",
+      "props": {
+        "id": "penguin-triptych-1",
+        "col1Title": "主策划",
+        "col1Text": "负责核心玩法设计、关卡事件设计、世界观叙事，设计了创新的遗传繁育系统。",
+        "col1Img": "",
+        "col2Title": "TA",
+        "col2Text": "建立 3D 开发管线，开发 Gitlock 等工具，负责全部灯光设计，帮助美术团队建立流程。",
+        "col2Img": "",
+        "col3Title": "项目管理",
+        "col3Text": "搭建飞书管理系统，协调 8 人团队，两周迭代周期，阻塞任务置顶设计。",
+        "col3Img": ""
+      }
+    },
+    {
+      "type": "NextProjectBlock",
+      "props": {
+        "id": "next-1",
+        "nextId": "lighting-portfolio",
+        "nextName": "LIGHTING PORTFOLIO",
+        "nextBg": "/images/train-station/2Day.webp"
+      }
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "root": {
+    "props": {
+      "title": "CITY ADD"
+    }
+  },
+  "content": [
+    {
+      "type": "LightingCollectionGallery",
+      "props": {
+        "title": "CITY ADD",
+        "number": "01",
+        "description": "A detailed breakdown of lighting setup, mood exploration, and before/after comparisons for city add.",
+        "backHref": "/works/lighting-portfolio",
+        "images": [
+          {
+            "lit": "/images/city-2026/001.webp",
+            "caption": "DAY",
+            "_arrayItem": {
+              "id": "collection-1-image-1"
+            }
+          },
+          {
+            "lit": "/images/city-2026/002.webp",
+            "caption": "DUSK",
+            "_arrayItem": {
+              "id": "collection-1-image-2"
+            }
+          },
+          {
+            "lit": "/images/city-2026/003.webp",
+            "caption": "NIGHT",
+            "_arrayItem": {
+              "id": "collection-1-image-3"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

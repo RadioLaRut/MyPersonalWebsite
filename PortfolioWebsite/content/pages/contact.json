@@ -1,84 +1,92 @@
 {
-    "root": {
-        "props": {
-            "title": "Contact Page"
-        }
-    },
-    "content": [
-        {
-            "type": "ContactFlashlight",
+  "root": {
+    "props": {
+      "title": "Contact Page"
+    }
+  },
+  "content": [
+    {
+      "type": "ContactFlashlight",
+      "props": {
+        "id": "ContactFlashlight-001",
+        "maskRadius": 500,
+        "maskSmoothness": 40,
+        "darkTextColor": "rgba(255,255,255,0.4)",
+        "lightTextColor": "rgba(255,255,255,1)",
+        "name": "JIANG CHENGYAN",
+        "taglineText": "艺术与科技 / 交互叙事设计 / 游戏设计",
+        "taglineSub": "CUC '2028",
+        "email": "3115437519@qq.com",
+        "wechat": "radiowithouthead",
+        "experienceHistory": [
+          {
+            "type": "ContactExperienceItem",
             "props": {
-                "id": "ContactFlashlight-001",
-                "maskRadius": 500,
-                "maskSmoothness": 40,
-                "darkTextColor": "rgba(255,255,255,0.4)",
-                "lightTextColor": "rgba(255,255,255,1)",
-                "name": "JIANG CHENGYAN",
-                "taglineText": "艺术与科技 / 交互叙事设计 / 游戏设计",
-                "taglineSub": "CUC '2028",
-                "email": "3115437519@qq.com",
-                "wechat": "radiowithouthead",
-                "experienceHistory": [
-                    {
-                        "company": "腾讯光子工作室",
-                        "role": "Lighting Technical Art Intern",
-                        "_arrayItem": {
-                            "id": "exp-1"
-                        }
-                    },
-                    {
-                        "company": "企鹅贸易公司 (Penguin Trading)",
-                        "role": "Lead Designer & PM",
-                        "_arrayItem": {
-                            "id": "exp-2"
-                        }
-                    },
-                    {
-                        "company": "暗喻之间 (Insight)",
-                        "role": "Lead Narrative System & Engineering",
-                        "_arrayItem": {
-                            "id": "exp-3"
-                        }
-                    },
-                    {
-                        "company": "杀毒奇兵 (Slay the Virus)",
-                        "role": "Core UI & UX Direction",
-                        "_arrayItem": {
-                            "id": "exp-4"
-                        }
-                    }
-                ],
-                "creativeDirection": [
-                    {
-                        "title": "交互叙事与关卡设计",
-                        "subtitle": "Interactive Narrative & Level Design",
-                        "_arrayItem": {
-                            "id": "cd-1"
-                        }
-                    },
-                    {
-                        "title": "光影表现与视觉引导",
-                        "subtitle": "Lighting Atmosphere & Visual Guidance",
-                        "_arrayItem": {
-                            "id": "cd-2"
-                        }
-                    },
-                    {
-                        "title": "程序化生成与创作工具链",
-                        "subtitle": "Procedural Generation & Toolchains",
-                        "_arrayItem": {
-                            "id": "cd-3"
-                        }
-                    },
-                    {
-                        "title": "UI系统与交互原型落地",
-                        "subtitle": "UI Systems & Rapid Prototyping",
-                        "_arrayItem": {
-                            "id": "cd-4"
-                        }
-                    }
-                ]
+              "id": "exp-1",
+              "company": "腾讯光子工作室",
+              "role": "Lighting Technical Art Intern"
             }
-        }
-    ]
+          },
+          {
+            "type": "ContactExperienceItem",
+            "props": {
+              "id": "exp-2",
+              "company": "企鹅贸易公司 (Penguin Trading)",
+              "role": "Lead Designer & PM"
+            }
+          },
+          {
+            "type": "ContactExperienceItem",
+            "props": {
+              "id": "exp-3",
+              "company": "暗喻之间 (Insight)",
+              "role": "Lead Narrative System & Engineering"
+            }
+          },
+          {
+            "type": "ContactExperienceItem",
+            "props": {
+              "id": "exp-4",
+              "company": "杀毒奇兵 (Slay the Virus)",
+              "role": "Core UI & UX Direction"
+            }
+          }
+        ],
+        "creativeDirection": [
+          {
+            "type": "ContactDirectionItem",
+            "props": {
+              "id": "cd-1",
+              "title": "交互叙事与关卡设计",
+              "subtitle": "Interactive Narrative & Level Design"
+            }
+          },
+          {
+            "type": "ContactDirectionItem",
+            "props": {
+              "id": "cd-2",
+              "title": "光影表现与视觉引导",
+              "subtitle": "Lighting Atmosphere & Visual Guidance"
+            }
+          },
+          {
+            "type": "ContactDirectionItem",
+            "props": {
+              "id": "cd-3",
+              "title": "程序化生成与创作工具链",
+              "subtitle": "Procedural Generation & Toolchains"
+            }
+          },
+          {
+            "type": "ContactDirectionItem",
+            "props": {
+              "id": "cd-4",
+              "title": "UI系统与交互原型落地",
+              "subtitle": "UI Systems & Rapid Prototyping"
+            }
+          }
+        ]
+      }
+    }
+  ]
 }

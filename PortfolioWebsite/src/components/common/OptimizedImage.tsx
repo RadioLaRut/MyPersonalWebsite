@@ -1,6 +1,8 @@
 import Image from "next/image";
 import type { ComponentProps } from "react";
 
+import { normalizeImageSrc } from "@/lib/public-paths";
+
 interface OptimizedImageProps extends Omit<ComponentProps<typeof Image>, "src" | "alt" | "quality" | "priority"> {
   src: string;
   alt: string;
@@ -13,7 +15,22 @@ export function OptimizedImage({
   alt,
   priority = false,
   quality = 95,
+  unoptimized,
+  className,
   ...props
 }: OptimizedImageProps) {
-  return <Image src={src} alt={alt} priority={priority} quality={quality} {...props} />;
+  const normalizedSrc = normalizeImageSrc(src);
+  const shouldSkipOptimization = unoptimized ?? normalizedSrc.toLowerCase().endsWith(".svg");
+
+  return (
+    <Image
+      src={normalizedSrc}
+      alt={alt}
+      priority={priority}
+      quality={quality}
+      unoptimized={shouldSkipOptimization}
+      className={className}
+      {...props}
+    />
+  );
 }

@@ -1,130 +1,188 @@
 {
-    "root": {
-        "props": {
-            "title": "INSIGHT"
-        }
+  "root": {
+    "props": {
+      "title": "INSIGHT"
+    }
+  },
+  "content": [
+    {
+      "type": "HeroHeadline",
+      "props": {
+        "id": "insight-hero-1",
+        "eyebrow": "Project 02",
+        "title": "INSIGHT",
+        "subtitle": "互动叙事游戏",
+        "heroImage": "/images/insight/InsightOnlyCover.webp",
+        "navLink": "https://www.bilibili.com/video/BV1gQbDzQEUL"
+      }
     },
-    "content": [
-        {
-            "type": "HeroHeadline",
+    {
+      "type": "RichParagraph",
+      "props": {
+        "id": "insight-desc-1",
+        "content": "INSIGHT 是一款轻交互的互动叙事游戏。玩家扮演一位网络舆情监管员，通过审查社交媒体内容、与用户对话，在维护网络秩序与尊重个人隐私之间做出选择。游戏采用拟真的桌面操作系统界面，通过对话选择驱动 2-3 条主要剧情分支，探讨网络监管的伦理困境。这是我第一个从概念到完成全流程独立开发的游戏项目，在一个月内完成了剧本写作、系统搭建、UI 设计与技术实现。"
+      }
+    },
+    {
+      "type": "HighDensityInfoBlock",
+      "props": {
+        "id": "insight-info-1",
+        "phase1Title": "项目背景",
+        "phase1Subtitle": "Context",
+        "phase1Content": "作为游戏叙事课程的结课作业，我独立完成了这款互动叙事游戏的全部设计与开发工作。项目周期约一个月，使用 Unreal Engine 5 和 Articy Draft 构建。这是我第一次完整实现从剧本到可玩版本的全流程开发。",
+        "phase1Items": [
+          {
+            "type": "MetadataListItem",
             "props": {
-                "id": "insight-hero-1",
-                "eyebrow": "Project 02",
-                "title": "INSIGHT",
-                "subtitle": "互动叙事游戏",
-                "heroImage": "/images/insight/InsightOnlyCover.webp",
-                "navLink": "https://www.bilibili.com/video/BV1gQbDzQEUL"
+              "id": "item-1",
+              "label": "引擎",
+              "value": "Unreal Engine 5",
+              "align": "end"
             }
-        },
-        {
-            "type": "RichParagraph",
+          },
+          {
+            "type": "MetadataListItem",
             "props": {
-                "id": "insight-desc-1",
-                "content": "INSIGHT 是一款轻交互的互动叙事游戏。玩家扮演一位网络舆情监管员，通过审查社交媒体内容、与用户对话，在维护网络秩序与尊重个人隐私之间做出选择。游戏采用拟真的桌面操作系统界面，通过对话选择驱动 2-3 条主要剧情分支，探讨网络监管的伦理困境。这是我第一个从概念到完成全流程独立开发的游戏项目，在一个月内完成了剧本写作、系统搭建、UI 设计与技术实现。"
+              "id": "item-2",
+              "label": "开发周期",
+              "value": "约 1 个月",
+              "align": "end"
             }
-        },
-        {
-            "type": "HighDensityInfoBlock",
+          },
+          {
+            "type": "MetadataListItem",
             "props": {
-                "id": "insight-info-1",
-                "phase1Title": "项目背景",
-                "phase1Subtitle": "Context",
-                "phase1Content": "作为游戏叙事课程的结课作业，我独立完成了这款互动叙事游戏的全部设计与开发工作。项目周期约一个月，使用 Unreal Engine 5 和 Articy Draft 构建。这是我第一次完整实现从剧本到可玩版本的全流程开发。",
-                "phase1Items": [
-                    { "label": "引擎", "value": "Unreal Engine 5", "_arrayItem": { "id": "item-1" } },
-                    { "label": "开发周期", "value": "约 1 个月", "_arrayItem": { "id": "item-2" } },
-                    { "label": "团队规模", "value": "独立完成", "_arrayItem": { "id": "item-3" } },
-                    { "label": "项目性质", "value": "课程作业", "_arrayItem": { "id": "item-4" } }
-                ],
-                "phase2Title": "系统架构",
-                "phase2Subtitle": "Architecture",
-                "phase2Content": "游戏采用对话选择驱动的叙事机制，使用 Articy Draft 管理多分支剧情树，通过自定义蓝图系统将对话数据导入 Unreal Engine。拟真的桌面操作系统 UI 设计增强了沉浸感，玩家在审查内容与对话选择中推进剧情。",
-                "phase2Items": [],
-                "phase3Title": "项目成果",
-                "phase3Subtitle": "Execution",
-                "phase3Content": "项目最终完成了完整可玩版本，包含 2-3 条主要剧情分支和多个结局。游戏在课程中获得高分，并在 B 站发布了演示视频。开发过程中克服了蓝图基础不牢固、Articy Draft 集成、以及题材表现难度等挑战。",
-                "phase3ImageSrc": ""
+              "id": "item-3",
+              "label": "团队规模",
+              "value": "独立完成",
+              "align": "end"
             }
-        },
-        {
-            "type": "BreakdownHeadline",
+          },
+          {
+            "type": "MetadataListItem",
             "props": {
-                "id": "insight-headline-1",
-                "title": "设计挑战"
+              "id": "item-4",
+              "label": "项目性质",
+              "value": "课程作业",
+              "align": "end"
             }
-        },
-        {
-            "type": "MediaTextCard",
-            "props": {
-                "id": "insight-card-1",
-                "title": "多分支叙事与题材表现",
-                "description": "设计多分支剧情时面临两个核心挑战：如何保持不同分支的叙事连贯性，以及如何表现网络舆情监管员这一特殊角色的内心活动。由于一般人不会在互联网上表露真实想法，设计真实可信的私密对话和心理活动成为难点。最终通过 Articy Draft 的节点系统实现了清晰的剧情流程管理。",
-                "imageSrc": "",
-                "tags": [
-                    { "tag": "多分支叙事", "_arrayItem": { "id": "tag-1" } },
-                    { "tag": "角色心理", "_arrayItem": { "id": "tag-2" } }
-                ]
+          }
+        ],
+        "phase2Title": "系统架构",
+        "phase2Subtitle": "Architecture",
+        "phase2Content": "游戏采用对话选择驱动的叙事机制，使用 Articy Draft 管理多分支剧情树，通过自定义蓝图系统将对话数据导入 Unreal Engine。拟真的桌面操作系统 UI 设计增强了沉浸感，玩家在审查内容与对话选择中推进剧情。",
+        "phase2Items": [],
+        "phase3Title": "项目成果",
+        "phase3Subtitle": "Execution",
+        "phase3Content": "项目最终完成了完整可玩版本，包含 2-3 条主要剧情分支和多个结局。游戏在课程中获得高分，并在 B 站发布了演示视频。开发过程中克服了蓝图基础不牢固、Articy Draft 集成、以及题材表现难度等挑战。",
+        "phase3ImageSrc": ""
+      }
+    },
+    {
+      "type": "BreakdownHeadline",
+      "props": {
+        "id": "insight-headline-1",
+        "title": "设计挑战"
+      }
+    },
+    {
+      "type": "MediaTextCard",
+      "props": {
+        "id": "insight-card-1",
+        "title": "多分支叙事与题材表现",
+        "description": "设计多分支剧情时面临两个核心挑战：如何保持不同分支的叙事连贯性，以及如何表现网络舆情监管员这一特殊角色的内心活动。由于一般人不会在互联网上表露真实想法，设计真实可信的私密对话和心理活动成为难点。最终通过 Articy Draft 的节点系统实现了清晰的剧情流程管理。",
+        "imageSrc": "",
+        "tags": [
+          {
+            "tag": "多分支叙事",
+            "_arrayItem": {
+              "id": "tag-1"
             }
-        },
-        {
-            "type": "MediaTextCard",
-            "props": {
-                "id": "insight-card-2",
-                "title": "技术集成与边学边做",
-                "description": "这是我第一次使用 Articy Draft 和深度使用 UE 蓝图系统。在蓝图基础不牢固的情况下，边学习边开发，最终实现了 Articy Draft 对话树与 Unreal Engine 的完整集成，搭建了可扩展的对话系统框架。",
-                "imageSrc": "",
-                "tags": [
-                    { "tag": "Articy Draft", "_arrayItem": { "id": "tag-3" } },
-                    { "tag": "UE 蓝图", "_arrayItem": { "id": "tag-4" } }
-                ]
+          },
+          {
+            "tag": "角色心理",
+            "_arrayItem": {
+              "id": "tag-2"
             }
-        },
-        {
-            "type": "BreakdownTriptych",
-            "props": {
-                "id": "insight-triptych-1",
-                "col1Title": "剧情树管理",
-                "col1Text": "剧本写作使用了 Articy Draft，通过节点极为方便地实现多分支剧情流程树的管理。",
-                "col1Img": "/images/insight/Code01.webp",
-                "col2Title": "蓝图系统",
-                "col2Text": "Unreal Engine 蓝图深度结合对话树系统，实现对话数据的导入与运行时逻辑。",
-                "col2Img": "/images/insight/Code02.webp",
-                "col3Title": "UI 设计",
-                "col3Text": "拟真桌面操作系统 UI 设计，增强玩家的沉浸感与代入感。",
-                "col3Img": "/images/insight/Shot04.webp"
+          }
+        ]
+      }
+    },
+    {
+      "type": "MediaTextCard",
+      "props": {
+        "id": "insight-card-2",
+        "title": "技术集成与边学边做",
+        "description": "这是我第一次使用 Articy Draft 和深度使用 UE 蓝图系统。在蓝图基础不牢固的情况下，边学习边开发，最终实现了 Articy Draft 对话树与 Unreal Engine 的完整集成，搭建了可扩展的对话系统框架。",
+        "imageSrc": "",
+        "tags": [
+          {
+            "tag": "Articy Draft",
+            "_arrayItem": {
+              "id": "tag-3"
             }
-        },
-        {
-            "type": "MosaicGallery",
-            "props": {
-                "id": "insight-gallery-1",
-                "images": [
-                    {
-                        "src": "/images/insight/Shot01.webp",
-                        "caption": "游戏界面",
-                        "_arrayItem": { "id": "img-1" }
-                    },
-                    {
-                        "src": "/images/insight/Shot02.webp",
-                        "caption": "对话系统",
-                        "_arrayItem": { "id": "img-2" }
-                    },
-                    {
-                        "src": "/images/insight/Shot03.webp",
-                        "caption": "剧情分支",
-                        "_arrayItem": { "id": "img-3" }
-                    }
-                ]
+          },
+          {
+            "tag": "UE 蓝图",
+            "_arrayItem": {
+              "id": "tag-4"
             }
-        },
-        {
-            "type": "NextProjectBlock",
-            "props": {
-                "id": "next-1",
-                "nextId": "slay-the-virus",
-                "nextName": "SLAY THE VIRUS",
-                "nextBg": "/images/slay-the-virus/STVTitle.webp"
+          }
+        ]
+      }
+    },
+    {
+      "type": "BreakdownTriptych",
+      "props": {
+        "id": "insight-triptych-1",
+        "col1Title": "剧情树管理",
+        "col1Text": "剧本写作使用了 Articy Draft，通过节点极为方便地实现多分支剧情流程树的管理。",
+        "col1Img": "/images/insight/Code01.webp",
+        "col2Title": "蓝图系统",
+        "col2Text": "Unreal Engine 蓝图深度结合对话树系统，实现对话数据的导入与运行时逻辑。",
+        "col2Img": "/images/insight/Code02.webp",
+        "col3Title": "UI 设计",
+        "col3Text": "拟真桌面操作系统 UI 设计，增强玩家的沉浸感与代入感。",
+        "col3Img": "/images/insight/Shot04.webp"
+      }
+    },
+    {
+      "type": "MosaicGallery",
+      "props": {
+        "id": "insight-gallery-1",
+        "images": [
+          {
+            "src": "/images/insight/Shot01.webp",
+            "caption": "游戏界面",
+            "_arrayItem": {
+              "id": "img-1"
             }
-        }
-    ]
+          },
+          {
+            "src": "/images/insight/Shot02.webp",
+            "caption": "对话系统",
+            "_arrayItem": {
+              "id": "img-2"
+            }
+          },
+          {
+            "src": "/images/insight/Shot03.webp",
+            "caption": "剧情分支",
+            "_arrayItem": {
+              "id": "img-3"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "NextProjectBlock",
+      "props": {
+        "id": "next-1",
+        "nextId": "slay-the-virus",
+        "nextName": "SLAY THE VIRUS",
+        "nextBg": "/images/slay-the-virus/STVTitle.webp"
+      }
+    }
+  ]
 }

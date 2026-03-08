@@ -31,6 +31,12 @@ const validCases: ValidCase[] = [
   {
     expectedRelativePath: "index.json",
     expectedSlugKey: "index",
+    input: "/",
+    name: "root path maps to index",
+  },
+  {
+    expectedRelativePath: "index.json",
+    expectedSlugKey: "index",
     input: "/p",
     name: "/p maps to index",
   },
@@ -63,6 +69,18 @@ const validCases: ValidCase[] = [
     expectedSlugKey: "a/b",
     input: ["A", "B"],
     name: "normalizes array input",
+  },
+  {
+    expectedRelativePath: "works/penguin.json",
+    expectedSlugKey: "works/penguin",
+    input: "/works/penguin",
+    name: "keeps public works path mapping",
+  },
+  {
+    expectedRelativePath: "works/lighting-portfolio/collection-1.json",
+    expectedSlugKey: "works/lighting-portfolio/collection-1",
+    input: "/works/lighting-portfolio/collection-1",
+    name: "keeps nested public lighting collection path mapping",
   },
   {
     expectedRelativePath: "lighting-portfolio.json",

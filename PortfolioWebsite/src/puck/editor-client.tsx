@@ -1,18 +1,14 @@
 "use client";
 
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { Puck, type Data, usePuck } from "@measured/puck";
 import "@measured/puck/puck.css";
+import { MotionConfig } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 import config from "@/puck/config";
-import CustomCursor from "@/components/layout/CustomCursor";
-
-const previewStylesheetId = "puck-preview-stylesheet";
-
-type IframeOverrideProps = {
-  children: ReactNode;
-  document?: Document;
-};
+import { toAdminPathFromSlugKey, toPublicPathFromSlugKey } from "@/lib/public-paths";
+import styles from "./editor-shell.module.css";
 
 type PuckApiPayload = {
   data?: Data;
@@ -49,39 +45,6 @@ const initialData: Data = {
   ],
 };
 
-function PuckIframeOverride({ children, document }: IframeOverrideProps) {
-  const { appState } = usePuck();
-  const isEditMode = appState.ui.previewMode !== "interactive";
-
-  useEffect(() => {
-    if (!document) {
-      return;
-    }
-
-    const existing = document.getElementById(previewStylesheetId) as HTMLLinkElement | null;
-    if (!existing) {
-      const link = document.createElement("link");
-      link.id = previewStylesheetId;
-      link.rel = "stylesheet";
-      link.href = "/puck-preview.css";
-      document.head.appendChild(link);
-    }
-
-    const sourceClasses = window.document.body.className
-      .split(/\s+/)
-      .filter(Boolean)
-      .filter((className) => className === "antialiased" || className.startsWith("__variable_"));
-    document.body.className = sourceClasses.join(" ");
-  }, [document]);
-
-  return (
-    <>
-      {isEditMode && <CustomCursor isWithinIframe={true} targetDocument={document} />}
-      {children}
-    </>
-  );
-}
-
 type PuckEditorClientProps = {
   initialSlug: string;
 };
@@ -90,16 +53,121 @@ type HeaderActionsOverrideProps = {
   children: ReactNode;
 };
 
+type HeaderOverrideProps = {
+  children: ReactNode;
+  actions?: ReactNode;
+};
+
+function IframePreviewChrome({
+  children,
+  document: frameDocument,
+}: {
+  children: ReactNode;
+  document?: Document;
+}) {
+  useEffect(() => {
+    if (!frameDocument) {
+      return;
+    }
+
+    const htmlElement = frameDocument.documentElement;
+    const bodyElement = frameDocument.body;
+    const previousHtmlOverflow = htmlElement.style.overflow;
+    const previousHtmlHeight = htmlElement.style.height;
+    const previousHtmlOverscrollBehavior = htmlElement.style.overscrollBehavior;
+    const previousBodyOverflow = bodyElement.style.overflow;
+    const previousBodyHeight = bodyElement.style.height;
+    const previousBodyOverscrollBehavior = bodyElement.style.overscrollBehavior;
+    const previousAdminMode = htmlElement.getAttribute("data-admin-mode");
+    const previousAdminRoot = htmlElement.getAttribute("data-admin-root");
+
+    htmlElement.setAttribute("data-admin-mode", "true");
+    htmlElement.removeAttribute("data-admin-root");
+    htmlElement.style.overflow = "";
+    htmlElement.style.height = "";
+    htmlElement.style.overscrollBehavior = "";
+    bodyElement.style.overflow = "";
+    bodyElement.style.height = "";
+    bodyElement.style.overscrollBehavior = "";
+
+    return () => {
+      if (previousAdminMode === null) {
+        htmlElement.removeAttribute("data-admin-mode");
+      } else {
+        htmlElement.setAttribute("data-admin-mode", previousAdminMode);
+      }
+
+      if (previousAdminRoot === null) {
+        htmlElement.removeAttribute("data-admin-root");
+      } else {
+        htmlElement.setAttribute("data-admin-root", previousAdminRoot);
+      }
+
+      htmlElement.style.overflow = previousHtmlOverflow;
+      htmlElement.style.height = previousHtmlHeight;
+      htmlElement.style.overscrollBehavior = previousHtmlOverscrollBehavior;
+      bodyElement.style.overflow = previousBodyOverflow;
+      bodyElement.style.height = previousBodyHeight;
+      bodyElement.style.overscrollBehavior = previousBodyOverscrollBehavior;
+    };
+  }, [frameDocument]);
+
+  return <>{children}</>;
+}
+
 function slugQueryValue(slugKey: string) {
   return slugKey === "index" ? "" : slugKey;
 }
 
 function toAdminPath(slugKey: string) {
-  return slugKey === "index" ? "/admin" : `/admin/${slugKey}`;
+  return toAdminPathFromSlugKey(slugKey);
 }
 
-function toPPath(slugKey: string) {
-  return slugKey === "index" ? "/p/" : `/p/${slugKey}`;
+function toPublicPath(slugKey: string) {
+  return toPublicPathFromSlugKey(slugKey);
+}
+
+function toSlugKeyFromPathInput(rawValue: string) {
+  const trimmed = rawValue.trim();
+  if (!trimmed || trimmed === "/") {
+    return "index";
+  }
+
+  let normalized = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  normalized = normalized.replace(/\/+/g, "/");
+
+  if (normalized === "/p" || normalized === "/p/") {
+    return "index";
+  }
+
+  if (normalized.startsWith("/p/")) {
+    normalized = normalized.slice(2);
+  }
+
+  if (normalized === "/admin" || normalized === "/admin/") {
+    return "index";
+  }
+
+  if (normalized.startsWith("/admin/")) {
+    normalized = normalized.slice("/admin".length);
+  }
+
+  const withoutSlashes = normalized.replace(/^\/+|\/+$/g, "");
+  if (!withoutSlashes) {
+    return "index";
+  }
+
+  return withoutSlashes
+    .split("/")
+    .filter(Boolean)
+    .map((segment) => {
+      try {
+        return decodeURIComponent(segment).trim().toLowerCase();
+      } catch {
+        return segment.trim().toLowerCase();
+      }
+    })
+    .join("/");
 }
 
 function PreviewModeToggle() {
@@ -141,26 +209,209 @@ function PreviewModeToggle() {
   );
 }
 
-function HeaderActionsWithModeToggle({ children }: HeaderActionsOverrideProps) {
+function PreviewEffectsToggle({
+  enabled,
+  onToggle,
+}: {
+  enabled: boolean;
+  onToggle: () => void;
+}) {
   return (
-    <div className="flex items-center gap-3">
+    <button
+      type="button"
+      onClick={onToggle}
+      className={`rounded-md border px-3 py-1.5 text-[10px] font-mono font-semibold tracking-[0.16em] transition-colors ${enabled
+        ? "border-white/20 bg-white/10 text-white hover:bg-white/20"
+        : "border-white/10 bg-transparent text-white/50 hover:text-white/80"
+        }`}
+      title="Toggle preview effects and custom cursor"
+    >
+      {enabled ? "EFFECTS ON" : "EFFECTS OFF"}
+    </button>
+  );
+}
+
+function HeaderActionsWithModeToggle({
+  children,
+  previewEffectsEnabled,
+  onTogglePreviewEffects,
+  onOpenPublicPage,
+}: HeaderActionsOverrideProps & {
+  previewEffectsEnabled: boolean;
+  onTogglePreviewEffects: () => void;
+  onOpenPublicPage: () => void;
+}) {
+  return (
+    <div className="flex flex-wrap items-center justify-end gap-3">
       {children}
+      <button
+        type="button"
+        onClick={onOpenPublicPage}
+        className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-[10px] font-mono font-semibold tracking-[0.16em] text-slate-700 transition-colors hover:border-slate-400 hover:text-slate-950"
+        title="Open current public page"
+      >
+        OPEN SITE
+      </button>
       <PreviewModeToggle />
+      <PreviewEffectsToggle enabled={previewEffectsEnabled} onToggle={onTogglePreviewEffects} />
+    </div>
+  );
+}
+
+function EditorHeaderChrome({
+  children,
+  currentPath,
+  selectedPagePath,
+  availablePublicPaths,
+  newPageInputValue,
+  loadState,
+  publishState,
+  isSwitchingPage,
+  onOpenPublicPage,
+  onSelectPagePath,
+  onNewPageInputValueChange,
+  onCreatePage,
+}: HeaderOverrideProps & {
+  currentPath: string;
+  selectedPagePath: string;
+  availablePublicPaths: string[];
+  newPageInputValue: string;
+  loadState: "idle" | "loading" | "error";
+  publishState: "idle" | "publishing" | "published" | "error";
+  isSwitchingPage: boolean;
+  onOpenPublicPage: () => void;
+  onSelectPagePath: (nextPath: string) => void;
+  onNewPageInputValueChange: (value: string) => void;
+  onCreatePage: () => void;
+}) {
+  return (
+    <div className="editor-header-shell">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 bg-[#fbfcfe] px-4 py-3 text-xs text-slate-600 md:px-5">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="rounded-sm border border-slate-200 bg-white px-3 py-2 font-mono tracking-[0.18em] uppercase text-slate-500">
+            当前页面 {currentPath}
+          </div>
+
+          <button
+            type="button"
+            onClick={onOpenPublicPage}
+            className="rounded-sm border border-slate-200 bg-white px-3 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-950"
+          >
+            OPEN PAGE
+          </button>
+
+          <div className="flex items-center rounded-sm border border-slate-200 bg-white transition-colors focus-within:border-slate-400">
+            <div className="border-r border-slate-200 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-400">
+              页面
+            </div>
+            <select
+              value={selectedPagePath}
+              onChange={(event) => onSelectPagePath(event.currentTarget.value)}
+              disabled={isSwitchingPage}
+              className="min-w-[260px] appearance-none bg-transparent px-3 py-2 text-xs font-mono tracking-[0.14em] text-slate-700 outline-none"
+              aria-label="Switch page"
+            >
+              {availablePublicPaths.map((pagePath) => (
+                <option key={pagePath} value={pagePath}>
+                  {pagePath}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center rounded-sm border border-slate-200 bg-white focus-within:border-slate-400 transition-colors">
+            <input
+              value={newPageInputValue}
+              onChange={(event) => onNewPageInputValueChange(event.currentTarget.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  onCreatePage();
+                }
+              }}
+              disabled={isSwitchingPage}
+              className="min-w-[220px] bg-transparent px-3 py-2 text-xs font-mono tracking-[0.14em] text-slate-700 outline-none placeholder-slate-300"
+              placeholder="/new-page"
+              aria-label="Create page"
+            />
+            <button
+              type="button"
+              disabled={isSwitchingPage}
+              className="border-l border-slate-200 bg-slate-50 px-3 py-2 text-[10px] font-mono uppercase tracking-[0.24em] text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950"
+              onClick={onCreatePage}
+            >
+              CREATE
+            </button>
+          </div>
+        </div>
+
+        <div className="flex items-center">
+          <span className={`font-mono tracking-[0.15em] uppercase ${(loadState === "loading" || isSwitchingPage) ? "animate-pulse text-blue-500" : ""}`}>
+            Load: {isSwitchingPage ? "switching" : loadState}
+          </span>
+          <span className="ml-4 font-mono tracking-[0.15em] uppercase">
+            Publish: {publishState}
+          </span>
+        </div>
+      </div>
+
+      {children}
     </div>
   );
 }
 
 export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps) {
+  const router = useRouter();
   const [data, setData] = useState<Data>(initialData);
   const [pageSlugs, setPageSlugs] = useState<string[]>([]);
-  const [loadState, setLoadState] = useState<"idle" | "loading" | "error">("loading"); // Fix: Start in loading state
+  const [loadState, setLoadState] = useState<"idle" | "loading" | "error">("loading");
   const [publishState, setPublishState] = useState<"idle" | "publishing" | "published" | "error">("idle");
+  const [selectedPagePath, setSelectedPagePath] = useState("/");
+  const [newPageInputValue, setNewPageInputValue] = useState("");
+  const [previewEffectsEnabled, setPreviewEffectsEnabled] = useState(true);
+  const [isSwitchingPage, startPageSwitchTransition] = useTransition();
+  const currentDataRef = useRef<Data>(initialData);
   const slugValue = slugQueryValue(initialSlug);
-  const headerPath = slugValue ? `/p/${slugValue}` : "/p/";
+  const headerPath = slugValue ? `/${slugValue}` : "/";
+  const publicPath = toPublicPath(initialSlug);
   const availablePages = useMemo(() => {
     const merged = new Set<string>(["index", ...pageSlugs, initialSlug]);
     return Array.from(merged).sort((a, b) => a.localeCompare(b));
   }, [pageSlugs, initialSlug]);
+  const availablePublicPaths = useMemo(() => availablePages.map((slug) => toPublicPath(slug)), [availablePages]);
+
+  useEffect(() => {
+    setSelectedPagePath(headerPath);
+    setNewPageInputValue("");
+  }, [headerPath]);
+
+  const currentAdminPath = toAdminPath(initialSlug);
+
+  const openAdminPath = useCallback((rawValue: string) => {
+    const slugKey = toSlugKeyFromPathInput(rawValue);
+    const nextAdminPath = toAdminPath(slugKey);
+    if (nextAdminPath === currentAdminPath) {
+      return;
+    }
+
+    currentDataRef.current = initialData;
+    setData(initialData);
+    setLoadState("loading");
+    setPublishState("idle");
+
+    startPageSwitchTransition(() => {
+      router.replace(nextAdminPath);
+    });
+  }, [currentAdminPath, router]);
+
+  const openPublicPage = useCallback(() => {
+    router.push(publicPath);
+  }, [publicPath, router]);
+
+  useEffect(() => {
+    for (const slug of availablePages) {
+      router.prefetch(toAdminPath(slug));
+    }
+  }, [availablePages, router]);
 
   useEffect(() => {
     let isMounted = true;
@@ -236,6 +487,7 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
           });
         }
 
+        currentDataRef.current = migratedData;
         setData(migratedData);
         setLoadState("idle");
       } catch {
@@ -253,16 +505,45 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
     };
   }, [initialSlug]);
 
-  const overrides = useMemo(
-    () => ({
-      iframe: PuckIframeOverride,
-      headerActions: HeaderActionsWithModeToggle,
-    }),
-    [],
-  );
+  const overrides = {
+    header: (props: HeaderOverrideProps) => (
+      <EditorHeaderChrome
+        {...props}
+        currentPath={headerPath}
+        selectedPagePath={selectedPagePath}
+        availablePublicPaths={availablePublicPaths}
+        newPageInputValue={newPageInputValue}
+        loadState={loadState}
+        publishState={publishState}
+        isSwitchingPage={isSwitchingPage}
+        onOpenPublicPage={openPublicPage}
+        onSelectPagePath={(nextPath) => {
+          setSelectedPagePath(nextPath);
+          if (nextPath !== headerPath) {
+            openAdminPath(nextPath);
+          }
+        }}
+        onNewPageInputValueChange={setNewPageInputValue}
+        onCreatePage={() => openAdminPath(newPageInputValue)}
+      />
+    ),
+    headerActions: (props: HeaderActionsOverrideProps) => (
+      <HeaderActionsWithModeToggle
+        {...props}
+        previewEffectsEnabled={previewEffectsEnabled}
+        onOpenPublicPage={openPublicPage}
+        onTogglePreviewEffects={() => setPreviewEffectsEnabled((current) => !current)}
+      />
+    ),
+    iframe: ({ children, document: frameDocument }: { children: ReactNode; document?: Document }) => (
+      <IframePreviewChrome document={frameDocument}>{children}</IframePreviewChrome>
+    ),
+  };
 
-  async function handlePublish(nextData: Data) {
+  async function handlePublish(nextData?: Data) {
+    const publishPayload = nextData ?? currentDataRef.current;
     setPublishState("publishing");
+    currentDataRef.current = publishPayload;
 
     try {
       const response = await fetch("/api/puck", {
@@ -271,7 +552,7 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          data: nextData,
+          data: publishPayload,
           slug: slugQueryValue(initialSlug),
         }),
       });
@@ -299,69 +580,11 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
   }
 
   return (
-    <main className="h-screen bg-black text-white flex flex-col overflow-hidden">
-      <div className="flex items-center justify-between px-6 py-4 text-xs text-white/70 md:px-8 border-b border-white/10 shrink-0">
-        <div className="flex items-center space-x-2">
-          <span className="font-mono tracking-[0.15em] uppercase text-white/50 select-none mr-1">/PAGE:</span>
-          <div className="flex items-center rounded-sm border border-white/20 bg-[#0a0a0a] px-2">
-            <select
-              value={initialSlug}
-              onChange={(event) => {
-                window.location.href = toAdminPath(event.currentTarget.value);
-              }}
-              className="min-w-[180px] bg-transparent py-1.5 text-xs font-mono tracking-wider text-white outline-none"
-              aria-label="Select page to edit"
-            >
-              {availablePages.map((slug) => (
-                <option key={slug} value={slug} className="bg-black text-white">
-                  {toPPath(slug)}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="h-4 w-px bg-white/20 mx-2" />
-
-          <div className="flex items-center space-x-0 bg-[#0a0a0a] border border-white/20 rounded-sm focus-within:border-white/60 transition-colors">
-            <span className="px-2 text-white/40 font-mono text-xs">/p/</span>
-            <input
-              type="text"
-              id="puck-route-input"
-              className="bg-transparent text-white outline-none font-mono tracking-wider w-32 placeholder-white/30 text-xs py-1.5 focus:bg-[#1a1a1a]"
-              placeholder="new-path..."
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  const val = e.currentTarget.value.trim().replace(/^\/+/, '');
-                  if (val) {
-                    window.location.href = toAdminPath(val);
-                  }
-                }
-              }}
-            />
-            <button
-              className="text-white/70 hover:text-white bg-white/5 hover:bg-white/20 px-3 py-1.5 text-[10px] font-mono uppercase tracking-widest transition-colors h-full border-l border-white/10"
-              onClick={() => {
-                const input = document.getElementById("puck-route-input") as HTMLInputElement;
-                const val = input?.value.trim().replace(/^\/+/, '') || '';
-                if (val) {
-                  window.location.href = toAdminPath(val);
-                }
-              }}
-            >
-              CREATE
-            </button>
-          </div>
-        </div>
-        <div className="flex items-center">
-          <span className={`font-mono tracking-[0.15em] uppercase ${loadState === "loading" ? "animate-pulse text-blue-400" : ""}`}>
-            Load: {loadState}
-          </span>
-          <span className="ml-4 font-mono tracking-[0.15em] uppercase">
-            Publish: {publishState}
-          </span>
-        </div>
-      </div>
-
-      <div className="flex-1 min-h-0 relative flex flex-col">
+    <main
+      data-admin-shell="true"
+      className={`${styles.adminShell} h-[100dvh] max-h-[100dvh] w-screen bg-[#eef3f8] text-slate-900 flex flex-col overflow-hidden`}
+    >
+      <div className="h-full min-h-0 relative flex flex-col">
         <style dangerouslySetInnerHTML={{
           __html: `
           #puck, [data-puck-editor="true"] { 
@@ -370,24 +593,36 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
           }
         `}} />
         {loadState === "loading" ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black">
-            <span className="font-mono tracking-[0.3em] text-white/40 uppercase mb-4 text-xs">Connecting to engine...</span>
-            <div className="w-12 h-[1px] bg-white/20 overflow-hidden relative">
-              <div className="absolute left-0 top-0 h-full w-1/3 bg-white animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#eef3f8]">
+            <span className="mb-4 font-mono text-xs uppercase tracking-[0.3em] text-slate-500">Connecting to engine...</span>
+            <div className="relative h-[1px] w-12 overflow-hidden bg-slate-300">
+              <div className="absolute left-0 top-0 h-full w-1/3 animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] bg-slate-700"></div>
             </div>
           </div>
         ) : (
-          <Puck
-            key={initialSlug}
-            config={config}
-            data={data}
-            headerTitle="Puck Local Editor"
-            headerPath={headerPath}
-            iframe={{ enabled: true, waitForStyles: true }}
-            onChange={setData}
-            onPublish={handlePublish}
-            overrides={overrides}
-          />
+          <MotionConfig reducedMotion={previewEffectsEnabled ? "never" : "always"}>
+            <Puck
+              key={initialSlug}
+              config={config}
+              data={data}
+              headerTitle="Puck Local Editor"
+              headerPath={headerPath}
+              iframe={{ enabled: true, waitForStyles: true }}
+              viewports={[
+                { width: 390, height: 844, icon: "Smartphone", label: "Mobile" },
+                { width: 820, height: 1180, icon: "Tablet", label: "Tablet" },
+                { width: 1280, height: 720, icon: "Monitor", label: "Desktop" },
+              ]}
+              onChange={(nextData) => {
+                currentDataRef.current = nextData;
+                if (publishState === "published") {
+                  setPublishState("idle");
+                }
+              }}
+              onPublish={handlePublish}
+              overrides={overrides}
+            />
+          </MotionConfig>
         )}
       </div>
     </main>

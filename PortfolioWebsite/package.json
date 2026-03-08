@@ -4,10 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "NEXT_PUBLIC_SITE_MODE=normal next dev",
     "dev:test": "NEXT_PUBLIC_SITE_MODE=testing next dev",
-    "dev:json": "npm run dev:test",
-    "dev:hardcode": "npm run dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

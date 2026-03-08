@@ -17,8 +17,6 @@ function withEnv(nextEnv, run) {
   const keys = [
     "NODE_ENV",
     "NEXT_PUBLIC_SITE_MODE",
-    "NEXT_PUBLIC_ENABLE_PUCK",
-    "NEXT_PUBLIC_USE_JSON",
     "CI",
     "VERCEL",
     "VERCEL_ENV",
@@ -91,6 +89,8 @@ function testSlugCases() {
     { input: "/p/A", expected: "a.json" },
     { input: "/p/a/b", expected: "a/b.json" },
     { input: "/p//A//B//", expected: "a/b.json" },
+    { input: "/works/penguin", expected: "works/penguin.json" },
+    { input: "/works/lighting-portfolio/collection-1", expected: "works/lighting-portfolio/collection-1.json" },
     { input: ["A", "B"], expected: "a/b.json" },
     { input: "lighting-portfolio", expected: "lighting-portfolio.json" },
   ];
@@ -121,17 +121,16 @@ function testSlugCases() {
   }
 }
 
-function testPConsumerAndAtomicWriteContract() {
-  const pConsumerFile = fs.readFileSync(
-    path.join(projectRoot, "src/app/p/[[...slug]]/page.tsx"),
-    "utf8",
-  );
+function testLegacyPRedirectAndAtomicWriteContract() {
+  const legacyPFile = fs.readFileSync(path.join(projectRoot, "src/app/p/[[...slug]]/page.tsx"), "utf8");
+  const renderHelperFile = fs.readFileSync(path.join(projectRoot, "src/lib/render-puck-page.tsx"), "utf8");
   const puckContentFile = fs.readFileSync(path.join(projectRoot, "src/lib/puck-content.ts"), "utf8");
 
-  assert.match(pConsumerFile, /fs\.readFile/);
-  assert.match(pConsumerFile, /JSON\.parse/);
-  assert.match(pConsumerFile, /notFound\(\)/);
-  assert.doesNotMatch(pConsumerFile, /from\s+["'][^"']+\.json["']/);
+  assert.match(legacyPFile, /redirect\(/);
+  assert.match(renderHelperFile, /fs\.readFile/);
+  assert.match(renderHelperFile, /JSON\.parse/);
+  assert.match(renderHelperFile, /notFound\(\)/);
+  assert.doesNotMatch(renderHelperFile, /from\s+["'][^"']+\.json["']/);
 
   assert.match(puckContentFile, /__puckWriteQueue/);
   assert.match(puckContentFile, /fs\.rename/);
@@ -162,13 +161,17 @@ function testUploadPolicy() {
 function testRequiredFilesExist() {
   assert.ok(fs.existsSync(path.join(projectRoot, "content/pages/index.json")));
   assert.ok(fs.existsSync(path.join(projectRoot, "content/pages/works/lighting-portfolio.json")));
+  assert.ok(fs.existsSync(path.join(projectRoot, "content/pages/works/lighting-portfolio/collection-1.json")));
+  assert.ok(!fs.existsSync(path.join(projectRoot, "content/pages/qa/concurrency.json")));
+  assert.ok(!fs.existsSync(path.join(projectRoot, "content/pages/qa/hmr.json")));
+  assert.ok(!fs.existsSync(path.join(projectRoot, "content/pages/qa/stage5.json")));
   assert.ok(fs.existsSync(path.join(projectRoot, "public/puck-preview.css")));
 }
 
 function main() {
   testGuard();
   testSlugCases();
-  testPConsumerAndAtomicWriteContract();
+  testLegacyPRedirectAndAtomicWriteContract();
   testUploadPolicy();
   testRequiredFilesExist();
   console.log("phase123-acceptance: PASS");

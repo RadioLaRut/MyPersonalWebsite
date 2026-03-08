@@ -1,14 +1,19 @@
 "use client";
-import React, { useRef } from "react";
+import React, { type ReactNode, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { OptimizedImage } from "@/components/common/OptimizedImage";
+import { PresetImage } from "@/components/common/PresetImage";
+import { type ImageFitMode, type ImagePreset, normalizeImagePreset } from "@/lib/image-presentation";
 
 interface ProjectSectionProps {
-  title: string;
+  title: ReactNode;
   imageSrc: string;
-  subtitle?: string;
+  subtitle?: ReactNode;
   link?: string;
   index?: number;
+  align?: "auto" | "left" | "right";
+  imagePreset?: ImagePreset;
+  imageFitMode?: ImageFitMode;
+  editMode?: boolean;
 }
 
 export default function ProjectSection({
@@ -17,8 +22,23 @@ export default function ProjectSection({
   subtitle,
   link,
   index = 0,
+  align = "auto",
+  imagePreset = "ratio-16-9",
+  imageFitMode = "x",
+  editMode = false,
 }: ProjectSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const imageAlt = typeof title === "string" ? title : "Project cover";
+  const resolvedImagePreset = normalizeImagePreset(imagePreset);
+  const sectionClassName = editMode
+    ? "relative w-full min-h-[420px] md:min-h-[500px] overflow-hidden flex items-center justify-center m-0 p-0 mix-blend-normal group cursor-default"
+    : "relative w-full h-screen overflow-hidden flex items-center justify-center m-0 p-0 mix-blend-normal group interactive cursor-pointer";
+  const mediaLayerClassName = editMode
+    ? "absolute inset-0 flex items-center justify-center px-0"
+    : "absolute inset-0 flex items-center justify-center px-0";
+  const frameClassName = resolvedImagePreset === "native"
+    ? "w-full h-full"
+    : "w-full";
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -28,9 +48,15 @@ export default function ProjectSection({
   const y = useTransform(scrollYProgress, [0, 1], ["-20%", "20%"]);
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
   const opacity = useTransform(scrollYProgress, [0, 0.4, 0.6, 1], [0, 1, 1, 0]);
+  const shouldAlignRight = align === "right" || (align === "auto" && index % 2 !== 0);
+  const textColumnClassName = shouldAlignRight
+    ? "md:col-start-5 items-end text-right"
+    : "md:col-start-2 items-start";
+  const subtitleClassName = shouldAlignRight ? "text-right" : "";
+  const underlineClassName = shouldAlignRight ? "origin-right self-end" : "origin-left";
 
   const handleInteraction = () => {
-    if (link) {
+    if (!editMode && link) {
       window.location.href = link;
     }
   };
@@ -39,48 +65,46 @@ export default function ProjectSection({
     <section
       ref={containerRef}
       onClick={handleInteraction}
-      className="relative w-full h-screen overflow-hidden flex items-center justify-center m-0 p-0 mix-blend-normal interactive cursor-pointer group"
+      className={sectionClassName}
     >
       <motion.div
-        className="absolute inset-0 w-full h-[140%] -top-[20%]"
-        style={{ y, scale }}
+        className={mediaLayerClassName}
+        style={editMode ? undefined : { y, scale }}
       >
         {/* Environment ambient gradient/shadow to improve contrast */}
-        <div className="absolute inset-0 bg-black/30 z-10 custom-blend group-hover:bg-black/10 transition-colors duration-1000" />
+        <div className={`absolute inset-0 z-10 ${editMode ? "bg-black/55" : "bg-black/30 custom-blend transition-colors duration-1000 group-hover:bg-black/10"}`} />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40 z-10" />
 
-        <OptimizedImage
+        <PresetImage
           src={imageSrc}
-          alt={title}
-          width={1920}
-          height={1080}
+          alt={imageAlt}
           priority={index === 0}
-          className="w-full h-full object-contain select-none"
+          preset={imagePreset}
+          fitMode={imageFitMode}
+          lockFrame={resolvedImagePreset !== "native"}
+          frameClassName={frameClassName}
+          imageClassName="select-none"
         />
       </motion.div>
 
       <motion.div
-        style={{ opacity }}
-        className="absolute inset-0 z-20 pointer-events-none flex flex-col justify-center py-20"
+        style={editMode ? undefined : { opacity }}
+        className={`absolute inset-0 z-20 flex flex-col justify-center py-20 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}
       >
-        <div className="grid-container w-full relative mix-blend-difference">
-          {/* Asymmetric Alignment Logic */}
+        <div className={`grid-container w-full relative ${editMode ? "" : "mix-blend-difference"}`}>
           <div
-            className={`col-span-4 md:col-span-8 flex flex-col ${index % 2 === 0
-              ? "md:col-start-2 items-start"
-              : "md:col-start-5 items-end text-right"
-              }`}
+            className={`col-span-4 md:col-span-8 flex flex-col ${textColumnClassName}`}
           >
             {subtitle && (
-              <p className={`text-white/70 font-gothic tracking-[0.4em] mb-4 text-xs sm:text-sm font-medium uppercase ${index % 2 !== 0 && "text-right"}`}>
+              <p className={`text-white/70 font-gothic tracking-[0.4em] mb-4 text-xs sm:text-sm font-medium uppercase ${subtitleClassName}`}>
                 {subtitle}
               </p>
             )}
-            <h2 className="text-[12vw] sm:text-[8vw] lg:text-[7vw] font-futura font-black tracking-tighter leading-[0.9] text-white transition-all duration-500 antialiased [transform:translateZ(0)] group-hover:tracking-normal group-hover:scale-[1.02] origin-left whitespace-nowrap">
+            <h2 className={`text-[12vw] sm:text-[8vw] lg:text-[7vw] font-futura font-black tracking-tighter leading-[0.9] text-white antialiased [transform:translateZ(0)] ${editMode ? "whitespace-normal break-words max-w-full" : "origin-left whitespace-nowrap transition-all duration-500 group-hover:tracking-normal group-hover:scale-[1.02]"}`}>
               {title}
             </h2>
-            <div className={`w-0 h-1 bg-white mt-8 transition-all duration-700 ease-out group-hover:w-1/3 ${index % 2 === 0 ? "origin-left" : "origin-right self-end"}`}></div>
+            <div className={`h-1 bg-white mt-8 ${editMode ? "w-1/3 max-w-40" : `w-0 transition-all duration-700 ease-out group-hover:w-1/3 ${underlineClassName}`}`}></div>
           </div>
         </div>
       </motion.div>

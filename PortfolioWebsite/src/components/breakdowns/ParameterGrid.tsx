@@ -2,7 +2,8 @@
 
 import React from 'react';
 import BilingualText from '@/components/common/BilingualText';
-import { OptimizedImage } from '@/components/common/OptimizedImage';
+import { PresetImage } from '@/components/common/PresetImage';
+import { type ImageFitMode, type ImagePreset } from '@/lib/image-presentation';
 
 interface Parameter {
     name: string;
@@ -13,18 +14,22 @@ interface Parameter {
 interface ParameterGridProps {
     mediaSrc: string; // Video or GIF showing generation
     isVideo?: boolean;
+    imagePreset?: ImagePreset;
+    imageFitMode?: ImageFitMode;
     parameters?: Parameter[];
 }
 
 export default function ParameterGrid({
     mediaSrc,
     isVideo = false,
+    imagePreset = "ratio-21-9",
+    imageFitMode = "x",
     parameters
 }: ParameterGridProps) {
     return (
         <div className="w-full my-32">
             {/* 1. Full-width Media */}
-            <div className="w-full aspect-video md:aspect-[21/9] relative bg-[#050505] overflow-hidden mb-12">
+            <div className="w-full relative bg-[#050505] overflow-hidden mb-12">
                 {isVideo ? (
                     <video
                         src={mediaSrc}
@@ -35,11 +40,12 @@ export default function ParameterGrid({
                         className="w-full h-full object-cover opacity-80"
                     />
                 ) : (
-                    <OptimizedImage
+                    <PresetImage
                         src={mediaSrc}
                         alt="PCG Generation Overview"
-                        fill
-                        className="object-cover opacity-80"
+                        preset={imagePreset}
+                        fitMode={imageFitMode}
+                        imageClassName="opacity-80"
                     />
                 )}
                 <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1 text-white font-mono text-xs tracking-widest border border-white/10">

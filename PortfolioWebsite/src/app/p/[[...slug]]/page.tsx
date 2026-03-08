@@ -1,48 +1,27 @@
-import fs from "node:fs/promises";
+import { redirect } from "next/navigation";
 
-import { Render } from "@measured/puck";
-import { notFound } from "next/navigation";
+import { normalizePuckSlugInput } from "@/lib/puck-slug";
+import { toCanonicalWorkSlug, toPublicPathFromSlugKey } from "@/lib/public-paths";
 
-import { listStaticPuckRouteParams } from "@/lib/puck-content";
-import { normalizePuckSlugInput, SlugValidationError } from "@/lib/puck-slug";
-import config from "@/puck/config";
-
-type PuckPageParams = {
+type LegacyPuckPageParams = {
   slug?: string[];
 };
 
-export const dynamic = "error";
-export const dynamicParams = false;
+function toCanonicalPublicSlug(slugKey: string) {
+  if (!slugKey.startsWith("works/")) {
+    return slugKey;
+  }
 
-export async function generateStaticParams() {
-  return listStaticPuckRouteParams();
+  const segments = slugKey.split("/");
+  if (segments.length === 2) {
+    return `works/${toCanonicalWorkSlug(segments[1])}`;
+  }
+
+  return slugKey;
 }
 
-export default async function PuckPage({ params }: { params: PuckPageParams }) {
-  try {
-    const normalizedSlug = normalizePuckSlugInput(params.slug);
-    const rawFile = await fs.readFile(normalizedSlug.absoluteJsonPath, "utf8");
-    const data = JSON.parse(rawFile);
-
-    return (
-      <main className="min-h-screen bg-black text-white">
-        <Render config={config} data={data} />
-      </main>
-    );
-  } catch (error) {
-    if (error instanceof SlugValidationError) {
-      notFound();
-    }
-
-    const errno = error as NodeJS.ErrnoException;
-    if (errno.code === "ENOENT") {
-      notFound();
-    }
-
-    if (error instanceof SyntaxError) {
-      notFound();
-    }
-
-    throw error;
-  }
+export default function LegacyPuckPage({ params }: { params: LegacyPuckPageParams }) {
+  const normalizedSlug = normalizePuckSlugInput(params.slug);
+  const publicPath = toPublicPathFromSlugKey(toCanonicalPublicSlug(normalizedSlug.slugKey));
+  redirect(publicPath);
 }

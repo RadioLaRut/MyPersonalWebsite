@@ -6,20 +6,19 @@
 - 严禁执行不可逆操作：不得删除文件夹、磁盘分区、Git 仓库或执行等价高风险命令（如 `rm -rf`、破坏性 `git reset`）。
 - 仅当命令具有高风险或不可逆性时，才需要先征得确认。
 - 任何可能越过安全边界的操作，必须先确认影响范围，并优先采用可回滚方案。
-- **Claude Opus 4.6会严格的Review你的代码和建议。**
+- **Claude Opus 4.6会严格的Review你的代码和建议。不允许偷懒**
 
 ## 项目结构与模块组织
 - 主应用位于 `PortfolioWebsite/`（Next.js 14 + TypeScript）。
-- 页面与路由：`PortfolioWebsite/src/app/`（含 `api/`、`works/`、`p/[[...slug]]/`）。
+- 页面与路由：`PortfolioWebsite/src/app/`（含 `api/`、`works/`、`admin/`、`playground/`，以及用于兼容跳转的 `p/[[...slug]]/`）。
 - 组件：`PortfolioWebsite/src/components/`，按 `home`、`works`、`breakdowns`、`layout`、`blocks` 分层。
 - 内容数据：`PortfolioWebsite/content/pages/**/*.json`。
 - 静态资源：`PortfolioWebsite/public/`；历史素材目录：仓库根 `作品集/`（通常不改动）。
 
 ## 构建、测试与开发命令
 - 在 `PortfolioWebsite/` 目录执行：
-- `npm run dev`：本地开发（默认数据源）。
-- `npm run dev:json`：启用 JSON + Puck 编辑能力。
-- `npm run dev:hardcode`：使用硬编码数据路径。
+- `npm run dev`：本地开发，默认使用 JSON 正常模式。
+- `npm run dev:test`：本地测试模式，启用 `/admin`、`/playground` 与全页可选中复制。
 - `npm run build && npm run start`：生产构建与启动。
 - `npm run lint`：运行 Next.js ESLint 检查。
 - `npm run test:slug`：执行 slug 安全与归一化测试。
@@ -34,9 +33,3 @@
 - 当前使用 Node 内置测试运行器（`node --test`），示例：`src/lib/puck-slug.test.ts`。
 - 新增测试文件建议命名 `*.test.ts`，与被测模块同目录。
 - 涉及 slug、上传、API 路由的改动必须补充正常与异常用例。
-
-## 提交与 PR 规范
-- 提交信息优先使用 Conventional Commits：`feat:`、`fix:`、`chore:`（可附中文说明）。
-- 单次提交聚焦单一主题，避免混入无关格式化。
-- PR 需包含：变更摘要、影响范围、验证命令与结果；UI 变更附截图（页面路径 + 前后对比）。
-- 合并前至少执行：`npm run lint`、`npm run test:slug`、`npm run build`。

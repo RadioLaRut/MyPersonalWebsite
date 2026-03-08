@@ -1,84 +1,133 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { isCmsPreviewEnabled } from "@/lib/site-mode";
+
+import { toCanonicalWorkSlug } from "@/lib/public-paths";
 
 const NO_STORE_HEADER = {
   "Cache-Control": "no-store",
 } as const;
 
-function isInvalidPuckPath(request: NextRequest) {
-  const rawUrl = request.url.toLowerCase();
-  if (rawUrl.includes("%2e%2e") || rawUrl.includes("\\")) {
-    return true;
-  }
+function isInvalidLegacyPath(pathname: string) {
+  const rawUrl = pathname.toLowerCase();
+  return rawUrl.includes("%2e%2e") || rawUrl.includes("\\");
+}
 
-  const pathname = request.nextUrl.pathname.slice(2);
-  if (pathname.includes("\\")) {
-    return true;
-  }
-
+function decodeSlugSegment(segment: string) {
   try {
-    const decoded = decodeURIComponent(pathname);
-    return /(^|\/)\.\.?(\/|$)/.test(decoded);
+    const decoded = decodeURIComponent(segment);
+    const normalized = decoded.trim().toLowerCase();
+
+    if (
+      !normalized ||
+      normalized === "." ||
+      normalized === ".." ||
+      normalized.includes("/") ||
+      normalized.includes("\\") ||
+      normalized.includes("\0")
+    ) {
+      return null;
+    }
+
+    return normalized;
   } catch {
-    return true;
+    return null;
   }
 }
 
-function toCmsRedirectPath(pathname: string): string | null {
-  if (pathname === "/works") {
-    return "/p/works";
+function normalizeLegacySegments(pathname: string) {
+  const rawPath = pathname.replace(/^\/p/i, "");
+  const merged = rawPath.replace(/\/+/g, "/").replace(/^\/+|\/+$/g, "");
+  if (!merged) {
+    return [];
   }
 
-  if (pathname === "/works/lighting-portfolio") {
-    return "/p/works/lighting-portfolio";
+  const segments = merged.split("/");
+  const normalizedSegments = segments.map(decodeSlugSegment);
+  return normalizedSegments.every(Boolean) ? (normalizedSegments as string[]) : null;
+}
+
+function toLegacyRedirectPath(pathname: string) {
+  const segments = normalizeLegacySegments(pathname);
+  if (segments === null) {
+    return null;
   }
 
-  if (pathname.startsWith("/works/lighting-portfolio/")) {
-    return "/p/works/lighting-portfolio";
+  if (segments.length === 0) {
+    return "/";
   }
 
-  if (pathname.startsWith("/works/")) {
-    return `/p${pathname}`;
+  if (segments[0] === "works" && segments.length === 2) {
+    segments[1] = toCanonicalWorkSlug(segments[1]);
   }
 
-  if (pathname === "/contact") {
-    return "/p/contact";
+  return `/${segments.join("/")}`;
+}
+
+function toCanonicalWorkRedirectPath(pathname: string) {
+  const match = pathname.match(/^\/works\/([^/]+)$/);
+  if (!match) {
+    return null;
   }
 
-  return null;
+  const currentSlug = match[1];
+  const canonicalSlug = toCanonicalWorkSlug(currentSlug);
+  if (canonicalSlug === currentSlug) {
+    return null;
+  }
+
+  return `/works/${canonicalSlug}`;
 }
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (isCmsPreviewEnabled()) {
-    const redirectPath = toCmsRedirectPath(pathname);
-    if (redirectPath && redirectPath !== pathname) {
-      const redirectUrl = request.nextUrl.clone();
-      redirectUrl.pathname = redirectPath;
-      return NextResponse.redirect(redirectUrl, 307);
+  if (pathname === "/p" || pathname === "/p/" || pathname.startsWith("/p/")) {
+    if (isInvalidLegacyPath(pathname)) {
+      return NextResponse.json(
+        {
+          error: {
+            code: "BAD_REQUEST",
+            message: "Invalid slug path",
+          },
+        },
+        {
+          headers: NO_STORE_HEADER,
+          status: 400,
+        },
+      );
     }
+
+    const redirectPath = toLegacyRedirectPath(pathname);
+    if (!redirectPath) {
+      return NextResponse.json(
+        {
+          error: {
+            code: "BAD_REQUEST",
+            message: "Invalid slug path",
+          },
+        },
+        {
+          headers: NO_STORE_HEADER,
+          status: 400,
+        },
+      );
+    }
+
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = redirectPath;
+    return NextResponse.redirect(redirectUrl, 307);
   }
 
-  if ((pathname === "/p" || pathname.startsWith("/p/")) && isInvalidPuckPath(request)) {
-    return NextResponse.json(
-      {
-        error: {
-          code: "BAD_REQUEST",
-          message: "Invalid slug path",
-        },
-      },
-      {
-        headers: NO_STORE_HEADER,
-        status: 400,
-      },
-    );
+  const workRedirectPath = toCanonicalWorkRedirectPath(pathname);
+  if (workRedirectPath) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = workRedirectPath;
+    return NextResponse.redirect(redirectUrl, 307);
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/p/:path*", "/works/:path*", "/works", "/contact", "/playground"],
+  matcher: ["/p", "/p/:path*", "/works/:path*"],
 };

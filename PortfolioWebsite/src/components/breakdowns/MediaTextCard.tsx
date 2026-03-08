@@ -1,26 +1,31 @@
 'use client';
 
-import React from 'react';
+import React, { type ReactNode } from 'react';
 import BilingualText from '@/components/common/BilingualText';
-import { OptimizedImage } from '@/components/common/OptimizedImage';
+import { PresetImage } from '@/components/common/PresetImage';
+import { type ImageFitMode, type ImagePreset } from '@/lib/image-presentation';
+import { toParagraphNodes } from '@/lib/editable-text';
+import { CANONICAL_PLACEHOLDER_PATH } from '@/lib/public-paths';
 
 interface MediaTextCardProps {
-    title: string;
-    description: string;
+    title: ReactNode;
+    description: ReactNode;
     imageSrc?: string;
-    tags?: string[];
+    imagePreset?: ImagePreset;
+    imageFitMode?: ImageFitMode;
+    tags?: ReactNode[];
 }
 
 export default function MediaTextCard({
     title,
     description,
     imageSrc,
-    tags
+    imagePreset = "ratio-16-9",
+    imageFitMode = "x",
+    tags,
 }: MediaTextCardProps) {
-    const paragraphs = description
-        .split('\n')
-        .map((paragraph) => paragraph.trim())
-        .filter(Boolean);
+    const paragraphs = toParagraphNodes(description);
+    const imageAlt = typeof title === "string" ? title : "Media card image";
 
     return (
         <div className="w-full my-24 grid-container">
@@ -51,26 +56,17 @@ export default function MediaTextCard({
 
             {/* Right Column: Visual Display */}
             <div className="col-span-4 md:col-span-8 mt-12 md:mt-0 relative group">
-                {imageSrc ? (
-                    <div className="relative w-full overflow-hidden rounded-sm">
-                        <OptimizedImage
-                            src={imageSrc}
-                            alt={title}
-                            width={0}
-                            height={0}
-                            sizes="100vw"
-                            className="w-full h-auto object-contain"
-                        />
-                    </div>
-                ) : (
-                    <div className="relative w-full h-full min-h-[400px] border border-white/10 bg-[#0a0a0a] overflow-hidden rounded-sm transition-colors duration-500 group-hover:border-white/20 flex flex-col items-center justify-center">
-                        {/* Subtle grid background */}
-                        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
-                        <div className="font-mono text-white/20 text-xs tracking-[0.3em] uppercase z-10">
-                            MEDIA AWAITING UPLOAD
-                        </div>
-                    </div>
-                )}
+                <div className="relative w-full overflow-hidden rounded-sm border border-white/10 bg-[#0a0a0a] transition-colors duration-500 group-hover:border-white/20">
+                    <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
+                    <PresetImage
+                        src={imageSrc || CANONICAL_PLACEHOLDER_PATH}
+                        alt={imageAlt}
+                        preset={imagePreset}
+                        fitMode={imageFitMode}
+                        sizes="100vw"
+                        frameClassName={imageSrc ? undefined : "min-h-[400px]"}
+                    />
+                </div>
             </div>
         </div>
     );

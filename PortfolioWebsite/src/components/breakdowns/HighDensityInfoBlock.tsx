@@ -1,21 +1,26 @@
 'use client';
 
-import React from 'react';
+import React, { type ReactNode } from 'react';
 import BilingualText from '@/components/common/BilingualText';
-import { OptimizedImage } from '@/components/common/OptimizedImage';
+import { PresetImage } from '@/components/common/PresetImage';
+import { type ImageFitMode, type ImagePreset } from '@/lib/image-presentation';
 
 interface InfoItem {
-    label: string;
-    value: string;
+    label: ReactNode;
+    value: ReactNode;
 }
 
 interface HighDensityInfoBlockProps {
-    phase1: { title: string; subtitle?: string; content: string; items?: InfoItem[] };
-    phase2: { title: string; subtitle?: string; content: string; items?: InfoItem[] };
-    phase3: { title: string; subtitle?: string; content: string; imageSrc?: string };
+    phase1: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; items?: InfoItem[] };
+    phase2: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; items?: InfoItem[] };
+    phase3: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; imageSrc?: string; imagePreset?: ImagePreset; imageFitMode?: ImageFitMode };
+    phase1ItemsContent?: ReactNode;
+    phase2ItemsContent?: ReactNode;
 }
 
-export default function HighDensityInfoBlock({ phase1, phase2, phase3 }: HighDensityInfoBlockProps) {
+export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1ItemsContent, phase2ItemsContent }: HighDensityInfoBlockProps) {
+    const phase3ImageAlt = typeof phase3.title === "string" ? phase3.title : "Phase image";
+
     return (
         <div className="w-full my-32">
             <div className="grid-container border-t border-white/20 pt-16">
@@ -39,6 +44,12 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3 }: HighDen
                             ))}
                         </div>
                     )}
+
+                    {phase1ItemsContent ? (
+                        <div className="mt-8 border-t border-white/10 pt-6">
+                            {phase1ItemsContent}
+                        </div>
+                    ) : null}
                 </div>
 
                 {/* Phase 2 Column (Dense text + architecture abstract) */}
@@ -60,6 +71,12 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3 }: HighDen
                             ))}
                         </div>
                     )}
+
+                    {phase2ItemsContent ? (
+                        <div className="mt-8 border-t border-white/10 pt-6">
+                            {phase2ItemsContent}
+                        </div>
+                    ) : null}
                 </div>
 
                 {/* Phase 3 Column (Execution & Visual Result) */}
@@ -72,12 +89,13 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3 }: HighDen
                     </p>
 
                     {phase3.imageSrc && (
-                        <div className="relative w-full aspect-[4/3] border border-white/10 bg-neutral-900 overflow-hidden mt-6">
-                            <OptimizedImage
+                        <div className="relative mt-6 w-full overflow-hidden border border-white/10 bg-neutral-900">
+                            <PresetImage
                                 src={phase3.imageSrc}
-                                alt={phase3.title}
-                                fill
-                                className="object-cover opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-700"
+                                alt={phase3ImageAlt}
+                                preset={phase3.imagePreset}
+                                fitMode={phase3.imageFitMode}
+                                imageClassName="opacity-90 transition-all duration-700 hover:scale-105 hover:opacity-100"
                             />
                         </div>
                     )}

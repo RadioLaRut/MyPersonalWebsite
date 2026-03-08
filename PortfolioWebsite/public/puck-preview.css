@@ -2169,6 +2169,19 @@ body::-webkit-scrollbar {
   border: 1px solid white;
 }
 
+html[data-puck-preview-mode="edit"] *,
+html[data-preview-effects="disabled"] * {
+  cursor: auto !important;
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+html[data-puck-preview-mode="edit"] .custom-cursor,
+html[data-preview-effects="disabled"] .custom-cursor {
+  display: none !important;
+}
+
 /* Lenis smooth scroll global styles */
 
 html.lenis,

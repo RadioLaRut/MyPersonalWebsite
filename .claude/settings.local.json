@@ -4,7 +4,10 @@
       "Bash(find:*)",
       "Bash(ls:*)",
       "Bash(du -sh:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(sudo cp:*)",
+      "Bash(cwebp:*)",
+      "Bash(npm run build:*)"
     ]
   }
 }

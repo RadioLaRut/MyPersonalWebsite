@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import React, { type ReactNode, useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 
 export interface ContactFlashlightBlockProps {
@@ -14,6 +14,8 @@ export interface ContactFlashlightBlockProps {
     wechat?: string;
     experienceHistory?: { company: string; role: string }[];
     creativeDirection?: { title: string; subtitle: string }[];
+    experienceContent?: ReactNode;
+    creativeContent?: ReactNode;
 }
 
 export default function ContactFlashlightBlock({
@@ -27,7 +29,9 @@ export default function ContactFlashlightBlock({
     email = "3115437519@qq.com",
     wechat = "radiowithouthead",
     experienceHistory = [],
-    creativeDirection = []
+    creativeDirection = [],
+    experienceContent,
+    creativeContent,
 }: ContactFlashlightBlockProps) {
     const wechatTextClass = "copyable-contact block whitespace-nowrap text-[clamp(1.35rem,1.9vw,2.2rem)] font-medium mix-blend-normal tracking-tight leading-[1] font-serif text-left";
     const emailTextClass = "copyable-contact block whitespace-nowrap text-[clamp(1.25rem,1.75vw,2rem)] font-medium mix-blend-normal tracking-tight leading-[1] font-serif";
@@ -106,28 +110,36 @@ export default function ContactFlashlightBlock({
                     <span className="text-xs uppercase tracking-[0.4em] font-mono opacity-40 mix-blend-normal">
                         Experience History
                     </span>
-                    <ul className="space-y-6 text-lg sm:text-xl font-medium mix-blend-normal leading-relaxed font-serif">
-                        {experienceHistory.map((item, i) => (
-                            <li key={i} className="flex flex-col">
-                                <span>{item.company}</span>
-                                <span className="text-sm font-mono opacity-50 mt-1">{item.role}</span>
-                            </li>
-                        ))}
-                    </ul>
+                    <div className="space-y-6 text-lg sm:text-xl font-medium mix-blend-normal leading-relaxed font-serif">
+                        {experienceContent ? (
+                            experienceContent
+                        ) : (
+                            experienceHistory.map((item, i) => (
+                                <div key={i} className="flex flex-col">
+                                    <span>{item.company}</span>
+                                    <span className="text-sm font-mono opacity-50 mt-1">{item.role}</span>
+                                </div>
+                            ))
+                        )}
+                    </div>
                 </div>
 
                 <div className="space-y-8">
                     <span className="text-xs uppercase tracking-[0.4em] font-mono opacity-40 mix-blend-normal">
                         Creative Direction
                     </span>
-                    <ul className="space-y-6 text-lg sm:text-xl font-medium mix-blend-normal leading-relaxed font-serif tracking-wide">
-                        {creativeDirection.map((item, i) => (
-                            <li key={i} className="flex flex-col">
-                                <span>{item.title}</span>
-                                <span className="text-sm font-mono opacity-50 mt-1">{item.subtitle}</span>
-                            </li>
-                        ))}
-                    </ul>
+                    <div className="space-y-6 text-lg sm:text-xl font-medium mix-blend-normal leading-relaxed font-serif tracking-wide">
+                        {creativeContent ? (
+                            creativeContent
+                        ) : (
+                            creativeDirection.map((item, i) => (
+                                <div key={i} className="flex flex-col">
+                                    <span>{item.title}</span>
+                                    <span className="text-sm font-mono opacity-50 mt-1">{item.subtitle}</span>
+                                </div>
+                            ))
+                        )}
+                    </div>
                 </div>
             </motion.section>
 

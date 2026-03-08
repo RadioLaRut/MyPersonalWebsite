@@ -1,10 +1,5 @@
-import { redirect } from "next/navigation";
-import { isCmsPreviewEnabled } from "@/lib/site-mode";
+import { renderPuckPage } from "@/lib/render-puck-page";
 
-export default function Home() {
-  if (isCmsPreviewEnabled()) {
-    redirect("/p");
-  }
-
-  redirect("/p");
+export default async function Home() {
+  return renderPuckPage("index");
 }

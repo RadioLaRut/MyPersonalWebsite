@@ -1,0 +1,211 @@
+.adminShell {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #eef3f8;
+  color: #0f1720;
+}
+
+.adminShell :global(.Puck) {
+  --puck-color-black: #0f1720;
+  --puck-color-white: #ffffff;
+  --puck-color-grey-01: #0f1720;
+  --puck-color-grey-02: #18212b;
+  --puck-color-grey-03: #273342;
+  --puck-color-grey-04: #415063;
+  --puck-color-grey-05: #5d6b7d;
+  --puck-color-grey-06: #748295;
+  --puck-color-grey-07: #8391a4;
+  --puck-color-grey-08: #4f5d6f;
+  --puck-color-grey-09: #d5dde7;
+  --puck-color-grey-10: #e5ebf2;
+  --puck-color-grey-11: #eef3f8;
+  --puck-color-grey-12: #f8fbff;
+  --puck-color-azure-04: #0f6bd7;
+  --puck-color-azure-05: #1579f2;
+  --puck-color-azure-06: #2f8dff;
+}
+
+.adminShell :global(.Puck),
+.adminShell :global(.Puck *) {
+  color-scheme: light;
+}
+
+.adminShell :global(.Puck) {
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden !important;
+}
+
+.adminShell :global(.Puck) > :first-child,
+.adminShell :global(.Puck) > :first-child > [class*="_PuckLayout_"] {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  display: block;
+  overflow: hidden;
+}
+
+.adminShell :global(.editor-header-shell) {
+  grid-area: header;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: #fbfcfe;
+  border-bottom: 1px solid #d5dde7;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.adminShell :global([data-puck-editor="true"]) {
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+}
+
+.adminShell :global(.Puck),
+.adminShell :global(.Puck) > :first-child,
+.adminShell :global(.Puck) > :first-child > [class*="_PuckLayout_"],
+.adminShell [class*="_PuckLayout-inner_"] {
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+}
+
+.adminShell [class*="_PuckLayout-inner_"] {
+  grid-template-rows: min-content minmax(0, 1fr) !important;
+  overflow: hidden;
+}
+
+.adminShell :global(._PuckCanvas_18jay_1),
+.adminShell :global(._Sidebar_1xksb_1),
+.adminShell :global(._PuckCanvas-inner_18jay_21) {
+  min-height: 0 !important;
+  max-height: 100% !important;
+}
+
+.adminShell :global(._PuckCanvas_18jay_1) {
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+}
+
+.adminShell :global(._Sidebar_1xksb_1) {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+}
+
+.adminShell :global(._PuckHeader_15xnq_1),
+.adminShell :global(._SidebarSection-title_8boj8_12),
+.adminShell :global(._MenuBar_8pf8c_1) {
+  background: #fbfcfe;
+}
+
+.adminShell :global(._PuckHeader_15xnq_1) {
+  position: static;
+  max-width: none;
+  border-bottom: 0;
+}
+
+.adminShell :global(._PuckCanvas_18jay_1) {
+  background: linear-gradient(180deg, #eef3f8 0%, #e9eef5 100%);
+}
+
+.adminShell :global(._PuckCanvas-inner_18jay_21) {
+  align-items: flex-start;
+}
+
+.adminShell :global(._PuckCanvas-controls_18jay_16) {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+.adminShell :global(._ViewportControls_gejzr_1) {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid #d5dde7;
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(15, 23, 32, 0.08);
+  min-width: 358px;
+  backdrop-filter: blur(12px);
+}
+
+.adminShell :global(._PuckCanvas-root_18jay_30) {
+  border-color: #d5dde7;
+  box-shadow: 0 24px 60px rgba(15, 23, 32, 0.12);
+}
+
+.adminShell :global(#puck-canvas-root) {
+  overflow: visible !important;
+}
+
+.adminShell :global(._ActionBar_rvadt_1) {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #d5dde7;
+  box-shadow: 0 10px 24px rgba(15, 23, 32, 0.08);
+}
+
+.adminShell :global(._ActionBar-label_rvadt_18),
+.adminShell :global(._ActionBar-action_rvadt_30),
+.adminShell :global(._IconButton_swpni_1),
+.adminShell :global(._DragIcon_17p8x_1),
+.adminShell :global(._PuckHeader-toggle_15xnq_20),
+.adminShell :global(._PuckHeader-menuButton_15xnq_49),
+.adminShell :global(._PuckHeader-path_15xnq_36),
+.adminShell :global(._PuckHeader-title_15xnq_32),
+.adminShell :global(._ViewportControls_gejzr_1 select),
+.adminShell :global(._ViewportControls_gejzr_1 option) {
+  color: #334155;
+}
+
+.adminShell :global(._ActionBar-action_rvadt_30:hover),
+.adminShell :global(._IconButton_swpni_1:hover:not(._IconButton--disabled_swpni_20)),
+.adminShell :global(._DragIcon_17p8x_1:hover:not(._DragIcon--disabled_17p8x_8)) {
+  color: #0f6bd7;
+}
+
+.adminShell :global(._ViewportButton--isActive_gejzr_38 ._ViewportButton-inner_gejzr_38),
+.adminShell :global(._PuckHeader--rightSideBarVisible_15xnq_27 ._PuckHeader-rightSideBarToggle_15xnq_27),
+.adminShell :global(._PuckHeader--leftSideBarVisible_15xnq_28 ._PuckHeader-leftSideBarToggle_15xnq_28) {
+  color: #0f6bd7;
+}
+
+.adminShell :global(._SidebarSection_8boj8_1),
+.adminShell :global(._SidebarSection-heading_8boj8_82),
+.adminShell :global(._Input-label_bsxfo_5),
+.adminShell :global(._SidebarSection-breadcrumbLabel_8boj8_41) {
+  color: #334155;
+}
+
+.adminShell :global(._Input-input_bsxfo_26),
+.adminShell :global(textarea._Input-input_bsxfo_26),
+.adminShell :global(select._Input-input_bsxfo_26),
+.adminShell :global(._ExternalInput-button_91ls0_5),
+.adminShell :global(._ExternalInput-detachButton_91ls0_35),
+.adminShell :global(._ExternalInputModal-searchInput_91ls0_299) {
+  background-color: #ffffff;
+  color: #0f1720 !important;
+  -webkit-text-fill-color: #0f1720;
+  caret-color: #0f1720;
+}
+
+.adminShell :global(._Input-input_bsxfo_26::placeholder),
+.adminShell :global(textarea._Input-input_bsxfo_26::placeholder),
+.adminShell :global(._ExternalInputModal-searchInput_91ls0_299::placeholder) {
+  color: #8a97a8;
+  -webkit-text-fill-color: #8a97a8;
+  opacity: 1;
+}
+
+.adminShell :global(._Input-input_bsxfo_26:focus),
+.adminShell :global(._ExternalInputModal-search_91ls0_227:focus-within) {
+  outline-color: #1579f2;
+}

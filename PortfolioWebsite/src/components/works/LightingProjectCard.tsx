@@ -1,7 +1,9 @@
 import React from "react";
 import Link from "next/link";
 import { ProjectCover } from "@/components/common/ProjectCover";
-import { isCmsPreviewEnabled } from "@/lib/site-mode";
+import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
+
+import { CANONICAL_PLACEHOLDER_PATH } from "@/lib/public-paths";
 
 interface LightingProjectCardProps {
     id: string;
@@ -9,11 +11,21 @@ interface LightingProjectCardProps {
     title: string;
     coverImage: string;
     href?: string;
+    imagePreset?: ImagePreset;
+    imageFitMode?: ImageFitMode;
 }
 
-export default function LightingProjectCard({ id, number, title, coverImage, href }: LightingProjectCardProps) {
-    const cmsPreviewEnabled = isCmsPreviewEnabled();
-    const cardHref = href ?? (cmsPreviewEnabled ? `/p/works/lighting-portfolio/${id}` : `/works/lighting-portfolio/${id}`);
+export default function LightingProjectCard({
+    id,
+    number,
+    title,
+    coverImage,
+    href,
+    imagePreset = "ratio-21-9",
+    imageFitMode = "x",
+}: LightingProjectCardProps) {
+    const cardHref = href ?? `/works/lighting-portfolio/${id}`;
+    const normalizedCoverImage = coverImage || CANONICAL_PLACEHOLDER_PATH;
 
     return (
         <section className="px-4 md:px-12 pb-32">
@@ -31,18 +43,14 @@ export default function LightingProjectCard({ id, number, title, coverImage, hre
                         </div>
 
                         {/* High-End Gallery Frame: Strict 21:9 container with horizontal alignment */}
-                        <div className="relative w-full aspect-[21/9] bg-[#050505] border border-white/10 flex items-center justify-center overflow-hidden">
-                            {coverImage ? (
-                                <ProjectCover
-                                    src={coverImage}
-                                    alt={title}
-                                    className="h-full opacity-90 group-hover:opacity-100 transition-opacity duration-500"
-                                />
-                            ) : (
-                                <div className="w-full h-full bg-neutral-900 flex items-center justify-center text-white/20 font-mono text-xs">
-                                    IMAGE PLACEHOLDER
-                                </div>
-                            )}
+                        <div className="relative w-full bg-[#050505] border border-white/10 flex items-center justify-center overflow-hidden">
+                            <ProjectCover
+                                src={normalizedCoverImage}
+                                alt={title}
+                                preset={imagePreset}
+                                fitMode={imageFitMode}
+                                className="opacity-90 transition-opacity duration-500 group-hover:opacity-100"
+                            />
                         </div>
                     </Link>
                 </div>

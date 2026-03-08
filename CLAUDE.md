@@ -53,8 +53,8 @@ npm run convert:images
 
 项目支持两种内容模式，通过环境变量 `NEXT_PUBLIC_SITE_MODE` 控制：
 
-- **常规模式** (`npm run dev`)：使用硬编码数据，`/admin` 路由不可访问
-- **测试模式** (`npm run dev:test`)：启用 Puck CMS，可访问 `/admin` 进行可视化编辑，内容保存到 `content/pages/*.json`
+- **常规模式** (`npm run dev`)：使用 JSON 正式路由，`/admin` 与 `/playground` 不可访问
+- **测试模式** (`npm run dev:test`)：启用 Puck CMS，可访问 `/admin` 和 `/playground`，内容保存到 `content/pages/*.json`
 
 ### 路由结构
 
@@ -66,18 +66,19 @@ npm run convert:images
 - `/contact` - 联系页（手电筒交互效果）
 - `/playground` - 仅测试模式可见
 - `/admin` - Puck CMS 编辑器（仅测试模式）
-- `/p/[[...slug]]` - Puck 渲染的动态页面
+- `/p/[[...slug]]` - 旧链接兼容重定向入口，不再作为正式页面
 
 ### 中间件逻辑
 
 `src/middleware.ts` 实现：
-- 测试模式下将 `/works`、`/contact` 等路由重定向到 `/p/*` 对应的 CMS 页面
-- Puck 路径安全验证，阻止路径遍历攻击（`..`、`%2e%2e`、反斜杠等）
+- 旧 `/p/*` 路径兼容重定向到无前缀正式路由
+- 旧 works slug 兼容重定向（如 `pcg-town` -> `houdini-pcg`）
+- 路径安全验证，阻止路径遍历攻击（`..`、`%2e%2e`、反斜杠等）
 
 ### 内容管理
 
-- **硬编码数据**：位于各页面组件内部（如 `src/app/works/[id]/page.tsx` 的 `projectsData`）
-- **CMS 数据**：存储在 `content/pages/*.json`，通过 Puck 编辑器管理
+- **正式内容数据**：存储在 `content/pages/*.json`，通过 Puck 编辑器管理
+- **旧硬编码备份**：仅保留在非路由备份文件中，用于人工核对迁移结果
 - **图片资源**：统一放置在 `public/images/` 下，按项目分文件夹组织
 
 ## 设计系统

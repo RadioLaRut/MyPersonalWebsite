@@ -2,22 +2,36 @@
 
 import React, { type ReactNode } from 'react';
 import BilingualText from '@/components/common/BilingualText';
-import { OptimizedImage } from '@/components/common/OptimizedImage';
+import { PresetImage } from '@/components/common/PresetImage';
+import { type ImageFitMode, type ImagePreset } from '@/lib/image-presentation';
 
 interface TextSplitLayoutProps {
     heading: ReactNode;
     paragraphs: ReactNode[];
     imageSrc?: string;
+    imagePreset?: ImagePreset;
+    imageFitMode?: ImageFitMode;
     layoutVariant?: 'split-left' | 'split-right' | 'stack';
+    paragraphsContent?: ReactNode;
 }
 
 export default function TextSplitLayout({
     heading,
     paragraphs,
     imageSrc,
-    layoutVariant = 'split-left'
+    imagePreset = "ratio-16-9",
+    imageFitMode = "x",
+    layoutVariant = 'split-left',
+    paragraphsContent,
 }: TextSplitLayoutProps) {
     const imageAlt = typeof heading === 'string' ? heading : 'TextSplitLayout image';
+    const paragraphContent = paragraphsContent ?? (
+        <>
+            {paragraphs.map((p, i) => (
+                <p key={i} className="break-words">{typeof p === "string" ? <BilingualText text={p} /> : p}</p>
+            ))}
+        </>
+    );
 
     return (
         <div className="w-full my-32">
@@ -31,9 +45,8 @@ export default function TextSplitLayout({
                                 {heading}
                             </h3>
                             {imageSrc && (
-                                <div className="w-full aspect-[4/3] relative opacity-90 hover:opacity-100 transition-opacity duration-700">
-                                    <div className="absolute inset-0 bg-neutral-900" />
-                                    <OptimizedImage src={imageSrc} alt={imageAlt} fill className="object-cover" />
+                                <div className="relative w-full opacity-90 transition-opacity duration-700 hover:opacity-100">
+                                    <PresetImage src={imageSrc} alt={imageAlt} preset={imagePreset} fitMode={imageFitMode} />
                                     <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] pointer-events-none" />
                                 </div>
                             )}
@@ -41,9 +54,7 @@ export default function TextSplitLayout({
                         {/* Text Right */}
                         <div className="col-span-4 md:col-span-5 md:col-start-8 flex flex-col justify-center">
                             <div className="text-white/60 tracking-[0.02em] text-lg md:text-xl leading-[1.9] space-y-6 pl-0 md:pl-8 border-l border-white/5">
-                                {paragraphs.map((p, i) => (
-                                    <p key={i} className="break-words">{typeof p === "string" ? <BilingualText text={p} /> : p}</p>
-                                ))}
+                                {paragraphContent}
                             </div>
                         </div>
                     </>
@@ -54,9 +65,7 @@ export default function TextSplitLayout({
                         {/* Text Left */}
                         <div className="col-span-4 md:col-span-5 md:col-start-1 flex flex-col justify-center mb-12 md:mb-0 order-2 md:order-1 mt-12 md:mt-0">
                             <div className="text-white/60 tracking-[0.02em] text-lg md:text-xl leading-[1.9] space-y-6 pr-0 md:pr-8 border-r border-white/5 text-right md:text-left">
-                                {paragraphs.map((p, i) => (
-                                    <p key={i} className="break-words">{typeof p === "string" ? <BilingualText text={p} /> : p}</p>
-                                ))}
+                                {paragraphContent}
                             </div>
                         </div>
                         {/* Heading Right */}
@@ -65,9 +74,8 @@ export default function TextSplitLayout({
                                 {heading}
                             </h3>
                             {imageSrc && (
-                                <div className="w-full aspect-[4/3] relative opacity-90 hover:opacity-100 transition-opacity duration-700">
-                                    <div className="absolute inset-0 bg-neutral-900" />
-                                    <OptimizedImage src={imageSrc} alt={imageAlt} fill className="object-cover" />
+                                <div className="relative w-full opacity-90 transition-opacity duration-700 hover:opacity-100">
+                                    <PresetImage src={imageSrc} alt={imageAlt} preset={imagePreset} fitMode={imageFitMode} />
                                     <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] pointer-events-none" />
                                 </div>
                             )}
@@ -81,14 +89,11 @@ export default function TextSplitLayout({
                             {heading}
                         </h3>
                         <div className="text-white/60 tracking-[0.02em] text-lg md:text-xl leading-[1.9] space-y-6 max-w-3xl border-white/5 border-t pt-12">
-                            {paragraphs.map((p, i) => (
-                                <p key={i} className="break-words">{typeof p === "string" ? <BilingualText text={p} /> : p}</p>
-                            ))}
+                            {paragraphContent}
                         </div>
                         {imageSrc && (
-                            <div className="w-full relative aspect-[21/9] mt-16 opacity-90 hover:opacity-100 transition-opacity duration-700">
-                                <div className="absolute inset-0 bg-neutral-900" />
-                                <OptimizedImage src={imageSrc} alt={imageAlt} fill className="object-cover" />
+                            <div className="relative mt-16 w-full opacity-90 transition-opacity duration-700 hover:opacity-100">
+                                <PresetImage src={imageSrc} alt={imageAlt} preset={imagePreset} fitMode={imageFitMode} />
                                 <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] pointer-events-none" />
                             </div>
                         )}

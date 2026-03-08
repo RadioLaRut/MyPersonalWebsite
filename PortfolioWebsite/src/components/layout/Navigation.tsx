@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { isCmsPreviewEnabled, isTestingMode } from "@/lib/site-mode";
+import { isTestingMode } from "@/lib/site-mode";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,9 +11,8 @@ export default function Navigation() {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const pathname = usePathname();
-  const cmsPreviewEnabled = isCmsPreviewEnabled();
   const testingMode = isTestingMode();
-  const keepsSpotlightVisible = pathname === "/contact" || pathname === "/p/contact";
+  const keepsSpotlightVisible = pathname === "/contact";
 
   useEffect(() => {
     if (pathname?.startsWith("/admin")) return;
@@ -107,19 +106,15 @@ export default function Navigation() {
 
   const closeMenu = () => setIsOpen(false);
 
-  const menuItems = cmsPreviewEnabled
-    ? [
-      { label: "HOME", href: "/p" },
-      { label: "WORKS", href: "/p/works" },
-      ...(testingMode ? [{ label: "PLAYGROUND", href: "/playground" }] : []),
-      { label: "CONTACT", href: "/p/contact" },
-    ]
-    : [
-      { label: "HOME", href: "/" },
-      { label: "WORKS", href: "/works" },
-      ...(testingMode ? [{ label: "PLAYGROUND", href: "/playground" }] : []),
-      { label: "CONTACT", href: "/contact" },
-    ];
+  const menuItems = [
+    { label: "HOME", href: "/" },
+    { label: "WORKS", href: "/works" },
+    ...(testingMode ? [
+      { label: "PLAYGROUND", href: "/playground" },
+      { label: "EDITOR", href: "/admin" },
+    ] : []),
+    { label: "CONTACT", href: "/contact" },
+  ];
 
   return (
     <>
