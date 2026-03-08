@@ -41,6 +41,10 @@ npm run test:slug
 
 # 构建 Puck 预览样式
 npm run build:puck-preview-css
+
+# 将 public/images/ 下所有 png/jpg/jpeg 转换为 webp 并更新代码引用
+# 需要系统安装 cwebp（/usr/local/bin/cwebp），跳过 placeholder 文件
+npm run convert:images
 ```
 
 ## 核心架构

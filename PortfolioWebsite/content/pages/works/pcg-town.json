@@ -12,7 +12,7 @@
                 "eyebrow": "Project 06",
                 "title": "HOUDINI 驱动的小镇生成管线",
                 "subtitle": "",
-                "heroImage": "/images/penguin/PCG/PCG01.png",
+                "heroImage": "/images/penguin/PCG/PCG01.webp",
                 "navLink": ""
             }
         },
@@ -29,13 +29,13 @@
                 "id": "triptych-1",
                 "col1Title": "HDA 封装逻辑",
                 "col1Text": "在 UE5 中内置调用 Houdini Engine 的数据数字资产。处理大量网格的实时更迭。",
-                "col1Img": "/images/penguin/PCG/PCG02.png",
+                "col1Img": "/images/penguin/PCG/PCG02.webp",
                 "col2Title": "样条线路网",
                 "col2Text": "由任意贝塞尔曲线动态分割计算的智能土路及河流系统。",
-                "col2Img": "/images/penguin/PCG/PCG03.png",
+                "col2Img": "/images/penguin/PCG/PCG03.webp",
                 "col3Title": "环境撒布引擎",
                 "col3Text": "基于规则的高速碰撞规避算法用于树木与房舍周边杂物的植被生成。",
-                "col3Img": "/images/penguin/PCG/PCG05.png"
+                "col3Img": "/images/penguin/PCG/PCG05.webp"
             }
         },
         {
@@ -44,7 +44,7 @@
                 "id": "gallery-1",
                 "images": [
                     {
-                        "src": "/images/penguin/PCG/PCG04png.png",
+                        "src": "/images/penguin/PCG/PCG04png.webp",
                         "caption": "PCG 04",
                         "_arrayItem": {
                             "id": "img-1"
@@ -59,7 +59,7 @@
                 "id": "next-1",
                 "nextId": "atmosphere-practice",
                 "nextName": "ATMOSPHERE PRACTICE",
-                "nextBg": "/images/penguin/01.png"
+                "nextBg": "/images/penguin/01.webp"
             }
         }
     ]

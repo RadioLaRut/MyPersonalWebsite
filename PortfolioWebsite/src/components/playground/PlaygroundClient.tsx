@@ -40,7 +40,7 @@ const playgroundComponents = Object.entries(puckConfig.components).filter(
 );
 const groupedPlaygroundComponents = PLAYGROUND_GROUPS.map((group) => ({
   ...group,
-  components: playgroundComponents.filter(([componentKey]) => group.keys.includes(componentKey)),
+  components: playgroundComponents.filter(([componentKey]) => (group.keys as readonly string[]).includes(componentKey)),
 })).filter((group) => group.components.length > 0);
 
 export default function PlaygroundClient() {

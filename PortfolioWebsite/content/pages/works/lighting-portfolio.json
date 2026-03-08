@@ -21,7 +21,7 @@
                 "id": "collection-1",
                 "number": "01",
                 "title": "CITY ADD",
-                "coverImage": "/images/city-2026/002.PNG",
+                "coverImage": "/images/city-2026/002.webp",
                 "href": "/p/works/lighting-atmosphere"
             }
         },
@@ -31,7 +31,7 @@
                 "id": "collection-2",
                 "number": "02",
                 "title": "RAINFOREST ECHO",
-                "coverImage": "/images/rainforest/Version2Output.0029.png",
+                "coverImage": "/images/rainforest/Version2Output.0029.webp",
                 "href": "/p/works/atmosphere-practice"
             }
         },
@@ -41,7 +41,7 @@
                 "id": "collection-3",
                 "number": "03",
                 "title": "TRAIN STATION",
-                "coverImage": "/images/train-station/2Day.png",
+                "coverImage": "/images/train-station/2Day.webp",
                 "href": "/p/works/lighting-atmosphere"
             }
         },
@@ -51,7 +51,7 @@
                 "id": "collection-4",
                 "number": "04",
                 "title": "WEST - DOUBLE COMPOSITION",
-                "coverImage": "/images/west/CDay.jpeg",
+                "coverImage": "/images/west/CDay.webp",
                 "href": "/p/works/atmosphere-practice"
             }
         },
@@ -61,7 +61,7 @@
                 "id": "collection-5",
                 "number": "05",
                 "title": "ATMOSPHERE PRACTICE",
-                "coverImage": "/images/penguin/01.png",
+                "coverImage": "/images/penguin/01.webp",
                 "href": "/p/works/atmosphere-practice"
             }
         }

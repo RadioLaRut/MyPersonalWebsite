@@ -12,7 +12,7 @@
                 "eyebrow": "Project 03",
                 "title": "SLAY THE VIRUS",
                 "subtitle": "Roguelike 卡牌游戏",
-                "heroImage": "/images/slay-the-virus/STVTitle.png",
+                "heroImage": "/images/slay-the-virus/STVTitle.webp",
                 "navLink": "https://www.bilibili.com/video/BV1QfgzzrE3J/"
             }
         },
@@ -90,8 +90,8 @@
             "type": "ImageSlider",
             "props": {
                 "id": "stv-slider-1",
-                "unlitSrc": "/images/slay-the-virus/PosterLandscapeOrigine.jpg",
-                "litSrc": "/images/slay-the-virus/STVTitle.png",
+                "unlitSrc": "/images/slay-the-virus/PosterLandscapeOrigine.webp",
+                "litSrc": "/images/slay-the-virus/STVTitle.webp",
                 "alt": "海报优化对比"
             }
         },
@@ -108,13 +108,13 @@
                 "id": "stv-triptych-1",
                 "col1Title": "UI 布局",
                 "col1Text": "基于网格的空间资源背包管理交互系统架构，确保玩家能清晰地进行卡牌拼放操作。",
-                "col1Img": "/images/slay-the-virus/01.jpg",
+                "col1Img": "/images/slay-the-virus/01.webp",
                 "col2Title": "卡牌设计",
                 "col2Text": "在 Photoshop 中精修由组员绘制的草稿与技能特效资产组合，统一视觉风格。",
-                "col2Img": "/images/slay-the-virus/02.jpg",
+                "col2Img": "/images/slay-the-virus/02.webp",
                 "col3Title": "游戏界面",
                 "col3Text": "医学和病毒主题的视觉风格，营造紧张的战斗氛围。",
-                "col3Img": "/images/slay-the-virus/03.jpg"
+                "col3Img": "/images/slay-the-virus/03.webp"
             }
         },
         {
@@ -123,12 +123,12 @@
                 "id": "stv-gallery-1",
                 "images": [
                     {
-                        "src": "/images/slay-the-virus/04.jpg",
+                        "src": "/images/slay-the-virus/04.webp",
                         "caption": "战斗界面",
                         "_arrayItem": { "id": "img-1" }
                     },
                     {
-                        "src": "/images/slay-the-virus/05.jpg",
+                        "src": "/images/slay-the-virus/05.webp",
                         "caption": "卡牌拼放",
                         "_arrayItem": { "id": "img-2" }
                     }
@@ -141,7 +141,7 @@
                 "id": "next-1",
                 "nextId": "prometheus",
                 "nextName": "PROMETHEUS PROJECT",
-                "nextBg": "/images/prometheus/PrometheusTitle.png"
+                "nextBg": "/images/prometheus/PrometheusTitle.webp"
             }
         }
     ]

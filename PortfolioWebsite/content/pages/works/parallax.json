@@ -12,7 +12,7 @@
                 "eyebrow": "Project / UI Design",
                 "title": "SOMEWHERE BETWEEN PARALLAX",
                 "subtitle": "视差之间 — Interactive VR Experience",
-                "heroImage": "/images/penguin/CyberRestaurant.png",
+                "heroImage": "/images/penguin/CyberRestaurant.webp",
                 "navLink": ""
             }
         },
@@ -29,13 +29,13 @@
                 "id": "triptych-1",
                 "col1Title": "VR 交互引导",
                 "col1Text": "采用「实体按钮」交互形式替代抽象手势，大幅降低 VR 环境中的操作学习成本，提升初次体验者的可理解性。",
-                "col1Img": "/images/penguin/CyberRestaurant.png",
+                "col1Img": "/images/penguin/CyberRestaurant.webp",
                 "col2Title": "UI 逻辑架构",
                 "col2Text": "负责全套 UI 信息层级设计，确保在沉浸式 VR 空间内界面元素不干扰叙事氛围的同时维持足够的功能可读性。",
-                "col2Img": "/images/penguin/CyberRestaurant.png",
+                "col2Img": "/images/penguin/CyberRestaurant.webp",
                 "col3Title": "碎片化叙事空间",
                 "col3Text": "配合视差贴图构成的立体城市场景，在 UI 层面配合叙事节奏提供引导与情绪渐进锚点。",
-                "col3Img": "/images/penguin/CyberRestaurant.png"
+                "col3Img": "/images/penguin/CyberRestaurant.webp"
             }
         },
         {
@@ -44,7 +44,7 @@
                 "id": "next-1",
                 "nextId": "penguin",
                 "nextName": "PENGUIN TRADING CO.",
-                "nextBg": "/images/penguin/CyberRestaurant.png"
+                "nextBg": "/images/penguin/CyberRestaurant.webp"
             }
         }
     ]

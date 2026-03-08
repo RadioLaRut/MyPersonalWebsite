@@ -18,7 +18,7 @@ export const projects: ProjectData[] = [
     id: 'insight',
     title: 'INSIGHT',
     subtitle: 'INTERACTIVE NARRATIVE GAME',
-    coverUrl: '/images/insight/InsightCover.png',
+    coverUrl: '/images/insight/InsightCover.webp',
     blocks: [
       {
         type: 'Text',
@@ -41,7 +41,7 @@ export const projects: ProjectData[] = [
     id: 'penguin',
     title: 'PENGUIN TRADING',
     subtitle: 'MANAGEMENT SIMULATION',
-    coverUrl: '/images/penguin/Epic.png',
+    coverUrl: '/images/penguin/Epic.webp',
     blocks: [
       {
         type: 'Text',
@@ -54,7 +54,7 @@ export const projects: ProjectData[] = [
     id: 'slay-the-virus',
     title: 'SLAY THE VIRUS',
     subtitle: 'DECK-BUILDING & INVENTORY MANAGEMENT',
-    coverUrl: '/images/slay-the-virus/STVTitle.png',
+    coverUrl: '/images/slay-the-virus/STVTitle.webp',
     blocks: [
       {
         type: 'Text',
@@ -67,7 +67,7 @@ export const projects: ProjectData[] = [
     id: 'prometheus',
     title: 'THE PROMETHEUS PROJECT',
     subtitle: 'STEALTH & TACTICAL',
-    coverUrl: '/images/prometheus/PrometheusTitle.png',
+    coverUrl: '/images/prometheus/PrometheusTitle.webp',
     blocks: [
       {
         type: 'TextWithAside',
@@ -80,7 +80,7 @@ export const projects: ProjectData[] = [
     id: 'lighting',
     title: 'LIGHTING & TECH',
     subtitle: 'HOUDINI & UNREAL ENGINE 5',
-    coverUrl: '/images/lighting/lit.jpg',
+    coverUrl: '/images/lighting/lit.webp',
     blocks: [
       {
         type: 'Text',

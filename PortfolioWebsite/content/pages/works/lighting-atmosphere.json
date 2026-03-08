@@ -12,7 +12,7 @@
                 "eyebrow": "Project 01",
                 "title": "灯光氛围",
                 "subtitle": "",
-                "heroImage": "/images/train-station/2Day.png",
+                "heroImage": "/images/train-station/2Day.webp",
                 "navLink": ""
             }
         },
@@ -29,13 +29,13 @@
                 "id": "triptych-1",
                 "col1Title": "白天 / 雾天",
                 "col1Text": "应用体积雾渐变增加画面的景深感。",
-                "col1Img": "/images/train-station/2Fog.png",
+                "col1Img": "/images/train-station/2Fog.webp",
                 "col2Title": "夜晚",
                 "col2Text": "光影对比的张力由自发光材质与高光反射驱动。",
-                "col2Img": "/images/train-station/2Dust.png",
+                "col2Img": "/images/train-station/2Dust.webp",
                 "col3Title": "过程",
                 "col3Text": "测试了多个 HDRI 贴图结合平行光的渲染管线。",
-                "col3Img": "/images/city-2026/001.PNG"
+                "col3Img": "/images/city-2026/001.webp"
             }
         },
         {
@@ -44,84 +44,84 @@
                 "id": "gallery-1",
                 "images": [
                     {
-                        "src": "/images/train-station/Day.png",
+                        "src": "/images/train-station/Day.webp",
                         "caption": "白天",
                         "_arrayItem": {
                             "id": "img-1"
                         }
                     },
                     {
-                        "src": "/images/train-station/Dusk.png",
+                        "src": "/images/train-station/Dusk.webp",
                         "caption": "黄昏",
                         "_arrayItem": {
                             "id": "img-2"
                         }
                     },
                     {
-                        "src": "/images/train-station/Night.png",
+                        "src": "/images/train-station/Night.webp",
                         "caption": "夜晚",
                         "_arrayItem": {
                             "id": "img-3"
                         }
                     },
                     {
-                        "src": "/images/train-station/NoLight.png",
+                        "src": "/images/train-station/NoLight.webp",
                         "caption": "无光",
                         "_arrayItem": {
                             "id": "img-4"
                         }
                     },
                     {
-                        "src": "/images/train-station/2Day.png",
+                        "src": "/images/train-station/2Day.webp",
                         "caption": "白天 2",
                         "_arrayItem": {
                             "id": "img-5"
                         }
                     },
                     {
-                        "src": "/images/train-station/2Dust.png",
+                        "src": "/images/train-station/2Dust.webp",
                         "caption": "尘土 2",
                         "_arrayItem": {
                             "id": "img-6"
                         }
                     },
                     {
-                        "src": "/images/train-station/2Fog.png",
+                        "src": "/images/train-station/2Fog.webp",
                         "caption": "雾天 2",
                         "_arrayItem": {
                             "id": "img-7"
                         }
                     },
                     {
-                        "src": "/images/train-station/2Night.png",
+                        "src": "/images/train-station/2Night.webp",
                         "caption": "夜晚 2",
                         "_arrayItem": {
                             "id": "img-8"
                         }
                     },
                     {
-                        "src": "/images/train-station/2NoLight.png",
+                        "src": "/images/train-station/2NoLight.webp",
                         "caption": "无光 2",
                         "_arrayItem": {
                             "id": "img-9"
                         }
                     },
                     {
-                        "src": "/images/city-2026/001.PNG",
+                        "src": "/images/city-2026/001.webp",
                         "caption": "城市 001",
                         "_arrayItem": {
                             "id": "img-10"
                         }
                     },
                     {
-                        "src": "/images/city-2026/002.PNG",
+                        "src": "/images/city-2026/002.webp",
                         "caption": "城市 002",
                         "_arrayItem": {
                             "id": "img-11"
                         }
                     },
                     {
-                        "src": "/images/city-2026/003.PNG",
+                        "src": "/images/city-2026/003.webp",
                         "caption": "城市 003",
                         "_arrayItem": {
                             "id": "img-12"
@@ -136,7 +136,7 @@
                 "id": "next-1",
                 "nextId": "insight",
                 "nextName": "INSIGHT",
-                "nextBg": "/images/insight/InsightCover.png"
+                "nextBg": "/images/insight/InsightCover.webp"
             }
         }
     ]

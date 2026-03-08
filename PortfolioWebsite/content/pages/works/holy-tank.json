@@ -12,7 +12,7 @@
                 "eyebrow": "Project 05",
                 "title": "帅油桶 (HOLY TANK)",
                 "subtitle": "交互叙事游戏",
-                "heroImage": "/images/holy-tank/7d9ca92e5ade09bfc1c349a49001b2eb.png",
+                "heroImage": "/images/holy-tank/7d9ca92e5ade09bfc1c349a49001b2eb.webp",
                 "navLink": "https://www.bilibili.com/video/BV1GqkRYxEWM/"
             }
         },
@@ -85,13 +85,13 @@
                 "id": "holytank-triptych-1",
                 "col1Title": "通感设计",
                 "col1Text": "纯轨迹球物理阻力操控模拟系统架构设计，让玩家通过操作体验残疾人的困难。",
-                "col1Img": "/images/holy-tank/f0f6239817a545ccad2f7dc47aff8acc.png",
+                "col1Img": "/images/holy-tank/f0f6239817a545ccad2f7dc47aff8acc.webp",
                 "col2Title": "叙事体验",
                 "col2Text": "环境叙事展现社会隐性偏见，通过关卡设计让玩家反思敌意建筑问题。",
-                "col2Img": "/images/holy-tank/f0f6239817a545ccad2f7dc47aff8acc.png",
+                "col2Img": "/images/holy-tank/f0f6239817a545ccad2f7dc47aff8acc.webp",
                 "col3Title": "概念方向",
                 "col3Text": "针对带有显性恶意的公共城市建筑体系发起的探究与批判。",
-                "col3Img": "/images/holy-tank/7d9ca92e5ade09bfc1c349a49001b2eb.png"
+                "col3Img": "/images/holy-tank/7d9ca92e5ade09bfc1c349a49001b2eb.webp"
             }
         },
         {
@@ -100,7 +100,7 @@
                 "id": "next-1",
                 "nextId": "pcg-town",
                 "nextName": "HOUDINI 驱动生成村镇",
-                "nextBg": "/images/penguin/PCG/PCG01.png"
+                "nextBg": "/images/penguin/PCG/PCG01.webp"
             }
         }
     ]

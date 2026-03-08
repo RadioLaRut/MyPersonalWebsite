@@ -18,70 +18,70 @@ const works: WorkItem[] = [
     href: "/p/works/lighting-portfolio",
     title: "LIGHTING PORTFOLIO",
     category: "Lighting Art",
-    imageSrc: "/images/train-station/2Day.png",
+    imageSrc: "/images/train-station/2Day.webp",
     desc: "A curated collection of lighting and mood practices",
   },
   {
     id: "slay-the-virus",
     title: "SLAY THE VIRUS",
     category: "UI / Poster / Game Design",
-    imageSrc: "/images/slay-the-virus/STVTitle.png",
+    imageSrc: "/images/slay-the-virus/STVTitle.webp",
     desc: "A deck-building and inventory management game",
   },
   {
     id: "wow-otto",
     title: "WOW, OTTO!",
     category: "Lead Designer",
-    imageSrc: "/images/penguin/CyberRestaurant.png", // Placeholder
+    imageSrc: "/images/penguin/CyberRestaurant.webp", // Placeholder
     desc: "Trackball narrative experience",
   },
   {
     id: "im-explode",
     title: "I'M EXPLODE WITH U",
     category: "Lead Designer",
-    imageSrc: "/images/penguin/CyberRestaurant.png", // Placeholder
+    imageSrc: "/images/penguin/CyberRestaurant.webp", // Placeholder
     desc: "Multiplayer platformer with pushback mechanics",
   },
   {
     id: "prometheus",
     title: "THE PROMETHEUS",
     category: "Lead Designer / Lighting",
-    imageSrc: "/images/prometheus/PrometheusTitle.png",
+    imageSrc: "/images/prometheus/PrometheusTitle.webp",
     desc: "Stealth tactical game with dramatic lighting contrasts",
   },
   {
     id: "parallax",
     title: "SOMEWHERE BETWEEN PARALLAX",
     category: "UI Design",
-    imageSrc: "/images/penguin/CyberRestaurant.png", // Placeholder
+    imageSrc: "/images/penguin/CyberRestaurant.webp", // Placeholder
     desc: "Interactive VR experience in fragmented memory",
   },
   {
     id: "insight",
     title: "INSIGHT",
     category: "Lead Designer / Programmer",
-    imageSrc: "/images/insight/InsightCover.png",
+    imageSrc: "/images/insight/InsightCover.webp",
     desc: "Play as an internet opinion regulator controlling the narrative",
   },
   {
     id: "penguin",
     title: "PENGUIN TRADING CO.",
     category: "Lead Designer / PM / Tech Art",
-    imageSrc: "/images/penguin/CyberRestaurant.png", // Placeholder
+    imageSrc: "/images/penguin/CyberRestaurant.webp", // Placeholder
     desc: "Simulation management game with asset lock systems",
   },
   {
     id: "houdini-pcg",
     title: "HOUDINI PROCEDURAL GENERATION",
     category: "Tech Art",
-    imageSrc: "/images/penguin/PCG/PCG01.png",
+    imageSrc: "/images/penguin/PCG/PCG01.webp",
     desc: "Procedural environment generation with Houdini and UE5",
   },
   {
     id: "epic-stage",
     title: "EPIC STAGE LIGHTING",
     category: "Tech Art / Lighting",
-    imageSrc: "/images/penguin/Epic.png",
+    imageSrc: "/images/penguin/Epic.webp",
     desc: "Musical theatre concept lighting choreography",
   },
 ];

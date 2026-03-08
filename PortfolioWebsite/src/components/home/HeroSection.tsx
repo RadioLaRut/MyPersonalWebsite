@@ -37,7 +37,7 @@ export default function HeroSection() {
           style={{ y, scale, opacity }}
         >
           <OptimizedImage
-            src="/images/covers/2026/ShotForCrewWithoutWord.0004.png"
+            src="/images/covers/2026/ShotForCrewWithoutWord.0004.webp"
             alt="Hero Background"
             width={1920}
             height={1080}

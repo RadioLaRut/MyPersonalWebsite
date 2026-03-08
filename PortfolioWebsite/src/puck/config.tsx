@@ -76,7 +76,7 @@ export const config: Config = {
         eyebrow: "Portfolio",
         title: "Build your page with Puck",
         subtitle: "This is a local editor scaffold for the staged migration.",
-        heroImage: "/images/train-station/2Day.png",
+        heroImage: "/images/train-station/2Day.webp",
         navLink: "",
       },
       render: ({ eyebrow, title, subtitle, heroImage, navLink }) => {
@@ -140,11 +140,11 @@ export const config: Config = {
         eyebrow: "Portfolio",
         title: "Build your page with Puck",
         subtitle: "This is a local editor scaffold for the staged migration.",
-        heroImage: "/images/train-station/2Day.png",
+        heroImage: "/images/train-station/2Day.webp",
         navLink: "",
       },
       render: ({ eyebrow, title, subtitle, heroImage, navLink }) => {
-        return config.components.HeroHeadline.render({ eyebrow, title, subtitle, heroImage, navLink });
+        return config.components.HeroHeadline.render({ eyebrow, title, subtitle, heroImage, navLink } as never);
       },
     },
     RichParagraph: {
@@ -178,7 +178,7 @@ export const config: Config = {
       defaultProps: {
         alt: "Puck image",
         caption: "Visual block",
-        src: "/images/train-station/2Day.png",
+        src: "/images/train-station/2Day.webp",
       },
       render: ({ alt, caption, src }) => {
         return (
@@ -217,8 +217,8 @@ export const config: Config = {
         alt: { type: "text" },
       },
       defaultProps: {
-        unlitSrc: "/images/train-station/2Day.png",
-        litSrc: "/images/train-station/2Night.png",
+        unlitSrc: "/images/train-station/2Day.webp",
+        litSrc: "/images/train-station/2Night.webp",
         alt: "Lighting Comparison",
       },
       render: ({ unlitSrc, litSrc, alt }) => <ImageSlider unlitSrc={unlitSrc} litSrc={litSrc} alt={alt} />
@@ -236,9 +236,9 @@ export const config: Config = {
       },
       defaultProps: {
         images: [
-          { src: "/images/train-station/2Day.png", caption: "Main View", _arrayItem: { id: "img-1" } },
-          { src: "/images/train-station/Day.png", caption: "Detail 1", _arrayItem: { id: "img-2" } },
-          { src: "/images/train-station/Cut2Day.png", caption: "Detail 2", _arrayItem: { id: "img-3" } },
+          { src: "/images/train-station/2Day.webp", caption: "Main View", _arrayItem: { id: "img-1" } },
+          { src: "/images/train-station/Day.webp", caption: "Detail 1", _arrayItem: { id: "img-2" } },
+          { src: "/images/train-station/Cut2Day.webp", caption: "Detail 2", _arrayItem: { id: "img-3" } },
         ] as any
       },
       render: ({ images }) => <MosaicGallery images={images as any} />
@@ -254,7 +254,7 @@ export const config: Config = {
       defaultProps: {
         title: "Breakdown Title",
         description: "这里用于承载更完整的拆解说明，包括为什么这样组织信息、为什么在这个节点切换视觉重点，以及不同素材如何共同服务于同一条阅读路径。 The English layer sits in the same paragraph block so you can compare Chinese and Latin weight matching under the same spacing system.\n\n当正文被拉长到四五行时，这个模块依然应该保持节奏稳定，让标题、标签、图像与文字之间的重心关系不被打散。 A longer bilingual paragraph should still hold the grid without collapsing the visual hierarchy.",
-        imageSrc: "/images/train-station/2Day.png",
+        imageSrc: "/images/train-station/2Day.webp",
         tags: [
           { tag: "Lighting", _arrayItem: { id: "tag-1" } },
           { tag: "Unreal Engine", _arrayItem: { id: "tag-2" } }
@@ -284,13 +284,13 @@ export const config: Config = {
       defaultProps: {
         col1Title: "Context Mapping",
         col1Text: "这一列用于说明问题的起点与观察维度，例如我首先锁定了哪些视觉矛盾、哪些叙事信息必须被优先传达，以及哪些环境元素会直接影响玩家的第一印象与阅读入口。 This first column defines the reading anchor and establishes what the viewer should notice before any system detail appears.",
-        col1Img: "/images/train-station/2Day.png",
+        col1Img: "/images/train-station/2Day.webp",
         col2Title: "System Decision",
         col2Text: "这一列承接具体方法论，解释我如何在镜头、节奏、界面密度和情绪表达之间做取舍，并通过多次迭代把抽象概念转化成更清晰、更可执行的系统判断。 This middle block translates intention into method so Chinese and English can be checked side by side within the same weight logic.",
-        col2Img: "/images/train-station/2Night.png",
+        col2Img: "/images/train-station/2Night.webp",
         col3Title: "Visual Outcome",
         col3Text: "最后一列聚焦结果与反馈，强调方案落地后带来的整体感受变化，以及为什么最终呈现能够同时满足氛围、功能性和画面秩序三方面的目标。 The final column closes the loop and verifies whether the implemented result still preserves hierarchy, contrast, and atmosphere.",
-        col3Img: "/images/city-2026/001.PNG",
+        col3Img: "/images/city-2026/001.webp",
       },
       render: ({
         col1Title,
@@ -337,7 +337,7 @@ export const config: Config = {
         }
       },
       defaultProps: {
-        mediaSrc: "/images/train-station/2Night.png",
+        mediaSrc: "/images/train-station/2Night.webp",
         isVideo: "false",
         parameters: [
           {
@@ -459,7 +459,7 @@ export const config: Config = {
       defaultProps: {
         title: "NEW PROJECT",
         subtitle: "Design / Development",
-        imageSrc: "/images/train-station/2Day.png",
+        imageSrc: "/images/train-station/2Day.webp",
         link: "/p/works",
         index: 0
       },
@@ -536,7 +536,7 @@ export const config: Config = {
         id: "collection-1",
         number: "01",
         title: "NEW COLLECTION",
-        coverImage: "/images/city-2026/002.PNG",
+        coverImage: "/images/city-2026/002.webp",
         href: "/p/works/lighting-atmosphere",
       },
       render: ({ id, number, title, coverImage, href, editMode }) => (
@@ -573,7 +573,7 @@ export const config: Config = {
             href: "/p/works/lighting-portfolio",
             title: "LIGHTING PORTFOLIO",
             category: "Lighting Art",
-            imageSrc: "/images/train-station/2Day.png",
+            imageSrc: "/images/train-station/2Day.webp",
             desc: "A curated collection of lighting and mood practices"
           }
         ]
@@ -597,7 +597,7 @@ export const config: Config = {
       defaultProps: {
         nextId: "penguin",
         nextName: "PENGUIN TRADING CO.",
-        nextBg: "/images/penguin/CyberRestaurant.png"
+        nextBg: "/images/penguin/CyberRestaurant.webp"
       },
       render: ({ nextId, nextName, nextBg, editMode }) => (
         <NextProjectBlock

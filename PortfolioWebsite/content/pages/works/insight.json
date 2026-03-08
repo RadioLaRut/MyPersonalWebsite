@@ -12,7 +12,7 @@
                 "eyebrow": "Project 02",
                 "title": "INSIGHT",
                 "subtitle": "互动叙事游戏",
-                "heroImage": "/images/insight/InsightOnlyCover.png",
+                "heroImage": "/images/insight/InsightOnlyCover.webp",
                 "navLink": "https://www.bilibili.com/video/BV1gQbDzQEUL"
             }
         },
@@ -85,13 +85,13 @@
                 "id": "insight-triptych-1",
                 "col1Title": "剧情树管理",
                 "col1Text": "剧本写作使用了 Articy Draft，通过节点极为方便地实现多分支剧情流程树的管理。",
-                "col1Img": "/images/insight/Code01.jpg",
+                "col1Img": "/images/insight/Code01.webp",
                 "col2Title": "蓝图系统",
                 "col2Text": "Unreal Engine 蓝图深度结合对话树系统，实现对话数据的导入与运行时逻辑。",
-                "col2Img": "/images/insight/Code02.jpg",
+                "col2Img": "/images/insight/Code02.webp",
                 "col3Title": "UI 设计",
                 "col3Text": "拟真桌面操作系统 UI 设计，增强玩家的沉浸感与代入感。",
-                "col3Img": "/images/insight/Shot04.jpg"
+                "col3Img": "/images/insight/Shot04.webp"
             }
         },
         {
@@ -100,17 +100,17 @@
                 "id": "insight-gallery-1",
                 "images": [
                     {
-                        "src": "/images/insight/Shot01.jpg",
+                        "src": "/images/insight/Shot01.webp",
                         "caption": "游戏界面",
                         "_arrayItem": { "id": "img-1" }
                     },
                     {
-                        "src": "/images/insight/Shot02.jpg",
+                        "src": "/images/insight/Shot02.webp",
                         "caption": "对话系统",
                         "_arrayItem": { "id": "img-2" }
                     },
                     {
-                        "src": "/images/insight/Shot03.jpg",
+                        "src": "/images/insight/Shot03.webp",
                         "caption": "剧情分支",
                         "_arrayItem": { "id": "img-3" }
                     }
@@ -123,7 +123,7 @@
                 "id": "next-1",
                 "nextId": "slay-the-virus",
                 "nextName": "SLAY THE VIRUS",
-                "nextBg": "/images/slay-the-virus/STVTitle.png"
+                "nextBg": "/images/slay-the-virus/STVTitle.webp"
             }
         }
     ]

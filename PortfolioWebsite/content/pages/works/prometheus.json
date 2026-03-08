@@ -12,7 +12,7 @@
                 "eyebrow": "Project 04",
                 "title": "THE PROMETHEUS PROJECT",
                 "subtitle": "潜行拍摄游戏",
-                "heroImage": "/images/prometheus/PrometheusTitle.png",
+                "heroImage": "/images/prometheus/PrometheusTitle.webp",
                 "navLink": "https://www.bilibili.com/video/BV1GSGmzBEx8"
             }
         },
@@ -85,13 +85,13 @@
                 "id": "prometheus-triptych-1",
                 "col1Title": "关卡设计",
                 "col1Text": "设计了巡逻路径、拍摄点位布局和机关交互逻辑，确保玩家有多种策略选择。",
-                "col1Img": "/images/prometheus/Shot01.jpg",
+                "col1Img": "/images/prometheus/Shot01.webp",
                 "col2Title": "潜行机制",
                 "col2Text": "通过视觉和听觉系统，玩家需要躲避巡逻敌人，寻找最佳拍摄时机。",
-                "col2Img": "/images/prometheus/Shot02.jpg",
+                "col2Img": "/images/prometheus/Shot02.webp",
                 "col3Title": "拍摄系统",
                 "col3Text": "玩家通过相机拍摄目标人物，不同目标具有不同的分数权重。",
-                "col3Img": "/images/prometheus/Shot04.jpg"
+                "col3Img": "/images/prometheus/Shot04.webp"
             }
         },
         {
@@ -100,17 +100,17 @@
                 "id": "prometheus-gallery-1",
                 "images": [
                     {
-                        "src": "/images/prometheus/Shot03.jpg",
+                        "src": "/images/prometheus/Shot03.webp",
                         "caption": "游戏场景",
                         "_arrayItem": { "id": "img-1" }
                     },
                     {
-                        "src": "/images/prometheus/Shot05.jpg",
+                        "src": "/images/prometheus/Shot05.webp",
                         "caption": "潜行拍摄",
                         "_arrayItem": { "id": "img-2" }
                     },
                     {
-                        "src": "/images/prometheus/Shot06.jpg",
+                        "src": "/images/prometheus/Shot06.webp",
                         "caption": "环境交互",
                         "_arrayItem": { "id": "img-3" }
                     }
@@ -123,7 +123,7 @@
                 "id": "next-1",
                 "nextId": "holy-tank",
                 "nextName": "HOLY TANK (帅油桶)",
-                "nextBg": "/images/holy-tank/7d9ca92e5ade09bfc1c349a49001b2eb.png"
+                "nextBg": "/images/holy-tank/7d9ca92e5ade09bfc1c349a49001b2eb.webp"
             }
         }
     ]

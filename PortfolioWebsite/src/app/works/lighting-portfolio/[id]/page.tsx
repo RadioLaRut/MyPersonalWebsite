@@ -15,32 +15,32 @@ const collectionData: Record<string, { title: string; number: string; images: { 
         title: "CITY ADD",
         number: "01",
         images: [
-            { lit: "/images/city-2026/001.PNG", caption: "DAY" },
-            { lit: "/images/city-2026/002.PNG", caption: "DUSK" },
-            { lit: "/images/city-2026/003.PNG", caption: "NIGHT" },
+            { lit: "/images/city-2026/001.webp", caption: "DAY" },
+            { lit: "/images/city-2026/002.webp", caption: "DUSK" },
+            { lit: "/images/city-2026/003.webp", caption: "NIGHT" },
         ],
     },
     "collection-2": {
         title: "RAINFOREST ECHO",
         number: "02",
         images: [
-            { lit: "/images/rainforest/Version2Output.0029.png", caption: "DAY" },
-            { lit: "/images/rainforest/Shot005.0002.png", caption: "ATMOSPHERE 1" },
-            { lit: "/images/rainforest/Output.0050.png", caption: "ATMOSPHERE 2" },
-            { lit: "/images/rainforest/Output.0101.png", caption: "NIGHT" },
+            { lit: "/images/rainforest/Version2Output.0029.webp", caption: "DAY" },
+            { lit: "/images/rainforest/Shot005.0002.webp", caption: "ATMOSPHERE 1" },
+            { lit: "/images/rainforest/Output.0050.webp", caption: "ATMOSPHERE 2" },
+            { lit: "/images/rainforest/Output.0101.webp", caption: "NIGHT" },
         ],
     },
     "collection-3": {
         title: "TRAIN STATION",
         number: "03",
         images: [
-            { lit: "/images/train-station/2Day.png", caption: "DAY" },
-            { lit: "/images/train-station/2Dust.png", caption: "DUSK" },
-            { lit: "/images/train-station/2Fog.png", caption: "FOG" },
-            { lit: "/images/train-station/2Night.png", caption: "NIGHT" },
+            { lit: "/images/train-station/2Day.webp", caption: "DAY" },
+            { lit: "/images/train-station/2Dust.webp", caption: "DUSK" },
+            { lit: "/images/train-station/2Fog.webp", caption: "FOG" },
+            { lit: "/images/train-station/2Night.webp", caption: "NIGHT" },
             {
-                lit: "/images/train-station/2Day.png", // lit image (DAY)
-                unlit: "/images/train-station/2NoLight.png", // unlit image
+                lit: "/images/train-station/2Day.webp", // lit image (DAY)
+                unlit: "/images/train-station/2NoLight.webp", // unlit image
                 caption: "LIGHTING COMPARISON"
             },
         ],
@@ -50,21 +50,21 @@ const collectionData: Record<string, { title: string; number: string; images: { 
         number: "04",
         images: [
             // Composition 1
-            { lit: "/images/west/Day.jpeg", caption: "COMPOSITION ONE - DAY" },
-            { lit: "/images/west/Dust.jpeg", caption: "COMPOSITION ONE - DUSK" },
-            { lit: "/images/west/Night.jpeg", caption: "COMPOSITION ONE - NIGHT" },
+            { lit: "/images/west/Day.webp", caption: "COMPOSITION ONE - DAY" },
+            { lit: "/images/west/Dust.webp", caption: "COMPOSITION ONE - DUSK" },
+            { lit: "/images/west/Night.webp", caption: "COMPOSITION ONE - NIGHT" },
             {
-                lit: "/images/west/Day.jpeg",
-                unlit: "/images/west/NoLight.jpg",
+                lit: "/images/west/Day.webp",
+                unlit: "/images/west/NoLight.webp",
                 caption: "COMPOSITION ONE - LIGHTING COMPARISON"
             },
             // Composition 2
-            { lit: "/images/west/CDay.jpeg", caption: "COMPOSITION TWO - DAY" },
-            { lit: "/images/west/CDust.jpeg", caption: "COMPOSITION TWO - DUSK" },
-            { lit: "/images/west/CNight.jpeg", caption: "COMPOSITION TWO - NIGHT" },
+            { lit: "/images/west/CDay.webp", caption: "COMPOSITION TWO - DAY" },
+            { lit: "/images/west/CDust.webp", caption: "COMPOSITION TWO - DUSK" },
+            { lit: "/images/west/CNight.webp", caption: "COMPOSITION TWO - NIGHT" },
             {
-                lit: "/images/west/CDay.jpeg",
-                unlit: "/images/west/CNoLight.jpg",
+                lit: "/images/west/CDay.webp",
+                unlit: "/images/west/CNoLight.webp",
                 caption: "COMPOSITION TWO - LIGHTING COMPARISON"
             },
         ],
@@ -73,9 +73,9 @@ const collectionData: Record<string, { title: string; number: string; images: { 
         title: "ATMOSPHERE PRACTICE",
         number: "05",
         images: [
-            { lit: "/images/penguin/01.png", caption: "CYBERPUNK ALLEY" },
-            { lit: "/images/penguin/02.png", caption: "INTERIOR SCENE" },
-            { lit: "/images/penguin/CyberRestaurant.png", caption: "CYBER RESTAURANT" },
+            { lit: "/images/penguin/01.webp", caption: "CYBERPUNK ALLEY" },
+            { lit: "/images/penguin/02.webp", caption: "INTERIOR SCENE" },
+            { lit: "/images/penguin/CyberRestaurant.webp", caption: "CYBER RESTAURANT" },
         ],
     },
 };

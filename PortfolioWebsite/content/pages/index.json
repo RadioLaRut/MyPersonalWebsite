@@ -17,7 +17,7 @@
                 "id": "proj-1",
                 "title": "LIGHTING PORTFOLIO",
                 "subtitle": "Lighting Art / Level Mood",
-                "imageSrc": "/images/train-station/2Day.png",
+                "imageSrc": "/images/train-station/2Day.webp",
                 "link": "/p/works/lighting-portfolio",
                 "index": 0
             }
@@ -39,7 +39,7 @@
                 "id": "proj-3",
                 "title": "INSIGHT",
                 "subtitle": "Lead Designer / Programmer / Writer",
-                "imageSrc": "/images/insight/InsightOnlyCover.png",
+                "imageSrc": "/images/insight/InsightOnlyCover.webp",
                 "link": "/p/works/insight",
                 "index": 2
             }
