@@ -7,11 +7,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 这是一个基于 Next.js 14 的个人作品集网站，采用 App Router 架构。项目使用 TypeScript、Tailwind CSS 和 Framer Motion 构建，集成了 Puck CMS 可视化编辑器用于内容管理。
 
 ## 安全规范
-- 所有输出都必须使用中文（包括说明、注释、评审意见与 PR 描述）。
+- 所有输出都必须使用中文（包括说明、注释、评审意见与 PR 描述），不得使用任何Emoji。
+- 任何提问**必须**使用 `AskUserQuestion` 提问工具 
 - 常规开发命令默认直接执行，无需逐条确认（如 `npm run dev`、`npm run build`、`npm run lint`、`npm test`）。
 - 严禁执行不可逆操作：不得删除文件夹、磁盘分区、Git 仓库或执行等价高风险命令（如 `rm -rf`、破坏性 `git reset`）。任何此类操作需要向用户二次确认。
 - 仅当命令具有高风险或不可逆性时，才需要先征得确认。
 - 任何可能越过安全边界的操作，必须先确认影响范围，并优先采用可回滚方案。
+- **CodeX 会Review你的任何内容。**
 
 ## 开发命令
 

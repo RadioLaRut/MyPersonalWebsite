@@ -1,11 +1,12 @@
 # Repository Guidelines
 
 ## 全局语言与安全规则
-- 所有输出都必须使用中文（包括说明、注释、评审意见与 PR 描述）。
+- 所有输出都必须使用中文（包括说明、注释、评审意见与 PR 描述），不得使用任何Emoji。
 - 常规开发命令默认直接执行，无需逐条确认（如 `npm run dev`、`npm run build`、`npm run lint`、`npm test`）。
 - 严禁执行不可逆操作：不得删除文件夹、磁盘分区、Git 仓库或执行等价高风险命令（如 `rm -rf`、破坏性 `git reset`）。
 - 仅当命令具有高风险或不可逆性时，才需要先征得确认。
 - 任何可能越过安全边界的操作，必须先确认影响范围，并优先采用可回滚方案。
+- **Claude Opus 4.6会严格的Review你的代码和建议。**
 
 ## 项目结构与模块组织
 - 主应用位于 `PortfolioWebsite/`（Next.js 14 + TypeScript）。
