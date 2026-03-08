@@ -47,7 +47,7 @@ export default function BreakdownTriptych({
           <h4 className="text-white text-base font-bold tracking-[0.18em] uppercase border-l-2 pl-3 border-white/80 leading-snug font-futura break-words">
             {col1Title}
           </h4>
-          <p className="text-white/70 text-sm md:text-[15px] leading-[1.95] break-words"><BilingualText text={col1Text} /></p>
+          <p className="text-white/70 text-sm md:text-[15px] leading-[1.95] break-words"><BilingualText text={col1Text} weight="medium" /></p>
           <div className="w-full relative overflow-hidden mt-6 border border-white/10">
             <PresetImage src={col1Img} alt={col1Title} preset={col1Preset} fitMode={col1FitMode} />
           </div>
@@ -57,7 +57,7 @@ export default function BreakdownTriptych({
           <h4 className="text-white text-base font-bold tracking-[0.18em] uppercase border-l-2 pl-3 border-white/80 leading-snug font-futura break-words">
             {col2Title}
           </h4>
-          <p className="text-white/70 text-sm md:text-[15px] leading-[1.95] break-words"><BilingualText text={col2Text} /></p>
+          <p className="text-white/70 text-sm md:text-[15px] leading-[1.95] break-words"><BilingualText text={col2Text} weight="medium" /></p>
           <div className="w-full relative overflow-hidden mt-6 border border-white/10">
             <PresetImage src={col2Img} alt={col2Title} preset={col2Preset} fitMode={col2FitMode} />
           </div>
@@ -67,7 +67,7 @@ export default function BreakdownTriptych({
           <h4 className="text-white text-base font-bold tracking-[0.18em] uppercase border-l-2 pl-3 border-white/80 leading-snug font-futura break-words">
             {col3Title}
           </h4>
-          <p className="text-white/70 text-sm md:text-[15px] leading-[1.95] break-words"><BilingualText text={col3Text} /></p>
+          <p className="text-white/70 text-sm md:text-[15px] leading-[1.95] break-words"><BilingualText text={col3Text} weight="medium" /></p>
           <div className="w-full relative overflow-hidden mt-6 border border-white/10">
             <PresetImage src={col3Img} alt={col3Title} preset={col3Preset} fitMode={col3FitMode} />
           </div>

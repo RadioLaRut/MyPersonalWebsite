@@ -28,8 +28,8 @@ export default function TextSplitLayout({
     const paragraphContent = paragraphsContent ?? (
         <>
             {paragraphs.map((p, i) => (
-                <p key={i} className="break-words">{typeof p === "string" ? <BilingualText text={p} /> : p}</p>
-            ))}
+                    <p key={i} className="break-words">{typeof p === "string" ? <BilingualText text={p} weight="medium" /> : p}</p>
+                ))}
         </>
     );
 

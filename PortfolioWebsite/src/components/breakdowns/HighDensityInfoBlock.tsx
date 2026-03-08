@@ -31,7 +31,7 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
                     <h3 className="text-xl md:text-2xl font-futura text-white/90 mb-2 break-words">{phase1.title}</h3>
                     {phase1.subtitle && <h4 className="text-sm font-futura italic text-white/50 mb-6">{phase1.subtitle}</h4>}
                     <p className="text-white/60 text-sm md:text-[15px] leading-[1.95] mb-8 pr-0 md:pr-4 break-words">
-                        <BilingualText text={phase1.content} />
+                        <BilingualText text={phase1.content} weight="medium" />
                     </p>
 
                     {phase1.items && (
@@ -58,7 +58,7 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
                     <h3 className="text-xl md:text-2xl font-futura text-white/90 mb-2 break-words">{phase2.title}</h3>
                     {phase2.subtitle && <h4 className="text-sm font-futura italic text-white/50 mb-6">{phase2.subtitle}</h4>}
                     <p className="text-white/60 text-sm md:text-[15px] leading-[1.95] mb-8 break-words">
-                        <BilingualText text={phase2.content} />
+                        <BilingualText text={phase2.content} weight="medium" />
                     </p>
 
                     {phase2.items && (
@@ -85,7 +85,7 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
                     <h3 className="text-xl md:text-2xl font-futura text-white/90 mb-2 break-words">{phase3.title}</h3>
                     {phase3.subtitle && <h4 className="text-sm font-futura italic text-white/50 mb-6">{phase3.subtitle}</h4>}
                     <p className="text-white/60 text-sm md:text-[15px] leading-[1.95] mb-8 break-words">
-                        <BilingualText text={phase3.content} />
+                        <BilingualText text={phase3.content} weight="medium" />
                     </p>
 
                     {phase3.imageSrc && (

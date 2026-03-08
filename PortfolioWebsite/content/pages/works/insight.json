@@ -147,32 +147,27 @@
       }
     },
     {
-      "type": "MosaicGallery",
+      "type": "GalleryItem",
       "props": {
-        "id": "insight-gallery-1",
-        "images": [
-          {
-            "src": "/images/insight/Shot01.webp",
-            "caption": "游戏界面",
-            "_arrayItem": {
-              "id": "img-1"
-            }
-          },
-          {
-            "src": "/images/insight/Shot02.webp",
-            "caption": "对话系统",
-            "_arrayItem": {
-              "id": "img-2"
-            }
-          },
-          {
-            "src": "/images/insight/Shot03.webp",
-            "caption": "剧情分支",
-            "_arrayItem": {
-              "id": "img-3"
-            }
-          }
-        ]
+        "id": "insight-gallery-img-1",
+        "src": "/images/insight/Shot01.webp",
+        "caption": "游戏界面"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "insight-gallery-img-2",
+        "src": "/images/insight/Shot02.webp",
+        "caption": "对话系统"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "insight-gallery-img-3",
+        "src": "/images/insight/Shot03.webp",
+        "caption": "剧情分支"
       }
     },
     {

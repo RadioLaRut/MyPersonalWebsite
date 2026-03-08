@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import puckConfig from "@/puck/config";
 import { CANONICAL_PLACEHOLDER_PATH } from "@/lib/public-paths";
+import BilingualText from "@/components/common/BilingualText";
 
 const EXCLUDED_COMPONENT_KEYS = new Set(["ContactFlashlight"]);
 const HIDDEN_LEGACY_COMPONENT_KEYS = new Set([
@@ -30,23 +31,34 @@ const PLAYGROUND_GROUPS = [
   {
     label: "Text Blocks",
     description: "纯文字与图文叙事模块。",
-    keys: ["RichParagraph", "TextSplitLayout", "MediaTextCard", "HighDensityInfoBlock"],
+    keys: ["RichParagraph", "TextSplitLayout", "MediaTextCard", "HighDensityInfoBlock", "StatementBlock"],
   },
   {
     label: "Media Blocks",
     description: "图片、滑块、参数和拼贴模块。",
-    keys: ["ImagePanel", "ImageSlider", "MosaicGallery", "BreakdownTriptych", "ParameterGrid"],
+    keys: ["ImagePanel", "ImageSlider", "GalleryItem", "BreakdownTriptych", "ParameterGrid"],
+  },
+  {
+    label: "Lighting Blocks",
+    description: "灯光作品集专用模块。",
+    keys: ["LightingCollectionHeader", "LightingCollectionItem"],
   },
   {
     label: "Page Blocks",
     description: "首页、作品流和跳转模块。",
-    keys: ["HeroSection", "ProjectSection", "HomeEndcapSection", "WorksList", "LightingProjectCard", "NextProjectBlock", "LightingCollectionGallery"],
+    keys: ["HeroSection", "ProjectSection", "HomeEndcapSection", "WorksList", "LightingProjectCard", "NextProjectBlock"],
   },
 ] as const;
 
 const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
   TextSplitLayout: {
     imageSrc: "/images/train-station/2Day.webp",
+  },
+  StatementBlock: {
+    content: "这是一个过渡区域组件，用于在项目之间创造呼吸感，让浏览体验更加舒适。",
+    align: "center",
+    backgroundColor: "black",
+    minHeight: "medium",
   },
   HighDensityInfoBlock: {
     phase3ImageSrc: "/images/train-station/2Day.webp",
@@ -96,16 +108,19 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     nextName: "INSIGHT",
     nextBg: "/images/insight/InsightOnlyCover.webp",
   },
-  LightingCollectionGallery: {
+  LightingCollectionHeader: {
     title: "CITY ADD",
     number: "01",
     description: "A detailed breakdown of lighting setup, mood exploration, and before/after comparisons for city add.",
     backHref: "/works/lighting-portfolio",
-    images: [
-      { lit: "/images/city-2026/001.webp", caption: "DAY", _arrayItem: { id: "demo-1" } },
-      { lit: "/images/city-2026/002.webp", caption: "DUSK", _arrayItem: { id: "demo-2" } },
-      { lit: "/images/city-2026/003.webp", caption: "NIGHT", _arrayItem: { id: "demo-3" } },
-    ],
+  },
+  LightingCollectionItem: {
+    lit: "/images/city-2026/001.webp",
+    caption: "DAY",
+  },
+  GalleryItem: {
+    src: "/images/train-station/2Day.webp",
+    caption: "Demo Image",
   },
 };
 
@@ -119,70 +134,264 @@ const groupedPlaygroundComponents = PLAYGROUND_GROUPS.map((group) => ({
 
 export default function PlaygroundClient() {
   return (
-    <main className="min-h-screen bg-black text-white pt-32 pb-32">
+    <main className="min-h-screen bg-black text-white pt-24 md:pt-32 pb-24 md:pb-32">
       <div className="grid-container">
-        <div className="col-span-4 md:col-start-2 md:col-span-10 mb-24">
-          <Link
-            href="/"
-            className="inline-block mb-8 font-mono text-xs uppercase tracking-[0.3em] text-white/50 hover:text-white transition-colors"
+        {/* Header Section */}
+        <div className="col-span-4 md:col-start-2 md:col-span-10 mb-16 md:mb-24">
+          {/* Back Button */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            ← 返回首页
-          </Link>
+            <Link
+              href="/"
+              className="group inline-flex items-center gap-4 mb-10 md:mb-12"
+            >
+              <span className="font-mono text-sm uppercase tracking-[0.25em] text-white/50 group-hover:text-white transition-colors duration-300">
+                ← 返回首页
+              </span>
+            </Link>
+          </motion.div>
+
+          {/* Title */}
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-[8vw] md:text-[5vw] font-luna font-black leading-none tracking-tighter mb-6"
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="text-[12vw] sm:text-[10vw] md:text-[6vw] font-luna font-black leading-[0.9] tracking-tighter mb-6 md:mb-8"
           >
-            PLAYGROUND 游乐场
+            PLAYGROUND
           </motion.h1>
-          <motion.p
+
+          {/* Subtitle */}
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="font-futura text-white/70 tracking-wide text-lg md:text-xl max-w-3xl"
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex flex-col md:flex-row md:items-end justify-between gap-6"
           >
-            当前页面会自动展示 Puck 中全部常规组件，用于统一预览布局与交互。
-          </motion.p>
+            <p className="font-futura text-white/60 tracking-wide text-base md:text-lg max-w-2xl leading-relaxed">
+              组件预览与交互测试空间。展示 Puck 中全部常规组件，用于统一预览布局与交互效果。
+            </p>
+          </motion.div>
         </div>
 
-        <div className="col-span-4 md:col-span-12 border-b border-white/20 mb-24" />
+        {/* Divider */}
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="col-span-4 md:col-span-12 border-b border-white/15 mb-16 md:mb-20 origin-left"
+        />
 
-        {groupedPlaygroundComponents.map((group, groupIndex) => (
-          <div key={group.label} className="col-span-4 md:col-span-12 mb-20">
-            <div className="mb-12 border-b border-white/10 pb-6">
-              <p className="font-mono text-xs uppercase tracking-[0.35em] text-white/35">
-                {`GROUP ${String(groupIndex + 1).padStart(2, "0")}`}
-              </p>
-              <h2 className="mt-3 text-3xl md:text-4xl font-futura tracking-[0.14em] uppercase text-white">
-                {group.label}
+        {/* BilingualText Component Showcase */}
+        <div className="col-span-4 md:col-span-12 mb-16 md:mb-24">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6 }}
+            className="mb-10 md:mb-12 border-b border-white/10 pb-6"
+          >
+            <div className="flex items-baseline gap-4 mb-3">
+              <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/30">
+                00
+              </span>
+              <h2 className="text-2xl md:text-3xl font-futura tracking-[0.1em] uppercase text-white">
+                BilingualText
               </h2>
-              <p className="mt-3 font-futura text-sm md:text-base tracking-wide text-white/55">
+            </div>
+            <p className="font-futura text-sm md:text-base tracking-wide text-white/50 ml-10">
+              双语文本组件，支持三种字重与自动中英文混排。
+            </p>
+          </motion.div>
+
+          <div className="space-y-12">
+            {/* Weight Comparison */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6 }}
+            >
+              <h3 className="text-lg md:text-xl font-futura tracking-wider text-white/70 mb-6">
+                三种字重对比
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="space-y-3">
+                  <span className="font-mono text-xs text-white/40 uppercase tracking-[0.2em]">light</span>
+                  <p className="text-white/80 text-lg leading-relaxed">
+                    <BilingualText text="中文轻量字重 / Light English Weight" weight="light" />
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  <span className="font-mono text-xs text-white/40 uppercase tracking-[0.2em]">medium</span>
+                  <p className="text-white/80 text-lg leading-relaxed">
+                    <BilingualText text="中文中等字重 / Medium English Weight" weight="medium" />
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  <span className="font-mono text-xs text-white/40 uppercase tracking-[0.2em]">black</span>
+                  <p className="text-white/80 text-lg leading-relaxed">
+                    <BilingualText text="中文粗黑字重 / Black English Weight" weight="black" />
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Mixed Content Demo */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <h3 className="text-lg md:text-xl font-futura tracking-wider text-white/70 mb-6">
+                中英文混排效果
+              </h3>
+              <div className="bg-white/[0.02] rounded-lg p-6 md:p-8 space-y-6">
+                <p className="text-white/80 text-base md:text-lg leading-[1.9]">
+                  <BilingualText
+                    text="这是一个BilingualText组件示例，展示中英文混排效果。This is a demo showing Chinese and English mixed text rendering with proper weight and baseline alignment."
+                    weight="medium"
+                  />
+                </p>
+                <p className="text-white/60 text-sm md:text-base leading-[1.85]">
+                  <BilingualText
+                    text="组件会自动检测文本中的中英文内容，并分别应用不同的字体和字重。The component automatically detects Chinese and English text, applying appropriate fonts and weights."
+                    weight="light"
+                  />
+                </p>
+              </div>
+            </motion.div>
+
+            {/* More Mixed Examples */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <h3 className="text-lg md:text-xl font-futura tracking-wider text-white/70 mb-6">
+                更多混排示例
+              </h3>
+              <div className="bg-white/[0.02] rounded-lg p-6 md:p-8 space-y-6">
+                <p className="text-white/80 text-base md:text-lg leading-[1.9]">
+                  <BilingualText
+                    text="在UnrealEngine5中，我们使用Lumen全局光照系统来实现真实的光影效果。In Unreal Engine 5, we use the Lumen global illumination system to achieve realistic lighting effects."
+                    weight="medium"
+                  />
+                </p>
+                <p className="text-white/70 text-base md:text-lg leading-[1.9]">
+                  <BilingualText
+                    text="本项目的GitHub仓库地址是github.com/example/project，欢迎提交Issue和PR。The GitHub repository for this project is github.com/example/project, welcome to submit Issues and PRs."
+                    weight="medium"
+                  />
+                </p>
+                <p className="text-white/60 text-sm md:text-base leading-[1.85]">
+                  <BilingualText
+                    text="版本号v2.1.0已于2024年1月15日发布，包含15个新功能和23个Bug修复。Version v2.1.0 was released on January 15, 2024, including 15 new features and 23 bug fixes."
+                    weight="light"
+                  />
+                </p>
+                <p className="text-white/90 text-lg md:text-xl leading-[1.9] font-black">
+                  <BilingualText
+                    text="CSS3和HTML5是现代Web开发的基础技术，配合TypeScript使用效果更佳。CSS3 and HTML5 are fundamental technologies for modern web development, and work even better with TypeScript."
+                    weight="black"
+                  />
+                </p>
+                <p className="text-white/80 text-base md:text-lg leading-[1.9]">
+                  <BilingualText
+                    text="请访问我们的官网www.example.com或发送邮件至contact@example.com获取更多信息。Please visit our website www.example.com or email contact@example.com for more information."
+                    weight="medium"
+                  />
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Component Groups */}
+        {groupedPlaygroundComponents.map((group, groupIndex) => (
+          <div key={group.label} className="col-span-4 md:col-span-12 mb-16 md:mb-24">
+            {/* Group Header */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6 }}
+              className="mb-10 md:mb-12 border-b border-white/10 pb-6"
+            >
+              <div className="flex items-baseline gap-4 mb-3">
+                <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/30">
+                  {String(groupIndex + 1).padStart(2, "0")}
+                </span>
+                <h2 className="text-2xl md:text-3xl font-futura tracking-[0.1em] uppercase text-white">
+                  {group.label}
+                </h2>
+              </div>
+              <p className="font-futura text-sm md:text-base tracking-wide text-white/50 ml-10">
                 {group.description}
               </p>
+            </motion.div>
+
+            {/* Components */}
+            <div className="space-y-16 md:space-y-24">
+              {group.components.map(([componentKey, componentConfig], componentIndex) => {
+                const componentProps = {
+                  ...(componentConfig.defaultProps ?? {}),
+                  ...(PLAYGROUND_PROPS[componentKey] ?? {}),
+                  editMode: false,
+                } as never;
+
+                return (
+                  <motion.div 
+                    key={componentKey} 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.6, delay: componentIndex * 0.1 }}
+                    className="group"
+                  >
+                    {/* Component Label */}
+                    <div className="mb-6 md:mb-8 flex items-start justify-between">
+                      <div>
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="font-mono text-[10px] text-white/30 uppercase tracking-[0.25em]">
+                            COMP {String(componentIndex + 1).padStart(2, "0")}
+                          </span>
+                          <div className="h-px w-8 bg-white/10"></div>
+                        </div>
+                        <h3 className="text-xl md:text-2xl font-futura tracking-wider text-white/90 group-hover:text-white transition-colors">
+                          {`<${COMPONENT_DISPLAY_NAMES[componentKey] ?? componentKey} />`}
+                        </h3>
+                      </div>
+                    </div>
+
+                    {/* Component Preview */}
+                    <div className="relative">
+                      <div className="absolute -inset-4 bg-white/[0.02] rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                      {componentConfig.render(componentProps)}
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
-
-            {group.components.map(([componentKey, componentConfig], componentIndex) => {
-              const componentProps = {
-                ...(componentConfig.defaultProps ?? {}),
-                ...(PLAYGROUND_PROPS[componentKey] ?? {}),
-                editMode: false,
-              } as never;
-
-              return (
-                <div key={componentKey} className="mb-32 group">
-                  <div className="mb-4">
-                    <span className="font-mono text-xs text-white/40 uppercase tracking-[0.3em] group-hover:text-white transition-colors">
-                      {`UI COMPONENT ${String(componentIndex + 1).padStart(2, "0")}`}
-                    </span>
-                    <h3 className="text-2xl font-futura tracking-widest mt-2 mb-8">{`<${COMPONENT_DISPLAY_NAMES[componentKey] ?? componentKey} />`}</h3>
-                  </div>
-
-                  {componentConfig.render(componentProps)}
-                </div>
-              );
-            })}
           </div>
         ))}
+
+        {/* Footer */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="col-span-4 md:col-span-12 mt-16 md:mt-24 pt-12 border-t border-white/10 text-center"
+        >
+          <p className="font-mono text-xs text-white/30 tracking-[0.2em]">
+            END OF PLAYGROUND
+          </p>
+        </motion.div>
       </div>
     </main>
   );

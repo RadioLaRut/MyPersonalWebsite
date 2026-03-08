@@ -7,7 +7,7 @@ interface TextParagraphBlockProps {
 export default function TextParagraphBlock({ text }: TextParagraphBlockProps) {
   return (
     <p className="break-words">
-      <BilingualText text={text} />
+      <BilingualText text={text} weight="medium" />
     </p>
   );
 }

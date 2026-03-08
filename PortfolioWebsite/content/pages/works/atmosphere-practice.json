@@ -39,95 +39,99 @@
       }
     },
     {
-      "type": "MosaicGallery",
+      "type": "GalleryItem",
       "props": {
-        "id": "gallery-1",
-        "images": [
-          {
-            "src": "/images/west/CDay.webp",
-            "caption": "West CDay",
-            "_arrayItem": {
-              "id": "img-1"
-            }
-          },
-          {
-            "src": "/images/west/CDust.webp",
-            "caption": "West CDust",
-            "_arrayItem": {
-              "id": "img-2"
-            }
-          },
-          {
-            "src": "/images/west/CNight.webp",
-            "caption": "West CNight",
-            "_arrayItem": {
-              "id": "img-3"
-            }
-          },
-          {
-            "src": "/images/west/CNoLight.webp",
-            "caption": "West CNoLight",
-            "_arrayItem": {
-              "id": "img-4"
-            }
-          },
-          {
-            "src": "/images/west/Day.webp",
-            "caption": "West Day",
-            "_arrayItem": {
-              "id": "img-5"
-            }
-          },
-          {
-            "src": "/images/west/Dust.webp",
-            "caption": "West Dust",
-            "_arrayItem": {
-              "id": "img-6"
-            }
-          },
-          {
-            "src": "/images/west/Night.webp",
-            "caption": "West Night",
-            "_arrayItem": {
-              "id": "img-7"
-            }
-          },
-          {
-            "src": "/images/west/NoLight.webp",
-            "caption": "West NoLight",
-            "_arrayItem": {
-              "id": "img-8"
-            }
-          },
-          {
-            "src": "/images/rainforest/Output.0050.webp",
-            "caption": "雨林 0050",
-            "_arrayItem": {
-              "id": "img-9"
-            }
-          },
-          {
-            "src": "/images/rainforest/Output.0101.webp",
-            "caption": "雨林 0101",
-            "_arrayItem": {
-              "id": "img-10"
-            }
-          },
-          {
-            "src": "/images/rainforest/Shot005.0002.webp",
-            "caption": "雨林 Shot005",
-            "_arrayItem": {
-              "id": "img-11"
-            }
-          },
-          {
-            "src": "/images/rainforest/Version2Output.0029.webp",
-            "caption": "雨林 V2 0029",
-            "_arrayItem": {
-              "id": "img-12"
-            }
-          }
-        ]
+        "id": "gallery-img-1",
+        "src": "/images/west/CDay.webp",
+        "caption": "West CDay"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-2",
+        "src": "/images/west/CDust.webp",
+        "caption": "West CDust"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-3",
+        "src": "/images/west/CNight.webp",
+        "caption": "West CNight"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-4",
+        "src": "/images/west/CNoLight.webp",
+        "caption": "West CNoLight"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-5",
+        "src": "/images/west/Day.webp",
+        "caption": "West Day"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-6",
+        "src": "/images/west/Dust.webp",
+        "caption": "West Dust"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-7",
+        "src": "/images/west/Night.webp",
+        "caption": "West Night"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-8",
+        "src": "/images/west/NoLight.webp",
+        "caption": "West NoLight"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-9",
+        "src": "/images/rainforest/Output.0050.webp",
+        "caption": "雨林 0050"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-10",
+        "src": "/images/rainforest/Output.0101.webp",
+        "caption": "雨林 0101"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-11",
+        "src": "/images/rainforest/Shot005.0002.webp",
+        "caption": "雨林 Shot005"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-12",
+        "src": "/images/rainforest/Version2Output.0029.webp",
+        "caption": "雨林 V2 0029"
       }
     },
     {

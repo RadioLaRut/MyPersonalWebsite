@@ -170,25 +170,19 @@
       }
     },
     {
-      "type": "MosaicGallery",
+      "type": "GalleryItem",
       "props": {
-        "id": "stv-gallery-1",
-        "images": [
-          {
-            "src": "/images/slay-the-virus/04.webp",
-            "caption": "战斗界面",
-            "_arrayItem": {
-              "id": "img-1"
-            }
-          },
-          {
-            "src": "/images/slay-the-virus/05.webp",
-            "caption": "卡牌拼放",
-            "_arrayItem": {
-              "id": "img-2"
-            }
-          }
-        ]
+        "id": "stv-gallery-img-1",
+        "src": "/images/slay-the-virus/04.webp",
+        "caption": "战斗界面"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "stv-gallery-img-2",
+        "src": "/images/slay-the-virus/05.webp",
+        "caption": "卡牌拼放"
       }
     },
     {

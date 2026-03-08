@@ -6,42 +6,45 @@
   },
   "content": [
     {
-      "type": "LightingCollectionGallery",
+      "type": "LightingCollectionHeader",
       "props": {
+        "id": "collection-2-header",
         "title": "RAINFOREST ECHO",
         "number": "02",
         "description": "A detailed breakdown of lighting setup, mood exploration, and before/after comparisons for rainforest echo.",
-        "backHref": "/works/lighting-portfolio",
-        "images": [
-          {
-            "lit": "/images/rainforest/Version2Output.0029.webp",
-            "caption": "DAY",
-            "_arrayItem": {
-              "id": "collection-2-image-1"
-            }
-          },
-          {
-            "lit": "/images/rainforest/Shot005.0002.webp",
-            "caption": "ATMOSPHERE 1",
-            "_arrayItem": {
-              "id": "collection-2-image-2"
-            }
-          },
-          {
-            "lit": "/images/rainforest/Output.0050.webp",
-            "caption": "ATMOSPHERE 2",
-            "_arrayItem": {
-              "id": "collection-2-image-3"
-            }
-          },
-          {
-            "lit": "/images/rainforest/Output.0101.webp",
-            "caption": "NIGHT",
-            "_arrayItem": {
-              "id": "collection-2-image-4"
-            }
-          }
-        ]
+        "backHref": "/works/lighting-portfolio"
+      }
+    },
+    {
+      "type": "LightingCollectionItem",
+      "props": {
+        "id": "collection-2-image-1",
+        "lit": "/images/rainforest/Version2Output.0029.webp",
+        "caption": "DAY"
+      }
+    },
+    {
+      "type": "LightingCollectionItem",
+      "props": {
+        "id": "collection-2-image-2",
+        "lit": "/images/rainforest/Shot005.0002.webp",
+        "caption": "ATMOSPHERE 1"
+      }
+    },
+    {
+      "type": "LightingCollectionItem",
+      "props": {
+        "id": "collection-2-image-3",
+        "lit": "/images/rainforest/Output.0050.webp",
+        "caption": "ATMOSPHERE 2"
+      }
+    },
+    {
+      "type": "LightingCollectionItem",
+      "props": {
+        "id": "collection-2-image-4",
+        "lit": "/images/rainforest/Output.0101.webp",
+        "caption": "NIGHT"
       }
     }
   ]

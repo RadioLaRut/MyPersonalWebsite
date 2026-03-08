@@ -6,18 +6,20 @@ import HighDensityInfoBlock from "../components/breakdowns/HighDensityInfoBlock"
 import BreakdownTriptych from "../components/breakdowns/BreakdownTriptych";
 import ImageSlider from "../components/breakdowns/ImageSlider";
 import MediaTextCard from "../components/breakdowns/MediaTextCard";
-import MosaicGallery from "../components/breakdowns/MosaicGallery";
+import GalleryItem from "../components/breakdowns/GalleryItem";
 import ParameterGrid from "../components/breakdowns/ParameterGrid";
 import TextSplitLayout from "../components/breakdowns/TextSplitLayout";
 import BreakdownSectionHeadline from "../components/breakdowns/BreakdownHeadline";
 import ContactFlashlightBlock from "../components/blocks/ContactFlashlightBlock";
 import ContactDirectionItem from "../components/blocks/ContactDirectionItem";
 import ContactExperienceItem from "../components/blocks/ContactExperienceItem";
+import StatementBlock from "../components/transitions/StatementBlock";
 import ProjectSection from "../components/home/ProjectSection";
 import HeroSection from "../components/home/HeroSection";
 import HomeEndcapSection from "../components/home/HomeEndcapSection";
 import NextProjectBlock from "../components/blocks/NextProjectBlock";
-import LightingCollectionGallery from "../components/works/LightingCollectionGallery";
+import LightingCollectionHeader from "../components/works/LightingCollectionHeader";
+import LightingCollectionItem from "../components/works/LightingCollectionItem";
 import LightingProjectCard from "../components/works/LightingProjectCard";
 import PortfolioHeroHeader from "../components/works/PortfolioHeroHeader";
 import WorksList from "../components/works/WorksList";
@@ -53,6 +55,53 @@ const imageFitModeField = {
 
 export const config: Config = {
   components: {
+    // --------------------------------------------------------
+    // Transition Components
+    // --------------------------------------------------------
+    StatementBlock: {
+      fields: {
+        content: { type: "textarea", contentEditable: true },
+        align: {
+          type: "select",
+          options: [
+            { label: "Left", value: "left" },
+            { label: "Center", value: "center" },
+            { label: "Right", value: "right" },
+          ],
+        },
+        backgroundColor: {
+          type: "select",
+          options: [
+            { label: "Black", value: "black" },
+            { label: "Dark Gray", value: "dark-gray" },
+          ],
+        },
+        minHeight: {
+          type: "select",
+          options: [
+            { label: "Small (20vh)", value: "small" },
+            { label: "Medium (35vh)", value: "medium" },
+            { label: "Large (50vh)", value: "large" },
+          ],
+        },
+      },
+      defaultProps: {
+        content: "在这里输入过渡文字，用于在项目之间创造呼吸感。",
+        align: "center",
+        backgroundColor: "black",
+        minHeight: "medium",
+      },
+      render: ({ content, align, backgroundColor, minHeight, editMode }) => (
+        <StatementBlock
+          content={content}
+          align={align as any}
+          backgroundColor={backgroundColor as any}
+          minHeight={minHeight as any}
+          editMode={editMode}
+        />
+      ),
+    },
+
     // --------------------------------------------------------
     // Basic Layout Components
     // --------------------------------------------------------
@@ -159,7 +208,7 @@ export const config: Config = {
             <div className="grid-container w-full">
               <div className="col-span-4 md:col-start-3 md:col-span-8">
                 <p className="text-xl md:text-[24px] leading-[2.2] text-white/90 text-justify tracking-wide">
-                  <BilingualText text={content} />
+                  <BilingualText text={content} weight="medium" />
                 </p>
               </div>
             </div>
@@ -238,26 +287,27 @@ export const config: Config = {
       )
     },
 
-    MosaicGallery: {
+    GalleryItem: {
       fields: {
-        images: {
-          type: "array",
-          arrayFields: {
-            src: { type: "text" },
-            caption: { type: "text" },
-            preset: imagePresetField,
-            fitMode: imageFitModeField,
-          }
-        }
+        src: { type: "text" },
+        caption: { type: "text" },
+        preset: imagePresetField,
+        fitMode: imageFitModeField,
       },
       defaultProps: {
-        images: [
-          { src: "/images/train-station/2Day.webp", caption: "Main View", preset: "ratio-16-9", fitMode: "x", _arrayItem: { id: "img-1" } },
-          { src: "/images/train-station/Day.webp", caption: "Detail 1", preset: "ratio-16-9", fitMode: "x", _arrayItem: { id: "img-2" } },
-          { src: "/images/train-station/Cut2Day.webp", caption: "Detail 2", preset: "ratio-16-9", fitMode: "x", _arrayItem: { id: "img-3" } },
-        ] as any
+        src: "/images/train-station/2Day.webp",
+        caption: "Gallery Image",
+        preset: "ratio-16-9",
+        fitMode: "x",
       },
-      render: ({ images }) => <MosaicGallery images={images as any} />
+      render: ({ src, caption, preset, fitMode }) => (
+        <GalleryItem
+          src={src}
+          caption={caption}
+          preset={preset as any}
+          fitMode={fitMode as any}
+        />
+      )
     },
 
     MediaTextCard: {
@@ -854,52 +904,50 @@ export const config: Config = {
         />
       )
     },
-    LightingCollectionGallery: {
+    LightingCollectionHeader: {
       fields: {
         title: { type: "text" },
         number: { type: "text" },
         description: { type: "textarea" },
         backHref: { type: "text" },
-        images: {
-          type: "array",
-          arrayFields: {
-            lit: { type: "text" },
-            unlit: { type: "text" },
-            caption: { type: "text" },
-            preset: imagePresetField,
-            fitMode: imageFitModeField,
-          },
-        },
       },
       defaultProps: {
         title: "CITY ADD",
         number: "01",
         description: "A detailed breakdown of lighting setup, mood exploration, and before/after comparisons for city add.",
         backHref: "/works/lighting-portfolio",
-        images: [
-          {
-            lit: "/images/city-2026/001.webp",
-            caption: "DAY",
-            preset: "ratio-16-9",
-            fitMode: "x",
-            _arrayItem: { id: "collection-image-1" },
-          },
-          {
-            lit: "/images/city-2026/002.webp",
-            caption: "DUSK",
-            preset: "ratio-16-9",
-            fitMode: "x",
-            _arrayItem: { id: "collection-image-2" },
-          },
-        ] as any,
       },
-      render: ({ title, number, description, backHref, images, editMode }) => (
-        <LightingCollectionGallery
+      render: ({ title, number, description, backHref, editMode }) => (
+        <LightingCollectionHeader
           title={title}
           number={number}
           description={description}
           backHref={toEditorAwareHref(backHref, editMode)}
-          images={images as any}
+        />
+      ),
+    },
+
+    LightingCollectionItem: {
+      fields: {
+        lit: { type: "text" },
+        unlit: { type: "text" },
+        caption: { type: "text" },
+        preset: imagePresetField,
+        fitMode: imageFitModeField,
+      },
+      defaultProps: {
+        lit: "/images/city-2026/001.webp",
+        caption: "DAY",
+        preset: "ratio-16-9",
+        fitMode: "x",
+      },
+      render: ({ lit, unlit, caption, preset, fitMode }) => (
+        <LightingCollectionItem
+          lit={lit}
+          unlit={unlit}
+          caption={caption}
+          preset={preset as any}
+          fitMode={fitMode as any}
         />
       ),
     },

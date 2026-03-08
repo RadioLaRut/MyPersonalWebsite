@@ -48,7 +48,7 @@ export default function MediaTextCard({
                 <div className="text-white/60 tracking-[0.02em] text-base md:text-lg leading-[1.95] space-y-5 max-w-none md:max-w-[36ch]">
                     {paragraphs.map((paragraph, i) => (
                         <p key={i} className="text-balance">
-                            <BilingualText text={paragraph} />
+                            <BilingualText text={paragraph} weight="medium" />
                         </p>
                     ))}
                 </div>

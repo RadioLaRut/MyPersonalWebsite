@@ -67,7 +67,7 @@ export default function ParameterGrid({
                                 </div>
                             )}
                             <p className="text-white/50 text-sm md:text-base leading-[1.9] break-words max-w-[32ch]">
-                                <BilingualText text={param.description} />
+                                <BilingualText text={param.description} weight="light" />
                             </p>
                         </div>
                     ))}

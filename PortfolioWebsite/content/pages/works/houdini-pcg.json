@@ -39,18 +39,11 @@
       }
     },
     {
-      "type": "MosaicGallery",
+      "type": "GalleryItem",
       "props": {
-        "id": "gallery-1",
-        "images": [
-          {
-            "src": "/images/penguin/PCG/PCG04png.webp",
-            "caption": "PCG 04",
-            "_arrayItem": {
-              "id": "img-1"
-            }
-          }
-        ]
+        "id": "gallery-img-1",
+        "src": "/images/penguin/PCG/PCG04png.webp",
+        "caption": "PCG 04"
       }
     },
     {

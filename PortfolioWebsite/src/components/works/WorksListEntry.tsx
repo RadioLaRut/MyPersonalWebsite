@@ -129,7 +129,7 @@ export default function WorksListEntry({
             {category}
           </p>
           <p className="mt-3 text-[10px] sm:text-xs text-white/60 font-futura font-medium tracking-[0.14em] uppercase leading-loose">
-            <BilingualText text={desc} />
+            <BilingualText text={desc} weight="light" />
           </p>
         </motion.div>
       </div>

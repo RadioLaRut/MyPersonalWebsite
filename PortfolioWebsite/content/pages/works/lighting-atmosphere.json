@@ -39,95 +39,99 @@
       }
     },
     {
-      "type": "MosaicGallery",
+      "type": "GalleryItem",
       "props": {
-        "id": "gallery-1",
-        "images": [
-          {
-            "src": "/images/train-station/Day.webp",
-            "caption": "白天",
-            "_arrayItem": {
-              "id": "img-1"
-            }
-          },
-          {
-            "src": "/images/train-station/Dusk.webp",
-            "caption": "黄昏",
-            "_arrayItem": {
-              "id": "img-2"
-            }
-          },
-          {
-            "src": "/images/train-station/Night.webp",
-            "caption": "夜晚",
-            "_arrayItem": {
-              "id": "img-3"
-            }
-          },
-          {
-            "src": "/images/train-station/NoLight.webp",
-            "caption": "无光",
-            "_arrayItem": {
-              "id": "img-4"
-            }
-          },
-          {
-            "src": "/images/train-station/2Day.webp",
-            "caption": "白天 2",
-            "_arrayItem": {
-              "id": "img-5"
-            }
-          },
-          {
-            "src": "/images/train-station/2Dust.webp",
-            "caption": "尘土 2",
-            "_arrayItem": {
-              "id": "img-6"
-            }
-          },
-          {
-            "src": "/images/train-station/2Fog.webp",
-            "caption": "雾天 2",
-            "_arrayItem": {
-              "id": "img-7"
-            }
-          },
-          {
-            "src": "/images/train-station/2Night.webp",
-            "caption": "夜晚 2",
-            "_arrayItem": {
-              "id": "img-8"
-            }
-          },
-          {
-            "src": "/images/train-station/2NoLight.webp",
-            "caption": "无光 2",
-            "_arrayItem": {
-              "id": "img-9"
-            }
-          },
-          {
-            "src": "/images/city-2026/001.webp",
-            "caption": "城市 001",
-            "_arrayItem": {
-              "id": "img-10"
-            }
-          },
-          {
-            "src": "/images/city-2026/002.webp",
-            "caption": "城市 002",
-            "_arrayItem": {
-              "id": "img-11"
-            }
-          },
-          {
-            "src": "/images/city-2026/003.webp",
-            "caption": "城市 003",
-            "_arrayItem": {
-              "id": "img-12"
-            }
-          }
-        ]
+        "id": "gallery-img-1",
+        "src": "/images/train-station/Day.webp",
+        "caption": "白天"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-2",
+        "src": "/images/train-station/Dusk.webp",
+        "caption": "黄昏"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-3",
+        "src": "/images/train-station/Night.webp",
+        "caption": "夜晚"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-4",
+        "src": "/images/train-station/NoLight.webp",
+        "caption": "无光"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-5",
+        "src": "/images/train-station/2Day.webp",
+        "caption": "白天 2"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-6",
+        "src": "/images/train-station/2Dust.webp",
+        "caption": "尘土 2"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-7",
+        "src": "/images/train-station/2Fog.webp",
+        "caption": "雾天 2"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-8",
+        "src": "/images/train-station/2Night.webp",
+        "caption": "夜晚 2"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-9",
+        "src": "/images/train-station/2NoLight.webp",
+        "caption": "无光 2"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-10",
+        "src": "/images/city-2026/001.webp",
+        "caption": "城市 001"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-11",
+        "src": "/images/city-2026/002.webp",
+        "caption": "城市 002"
+      }
+    },
+    {
+      "type": "GalleryItem",
+      "props": {
+        "id": "gallery-img-12",
+        "src": "/images/city-2026/003.webp",
+        "caption": "城市 003"
       }
     },
     {

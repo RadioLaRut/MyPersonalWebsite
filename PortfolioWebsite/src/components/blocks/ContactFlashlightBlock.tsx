@@ -37,6 +37,16 @@ export default function ContactFlashlightBlock({
     const emailTextClass = "copyable-contact block whitespace-nowrap text-[clamp(1.25rem,1.75vw,2rem)] font-medium mix-blend-normal tracking-tight leading-[1] font-serif";
     const containerRef = useRef<HTMLDivElement>(null);
     const [mousePos, setMousePos] = useState({ x: "50%", y: "50%" });
+    const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+    useEffect(() => {
+        const checkTouchDevice = () => {
+            setIsTouchDevice(window.matchMedia("(pointer: coarse)").matches);
+        };
+        checkTouchDevice();
+        window.addEventListener("resize", checkTouchDevice);
+        return () => window.removeEventListener("resize", checkTouchDevice);
+    }, []);
 
     useEffect(() => {
         let lastClientX = window.innerWidth / 2;
@@ -187,8 +197,12 @@ export default function ContactFlashlightBlock({
                     aria-hidden="true"
                     style={{
                         color: lightTextColor,
-                        WebkitMaskImage: `radial-gradient(${maskRadius}px circle at ${mousePos.x} ${mousePos.y}, black 0%, black ${maskSmoothness}%, transparent 100%)`,
-                        maskImage: `radial-gradient(${maskRadius}px circle at ${mousePos.x} ${mousePos.y}, black 0%, black ${maskSmoothness}%, transparent 100%)`,
+                        WebkitMaskImage: isTouchDevice
+                            ? "none"
+                            : `radial-gradient(${maskRadius}px circle at ${mousePos.x} ${mousePos.y}, black 0%, black ${maskSmoothness}%, transparent 100%)`,
+                        maskImage: isTouchDevice
+                            ? "none"
+                            : `radial-gradient(${maskRadius}px circle at ${mousePos.x} ${mousePos.y}, black 0%, black ${maskSmoothness}%, transparent 100%)`,
                         WebkitMaskRepeat: "no-repeat",
                         maskRepeat: "no-repeat",
                     }}

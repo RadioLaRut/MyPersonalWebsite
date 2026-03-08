@@ -89,12 +89,12 @@ export default function HeroSection({
               animate={editMode ? undefined : { opacity: 1 }}
               transition={editMode ? undefined : { duration: 1.5, delay: 0.5, ease: "easeOut" }}
             >
-              <h1 className="font-gothic font-light text-[10vw] md:text-5xl lg:text-[5vw] tracking-[0.2em] text-white uppercase leading-[1.1] interactive pointer-events-auto">
+              <h1 className="font-gothic font-light text-[clamp(1.75rem,5vw,3.5rem)] tracking-[0.2em] text-white uppercase leading-[1.1] interactive pointer-events-auto">
                 {title}
               </h1>
               <div className="flex items-center gap-4 mt-2">
                 <span className="inline-block w-8 md:w-16 h-px bg-white/40"></span>
-                <h1 className="font-gothic font-light text-2xl md:text-3xl lg:text-4xl tracking-widest text-white/50 uppercase interactive pointer-events-auto">
+                <h1 className="font-gothic font-light text-[clamp(1rem,2.5vw,1.5rem)] tracking-widest text-white/50 uppercase interactive pointer-events-auto">
                   {subtitle}
                 </h1>
               </div>

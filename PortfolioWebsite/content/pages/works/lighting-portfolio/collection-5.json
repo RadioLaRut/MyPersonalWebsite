@@ -6,35 +6,37 @@
   },
   "content": [
     {
-      "type": "LightingCollectionGallery",
+      "type": "LightingCollectionHeader",
       "props": {
+        "id": "collection-5-header",
         "title": "ATMOSPHERE PRACTICE",
         "number": "05",
         "description": "A detailed breakdown of lighting setup, mood exploration, and before/after comparisons for atmosphere practice.",
-        "backHref": "/works/lighting-portfolio",
-        "images": [
-          {
-            "lit": "/images/penguin/01.webp",
-            "caption": "CYBERPUNK ALLEY",
-            "_arrayItem": {
-              "id": "collection-5-image-1"
-            }
-          },
-          {
-            "lit": "/images/penguin/02.webp",
-            "caption": "INTERIOR SCENE",
-            "_arrayItem": {
-              "id": "collection-5-image-2"
-            }
-          },
-          {
-            "lit": "/images/penguin/CyberRestaurant.webp",
-            "caption": "CYBER RESTAURANT",
-            "_arrayItem": {
-              "id": "collection-5-image-3"
-            }
-          }
-        ]
+        "backHref": "/works/lighting-portfolio"
+      }
+    },
+    {
+      "type": "LightingCollectionItem",
+      "props": {
+        "id": "collection-5-image-1",
+        "lit": "/images/penguin/01.webp",
+        "caption": "CYBERPUNK ALLEY"
+      }
+    },
+    {
+      "type": "LightingCollectionItem",
+      "props": {
+        "id": "collection-5-image-2",
+        "lit": "/images/penguin/02.webp",
+        "caption": "INTERIOR SCENE"
+      }
+    },
+    {
+      "type": "LightingCollectionItem",
+      "props": {
+        "id": "collection-5-image-3",
+        "lit": "/images/penguin/CyberRestaurant.webp",
+        "caption": "CYBER RESTAURANT"
       }
     }
   ]
