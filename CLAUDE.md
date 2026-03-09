@@ -119,7 +119,7 @@ npm run convert:images
 - `ImageSlider` - 光照对比滑块（支持 `litImg`/`unlitImg`）
 - `MosaicGallery` - 图片画廊
 - `ParameterGrid` - 参数网格
-- `MediaTextCard` - 图文卡片
+- `ContentCard` - 内容卡片（支持图文混排和纯文本模式）
 - `TextSplitLayout` - 文本分栏布局
 - `HighDensityInfoBlock` - 高密度信息块
 - `MetaDataBlock` - 元数据展示

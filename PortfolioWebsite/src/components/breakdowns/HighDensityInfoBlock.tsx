@@ -11,9 +11,9 @@ interface InfoItem {
 }
 
 interface HighDensityInfoBlockProps {
-    phase1: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; items?: InfoItem[] };
-    phase2: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; items?: InfoItem[] };
-    phase3: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; imageSrc?: string; imagePreset?: ImagePreset; imageFitMode?: ImageFitMode };
+    phase1: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; items?: InfoItem[]; label?: ReactNode };
+    phase2: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; items?: InfoItem[]; label?: ReactNode };
+    phase3: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; imageSrc?: string; imagePreset?: ImagePreset; imageFitMode?: ImageFitMode; label?: ReactNode };
     phase1ItemsContent?: ReactNode;
     phase2ItemsContent?: ReactNode;
 }
@@ -27,7 +27,7 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
 
                 {/* Phase 1 Column (Dense text + metadata) */}
                 <div className="col-span-4 md:col-span-3 pr-0 md:pr-5 mb-12 md:mb-0 border-r border-white/5">
-                    <div className="font-mono text-white/40 text-[10px] tracking-[0.2em] mb-4">PHASE 01 / CONTEXT</div>
+                    <div className="font-mono text-white/40 text-[10px] tracking-[0.2em] mb-4">{phase1.label || "PHASE 01 / CONTEXT"}</div>
                     <h3 className="text-xl md:text-2xl font-futura text-white/90 mb-2 break-words">{phase1.title}</h3>
                     {phase1.subtitle && <h4 className="text-sm font-futura italic text-white/50 mb-6">{phase1.subtitle}</h4>}
                     <p className="text-white/60 text-sm md:text-[15px] leading-[1.95] mb-8 pr-0 md:pr-4 break-words">
@@ -54,7 +54,7 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
 
                 {/* Phase 2 Column (Dense text + architecture abstract) */}
                 <div className="col-span-4 md:col-span-4 px-0 md:px-8 mb-12 md:mb-0 border-r border-transparent md:border-white/5">
-                    <div className="font-mono text-white/40 text-[10px] tracking-[0.2em] mb-4">PHASE 02 / SYSTEM ARCHITECTURE</div>
+                    <div className="font-mono text-white/40 text-[10px] tracking-[0.2em] mb-4">{phase2.label || "PHASE 02 / SYSTEM ARCHITECTURE"}</div>
                     <h3 className="text-xl md:text-2xl font-futura text-white/90 mb-2 break-words">{phase2.title}</h3>
                     {phase2.subtitle && <h4 className="text-sm font-futura italic text-white/50 mb-6">{phase2.subtitle}</h4>}
                     <p className="text-white/60 text-sm md:text-[15px] leading-[1.95] mb-8 break-words">
@@ -81,7 +81,7 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
 
                 {/* Phase 3 Column (Execution & Visual Result) */}
                 <div className="col-span-4 md:col-span-5 pl-0 md:pl-8">
-                    <div className="font-mono text-white/40 text-[10px] tracking-[0.2em] mb-4">PHASE 03 / EXECUTION & RESULTS</div>
+                    <div className="font-mono text-white/40 text-[10px] tracking-[0.2em] mb-4">{phase3.label || "PHASE 03 / EXECUTION & RESULTS"}</div>
                     <h3 className="text-xl md:text-2xl font-futura text-white/90 mb-2 break-words">{phase3.title}</h3>
                     {phase3.subtitle && <h4 className="text-sm font-futura italic text-white/50 mb-6">{phase3.subtitle}</h4>}
                     <p className="text-white/60 text-sm md:text-[15px] leading-[1.95] mb-8 break-words">

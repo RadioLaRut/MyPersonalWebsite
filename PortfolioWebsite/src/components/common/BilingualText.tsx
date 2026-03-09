@@ -35,7 +35,7 @@ const FONT_FAMILY_LATIN = "var(--font-futura), sans-serif";
 const HAN_LIKE_REGEX = /[\p{Script=Han}\u3000-\u303F\uFF00-\uFFEF]/u;
 
 /** 英文与中文相邻时的垂直对齐调整值（像素） */
-const VERTICAL_ALIGN_ADJUST = "-1.3px";
+const VERTICAL_ALIGN_ADJUST = "-1.2px";
 
 /** 基础CSS类名 */
 const CLASS_NAME_INHERIT = "text-inherit";

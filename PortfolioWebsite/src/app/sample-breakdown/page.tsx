@@ -4,10 +4,10 @@ import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import ImageSlider from '@/components/breakdowns/ImageSlider';
-import MediaTextCard from '@/components/breakdowns/MediaTextCard';
+import ContentCard from '@/components/breakdowns/ContentCard';
 import TextSplitLayout from '@/components/breakdowns/TextSplitLayout';
 import ParameterGrid from '@/components/breakdowns/ParameterGrid';
-import MosaicGallery from '@/components/breakdowns/MosaicGallery';
+
 import MetaDataBlock from '@/components/breakdowns/MetaDataBlock';
 import HighDensityInfoBlock from '@/components/breakdowns/HighDensityInfoBlock';
 
@@ -72,9 +72,9 @@ export default function SampleBreakdownPage() {
                 </div>
 
                 <div className="col-span-4 md:col-span-12 mt-16">
-                    <MediaTextCard
+                    <ContentCard
                         title="灯光绑定与自动曝光体验系统"
-                        description="不仅是静态的美术调整，我还开发了一套蓝图工具，用于根据不同的镜头焦段和机位自动校准 Auto Exposure。\\n这样可以确保在切换特写与远景时，高光不会溢出，暗部始终保持克制的细节。"
+                        description="不仅是静态的美术调整，我还开发了一套蓝图工具，用于根据不同的镜头焦段和机位自动校准 Auto Exposure。\n这样可以确保在切换特写与远景时，高光不会溢出，暗部始终保持克制的细节。"
                         tags={["蓝图", "TA", "灯光管线"]}
                         imageSrc="/images/lighting/unlit.webp"
                     />
@@ -101,15 +101,7 @@ export default function SampleBreakdownPage() {
                     />
                 </div>
 
-                <div className="col-span-4 md:col-span-12">
-                    <MosaicGallery
-                        images={[
-                            { src: "/images/lighting/lit.webp", caption: "最终输出 / 电影感色彩调色" },
-                            { src: "/images/lighting/unlit.webp", caption: "色温尝试：偏暖的钨丝灯效果" },
-                            { src: "/images/lighting/unlit.webp", caption: "高反差测试：极端的剪影效果" }
-                        ]}
-                    />
-                </div>
+
 
                 <div className="col-span-4 md:col-span-12 mt-24 mb-32 border-t border-white/20 pt-24">
                     <div className="mb-24">

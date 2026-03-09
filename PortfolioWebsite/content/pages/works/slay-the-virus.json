@@ -13,65 +13,30 @@
         "title": "SLAY THE VIRUS",
         "subtitle": "Roguelike 卡牌游戏",
         "heroImage": "/images/slay-the-virus/STVTitle.webp",
-        "navLink": "https://www.bilibili.com/video/BV1QfgzzrE3J/"
+        "navLink": "https://www.bilibili.com/video/BV1QfgzzrE3J/",
+        "heroImagePreset": "ratio-21-9",
+        "heroImageFitMode": "x"
       }
     },
     {
       "type": "RichParagraph",
       "props": {
         "id": "stv-desc-1",
-        "content": "SLAY THE VIRUS 是一款创新的 Roguelike 卡牌游戏，将卡牌战斗与俄罗斯方块机制巧妙融合。游戏以医学和病毒为主题，玩家需要在有限的空间内排列卡牌——每张卡牌都是一个俄罗斯方块形状，每回合能打出多少卡牌取决于你能将多少卡牌拼入有限的空间。不同卡牌之间还存在联携效应，鼓励玩家进行策略性组合。这是我的第一个长期项目，从 Game Jam 原型发展为完整游戏，历时 2-3 个月，由 4-6 人团队协作完成。我主要负责 UI 设计和美术风格把握，并对游戏海报进行了优化设计。项目最终发布到 TapTap 平台，参加了聚光灯活动并获得玩家反馈。"
+        "content": "SLAY THE VIRUS 是一款创新的 Roguelike 卡牌游戏，将卡牌战斗与俄罗斯方块机制巧妙融合。游戏以医学和病毒为主题，玩家需要在有限的空间内排列卡牌——每张卡牌都是一个俄罗斯方块形状，每回合能打出多少卡牌取决于你能将多少卡牌拼入有限的空间。不同卡牌之间还存在联携效应，鼓励玩家进行策略性组合。这是我的第一个长期项目，从 Game Jam 原型发展为完整游戏，历时 2-3 个月，由 4-6 人团队协作完成。我主要负责 UI 设计和美术风格把握，并对游戏海报进行了优化设计。"
       }
     },
     {
       "type": "HighDensityInfoBlock",
       "props": {
+        "phase2Items": [],
+        "phase1Items": [],
         "id": "stv-info-1",
         "phase1Title": "项目背景",
         "phase1Subtitle": "Context",
         "phase1Content": "这是我的第一个长期游戏项目。项目起源于 Game Jam，后续扩展为完整游戏。4-6 人团队协作开发 2-3 个月，最终发布到 TapTap 平台并参加聚光灯活动。这个项目让我学会了如何在长期开发中维持团队协作和风格统一。",
-        "phase1Items": [
-          {
-            "type": "MetadataListItem",
-            "props": {
-              "id": "item-1",
-              "label": "引擎",
-              "value": "Unity",
-              "align": "end"
-            }
-          },
-          {
-            "type": "MetadataListItem",
-            "props": {
-              "id": "item-2",
-              "label": "开发周期",
-              "value": "2-3 个月",
-              "align": "end"
-            }
-          },
-          {
-            "type": "MetadataListItem",
-            "props": {
-              "id": "item-3",
-              "label": "团队规模",
-              "value": "4-6 人",
-              "align": "end"
-            }
-          },
-          {
-            "type": "MetadataListItem",
-            "props": {
-              "id": "item-4",
-              "label": "发布平台",
-              "value": "TapTap",
-              "align": "end"
-            }
-          }
-        ],
         "phase2Title": "核心机制",
         "phase2Subtitle": "Core Mechanics",
         "phase2Content": "游戏的创新点在于将卡牌与俄罗斯方块机制融合。每张卡牌都是一个俄罗斯方块形状，玩家需要在有限的空间内拼放卡牌。每回合能打出的卡牌数量取决于空间利用效率，同时不同卡牌之间存在联携效应，增加了策略深度。",
-        "phase2Items": [],
         "phase3Title": "我的贡献",
         "phase3Subtitle": "My Role",
         "phase3Content": "我主要负责 UI 设计和美术风格把握。设计了基于网格的背包管理界面，确保玩家能清晰地进行卡牌拼放操作。同时负责整体视觉风格的统一，平衡团队成员的审美差异，推进风格迭代。此外，我还优化了游戏海报设计，提升了视觉传达效果。",
@@ -86,103 +51,69 @@
       }
     },
     {
-      "type": "MediaTextCard",
+      "type": "ContentCard",
       "props": {
         "id": "stv-card-1",
         "title": "创新的卡牌机制",
         "description": "将卡牌战斗与俄罗斯方块机制融合，每张卡牌都是一个俄罗斯方块形状。玩家需要在有限的空间内拼放卡牌，每回合能打出的卡牌数量取决于空间利用效率。这种机制增加了策略深度，玩家需要同时考虑卡牌效果和空间布局。",
-        "imageSrc": "",
-        "tags": [
-          {
-            "tag": "卡牌机制",
-            "_arrayItem": {
-              "id": "tag-1"
-            }
-          },
-          {
-            "tag": "俄罗斯方块",
-            "_arrayItem": {
-              "id": "tag-2"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "MediaTextCard",
-      "props": {
-        "id": "stv-card-2",
-        "title": "UI 设计与视觉优化",
-        "description": "设计了基于网格的背包管理界面，确保玩家能清晰地进行卡牌拼放操作。负责整体视觉风格的统一，平衡团队成员的审美差异。此外，我还对游戏海报进行了优化设计，提升了视觉传达效果和电影感对比度。",
-        "imageSrc": "",
-        "tags": [
-          {
-            "tag": "UI 设计",
-            "_arrayItem": {
-              "id": "tag-3"
-            }
-          },
-          {
-            "tag": "视觉优化",
-            "_arrayItem": {
-              "id": "tag-4"
-            }
-          }
-        ]
+        "imageSrc": "/images/slay-the-virus/05.webp",
+        "tags": []
       }
     },
     {
       "type": "BreakdownHeadline",
       "props": {
         "id": "stv-headline-2",
-        "title": "海报优化对比"
+        "title": "UI 设计与视觉优化"
+      }
+    },
+    {
+      "type": "RichParagraph",
+      "props": {
+        "content": "我主要负责整体视觉风格的统一，平衡团队成员的审美差异。此外，我还对游戏海报进行了优化设计，提升了视觉传达效果和电影感对比度，使海报更具吸引力和传达力。",
+        "id": "RichParagraph-8d4dba96-9238-42e0-82d7-aa1f03d25c16"
       }
     },
     {
       "type": "ImageSlider",
       "props": {
         "id": "stv-slider-1",
-        "unlitSrc": "/images/slay-the-virus/PosterLandscapeOrigine.webp",
+        "unlitSrc": "/images/slay-the-virus/PosterLandscapeOrigineClean.webp",
         "litSrc": "/images/slay-the-virus/STVTitle.webp",
-        "alt": "海报优化对比"
+        "alt": "海报优化对比",
+        "leftLabel": "ORIGINAL",
+        "rightLabel": "OPTIMIZED"
       }
     },
     {
-      "type": "RichParagraph",
+      "type": "ImageSlider",
       "props": {
-        "id": "stv-poster-desc",
-        "content": "我对美术团队提供的原始海报进行了优化，提升了整体视觉的电影感对比度及文字图形的易读性，使海报更具吸引力和传达力。"
+        "id": "ImageSlider-3ed604bd-97bb-4bea-b135-33432e93140d",
+        "unlitSrc": "/images/slay-the-virus/PosterPortraitOrigine.webp",
+        "litSrc": "/images/slay-the-virus/STVTitlePortrait.webp",
+        "alt": "海报优化对比",
+        "leftLabel": "ORIGINAL",
+        "rightLabel": "OPTIMIZED",
+        "imagePreset": "native",
+        "imageFitMode": "y"
       }
     },
     {
-      "type": "BreakdownTriptych",
-      "props": {
-        "id": "stv-triptych-1",
-        "col1Title": "UI 布局",
-        "col1Text": "基于网格的空间资源背包管理交互系统架构，确保玩家能清晰地进行卡牌拼放操作。",
-        "col1Img": "/images/slay-the-virus/01.webp",
-        "col2Title": "卡牌设计",
-        "col2Text": "在 Photoshop 中精修由组员绘制的草稿与技能特效资产组合，统一视觉风格。",
-        "col2Img": "/images/slay-the-virus/02.webp",
-        "col3Title": "游戏界面",
-        "col3Text": "医学和病毒主题的视觉风格，营造紧张的战斗氛围。",
-        "col3Img": "/images/slay-the-virus/03.webp"
-      }
-    },
-    {
-      "type": "GalleryItem",
+      "type": "ImagePanel",
       "props": {
         "id": "stv-gallery-img-1",
         "src": "/images/slay-the-virus/04.webp",
-        "caption": "战斗界面"
+        "caption": "新建存档页面",
+        "variant": "fullscreen"
       }
     },
     {
-      "type": "GalleryItem",
+      "type": "ImagePanel",
       "props": {
         "id": "stv-gallery-img-2",
-        "src": "/images/slay-the-virus/05.webp",
-        "caption": "卡牌拼放"
+        "src": "/images/slay-the-virus/06.webp",
+        "caption": "游戏主界面",
+        "variant": "fullscreen"
       }
     },
     {
@@ -194,5 +125,6 @@
         "nextBg": "/images/prometheus/PrometheusTitle.webp"
       }
     }
-  ]
+  ],
+  "zones": {}
 }

@@ -423,11 +423,11 @@
 
 ---
 
-#### MediaTextCard
+#### ContentCard
 
-图文卡片组件，左侧文字右侧图片。
+内容卡片组件，支持图文混排和纯文本两种模式。
 
-**用途**：展示单个技术要点的详细说明。
+**用途**：展示单个技术要点的详细说明，可根据内容自动切换布局。
 
 **配置项**：
 
@@ -436,7 +436,8 @@
 | `id` | string | 是 | 唯一标识符 |
 | `title` | string | 是 | 卡片标题 |
 | `description` | string | 是 | 详细描述，支持换行（使用 `\n`） |
-| `imageSrc` | string | 否 | 右侧图片路径 |
+| `imageSrc` | string | 否 | 图片路径，为空时自动切换为纯文本模式 |
+| `imagePosition` | string | 否 | 图片位置：`"right"`（默认）或 `"left"` |
 | `tags` | array | 否 | 标签数组 |
 
 **tags 数组项配置**：
@@ -448,12 +449,13 @@
 **JSON 示例**：
 ```json
 {
-    "type": "MediaTextCard",
+    "type": "ContentCard",
     "props": {
         "id": "card-1",
         "title": "Breakdown Title",
         "description": "这里是详细描述。\n可以换行。",
         "imageSrc": "/images/train-station/2Day.png",
+        "imagePosition": "right",
         "tags": [
             { "tag": "Lighting", "_arrayItem": { "id": "tag-1" } },
             { "tag": "Unreal Engine", "_arrayItem": { "id": "tag-2" } }

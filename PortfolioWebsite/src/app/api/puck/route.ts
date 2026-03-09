@@ -7,6 +7,7 @@ import {
   readPageDataByNormalizedSlug,
   writePageDataByNormalizedSlug,
 } from "@/lib/puck-content";
+import { normalizePuckData } from "@/lib/puck-data-normalization";
 import { normalizePuckSlugInput, SlugValidationError } from "@/lib/puck-slug";
 import { assertLocalEditorAccess } from "@/lib/security";
 
@@ -94,7 +95,7 @@ export async function GET(request: NextRequest) {
       return normalizedOrError;
     }
 
-    const data = await readPageDataByNormalizedSlug(normalizedOrError);
+    const data = normalizePuckData(await readPageDataByNormalizedSlug(normalizedOrError));
     return jsonResponse({
       data,
       slug: normalizedOrError.slugKey,
@@ -151,7 +152,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    await writePageDataByNormalizedSlug(normalizedOrError, dataValue);
+    await writePageDataByNormalizedSlug(normalizedOrError, normalizePuckData(dataValue) as JsonValue);
   } catch {
     return jsonResponse(INTERNAL_ERROR, 500);
   }

@@ -1,13 +1,14 @@
 "use client";
 
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
-import { Puck, type Data, usePuck } from "@measured/puck";
+import { Puck, type Data } from "@measured/puck";
 import "@measured/puck/puck.css";
 import { MotionConfig } from "framer-motion";
 import { useRouter } from "next/navigation";
 
 import config from "@/puck/config";
 import { toAdminPathFromSlugKey, toPublicPathFromSlugKey } from "@/lib/public-paths";
+import { ChineseTextInputField } from "@/puck/fields/ChineseTextField";
 import styles from "./editor-shell.module.css";
 
 type PuckApiPayload = {
@@ -56,6 +57,13 @@ type HeaderActionsOverrideProps = {
 type HeaderOverrideProps = {
   children: ReactNode;
   actions?: ReactNode;
+};
+
+type SidebarTextFieldProps = {
+  children?: ReactNode;
+  name: string;
+  onChange: (value: string) => void;
+  value?: string;
 };
 
 function IframePreviewChrome({
@@ -170,45 +178,6 @@ function toSlugKeyFromPathInput(rawValue: string) {
     .join("/");
 }
 
-function PreviewModeToggle() {
-  const { appState, dispatch } = usePuck();
-  const previewMode = appState.ui.previewMode;
-  const isInteractive = previewMode === "interactive";
-
-  return (
-    <div
-      className="flex items-center gap-1 rounded-md border border-white/15 bg-[#0f1115] p-1"
-      style={{ boxShadow: "inset 0 2px 4px rgba(0,0,0,0.45)" }}
-    >
-      <button
-        type="button"
-        onClick={() => dispatch({ type: "setUi", ui: { previewMode: "edit" } })}
-        aria-pressed={!isInteractive}
-        className={`flex items-center gap-1.5 rounded-sm px-2.5 py-1.5 text-[10px] font-mono font-semibold tracking-[0.12em] transition-all ${!isInteractive
-          ? "bg-white/15 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.14)]"
-          : "text-white/45 hover:text-white/80"
-          }`}
-        title="Switch to Edit mode"
-      >
-        {!isInteractive ? "EDIT" : "EDIT"}
-      </button>
-      <button
-        type="button"
-        onClick={() => dispatch({ type: "setUi", ui: { previewMode: "interactive" } })}
-        aria-pressed={isInteractive}
-        className={`flex items-center gap-1.5 rounded-sm px-2.5 py-1.5 text-[10px] font-mono font-semibold tracking-[0.12em] transition-all ${isInteractive
-          ? "bg-blue-600 text-white shadow-[0_0_12px_rgba(37,99,235,0.38)]"
-          : "text-white/45 hover:text-white/80"
-          }`}
-        title="Switch to Preview mode (same as Cmd+I)"
-      >
-        {isInteractive ? "PREVIEW" : "PREVIEW"}
-      </button>
-      <span className="px-1 text-[10px] font-mono text-white/35">⌘I</span>
-    </div>
-  );
-}
-
 function PreviewEffectsToggle({
   enabled,
   onToggle,
@@ -247,12 +216,10 @@ function HeaderActionsWithModeToggle({
       <button
         type="button"
         onClick={onOpenPublicPage}
-        className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-[10px] font-mono font-semibold tracking-[0.16em] text-slate-700 transition-colors hover:border-slate-400 hover:text-slate-950"
-        title="Open current public page"
+        className="rounded-sm border border-slate-200 bg-white px-3 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-950"
       >
-        OPEN SITE
+        OPEN PAGE
       </button>
-      <PreviewModeToggle />
       <PreviewEffectsToggle enabled={previewEffectsEnabled} onToggle={onTogglePreviewEffects} />
     </div>
   );
@@ -260,26 +227,18 @@ function HeaderActionsWithModeToggle({
 
 function EditorHeaderChrome({
   children,
-  currentPath,
   selectedPagePath,
   availablePublicPaths,
   newPageInputValue,
-  loadState,
-  publishState,
   isSwitchingPage,
-  onOpenPublicPage,
   onSelectPagePath,
   onNewPageInputValueChange,
   onCreatePage,
 }: HeaderOverrideProps & {
-  currentPath: string;
   selectedPagePath: string;
   availablePublicPaths: string[];
   newPageInputValue: string;
-  loadState: "idle" | "loading" | "error";
-  publishState: "idle" | "publishing" | "published" | "error";
   isSwitchingPage: boolean;
-  onOpenPublicPage: () => void;
   onSelectPagePath: (nextPath: string) => void;
   onNewPageInputValueChange: (value: string) => void;
   onCreatePage: () => void;
@@ -288,21 +247,9 @@ function EditorHeaderChrome({
     <div className="editor-header-shell">
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 bg-[#fbfcfe] px-4 py-3 text-xs text-slate-600 md:px-5">
         <div className="flex flex-wrap items-center gap-3">
-          <div className="rounded-sm border border-slate-200 bg-white px-3 py-2 font-mono tracking-[0.18em] uppercase text-slate-500">
-            当前页面 {currentPath}
-          </div>
-
-          <button
-            type="button"
-            onClick={onOpenPublicPage}
-            className="rounded-sm border border-slate-200 bg-white px-3 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-950"
-          >
-            OPEN PAGE
-          </button>
-
           <div className="flex items-center rounded-sm border border-slate-200 bg-white transition-colors focus-within:border-slate-400">
             <div className="border-r border-slate-200 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-400">
-              页面
+              当前页面
             </div>
             <select
               value={selectedPagePath}
@@ -344,14 +291,7 @@ function EditorHeaderChrome({
           </div>
         </div>
 
-        <div className="flex items-center">
-          <span className={`font-mono tracking-[0.15em] uppercase ${(loadState === "loading" || isSwitchingPage) ? "animate-pulse text-blue-500" : ""}`}>
-            Load: {isSwitchingPage ? "switching" : loadState}
-          </span>
-          <span className="ml-4 font-mono tracking-[0.15em] uppercase">
-            Publish: {publishState}
-          </span>
-        </div>
+
       </div>
 
       {children}
@@ -369,6 +309,7 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
   const [newPageInputValue, setNewPageInputValue] = useState("");
   const [previewEffectsEnabled, setPreviewEffectsEnabled] = useState(true);
   const [isSwitchingPage, startPageSwitchTransition] = useTransition();
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const currentDataRef = useRef<Data>(initialData);
   const slugValue = slugQueryValue(initialSlug);
   const headerPath = slugValue ? `/${slugValue}` : "/";
@@ -404,14 +345,27 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
   }, [currentAdminPath, router]);
 
   const openPublicPage = useCallback(() => {
-    router.push(publicPath);
-  }, [publicPath, router]);
+    window.open(publicPath, "_blank");
+  }, [publicPath]);
 
   useEffect(() => {
     for (const slug of availablePages) {
       router.prefetch(toAdminPath(slug));
     }
   }, [availablePages, router]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        event.preventDefault();
+        event.returnValue = "";
+        return "";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [hasUnsavedChanges]);
 
   useEffect(() => {
     let isMounted = true;
@@ -509,14 +463,10 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
     header: (props: HeaderOverrideProps) => (
       <EditorHeaderChrome
         {...props}
-        currentPath={headerPath}
         selectedPagePath={selectedPagePath}
         availablePublicPaths={availablePublicPaths}
         newPageInputValue={newPageInputValue}
-        loadState={loadState}
-        publishState={publishState}
         isSwitchingPage={isSwitchingPage}
-        onOpenPublicPage={openPublicPage}
         onSelectPagePath={(nextPath) => {
           setSelectedPagePath(nextPath);
           if (nextPath !== headerPath) {
@@ -538,6 +488,23 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
     iframe: ({ children, document: frameDocument }: { children: ReactNode; document?: Document }) => (
       <IframePreviewChrome document={frameDocument}>{children}</IframePreviewChrome>
     ),
+    fieldTypes: {
+      text: ({ value, onChange, name }: SidebarTextFieldProps) => (
+        <ChineseTextInputField
+          value={typeof value === "string" ? value : ""}
+          onChange={onChange}
+          name={name}
+        />
+      ),
+      textarea: ({ value, onChange, name }: SidebarTextFieldProps) => (
+        <ChineseTextInputField
+          value={typeof value === "string" ? value : ""}
+          onChange={onChange}
+          multiline
+          name={name}
+        />
+      ),
+    },
   };
 
   async function handlePublish(nextData?: Data) {
@@ -564,6 +531,7 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
       }
 
       setPublishState("published");
+      setHasUnsavedChanges(false);
 
       try {
         const listResponse = await fetch("/api/puck?list=1", { cache: "no-store" });
@@ -615,6 +583,7 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
               ]}
               onChange={(nextData) => {
                 currentDataRef.current = nextData;
+                setHasUnsavedChanges(true);
                 if (publishState === "published") {
                   setPublishState("idle");
                 }

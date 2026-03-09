@@ -1,23 +1,24 @@
 "use client";
 
-import React from "react";
+import React, { type ReactNode } from "react";
 import BilingualText from "@/components/common/BilingualText";
 import { PresetImage } from "@/components/common/PresetImage";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
+import { toPlainText } from "@/lib/editable-text";
 
 interface BreakdownTriptychProps {
-  col1Title: string;
-  col1Text: string;
+  col1Title: ReactNode;
+  col1Text: ReactNode;
   col1Img: string;
   col1Preset?: ImagePreset;
   col1FitMode?: ImageFitMode;
-  col2Title: string;
-  col2Text: string;
+  col2Title: ReactNode;
+  col2Text: ReactNode;
   col2Img: string;
   col2Preset?: ImagePreset;
   col2FitMode?: ImageFitMode;
-  col3Title: string;
-  col3Text: string;
+  col3Title: ReactNode;
+  col3Text: ReactNode;
   col3Img: string;
   col3Preset?: ImagePreset;
   col3FitMode?: ImageFitMode;
@@ -40,6 +41,10 @@ export default function BreakdownTriptych({
   col3Preset = "ratio-16-9",
   col3FitMode = "x",
 }: BreakdownTriptychProps) {
+  const col1Alt = toPlainText(col1Title) ?? "Breakdown image 1";
+  const col2Alt = toPlainText(col2Title) ?? "Breakdown image 2";
+  const col3Alt = toPlainText(col3Title) ?? "Breakdown image 3";
+
   return (
     <section className="w-full relative z-20 bg-black pb-32">
       <div className="grid-container w-full pt-16 border-t border-white/10">
@@ -49,7 +54,7 @@ export default function BreakdownTriptych({
           </h4>
           <p className="text-white/70 text-sm md:text-[15px] leading-[1.95] break-words"><BilingualText text={col1Text} weight="medium" /></p>
           <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-            <PresetImage src={col1Img} alt={col1Title} preset={col1Preset} fitMode={col1FitMode} />
+            <PresetImage src={col1Img} alt={col1Alt} preset={col1Preset} fitMode={col1FitMode} />
           </div>
         </div>
 
@@ -59,7 +64,7 @@ export default function BreakdownTriptych({
           </h4>
           <p className="text-white/70 text-sm md:text-[15px] leading-[1.95] break-words"><BilingualText text={col2Text} weight="medium" /></p>
           <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-            <PresetImage src={col2Img} alt={col2Title} preset={col2Preset} fitMode={col2FitMode} />
+            <PresetImage src={col2Img} alt={col2Alt} preset={col2Preset} fitMode={col2FitMode} />
           </div>
         </div>
 
@@ -69,7 +74,7 @@ export default function BreakdownTriptych({
           </h4>
           <p className="text-white/70 text-sm md:text-[15px] leading-[1.95] break-words"><BilingualText text={col3Text} weight="medium" /></p>
           <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-            <PresetImage src={col3Img} alt={col3Title} preset={col3Preset} fitMode={col3FitMode} />
+            <PresetImage src={col3Img} alt={col3Alt} preset={col3Preset} fitMode={col3FitMode} />
           </div>
         </div>
       </div>

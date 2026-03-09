@@ -38,7 +38,7 @@ export default function LightingProjectCard({
                                 NO. {number || "00"}
                             </p>
                             <h3 className="font-futura text-sm tracking-widest text-white/80 uppercase">
-                                {title || "UNTITLED PROJECT"}
+                                {title}
                             </h3>
                         </div>
 

@@ -35,7 +35,7 @@ export function getImagePresetFrameClassName(preset: ImagePreset) {
   }
 
   if (preset === "native") {
-    return "relative w-full bg-black";
+    return "relative w-full overflow-hidden bg-black";
   }
 
   return "relative w-full aspect-video overflow-hidden bg-black";
@@ -68,4 +68,3 @@ export function getImageElementClassName(preset: ImagePreset, fitMode: ImageFitM
 
   return "block w-full h-auto max-h-none max-w-none shrink-0";
 }
-

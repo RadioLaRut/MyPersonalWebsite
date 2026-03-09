@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { ReactNode } from "react";
 import type { Config } from "@measured/puck";
 import { PresetImage } from "../components/common/PresetImage";
 import BilingualText from "../components/common/BilingualText";
 import HighDensityInfoBlock from "../components/breakdowns/HighDensityInfoBlock";
 import BreakdownTriptych from "../components/breakdowns/BreakdownTriptych";
 import ImageSlider from "../components/breakdowns/ImageSlider";
-import MediaTextCard from "../components/breakdowns/MediaTextCard";
-import GalleryItem from "../components/breakdowns/GalleryItem";
+import ContentCard from "../components/breakdowns/ContentCard";
+import ImagePanel from "../components/breakdowns/ImagePanel";
 import ParameterGrid from "../components/breakdowns/ParameterGrid";
 import TextSplitLayout from "../components/breakdowns/TextSplitLayout";
 import BreakdownSectionHeadline from "../components/breakdowns/BreakdownHeadline";
@@ -28,6 +29,7 @@ import MetadataListItem from "../components/common/MetadataListItem";
 import TextParagraphBlock from "../components/common/TextParagraphBlock";
 import { CANONICAL_PLACEHOLDER_PATH, toAdminPathFromPublicPath, normalizeLegacyPublicPath } from "@/lib/public-paths";
 import { IMAGE_FIT_MODE_OPTIONS, IMAGE_PRESET_OPTIONS } from "@/lib/image-presentation";
+import { resolveEditableText, toPlainText } from "@/lib/editable-text";
 
 function toEditorAwareHref(href: string | undefined, editMode?: boolean): string | undefined {
   if (!href || !href.startsWith("/")) {
@@ -53,6 +55,126 @@ const imageFitModeField = {
   options: IMAGE_FIT_MODE_OPTIONS.map((option) => ({ ...option })),
 };
 
+function renderHeroHeadlineBlock({
+  eyebrow,
+  title,
+  subtitle,
+  heroImage,
+  heroImagePreset,
+  heroImageFitMode,
+  navLink,
+  editMode,
+}: {
+  eyebrow?: ReactNode;
+  title?: ReactNode;
+  subtitle?: ReactNode;
+  heroImage?: string;
+  heroImagePreset?: string;
+  heroImageFitMode?: string;
+  navLink?: string;
+  editMode?: boolean;
+}) {
+  const resolvedEyebrow = resolveEditableText(eyebrow, "PROJECT");
+  const resolvedTitle = resolveEditableText(title, "PROJECT TITLE");
+  const resolvedSubtitle = resolveEditableText(subtitle, "Add a short project summary.");
+  const resolvedHeroImage = typeof heroImage === "string" ? heroImage.trim() : "";
+  const heroImageAlt = toPlainText(title) ?? "PROJECT TITLE";
+
+  if (editMode) {
+    return (
+      <section className="relative isolate w-full min-h-[560px] overflow-hidden border-y border-white/5 bg-black">
+        <div className="absolute inset-0">
+          <PresetImage
+            src={resolvedHeroImage}
+            alt={heroImageAlt}
+            preset={heroImagePreset}
+            fitMode={heroImageFitMode}
+            sizes="100vw"
+            priority
+            lockFrame={false}
+            frameClassName="h-full w-full opacity-65"
+          />
+          <div className="absolute inset-0 bg-black/45" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.2)_0%,rgba(0,0,0,0.68)_100%)]" />
+        </div>
+
+        <div className="relative z-10 flex min-h-[560px] items-end py-16 md:py-20">
+          <div className="grid-container w-full">
+            <div className="col-span-4 md:col-start-2 md:col-span-10 flex flex-col items-start gap-4 md:gap-6">
+              <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/60">
+                {resolvedEyebrow}
+              </span>
+              <h1 className="text-white text-[12vw] sm:text-[7vw] font-black tracking-normal uppercase leading-[0.85] font-futura">
+                {resolvedTitle}
+              </h1>
+              <p className="max-w-3xl text-sm font-medium leading-[1.9] tracking-wide text-white/80 md:text-base font-futura">
+                {resolvedSubtitle}
+              </p>
+              {navLink ? (
+                <div className="mt-4 border border-white/20 px-6 py-3 text-xs uppercase tracking-[0.24em] text-white/70 font-mono">
+                  播放演示视频 (Bilibili)
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <header className="relative w-full h-[85vh] flex items-center justify-center overflow-hidden bg-black">
+      {resolvedHeroImage ? (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <PresetImage
+            src={resolvedHeroImage}
+            alt={heroImageAlt}
+            preset={heroImagePreset}
+            fitMode={heroImageFitMode}
+            sizes="100vw"
+            priority
+            frameClassName="w-full opacity-70"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,1)_140%)] pointer-events-none" />
+        </div>
+      ) : null}
+
+      <div className="absolute inset-0 z-10 flex flex-col justify-end pb-24 md:pb-32 pointer-events-none">
+        <div className="grid-container w-full mix-blend-difference pointer-events-auto">
+          <div className="col-span-4 md:col-start-2 md:col-span-10 flex flex-col items-start gap-4">
+            {resolvedEyebrow ? (
+              <span className="font-mono text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.4em] uppercase text-white/50">
+                {resolvedEyebrow}
+              </span>
+            ) : null}
+            {resolvedTitle ? (
+              <h1 className="text-white text-[12vw] sm:text-[7vw] font-black tracking-normal uppercase leading-[0.85] font-futura">
+                {resolvedTitle}
+              </h1>
+            ) : null}
+            {resolvedSubtitle ? (
+              <p className="text-white/75 text-sm md:text-base font-medium leading-[1.9] font-futura tracking-wide max-w-3xl">
+                {resolvedSubtitle}
+              </p>
+            ) : null}
+            {navLink ? (
+              <a
+                href={navLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-8 border border-white/30 px-6 py-3 text-xs tracking-widest hover:bg-white hover:text-black transition-colors uppercase font-mono interactive mix-blend-normal"
+              >
+                播放演示视频 (Bilibili)
+              </a>
+            ) : null}
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
 export const config: Config = {
   components: {
     // --------------------------------------------------------
@@ -60,9 +182,10 @@ export const config: Config = {
     // --------------------------------------------------------
     StatementBlock: {
       fields: {
-        content: { type: "textarea", contentEditable: true },
+        content: { type: "textarea", contentEditable: true, label: "Content" },
         align: {
           type: "select",
+          label: "Align",
           options: [
             { label: "Left", value: "left" },
             { label: "Center", value: "center" },
@@ -71,6 +194,7 @@ export const config: Config = {
         },
         backgroundColor: {
           type: "select",
+          label: "Background Color",
           options: [
             { label: "Black", value: "black" },
             { label: "Dark Gray", value: "dark-gray" },
@@ -78,6 +202,7 @@ export const config: Config = {
         },
         minHeight: {
           type: "select",
+          label: "Min Height",
           options: [
             { label: "Small (20vh)", value: "small" },
             { label: "Medium (35vh)", value: "medium" },
@@ -86,7 +211,7 @@ export const config: Config = {
         },
       },
       defaultProps: {
-        content: "在这里输入过渡文字，用于在项目之间创造呼吸感。",
+        content: "",
         align: "center",
         backgroundColor: "black",
         minHeight: "medium",
@@ -108,99 +233,32 @@ export const config: Config = {
     // Legacy Puck type name kept for existing JSON content.
     HeroHeadline: {
       fields: {
-        eyebrow: { type: "text", contentEditable: true },
-        title: { type: "text", contentEditable: true },
-        subtitle: { type: "textarea", contentEditable: true },
-        heroImage: { type: "text" },
-        heroImagePreset: imagePresetField,
-        heroImageFitMode: imageFitModeField,
-        navLink: { type: "text" },
+        eyebrow: { type: "text", contentEditable: true, label: "Eyebrow" },
+        title: { type: "text", contentEditable: true, label: "Title" },
+        subtitle: { type: "textarea", contentEditable: true, label: "Subtitle" },
+        heroImage: { type: "text", label: "Hero Image" },
+        heroImagePreset: { ...imagePresetField, label: "Image Preset" },
+        heroImageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
+        navLink: { type: "text", label: "Nav Link" },
       },
       defaultProps: {
-        eyebrow: "Portfolio",
-        title: "Build your page with Puck",
-        subtitle: "This is a local editor scaffold for the staged migration.",
+        eyebrow: "PROJECT",
+        title: "PROJECT TITLE",
+        subtitle: "Add a short project summary.",
         heroImage: "/images/train-station/2Day.webp",
         heroImagePreset: "ratio-21-9",
         heroImageFitMode: "x",
         navLink: "",
       },
-      render: ({ eyebrow, title, subtitle, heroImage, heroImagePreset, heroImageFitMode, navLink }) => {
-        return (
-          <header className="relative w-full h-[85vh] flex items-center justify-center overflow-hidden bg-black">
-            {heroImage ? (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <PresetImage
-                  src={heroImage}
-                  alt={title}
-                  preset={heroImagePreset}
-                  fitMode={heroImageFitMode}
-                  sizes="100vw"
-                  priority
-                  frameClassName="w-full opacity-70"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,1)_140%)] pointer-events-none" />
-              </div>
-            ) : null}
-
-            <div className="absolute inset-0 z-10 flex flex-col justify-end pb-24 md:pb-32 pointer-events-none">
-              <div className="grid-container w-full mix-blend-difference pointer-events-auto">
-                <div className="col-span-4 md:col-start-2 md:col-span-10 flex flex-col items-start gap-4">
-                  <span className="font-mono text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.4em] uppercase text-white/50">
-                    {eyebrow}
-                  </span>
-                  <h1 className="text-white text-[12vw] sm:text-[7vw] font-black tracking-normal uppercase leading-[0.85] font-futura">
-                    {title}
-                  </h1>
-                  {subtitle ? (
-                    <p className="text-white/75 text-sm md:text-base font-medium leading-[1.9] font-futura tracking-wide max-w-3xl">
-                      {subtitle}
-                    </p>
-                  ) : null}
-                  {navLink ? (
-                    <a
-                      href={navLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-8 border border-white/30 px-6 py-3 text-xs tracking-widest hover:bg-white hover:text-black transition-colors uppercase font-mono interactive mix-blend-normal"
-                    >
-                      播放演示视频 (Bilibili)
-                    </a>
-                  ) : null}
-                </div>
-              </div>
-            </div>
-          </header>
-        );
-      },
-    },
-    BreakdownIntroHeader: {
-      fields: {
-        eyebrow: { type: "text", contentEditable: true },
-        title: { type: "text", contentEditable: true },
-        subtitle: { type: "textarea", contentEditable: true },
-        heroImage: { type: "text" },
-        navLink: { type: "text" },
-      },
-      defaultProps: {
-        eyebrow: "Portfolio",
-        title: "Build your page with Puck",
-        subtitle: "This is a local editor scaffold for the staged migration.",
-        heroImage: "/images/train-station/2Day.webp",
-        navLink: "",
-      },
-      render: ({ eyebrow, title, subtitle, heroImage, navLink }) => {
-        return config.components.HeroHeadline.render({ eyebrow, title, subtitle, heroImage, navLink } as never);
-      },
+      render: ({ eyebrow, title, subtitle, heroImage, heroImagePreset, heroImageFitMode, navLink, editMode }) =>
+        renderHeroHeadlineBlock({ eyebrow, title, subtitle, heroImage, heroImagePreset, heroImageFitMode, navLink, editMode }),
     },
     RichParagraph: {
       fields: {
-        content: { type: "textarea", contentEditable: true },
+        content: { type: "textarea", contentEditable: true, label: "Content" },
       },
       defaultProps: {
-        content:
-          "这一段用于承载完整的项目说明，既要说明设计判断，也要解释执行路径与结果反馈；当中文信息被拉长到四五行时，版面依然需要保持节奏、留白与网格秩序。 English copy should remain readable beside the Chinese paragraph so you can compare weight, rhythm, and spacing consistency in one block.",
+        content: "",
       },
       render: ({ content }) => {
         return (
@@ -218,31 +276,38 @@ export const config: Config = {
     },
     ImagePanel: {
       fields: {
-        alt: { type: "text" },
-        caption: { type: "text" },
-        src: { type: "text" },
-        preset: imagePresetField,
-        fitMode: imageFitModeField,
+        src: { type: "text", label: "Image Source" },
+        alt: { type: "text", label: "Alt Text" },
+        caption: { type: "text", label: "Caption" },
+        preset: { ...imagePresetField, label: "Preset" },
+        fitMode: { ...imageFitModeField, label: "Fit Mode" },
+        variant: {
+          type: "select" as const,
+          label: "Variant",
+          options: [
+            { label: "Content (max-width with border)", value: "content" },
+            { label: "Fullscreen (full viewport height)", value: "fullscreen" },
+          ],
+        },
       },
       defaultProps: {
-        alt: "Puck image",
-        caption: "Visual block",
         src: "/images/train-station/2Day.webp",
+        alt: "",
+        caption: "",
         preset: "ratio-16-9",
         fitMode: "x",
+        variant: "content",
       },
-      render: ({ alt, caption, src, preset, fitMode }) => {
+      render: ({ src, alt, caption, preset, fitMode, variant }) => {
         return (
-          <section className="mx-auto w-full max-w-5xl px-6 py-10 md:px-8">
-            <figure className="overflow-hidden border border-white/15 bg-white/[0.03]">
-              <PresetImage alt={alt} src={src} preset={preset} fitMode={fitMode} />
-              {caption ? (
-                <figcaption className="border-t border-white/15 px-4 py-3 text-xs uppercase tracking-[0.18em] text-white/70">
-                  {caption}
-                </figcaption>
-              ) : null}
-            </figure>
-          </section>
+          <ImagePanel
+            src={src}
+            alt={alt}
+            caption={caption}
+            preset={preset as any}
+            fitMode={fitMode as any}
+            variant={variant as any}
+          />
         );
       },
     },
@@ -253,21 +318,23 @@ export const config: Config = {
     // Legacy Puck type name kept for existing JSON content.
     BreakdownHeadline: {
       fields: {
-        title: { type: "text", contentEditable: true }
+        title: { type: "text", contentEditable: true, label: "Title" }
       },
       defaultProps: {
-        title: "BREAKDOWN SECTION"
+        title: ""
       },
       render: ({ title }) => <BreakdownSectionHeadline title={title} />
     },
 
     ImageSlider: {
       fields: {
-        unlitSrc: { type: "text" },
-        litSrc: { type: "text" },
-        alt: { type: "text" },
-        imagePreset: imagePresetField,
-        imageFitMode: imageFitModeField,
+        unlitSrc: { type: "text", label: "Unlit Source" },
+        litSrc: { type: "text", label: "Lit Source" },
+        alt: { type: "text", label: "Alt Text" },
+        imagePreset: { ...imagePresetField, label: "Image Preset" },
+        imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
+        leftLabel: { type: "text", label: "Left Label" },
+        rightLabel: { type: "text", label: "Right Label" },
       },
       defaultProps: {
         unlitSrc: "/images/train-station/2Day.webp",
@@ -276,103 +343,89 @@ export const config: Config = {
         imagePreset: "ratio-16-9",
         imageFitMode: "x",
       },
-      render: ({ unlitSrc, litSrc, alt, imagePreset, imageFitMode }) => (
+      render: ({ unlitSrc, litSrc, alt, imagePreset, imageFitMode, leftLabel, rightLabel }) => (
         <ImageSlider
           unlitSrc={unlitSrc}
           litSrc={litSrc}
           alt={alt}
           imagePreset={imagePreset as any}
           imageFitMode={imageFitMode as any}
+          leftLabel={leftLabel}
+          rightLabel={rightLabel}
         />
       )
     },
 
-    GalleryItem: {
+    ContentCard: {
       fields: {
-        src: { type: "text" },
-        caption: { type: "text" },
-        preset: imagePresetField,
-        fitMode: imageFitModeField,
+        title: { type: "text", contentEditable: true, label: "Title" },
+        description: { type: "textarea", contentEditable: true, label: "Description" },
+        imageSrc: { type: "text", label: "Image Source" },
+        imagePreset: { ...imagePresetField, label: "Image Preset" },
+        imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
+        tags: { type: "array", arrayFields: { tag: { type: "text", label: "Tag" } }, label: "Tags" },
+        imagePosition: {
+          type: "select" as const,
+          label: "Image Position",
+          options: [
+            { label: "Image Right (default)", value: "right" },
+            { label: "Image Left", value: "left" },
+          ],
+        },
       },
       defaultProps: {
-        src: "/images/train-station/2Day.webp",
-        caption: "Gallery Image",
-        preset: "ratio-16-9",
-        fitMode: "x",
-      },
-      render: ({ src, caption, preset, fitMode }) => (
-        <GalleryItem
-          src={src}
-          caption={caption}
-          preset={preset as any}
-          fitMode={fitMode as any}
-        />
-      )
-    },
-
-    MediaTextCard: {
-      fields: {
-        title: { type: "text", contentEditable: true },
-        description: { type: "textarea", contentEditable: true },
-        imageSrc: { type: "text" },
-        imagePreset: imagePresetField,
-        imageFitMode: imageFitModeField,
-        tags: { type: "array", arrayFields: { tag: { type: "text" } } },
-      },
-      defaultProps: {
-        title: "Breakdown Title",
-        description: "这里用于承载更完整的拆解说明，包括为什么这样组织信息、为什么在这个节点切换视觉重点，以及不同素材如何共同服务于同一条阅读路径。 The English layer sits in the same paragraph block so you can compare Chinese and Latin weight matching under the same spacing system.\n\n当正文被拉长到四五行时，这个模块依然应该保持节奏稳定，让标题、标签、图像与文字之间的重心关系不被打散。 A longer bilingual paragraph should still hold the grid without collapsing the visual hierarchy.",
-        imageSrc: "/images/train-station/2Day.webp",
+        title: "",
+        description: "",
+        imageSrc: "",
         imagePreset: "ratio-16-9",
         imageFitMode: "x",
-        tags: [
-          { tag: "Lighting", _arrayItem: { id: "tag-1" } },
-          { tag: "Unreal Engine", _arrayItem: { id: "tag-2" } }
-        ] as any
+        tags: [] as any,
+        imagePosition: "right",
       },
-      render: ({ title, description, imageSrc, imagePreset, imageFitMode, tags }) => (
-        <MediaTextCard
+      render: ({ title, description, imageSrc, imagePreset, imageFitMode, tags, imagePosition }) => (
+        <ContentCard
           title={title}
           description={description}
           imageSrc={imageSrc}
           imagePreset={imagePreset as any}
           imageFitMode={imageFitMode as any}
           tags={(tags as any)?.map((t: any) => t.tag)}
+          imagePosition={imagePosition as any}
         />
       )
     },
     BreakdownTriptych: {
       fields: {
-        col1Title: { type: "text" },
-        col1Text: { type: "textarea" },
-        col1Img: { type: "text" },
-        col1Preset: imagePresetField,
-        col1FitMode: imageFitModeField,
-        col2Title: { type: "text" },
-        col2Text: { type: "textarea" },
-        col2Img: { type: "text" },
-        col2Preset: imagePresetField,
-        col2FitMode: imageFitModeField,
-        col3Title: { type: "text" },
-        col3Text: { type: "textarea" },
-        col3Img: { type: "text" },
-        col3Preset: imagePresetField,
-        col3FitMode: imageFitModeField,
+        col1Title: { type: "text", contentEditable: true, label: "Column 1 Title" },
+        col1Text: { type: "textarea", contentEditable: true, label: "Column 1 Text" },
+        col1Img: { type: "text", label: "Column 1 Image" },
+        col1Preset: { ...imagePresetField, label: "Column 1 Preset" },
+        col1FitMode: { ...imageFitModeField, label: "Column 1 Fit Mode" },
+        col2Title: { type: "text", contentEditable: true, label: "Column 2 Title" },
+        col2Text: { type: "textarea", contentEditable: true, label: "Column 2 Text" },
+        col2Img: { type: "text", label: "Column 2 Image" },
+        col2Preset: { ...imagePresetField, label: "Column 2 Preset" },
+        col2FitMode: { ...imageFitModeField, label: "Column 2 Fit Mode" },
+        col3Title: { type: "text", contentEditable: true, label: "Column 3 Title" },
+        col3Text: { type: "textarea", contentEditable: true, label: "Column 3 Text" },
+        col3Img: { type: "text", label: "Column 3 Image" },
+        col3Preset: { ...imagePresetField, label: "Column 3 Preset" },
+        col3FitMode: { ...imageFitModeField, label: "Column 3 Fit Mode" },
       },
       defaultProps: {
-        col1Title: "Context Mapping",
-        col1Text: "这一列用于说明问题的起点与观察维度，例如我首先锁定了哪些视觉矛盾、哪些叙事信息必须被优先传达，以及哪些环境元素会直接影响玩家的第一印象与阅读入口。 This first column defines the reading anchor and establishes what the viewer should notice before any system detail appears.",
-        col1Img: "/images/train-station/2Day.webp",
+        col1Title: "",
+        col1Text: "",
+        col1Img: "",
         col1Preset: "ratio-16-9",
         col1FitMode: "x",
-        col2Title: "System Decision",
-        col2Text: "这一列承接具体方法论，解释我如何在镜头、节奏、界面密度和情绪表达之间做取舍，并通过多次迭代把抽象概念转化成更清晰、更可执行的系统判断。 This middle block translates intention into method so Chinese and English can be checked side by side within the same weight logic.",
-        col2Img: "/images/train-station/2Night.webp",
+        col2Title: "",
+        col2Text: "",
+        col2Img: "",
         col2Preset: "ratio-16-9",
         col2FitMode: "x",
-        col3Title: "Visual Outcome",
-        col3Text: "最后一列聚焦结果与反馈，强调方案落地后带来的整体感受变化，以及为什么最终呈现能够同时满足氛围、功能性和画面秩序三方面的目标。 The final column closes the loop and verifies whether the implemented result still preserves hierarchy, contrast, and atmosphere.",
-        col3Img: "/images/city-2026/001.webp",
+        col3Title: "",
+        col3Text: "",
+        col3Img: "",
         col3Preset: "ratio-16-9",
         col3FitMode: "x",
       },
@@ -415,11 +468,12 @@ export const config: Config = {
 
     ParameterGrid: {
       fields: {
-        mediaSrc: { type: "text" },
-        imagePreset: imagePresetField,
-        imageFitMode: imageFitModeField,
+        mediaSrc: { type: "text", label: "Media Source" },
+        imagePreset: { ...imagePresetField, label: "Image Preset" },
+        imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
         isVideo: {
           type: "select",
+          label: "Is Video",
           options: [
             { label: "Image", value: "false" },
             { label: "Video", value: "true" }
@@ -427,27 +481,20 @@ export const config: Config = {
         },
         parameters: {
           type: "array",
+          label: "Parameters",
           arrayFields: {
-            name: { type: "text" },
-            value: { type: "text" },
-            description: { type: "textarea" }
+            name: { type: "text", label: "Name" },
+            value: { type: "text", label: "Value" },
+            description: { type: "textarea", label: "Description" }
           }
         }
       },
       defaultProps: {
-        mediaSrc: "/images/train-station/2Night.webp",
+        mediaSrc: "",
         imagePreset: "ratio-21-9",
         imageFitMode: "x",
         isVideo: "false",
-        parameters: [
-          {
-            name: "Global Illumination",
-            value: "Lumen",
-            description: "使用实时全局光照维持空间中的连续反弹与明暗过渡，让场景在长时间观察和多角度移动下依旧保持可信的体积关系与情绪稳定性。",
-            
-            _arrayItem: { id: "param-1" }
-          }
-        ] as any
+        parameters: [] as any
       },
       render: ({ mediaSrc, imagePreset, imageFitMode, isVideo, parameters }) => (
         <ParameterGrid
@@ -462,13 +509,14 @@ export const config: Config = {
 
     TextSplitLayout: {
       fields: {
-        heading: { type: "text", contentEditable: true },
-        paragraphs: { type: "slot" },
-        imageSrc: { type: "text" },
-        imagePreset: imagePresetField,
-        imageFitMode: imageFitModeField,
+        heading: { type: "text", contentEditable: true, label: "Heading" },
+        paragraphs: { type: "slot", label: "Paragraphs" },
+        imageSrc: { type: "text", label: "Image Source" },
+        imagePreset: { ...imagePresetField, label: "Image Preset" },
+        imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
         layoutVariant: {
           type: "select",
+          label: "Layout Variant",
           options: [
             { label: "Split Left", value: "split-left" },
             { label: "Split Right", value: "split-right" },
@@ -477,24 +525,9 @@ export const config: Config = {
         }
       },
       defaultProps: {
-        heading: "CORE CONCEPT",
-        paragraphs: [
-          {
-            type: "TextParagraphBlock",
-            props: {
-              id: "para-1",
-              text: "这一段用于解释版式背后的核心判断：为什么标题需要先建立压倒性的识别度，为什么正文要在更克制的节奏里展开，以及图像、留白与信息密度之间如何共同形成一条稳定的阅读路径。",
-            }
-          },
-          {
-            type: "TextParagraphBlock",
-            props: {
-              id: "para-2",
-              text: "当说明文字增长到四五行之后，模块不应该因为内容变长就失去秩序；相反，它应该通过网格、行高和段落间距的控制，把阅读压力重新转化成更明确的层次与更自然的浏览节奏。 The bilingual paragraph here is intentionally longer so you can inspect whether HanYi QiHei and Futura still feel balanced in the same block.",
-            }
-          }
-        ] as any,
-        imageSrc: "/images/train-station/2Day.webp",
+        heading: "",
+        paragraphs: [] as any,
+        imageSrc: "",
         imagePreset: "ratio-16-9",
         imageFitMode: "x",
         layoutVariant: "split-left"
@@ -521,31 +554,40 @@ export const config: Config = {
 
     HighDensityInfoBlock: {
       fields: {
-        phase1Title: { type: "text", contentEditable: true },
-        phase1Subtitle: { type: "text", contentEditable: true },
-        phase1Content: { type: "textarea", contentEditable: true },
-        phase1Items: { type: "slot" },
-        phase2Title: { type: "text", contentEditable: true },
-        phase2Subtitle: { type: "text", contentEditable: true },
-        phase2Content: { type: "textarea", contentEditable: true },
-        phase2Items: { type: "slot" },
-        phase3Title: { type: "text", contentEditable: true },
-        phase3Subtitle: { type: "text", contentEditable: true },
-        phase3Content: { type: "textarea", contentEditable: true },
-        phase3ImageSrc: { type: "text" },
-        phase3ImagePreset: imagePresetField,
-        phase3ImageFitMode: imageFitModeField,
+        phase1Label: { type: "text", contentEditable: true, label: "Phase 1 Label" },
+        phase1Title: { type: "text", contentEditable: true, label: "Phase 1 Title" },
+        phase1Subtitle: { type: "text", contentEditable: true, label: "Phase 1 Subtitle" },
+        phase1Content: { type: "textarea", contentEditable: true, label: "Phase 1 Content" },
+        phase1Items: { type: "slot", label: "Phase 1 Items" },
+        phase2Label: { type: "text", contentEditable: true, label: "Phase 2 Label" },
+        phase2Title: { type: "text", contentEditable: true, label: "Phase 2 Title" },
+        phase2Subtitle: { type: "text", contentEditable: true, label: "Phase 2 Subtitle" },
+        phase2Content: { type: "textarea", contentEditable: true, label: "Phase 2 Content" },
+        phase2Items: { type: "slot", label: "Phase 2 Items" },
+        phase3Label: { type: "text", contentEditable: true, label: "Phase 3 Label" },
+        phase3Title: { type: "text", contentEditable: true, label: "Phase 3 Title" },
+        phase3Subtitle: { type: "text", contentEditable: true, label: "Phase 3 Subtitle" },
+        phase3Content: { type: "textarea", contentEditable: true, label: "Phase 3 Content" },
+        phase3ImageSrc: { type: "text", label: "Phase 3 Image Source" },
+        phase3ImagePreset: { ...imagePresetField, label: "Phase 3 Image Preset" },
+        phase3ImageFitMode: { ...imageFitModeField, label: "Phase 3 Image Fit Mode" },
       },
       defaultProps: {
-        phase1Title: "Context",
-        phase1Content: "这一部分用于交代问题背景与起始约束，说明项目在视觉、交互或系统层面最先暴露出的矛盾点，以及我为什么判断它值得被优先拆开分析。 This opening paragraph defines the problem frame before the implementation logic appears.",
+        phase1Label: "",
+        phase1Title: "",
+        phase1Subtitle: "",
+        phase1Content: "",
         phase1Items: [] as any,
-        phase2Title: "Architecture",
-        phase2Content: "这一部分用于展开具体方案结构，强调我如何把复杂目标拆成更可执行的层级，并通过更清楚的步骤、参数与依赖关系来维持整体实现的可控性。 The English line is kept in the same tone so bilingual text can stress-test the layout.",
+        phase2Label: "",
+        phase2Title: "",
+        phase2Subtitle: "",
+        phase2Content: "",
         phase2Items: [] as any,
-        phase3Title: "Execution",
-        phase3Content: "这一部分用于回收方法与结果，说明在真正落地之后，哪些判断被验证、哪些问题被修正，以及最终呈现为什么能够同时满足氛围、功能与叙事表达。 This concluding paragraph checks whether the final composition still reads clearly under longer mixed-language content.",
-        phase3ImageSrc: "/images/train-station/2Day.webp",
+        phase3Label: "",
+        phase3Title: "",
+        phase3Subtitle: "",
+        phase3Content: "",
+        phase3ImageSrc: "",
         phase3ImagePreset: "ratio-16-9",
         phase3ImageFitMode: "x",
       },
@@ -567,18 +609,21 @@ export const config: Config = {
 
         // Construct the phase objects required by the component
         const phase1 = {
+          label: props.phase1Label,
           title: props.phase1Title,
           subtitle: props.phase1Subtitle,
           content: props.phase1Content,
           items: phase1FallbackItems,
         };
         const phase2 = {
+          label: props.phase2Label,
           title: props.phase2Title,
           subtitle: props.phase2Subtitle,
           content: props.phase2Content,
           items: phase2FallbackItems,
         };
         const phase3 = {
+          label: props.phase3Label,
           title: props.phase3Title,
           subtitle: props.phase3Subtitle,
           content: props.phase3Content,
@@ -600,15 +645,16 @@ export const config: Config = {
 
     ProjectSection: {
       fields: {
-        title: { type: "text", contentEditable: true },
-        subtitle: { type: "text", contentEditable: true },
-        imageSrc: { type: "text" },
-        imagePreset: imagePresetField,
-        imageFitMode: imageFitModeField,
-        link: { type: "text" },
-        index: { type: "number" },
+        title: { type: "text", contentEditable: true, label: "Title" },
+        subtitle: { type: "text", contentEditable: true, label: "Subtitle" },
+        imageSrc: { type: "text", label: "Image Source" },
+        imagePreset: { ...imagePresetField, label: "Image Preset" },
+        imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
+        link: { type: "text", label: "Link" },
+        index: { type: "number", label: "Index" },
         align: {
           type: "select",
+          label: "Align",
           options: [
             { label: "Auto", value: "auto" },
             { label: "Left", value: "left" },
@@ -617,12 +663,12 @@ export const config: Config = {
         },
       },
       defaultProps: {
-        title: "NEW PROJECT",
-        subtitle: "Design / Development",
-        imageSrc: CANONICAL_PLACEHOLDER_PATH,
+        title: "",
+        subtitle: "",
+        imageSrc: "",
         imagePreset: "ratio-16-9",
         imageFitMode: "x",
-        link: "/works",
+        link: "",
         index: 0,
         align: "auto",
       },
@@ -643,13 +689,13 @@ export const config: Config = {
 
     HeroSection: {
       fields: {
-        title: { type: "text", contentEditable: true },
-        subtitle: { type: "text", contentEditable: true },
-        description: { type: "textarea", contentEditable: true },
-        imageSrc: { type: "text" },
-        imageAlt: { type: "text" },
-        imagePreset: imagePresetField,
-        imageFitMode: imageFitModeField,
+        title: { type: "text", contentEditable: true, label: "Title" },
+        subtitle: { type: "text", contentEditable: true, label: "Subtitle" },
+        description: { type: "textarea", contentEditable: true, label: "Description" },
+        imageSrc: { type: "text", label: "Image Source" },
+        imageAlt: { type: "text", label: "Image Alt" },
+        imagePreset: { ...imagePresetField, label: "Image Preset" },
+        imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
       },
       defaultProps: {
         title: "JIANG CHENGYAN",
@@ -676,18 +722,18 @@ export const config: Config = {
 
     HomeEndcapSection: {
       fields: {
-        eyebrow: { type: "text", contentEditable: true },
-        title: { type: "text", contentEditable: true },
-        description: { type: "textarea", contentEditable: true },
-        buttonLabel: { type: "text", contentEditable: true },
-        buttonHref: { type: "text" },
+        eyebrow: { type: "text", contentEditable: true, label: "Eyebrow" },
+        title: { type: "text", contentEditable: true, label: "Title" },
+        description: { type: "textarea", contentEditable: true, label: "Description" },
+        buttonLabel: { type: "text", contentEditable: true, label: "Button Label" },
+        buttonHref: { type: "text", label: "Button Href" },
       },
       defaultProps: {
-        eyebrow: "Selected Archive",
-        title: "ALL WORKS",
-        description: "A full index of interactive narrative, systems, lighting studies, and production experiments.",
-        buttonLabel: "ENTER ARCHIVE",
-        buttonHref: "/works",
+        eyebrow: "",
+        title: "",
+        description: "",
+        buttonLabel: "",
+        buttonHref: "",
       },
       render: ({ eyebrow, title, description, buttonLabel, buttonHref, editMode }) => (
         <HomeEndcapSection
@@ -703,18 +749,18 @@ export const config: Config = {
 
     PortfolioHeroHeader: {
       fields: {
-        title: { type: "text", contentEditable: true },
-        subtitle: { type: "text", contentEditable: true },
-        descriptionLine1: { type: "text", contentEditable: true },
-        descriptionLine2: { type: "text", contentEditable: true },
-        ctaLabel: { type: "text" },
-        ctaHref: { type: "text" },
+        title: { type: "text", contentEditable: true, label: "Title" },
+        subtitle: { type: "text", contentEditable: true, label: "Subtitle" },
+        descriptionLine1: { type: "text", contentEditable: true, label: "Description Line 1" },
+        descriptionLine2: { type: "text", contentEditable: true, label: "Description Line 2" },
+        ctaLabel: { type: "text", label: "CTA Label" },
+        ctaHref: { type: "text", label: "CTA Href" },
       },
       defaultProps: {
-        title: "LIGHTING",
-        subtitle: "PORTFOLIO",
-        descriptionLine1: "A Curated Selection",
-        descriptionLine2: "Unreal Engine 5",
+        title: "",
+        subtitle: "",
+        descriptionLine1: "",
+        descriptionLine2: "",
         ctaLabel: "",
         ctaHref: "",
       },
@@ -732,18 +778,18 @@ export const config: Config = {
     },
     LightingCollectionHeroHeader: {
       fields: {
-        title: { type: "text", contentEditable: true },
-        subtitle: { type: "text", contentEditable: true },
-        descriptionLine1: { type: "text", contentEditable: true },
-        descriptionLine2: { type: "text", contentEditable: true },
-        ctaLabel: { type: "text" },
-        ctaHref: { type: "text" },
+        title: { type: "text", contentEditable: true, label: "Title" },
+        subtitle: { type: "text", contentEditable: true, label: "Subtitle" },
+        descriptionLine1: { type: "text", contentEditable: true, label: "Description Line 1" },
+        descriptionLine2: { type: "text", contentEditable: true, label: "Description Line 2" },
+        ctaLabel: { type: "text", label: "CTA Label" },
+        ctaHref: { type: "text", label: "CTA Href" },
       },
       defaultProps: {
-        title: "LIGHTING",
-        subtitle: "PORTFOLIO",
-        descriptionLine1: "A Curated Selection",
-        descriptionLine2: "Unreal Engine 5",
+        title: "",
+        subtitle: "",
+        descriptionLine1: "",
+        descriptionLine2: "",
         ctaLabel: "",
         ctaHref: "",
       },
@@ -762,13 +808,13 @@ export const config: Config = {
 
     LightingProjectCard: {
       fields: {
-        id: { type: "text" },
-        number: { type: "text" },
-        title: { type: "text" },
-        coverImage: { type: "text" },
-        imagePreset: imagePresetField,
-        imageFitMode: imageFitModeField,
-        href: { type: "text" },
+        id: { type: "text", label: "ID" },
+        number: { type: "text", label: "Number" },
+        title: { type: "text", label: "Title" },
+        coverImage: { type: "text", label: "Cover Image" },
+        imagePreset: { ...imagePresetField, label: "Image Preset" },
+        imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
+        href: { type: "text", label: "Href" },
       },
       defaultProps: {
         id: "collection-1",
@@ -794,25 +840,12 @@ export const config: Config = {
 
     WorksList: {
       fields: {
-        heading: { type: "text", contentEditable: true },
-        entries: { type: "slot" }
+        heading: { type: "text", contentEditable: true, label: "Heading" },
+        entries: { type: "slot", label: "Entries" }
       },
       defaultProps: {
-        heading: "All Selected Works",
-        entries: [
-          {
-            type: "WorksListEntry",
-            props: {
-              id: "works-entry-1",
-              number: "01",
-              href: "/works/lighting-portfolio",
-              title: "LIGHTING PORTFOLIO",
-              category: "Lighting Art",
-              imageSrc: "/images/train-station/2Day.webp",
-              desc: "A curated collection of lighting and mood practices"
-            }
-          }
-        ]
+        heading: "",
+        entries: [] as any
       },
       render: ({ heading, entries, editMode }) => {
         const fallbackWorks = Array.isArray(entries)
@@ -843,24 +876,24 @@ export const config: Config = {
 
     WorksListEntry: {
       fields: {
-        number: { type: "text", contentEditable: true },
-        href: { type: "text" },
-        title: { type: "text", contentEditable: true },
-        category: { type: "text", contentEditable: true },
-        imageSrc: { type: "text" },
-        imagePreset: imagePresetField,
-        imageFitMode: imageFitModeField,
-        desc: { type: "textarea", contentEditable: true },
+        number: { type: "text", contentEditable: true, label: "Number" },
+        href: { type: "text", label: "Href" },
+        title: { type: "text", contentEditable: true, label: "Title" },
+        category: { type: "text", label: "Category" },
+        imageSrc: { type: "text", label: "Image Source" },
+        imagePreset: { ...imagePresetField, label: "Image Preset" },
+        imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
+        desc: { type: "textarea", label: "Description" },
       },
       defaultProps: {
-        number: "01",
-        href: "/works/lighting-portfolio",
-        title: "LIGHTING PORTFOLIO",
-        category: "Lighting Art",
-        imageSrc: CANONICAL_PLACEHOLDER_PATH,
+        number: "",
+        href: "",
+        title: "",
+        category: "",
+        imageSrc: "",
         imagePreset: "ratio-21-9",
         imageFitMode: "x",
-        desc: "A curated collection of lighting and mood practices",
+        desc: "",
       },
       render: ({ id, number, href, title, category, imageSrc, imagePreset, imageFitMode, desc, editMode }) => (
         <WorksListEntry
@@ -880,11 +913,11 @@ export const config: Config = {
 
     NextProjectBlock: {
       fields: {
-        nextId: { type: "text" },
-        nextName: { type: "text" },
-        nextBg: { type: "text" },
-        imagePreset: imagePresetField,
-        imageFitMode: imageFitModeField,
+        nextId: { type: "text", label: "Next ID" },
+        nextName: { type: "text", label: "Next Name" },
+        nextBg: { type: "text", label: "Next Background" },
+        imagePreset: { ...imagePresetField, label: "Image Preset" },
+        imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
       },
       defaultProps: {
         nextId: "penguin",
@@ -906,10 +939,10 @@ export const config: Config = {
     },
     LightingCollectionHeader: {
       fields: {
-        title: { type: "text" },
-        number: { type: "text" },
-        description: { type: "textarea" },
-        backHref: { type: "text" },
+        title: { type: "text", label: "Title" },
+        number: { type: "text", label: "Number" },
+        description: { type: "textarea", label: "Description" },
+        backHref: { type: "text", label: "Back Href" },
       },
       defaultProps: {
         title: "CITY ADD",
@@ -929,25 +962,24 @@ export const config: Config = {
 
     LightingCollectionItem: {
       fields: {
-        lit: { type: "text" },
-        unlit: { type: "text" },
-        caption: { type: "text" },
-        preset: imagePresetField,
-        fitMode: imageFitModeField,
+        src: { type: "text", label: "Source" },
+        caption: { type: "text", label: "Caption" },
+        preset: { ...imagePresetField, label: "Preset" },
+        fitMode: { ...imageFitModeField, label: "Fit Mode" },
       },
       defaultProps: {
-        lit: "/images/city-2026/001.webp",
-        caption: "DAY",
+        src: "/images/train-station/2Day.webp",
+        caption: "IMAGE",
         preset: "ratio-16-9",
         fitMode: "x",
       },
-      render: ({ lit, unlit, caption, preset, fitMode }) => (
+      render: ({ src, caption, preset, fitMode, editMode }) => (
         <LightingCollectionItem
-          lit={lit}
-          unlit={unlit}
+          src={src}
           caption={caption}
           preset={preset as any}
           fitMode={fitMode as any}
+          editMode={editMode}
         />
       ),
     },
@@ -957,34 +989,30 @@ export const config: Config = {
     // --------------------------------------------------------
     ContactFlashlight: {
       fields: {
-        maskRadius: { type: "number" },
-        maskSmoothness: { type: "number" },
-        darkTextColor: { type: "text" },
-        lightTextColor: { type: "text" },
-        name: { type: "text", contentEditable: true },
-        taglineText: { type: "text", contentEditable: true },
-        taglineSub: { type: "text", contentEditable: true },
-        email: { type: "text", contentEditable: true },
-        wechat: { type: "text", contentEditable: true },
-        experienceHistory: { type: "slot" },
-        creativeDirection: { type: "slot" }
+        maskRadius: { type: "number", label: "Mask Radius" },
+        maskSmoothness: { type: "number", label: "Mask Smoothness" },
+        darkTextColor: { type: "text", label: "Dark Text Color" },
+        lightTextColor: { type: "text", label: "Light Text Color" },
+        name: { type: "text", contentEditable: true, label: "Name" },
+        taglineText: { type: "text", contentEditable: true, label: "Tagline Text" },
+        taglineSub: { type: "text", contentEditable: true, label: "Tagline Sub" },
+        email: { type: "text", contentEditable: true, label: "Email" },
+        wechat: { type: "text", contentEditable: true, label: "WeChat" },
+        experienceHistory: { type: "slot", label: "Experience History" },
+        creativeDirection: { type: "slot", label: "Creative Direction" }
       },
       defaultProps: {
         maskRadius: 500,
         maskSmoothness: 40,
         darkTextColor: "rgba(255,255,255,0.4)",
         lightTextColor: "rgba(255,255,255,1)",
-        name: "JIANG CHENGYAN",
-        taglineText: "艺术与科技 / 交互叙事设计 / 游戏设计",
-        taglineSub: "CUC '2028",
-        email: "3115437519@qq.com",
-        wechat: "radiowithouthead",
-        experienceHistory: [
-          { type: "ContactExperienceItem", props: { id: "exp-1", company: "腾讯光子工作室", role: "Lighing Technical Art Intern" } }
-        ] as any,
-        creativeDirection: [
-          { type: "ContactDirectionItem", props: { id: "cd-1", title: "交互叙事与关卡设计", subtitle: "Interactive Narrative & Level Design" } }
-        ] as any
+        name: "",
+        taglineText: "",
+        taglineSub: "",
+        email: "",
+        wechat: "",
+        experienceHistory: [] as any,
+        creativeDirection: [] as any
       },
       render: ({
         maskRadius,
@@ -1034,10 +1062,11 @@ export const config: Config = {
 
     MetadataListItem: {
       fields: {
-        label: { type: "text", contentEditable: true },
-        value: { type: "text", contentEditable: true },
+        label: { type: "text", contentEditable: true, label: "Label" },
+        value: { type: "text", contentEditable: true, label: "Value" },
         align: {
           type: "select",
+          label: "Align",
           options: [
             { label: "Start", value: "start" },
             { label: "End", value: "end" },
@@ -1054,34 +1083,34 @@ export const config: Config = {
 
     TextParagraphBlock: {
       fields: {
-        text: { type: "textarea", contentEditable: true },
+        text: { type: "textarea", contentEditable: true, label: "Text" },
       },
       defaultProps: {
-        text: "This is a paragraph block.",
+        text: "",
       },
       render: ({ text }) => <TextParagraphBlock text={text} />,
     },
 
     ContactExperienceItem: {
       fields: {
-        company: { type: "text", contentEditable: true },
-        role: { type: "text", contentEditable: true },
+        company: { type: "text", contentEditable: true, label: "Company" },
+        role: { type: "text", contentEditable: true, label: "Role" },
       },
       defaultProps: {
-        company: "腾讯光子工作室",
-        role: "Lighting Technical Art Intern",
+        company: "",
+        role: "",
       },
       render: ({ company, role }) => <ContactExperienceItem company={company} role={role} />,
     },
 
     ContactDirectionItem: {
       fields: {
-        title: { type: "text", contentEditable: true },
-        subtitle: { type: "text", contentEditable: true },
+        title: { type: "text", contentEditable: true, label: "Title" },
+        subtitle: { type: "text", contentEditable: true, label: "Subtitle" },
       },
       defaultProps: {
-        title: "交互叙事与关卡设计",
-        subtitle: "Interactive Narrative & Level Design",
+        title: "",
+        subtitle: "",
       },
       render: ({ title, subtitle }) => <ContactDirectionItem title={title} subtitle={subtitle} />,
     }

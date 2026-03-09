@@ -101,6 +101,14 @@
   overflow-x: hidden !important;
   overflow-y: auto !important;
   overscroll-behavior: contain;
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+}
+
+.adminShell :global(._Sidebar_1xksb_1)::selection {
+  background-color: #1579f2;
+  color: #ffffff;
 }
 
 .adminShell :global(._PuckHeader_15xnq_1),
@@ -208,4 +216,19 @@
 .adminShell :global(._Input-input_bsxfo_26:focus),
 .adminShell :global(._ExternalInputModal-search_91ls0_227:focus-within) {
   outline-color: #1579f2;
+}
+
+/* Text selection styles for Puck editor sidebar inputs */
+.adminShell :global(._Input-input_bsxfo_26::selection),
+.adminShell :global(textarea._Input-input_bsxfo_26::selection),
+.adminShell :global(._ExternalInputModal-searchInput_91ls0_299::selection) {
+  background-color: #1579f2;
+  color: #ffffff;
+}
+
+.adminShell :global(._Input-input_bsxfo_26::-moz-selection),
+.adminShell :global(textarea._Input-input_bsxfo_26::-moz-selection),
+.adminShell :global(._ExternalInputModal-searchInput_91ls0_299::-moz-selection) {
+  background-color: #1579f2;
+  color: #ffffff;
 }

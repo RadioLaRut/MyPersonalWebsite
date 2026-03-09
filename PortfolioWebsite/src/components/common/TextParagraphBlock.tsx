@@ -1,7 +1,9 @@
+import type { ReactNode } from "react";
+
 import BilingualText from "@/components/common/BilingualText";
 
 interface TextParagraphBlockProps {
-  text: string;
+  text: ReactNode;
 }
 
 export default function TextParagraphBlock({ text }: TextParagraphBlockProps) {

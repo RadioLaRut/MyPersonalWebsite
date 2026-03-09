@@ -7,13 +7,13 @@ export interface ContactFlashlightBlockProps {
     maskSmoothness?: number;
     darkTextColor?: string;
     lightTextColor?: string;
-    name?: string;
-    taglineText?: string;
-    taglineSub?: string;
-    email?: string;
-    wechat?: string;
-    experienceHistory?: { company: string; role: string }[];
-    creativeDirection?: { title: string; subtitle: string }[];
+    name?: ReactNode;
+    taglineText?: ReactNode;
+    taglineSub?: ReactNode;
+    email?: ReactNode;
+    wechat?: ReactNode;
+    experienceHistory?: { company: ReactNode; role: ReactNode }[];
+    creativeDirection?: { title: ReactNode; subtitle: ReactNode }[];
     experienceContent?: ReactNode;
     creativeContent?: ReactNode;
 }

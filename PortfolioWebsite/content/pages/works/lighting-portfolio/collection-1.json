@@ -9,35 +9,77 @@
       "type": "LightingCollectionHeader",
       "props": {
         "id": "collection-1-header",
-        "title": "CITY ADD",
+        "title": "电影化镜头叙事设计",
         "number": "01",
-        "description": "A detailed breakdown of lighting setup, mood exploration, and before/after comparisons for city add.",
+        "description": "这是我自己基于资产素材搭建自主完成镜头构图和灯光塑造的作品",
         "backHref": "/works/lighting-portfolio"
       }
     },
     {
       "type": "LightingCollectionItem",
       "props": {
-        "id": "collection-1-image-1",
-        "lit": "/images/city-2026/001.webp",
-        "caption": "DAY"
+        "id": "LightingCollectionItem-1416da9f-1777-4b99-9ebb-978379edfaa7",
+        "src": "/images/city-2026/001.webp",
+        "caption": "",
+        "preset": "native"
       }
     },
     {
       "type": "LightingCollectionItem",
       "props": {
         "id": "collection-1-image-2",
-        "lit": "/images/city-2026/002.webp",
-        "caption": "DUSK"
+        "src": "/images/city-2026/002.webp",
+        "caption": "",
+        "preset": "native"
       }
     },
     {
       "type": "LightingCollectionItem",
       "props": {
         "id": "collection-1-image-3",
-        "lit": "/images/city-2026/003.webp",
-        "caption": "NIGHT"
+        "src": "/images/city-2026/003.webp",
+        "caption": "",
+        "preset": "native"
+      }
+    },
+    {
+      "type": "LightingCollectionItem",
+      "props": {
+        "id": "collection-1-image-1",
+        "src": "/images/rainforest/Version2Output.0029.webp",
+        "caption": "",
+        "preset": "native"
+      }
+    },
+    {
+      "type": "LightingCollectionItem",
+      "props": {
+        "id": "LightingCollectionItem-870ead0a-6e4c-43f6-b972-ad377e9372ab",
+        "src": "/images/rainforest/Output.0050.webp",
+        "caption": "",
+        "preset": "native"
+      }
+    },
+    {
+      "type": "LightingCollectionItem",
+      "props": {
+        "id": "LightingCollectionItem-a8d5f68e-b363-4b63-a1e2-9c7bd5fa227d",
+        "src": "/images/rainforest/Output.0101.webp",
+        "caption": "",
+        "preset": "native"
+      }
+    },
+    {
+      "type": "HomeEndcapSection",
+      "props": {
+        "eyebrow": "下一个作品",
+        "title": "NEXT",
+        "description": "\n",
+        "buttonLabel": "ENTER",
+        "buttonHref": "/works/lighting-portfolio/collection-2",
+        "id": "HomeEndcapSection-8ad2878f-002b-426e-8c93-993529b54abc"
       }
     }
-  ]
+  ],
+  "zones": {}
 }

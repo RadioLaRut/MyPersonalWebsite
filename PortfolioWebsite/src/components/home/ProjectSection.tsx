@@ -101,7 +101,7 @@ export default function ProjectSection({
                 {subtitle}
               </p>
             )}
-            <h2 className={`text-[clamp(2rem,7vw,5rem)] font-futura font-black tracking-tighter leading-[0.9] text-white antialiased [transform:translateZ(0)] ${editMode ? "whitespace-normal break-words max-w-full" : "origin-left whitespace-nowrap transition-all duration-500 group-hover:tracking-normal group-hover:scale-[1.02]"}`}>
+            <h2 className={`text-[clamp(2rem,7vw,5rem)] font-futura font-black tracking-tight leading-[0.9] text-white antialiased [transform:translateZ(0)] ${editMode ? "whitespace-normal break-words max-w-full" : "origin-left whitespace-nowrap transition-all duration-500 group-hover:tracking-normal group-hover:scale-[1.02]"}`}>
               {title}
             </h2>
             <div className={`h-1 bg-white mt-8 ${editMode ? "w-1/3 max-w-40" : `w-0 transition-all duration-700 ease-out group-hover:w-1/3 ${underlineClassName}`}`}></div>

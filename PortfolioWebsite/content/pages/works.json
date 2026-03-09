@@ -15,10 +15,10 @@
               "id": "w1",
               "number": "01",
               "href": "/works/lighting-portfolio",
-              "title": "LIGHTING PORTFOLIO",
+              "title": "LIGHTING",
               "category": "Lighting Art",
               "imageSrc": "/images/train-station/2Day.webp",
-              "desc": "A curated collection of lighting and mood practices"
+              "desc": "灯光与氛围练习作品集"
             }
           },
           {
@@ -26,11 +26,11 @@
             "props": {
               "id": "w2",
               "number": "02",
-              "href": "/works/slay-the-virus",
-              "title": "SLAY THE VIRUS",
-              "category": "UI / Poster / Game Design",
-              "imageSrc": "/images/slay-the-virus/STVTitle.webp",
-              "desc": "A deck-building and inventory management game"
+              "href": "/works/penguin",
+              "title": "PENGUIN TRADING CO.",
+              "category": "主策划 / TA / PM",
+              "imageSrc": "/assets/images/placeholder.svg",
+              "desc": "黑色幽默的贩卖企鹅的资本主义游戏\n"
             }
           },
           {
@@ -38,11 +38,11 @@
             "props": {
               "id": "w3",
               "number": "03",
-              "href": "/works/wow-otto",
-              "title": "WOW, OTTO!",
-              "category": "Lead Designer",
-              "imageSrc": "/assets/images/placeholder.svg",
-              "desc": "Trackball narrative experience"
+              "href": "/works/insight",
+              "title": "INSIGHT",
+              "category": "主策划 / 程序",
+              "imageSrc": "/images/insight/InsightOnlyCover.webp",
+              "desc": "在信息洪流中操控真相，体验操纵舆论场的权力游戏"
             }
           },
           {
@@ -50,11 +50,11 @@
             "props": {
               "id": "w4",
               "number": "04",
-              "href": "/works/im-explode",
-              "title": "I'M EXPLODE WITH U",
-              "category": "Lead Designer",
-              "imageSrc": "/assets/images/placeholder.svg",
-              "desc": "Multiplayer platformer with pushback mechanics"
+              "href": "/works/slay-the-virus",
+              "title": "SLAY THE VIRUS",
+              "category": "策划 / UI设计 / 制作人",
+              "imageSrc": "/images/slay-the-virus/STVTitle.webp",
+              "desc": "卡牌构筑与背包管理融合的策略游戏\n"
             }
           },
           {
@@ -64,9 +64,9 @@
               "number": "05",
               "href": "/works/prometheus",
               "title": "THE PROMETHEUS",
-              "category": "Lead Designer / Lighting",
+              "category": "关卡策划 / 灯光",
               "imageSrc": "/images/prometheus/PrometheusTitle.webp",
-              "desc": "Stealth tactical game with dramatic lighting contrasts"
+              "desc": "策略潜行拍摄游戏，有限胶卷×目标权重×机关互动的\n多重决策\n"
             }
           },
           {
@@ -76,9 +76,9 @@
               "number": "06",
               "href": "/works/parallax",
               "title": "SOMEWHERE BETWEEN PARALLAX",
-              "category": "UI Design",
+              "category": "UI 设计",
               "imageSrc": "/assets/images/placeholder.svg",
-              "desc": "Interactive VR experience in fragmented memory"
+              "desc": "碎片化记忆空间的VR互动叙事探索"
             }
           },
           {
@@ -86,11 +86,11 @@
             "props": {
               "id": "w7",
               "number": "07",
-              "href": "/works/insight",
-              "title": "INSIGHT",
-              "category": "Lead Designer / Programmer",
-              "imageSrc": "/images/insight/InsightCover.webp",
-              "desc": "Play as an internet opinion regulator controlling the narrative"
+              "href": "/works/wow-otto",
+              "title": "WOW, OTTO!",
+              "category": "主策划 / 交互设计",
+              "imageSrc": "/assets/images/placeholder.svg",
+              "desc": "非常规输入设备的叙事游戏探索"
             }
           },
           {
@@ -98,11 +98,11 @@
             "props": {
               "id": "w8",
               "number": "08",
-              "href": "/works/penguin",
-              "title": "PENGUIN TRADING CO.",
-              "category": "Lead Designer / PM / Tech Art",
+              "href": "/works/im-explode",
+              "title": "I'M EXPLODE WITH U",
+              "category": "主策划",
               "imageSrc": "/assets/images/placeholder.svg",
-              "desc": "Simulation management game with asset lock systems"
+              "desc": "基于物理击退机制的多人平台游戏\n"
             }
           },
           {
@@ -111,10 +111,10 @@
               "id": "w9",
               "number": "09",
               "href": "/works/houdini-pcg",
-              "title": "HOUDINI PROCEDURAL GENERATION",
-              "category": "Tech Art",
+              "title": "HOUDINI PCG",
+              "category": "程序化生成",
               "imageSrc": "/images/penguin/PCG/PCG01.webp",
-              "desc": "Procedural environment generation with Houdini and UE5"
+              "desc": "HOUDINI的\n"
             }
           },
           {
@@ -123,24 +123,24 @@
               "id": "w10",
               "number": "10",
               "href": "/works/epic-stage",
-              "title": "EPIC STAGE LIGHTING",
-              "category": "Tech Art / Lighting",
+              "title": "EPIC ",
+              "category": "舞台灯光设计",
               "imageSrc": "/images/penguin/Epic.webp",
-              "desc": "Musical theatre concept lighting choreography"
+              "desc": "音乐剧概念灯光编排，舞台光影的视觉节奏设计\n"
             }
           }
         ],
         "id": "workslist-1",
-        "heading": "All Selected Works"
+        "heading": "ALL MY WORKS"
       }
     },
     {
       "type": "HomeEndcapSection",
       "props": {
-        "eyebrow": "Selected Archive",
-        "title": "CONTACT ME",
-        "description": "A full index of interactive narrative, systems, lighting studies, and production experiments.",
-        "buttonLabel": "ENTER ARCHIVE",
+        "eyebrow": "联系我",
+        "title": "CONTACT",
+        "description": "邮箱、微信和工作经历，都在这里",
+        "buttonLabel": "了解更多",
         "buttonHref": "/contact",
         "id": "HomeEndcapSection-04d186c3-f24c-4767-bf9c-533ff520fe87"
       }

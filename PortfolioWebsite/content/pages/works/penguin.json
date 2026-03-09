@@ -86,7 +86,7 @@
       }
     },
     {
-      "type": "MediaTextCard",
+      "type": "ContentCard",
       "props": {
         "id": "penguin-card-1",
         "title": "遗传繁育系统",
@@ -109,7 +109,7 @@
       }
     },
     {
-      "type": "MediaTextCard",
+      "type": "ContentCard",
       "props": {
         "id": "penguin-card-2",
         "title": "基地管理与 Q 币交易",
@@ -164,7 +164,7 @@
       }
     },
     {
-      "type": "MediaTextCard",
+      "type": "ContentCard",
       "props": {
         "id": "penguin-card-3",
         "title": "Gitlock：独占锁工具",
@@ -187,7 +187,7 @@
       }
     },
     {
-      "type": "MediaTextCard",
+      "type": "ContentCard",
       "props": {
         "id": "penguin-card-4",
         "title": "美术流程建立",
@@ -249,7 +249,7 @@
       }
     },
     {
-      "type": "MediaTextCard",
+      "type": "ContentCard",
       "props": {
         "id": "penguin-card-5",
         "title": "C++ 开发难题：蓝图丢失与自动化",
@@ -272,7 +272,7 @@
       }
     },
     {
-      "type": "MediaTextCard",
+      "type": "ContentCard",
       "props": {
         "id": "penguin-card-6",
         "title": "版本控制危机与分支管理",
@@ -295,7 +295,7 @@
       }
     },
     {
-      "type": "MediaTextCard",
+      "type": "ContentCard",
       "props": {
         "id": "penguin-card-7",
         "title": "美术资产问题：ORM 贴图排查",

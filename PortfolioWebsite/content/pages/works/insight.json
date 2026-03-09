@@ -13,65 +13,42 @@
         "title": "INSIGHT",
         "subtitle": "互动叙事游戏",
         "heroImage": "/images/insight/InsightOnlyCover.webp",
-        "navLink": "https://www.bilibili.com/video/BV1gQbDzQEUL"
+        "navLink": "https://www.bilibili.com/video/BV1gQbDzQEUL",
+        "heroImagePreset": "ratio-21-9",
+        "heroImageFitMode": "x"
       }
     },
     {
       "type": "RichParagraph",
       "props": {
         "id": "insight-desc-1",
-        "content": "INSIGHT 是一款轻交互的互动叙事游戏。玩家扮演一位网络舆情监管员，通过审查社交媒体内容、与用户对话，在维护网络秩序与尊重个人隐私之间做出选择。游戏采用拟真的桌面操作系统界面，通过对话选择驱动 2-3 条主要剧情分支，探讨网络监管的伦理困境。这是我第一个从概念到完成全流程独立开发的游戏项目，在一个月内完成了剧本写作、系统搭建、UI 设计与技术实现。"
+        "content": "INSIGHT 是一款轻交互的互动叙事游戏。玩家扮演一位网络舆情监管员，通过审查社交媒体内容、与用户对话，在维护网络秩序与尊重个人隐私之间做出选择。游戏通过对话选择驱动 2-3 条主要剧情分支，探讨网络监管的伦理困境。这是我第一个从概念到完成全流程独立开发的游戏项目，在一个月内完成了剧本写作、系统搭建、UI 设计与技术实现。"
+      }
+    },
+    {
+      "type": "ImagePanel",
+      "props": {
+        "src": "/images/train-station/2Day.webp",
+        "alt": "",
+        "caption": "",
+        "preset": "ratio-16-9",
+        "fitMode": "x",
+        "variant": "fullscreen",
+        "id": "ImagePanel-51db880b-c9ae-42ec-9045-4063838ef3d3"
       }
     },
     {
       "type": "HighDensityInfoBlock",
       "props": {
+        "phase2Items": [],
+        "phase1Items": [],
         "id": "insight-info-1",
         "phase1Title": "项目背景",
         "phase1Subtitle": "Context",
         "phase1Content": "作为游戏叙事课程的结课作业，我独立完成了这款互动叙事游戏的全部设计与开发工作。项目周期约一个月，使用 Unreal Engine 5 和 Articy Draft 构建。这是我第一次完整实现从剧本到可玩版本的全流程开发。",
-        "phase1Items": [
-          {
-            "type": "MetadataListItem",
-            "props": {
-              "id": "item-1",
-              "label": "引擎",
-              "value": "Unreal Engine 5",
-              "align": "end"
-            }
-          },
-          {
-            "type": "MetadataListItem",
-            "props": {
-              "id": "item-2",
-              "label": "开发周期",
-              "value": "约 1 个月",
-              "align": "end"
-            }
-          },
-          {
-            "type": "MetadataListItem",
-            "props": {
-              "id": "item-3",
-              "label": "团队规模",
-              "value": "独立完成",
-              "align": "end"
-            }
-          },
-          {
-            "type": "MetadataListItem",
-            "props": {
-              "id": "item-4",
-              "label": "项目性质",
-              "value": "课程作业",
-              "align": "end"
-            }
-          }
-        ],
         "phase2Title": "系统架构",
         "phase2Subtitle": "Architecture",
         "phase2Content": "游戏采用对话选择驱动的叙事机制，使用 Articy Draft 管理多分支剧情树，通过自定义蓝图系统将对话数据导入 Unreal Engine。拟真的桌面操作系统 UI 设计增强了沉浸感，玩家在审查内容与对话选择中推进剧情。",
-        "phase2Items": [],
         "phase3Title": "项目成果",
         "phase3Subtitle": "Execution",
         "phase3Content": "项目最终完成了完整可玩版本，包含 2-3 条主要剧情分支和多个结局。游戏在课程中获得高分，并在 B 站发布了演示视频。开发过程中克服了蓝图基础不牢固、Articy Draft 集成、以及题材表现难度等挑战。",
@@ -86,7 +63,7 @@
       }
     },
     {
-      "type": "MediaTextCard",
+      "type": "ContentCard",
       "props": {
         "id": "insight-card-1",
         "title": "多分支叙事与题材表现",
@@ -109,7 +86,7 @@
       }
     },
     {
-      "type": "MediaTextCard",
+      "type": "ContentCard",
       "props": {
         "id": "insight-card-2",
         "title": "技术集成与边学边做",
@@ -147,27 +124,30 @@
       }
     },
     {
-      "type": "GalleryItem",
+      "type": "ImagePanel",
       "props": {
         "id": "insight-gallery-img-1",
         "src": "/images/insight/Shot01.webp",
-        "caption": "游戏界面"
+        "caption": "游戏界面",
+        "variant": "fullscreen"
       }
     },
     {
-      "type": "GalleryItem",
+      "type": "ImagePanel",
       "props": {
         "id": "insight-gallery-img-2",
         "src": "/images/insight/Shot02.webp",
-        "caption": "对话系统"
+        "caption": "对话系统",
+        "variant": "fullscreen"
       }
     },
     {
-      "type": "GalleryItem",
+      "type": "ImagePanel",
       "props": {
         "id": "insight-gallery-img-3",
         "src": "/images/insight/Shot03.webp",
-        "caption": "剧情分支"
+        "caption": "剧情分支",
+        "variant": "fullscreen"
       }
     },
     {
@@ -179,5 +159,6 @@
         "nextBg": "/images/slay-the-virus/STVTitle.webp"
       }
     }
-  ]
+  ],
+  "zones": {}
 }

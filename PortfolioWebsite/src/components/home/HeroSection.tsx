@@ -81,26 +81,26 @@ export default function HeroSection({
         </motion.div>
 
         {/* Front Content Overlay based on Grid */}
-        <div className={`absolute inset-0 z-20 mix-blend-normal flex flex-col justify-end ${editMode ? "pointer-events-auto pt-24 pb-16 md:pb-20" : "pointer-events-none pt-32 pb-20 md:pb-24"}`}>
+        <div className={`absolute inset-0 z-20 mix-blend-normal flex flex-col justify-end ${editMode ? "pointer-events-auto pt-24 pb-24 md:pb-28" : "pointer-events-none pt-32 pb-24 md:pb-28"}`}>
           <div className="grid-container w-full relative">
             <motion.div
-              className="col-span-4 md:col-start-3 md:col-span-9 flex flex-col justify-end md:translate-y-6"
+              className="col-span-4 md:col-start-2 md:col-span-10 flex flex-col justify-end md:translate-y-6"
               initial={editMode ? false : { opacity: 0 }}
               animate={editMode ? undefined : { opacity: 1 }}
               transition={editMode ? undefined : { duration: 1.5, delay: 0.5, ease: "easeOut" }}
             >
-              <h1 className="font-gothic font-light text-[clamp(1.75rem,5vw,3.5rem)] tracking-[0.2em] text-white uppercase leading-[1.1] interactive pointer-events-auto">
+              <h1 className="font-gothic font-light text-[clamp(1.75rem,5vw,3.5rem)] tracking-[0.2em] text-white uppercase leading-[1.1] select-none">
                 {title}
               </h1>
               <div className="flex items-center gap-4 mt-2">
                 <span className="inline-block w-8 md:w-16 h-px bg-white/40"></span>
-                <h1 className="font-gothic font-light text-[clamp(1rem,2.5vw,1.5rem)] tracking-widest text-white/50 uppercase interactive pointer-events-auto">
+                <h1 className="font-gothic font-light text-[clamp(1rem,2.5vw,1.5rem)] tracking-widest text-white/50 uppercase select-none">
                   {subtitle}
                 </h1>
               </div>
 
               <motion.p
-                className="mt-12 font-futura text-white/40 text-xs md:text-sm tracking-[0.3em] uppercase max-w-sm interactive pointer-events-auto whitespace-pre-line"
+                className="mt-12 font-futura text-white/40 text-xs md:text-sm tracking-[0.3em] uppercase max-w-sm select-none whitespace-pre-line"
                 initial={editMode ? false : { opacity: 0, x: -20 }}
                 animate={editMode ? undefined : { opacity: 1, x: 0 }}
                 transition={editMode ? undefined : { duration: 1.5, delay: 1, ease: "easeOut" }}

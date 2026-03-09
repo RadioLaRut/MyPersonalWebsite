@@ -1,7 +1,7 @@
 {
   "root": {
     "props": {
-      "title": "WEST - DOUBLE COMPOSITION"
+      "title": "ATMOSPHERE PRACTICE"
     }
   },
   "content": [
@@ -9,9 +9,9 @@
       "type": "LightingCollectionHeader",
       "props": {
         "id": "collection-4-header",
-        "title": "WEST - DOUBLE COMPOSITION",
+        "title": "PRACTICE",
         "number": "04",
-        "description": "A detailed breakdown of lighting setup, mood exploration, and before/after comparisons for west - double composition.",
+        "description": "日常的虚幻引擎写实环境与打光专项练习。",
         "backHref": "/works/lighting-portfolio"
       }
     },
@@ -19,67 +19,43 @@
       "type": "LightingCollectionItem",
       "props": {
         "id": "collection-4-image-1",
-        "lit": "/images/west/Day.webp",
-        "caption": "COMPOSITION ONE - DAY"
+        "src": "/images/penguin/01.webp",
+        "caption": "",
+        "preset": "ratio-16-9",
+        "fitMode": "x"
       }
     },
     {
       "type": "LightingCollectionItem",
       "props": {
         "id": "collection-4-image-2",
-        "lit": "/images/west/Dust.webp",
-        "caption": "COMPOSITION ONE - DUSK"
+        "src": "/images/penguin/02.webp",
+        "caption": "",
+        "preset": "native",
+        "fitMode": "x"
       }
     },
     {
       "type": "LightingCollectionItem",
       "props": {
         "id": "collection-4-image-3",
-        "lit": "/images/west/Night.webp",
-        "caption": "COMPOSITION ONE - NIGHT"
+        "src": "/images/penguin/CyberRestaurant.webp",
+        "caption": "",
+        "preset": "ratio-16-9",
+        "fitMode": "x"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "HomeEndcapSection",
       "props": {
-        "id": "collection-4-image-4",
-        "lit": "/images/west/Day.webp",
-        "unlit": "/images/west/NoLight.webp",
-        "caption": "COMPOSITION ONE - LIGHTING COMPARISON"
-      }
-    },
-    {
-      "type": "LightingCollectionItem",
-      "props": {
-        "id": "collection-4-image-5",
-        "lit": "/images/west/CDay.webp",
-        "caption": "COMPOSITION TWO - DAY"
-      }
-    },
-    {
-      "type": "LightingCollectionItem",
-      "props": {
-        "id": "collection-4-image-6",
-        "lit": "/images/west/CDust.webp",
-        "caption": "COMPOSITION TWO - DUSK"
-      }
-    },
-    {
-      "type": "LightingCollectionItem",
-      "props": {
-        "id": "collection-4-image-7",
-        "lit": "/images/west/CNight.webp",
-        "caption": "COMPOSITION TWO - NIGHT"
-      }
-    },
-    {
-      "type": "LightingCollectionItem",
-      "props": {
-        "id": "collection-4-image-8",
-        "lit": "/images/west/CDay.webp",
-        "unlit": "/images/west/CNoLight.webp",
-        "caption": "COMPOSITION TWO - LIGHTING COMPARISON"
+        "eyebrow": "返回到所有作品页面",
+        "title": "back to works",
+        "description": "",
+        "buttonLabel": "enter",
+        "buttonHref": "",
+        "id": "HomeEndcapSection-5ed9aa0c-9857-499a-83dd-ffc6184a5abc"
       }
     }
-  ]
+  ],
+  "zones": {}
 }

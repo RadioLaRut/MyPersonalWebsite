@@ -12,8 +12,10 @@
         "eyebrow": "Project / UI Design",
         "title": "SOMEWHERE BETWEEN PARALLAX",
         "subtitle": "视差之间 — Interactive VR Experience",
-        "heroImage": "/images/penguin/CyberRestaurant.webp",
-        "navLink": ""
+        "heroImage": "",
+        "navLink": "",
+        "heroImagePreset": "ratio-21-9",
+        "heroImageFitMode": "x"
       }
     },
     {

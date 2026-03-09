@@ -1,7 +1,7 @@
 {
   "root": {
     "props": {
-      "title": "RAINFOREST ECHO"
+      "title": "TRAIN STATION"
     }
   },
   "content": [
@@ -9,9 +9,9 @@
       "type": "LightingCollectionHeader",
       "props": {
         "id": "collection-2-header",
-        "title": "RAINFOREST ECHO",
+        "title": "TRAIN STATION",
         "number": "02",
-        "description": "A detailed breakdown of lighting setup, mood exploration, and before/after comparisons for rainforest echo.",
+        "description": "",
         "backHref": "/works/lighting-portfolio"
       }
     },
@@ -19,33 +19,109 @@
       "type": "LightingCollectionItem",
       "props": {
         "id": "collection-2-image-1",
-        "lit": "/images/rainforest/Version2Output.0029.webp",
-        "caption": "DAY"
+        "src": "/images/train-station/Cut2Day.webp",
+        "caption": "DAY",
+        "preset": "native",
+        "fitMode": "x"
       }
     },
     {
       "type": "LightingCollectionItem",
       "props": {
         "id": "collection-2-image-2",
-        "lit": "/images/rainforest/Shot005.0002.webp",
-        "caption": "ATMOSPHERE 1"
+        "src": "/images/train-station/Cut2Dusk.webp",
+        "caption": "DUSK",
+        "preset": "native",
+        "fitMode": "x"
       }
     },
     {
       "type": "LightingCollectionItem",
       "props": {
         "id": "collection-2-image-3",
-        "lit": "/images/rainforest/Output.0050.webp",
-        "caption": "ATMOSPHERE 2"
+        "src": "/images/train-station/Cut2Fog.webp",
+        "caption": "FOG",
+        "preset": "native",
+        "fitMode": "x"
       }
     },
     {
       "type": "LightingCollectionItem",
       "props": {
         "id": "collection-2-image-4",
-        "lit": "/images/rainforest/Output.0101.webp",
-        "caption": "NIGHT"
+        "src": "/images/train-station/Cut2Night.webp",
+        "caption": "NIGHT",
+        "preset": "native",
+        "fitMode": "x"
+      }
+    },
+    {
+      "type": "ImageSlider",
+      "props": {
+        "unlitSrc": "/images/train-station/2NoLight.webp",
+        "litSrc": "/images/train-station/2Day.webp",
+        "alt": "Lighting Comparison",
+        "imagePreset": "ratio-16-9",
+        "imageFitMode": "x",
+        "id": "ImageSlider-fc7ebed5-5622-4dbf-abb3-43df8d11cd40",
+        "leftLabel": "无光照",
+        "rightLabel": "光照"
+      }
+    },
+    {
+      "type": "LightingCollectionItem",
+      "props": {
+        "id": "LightingCollectionItem-26dc854a-f6c7-41b8-8e0c-ba79f3d884ed",
+        "src": "/images/train-station/Day.webp",
+        "caption": "DAY",
+        "preset": "native",
+        "fitMode": "x"
+      }
+    },
+    {
+      "type": "LightingCollectionItem",
+      "props": {
+        "id": "LightingCollectionItem-cf14ab2b-3033-4d76-b328-5a3d848e59ad",
+        "src": "/images/train-station/Dusk.webp",
+        "caption": "DUSK",
+        "preset": "native",
+        "fitMode": "x"
+      }
+    },
+    {
+      "type": "LightingCollectionItem",
+      "props": {
+        "id": "LightingCollectionItem-b03d7461-0991-4cfb-9a83-924326c2b469",
+        "src": "/images/train-station/Night.webp",
+        "caption": "NIGHT",
+        "preset": "native",
+        "fitMode": "x"
+      }
+    },
+    {
+      "type": "ImageSlider",
+      "props": {
+        "unlitSrc": "/images/train-station/NoLight.webp",
+        "litSrc": "/images/train-station/Day.webp",
+        "alt": "Lighting Comparison",
+        "imagePreset": "ratio-16-9",
+        "imageFitMode": "x",
+        "id": "ImageSlider-c5403abb-5cd2-4c52-bef8-ff7da34ce1e2",
+        "leftLabel": "无光照",
+        "rightLabel": "光照"
+      }
+    },
+    {
+      "type": "HomeEndcapSection",
+      "props": {
+        "eyebrow": "下一个作品",
+        "title": "NEXT",
+        "description": "",
+        "buttonLabel": "ENTER",
+        "buttonHref": "works/lightin-portfolio/collection-3",
+        "id": "HomeEndcapSection-9e12cb17-4a02-4831-942c-ec8c0709dcc4"
       }
     }
-  ]
+  ],
+  "zones": {}
 }

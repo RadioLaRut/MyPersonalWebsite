@@ -12,6 +12,14 @@ interface HomeEndcapSectionProps {
   editMode?: boolean;
 }
 
+function isContentEmpty(content: ReactNode): boolean {
+  if (content === null || content === undefined) return true;
+  if (typeof content === "string") return content.trim() === "";
+  if (typeof content === "number") return false;
+  if (Array.isArray(content)) return content.length === 0 || content.every(isContentEmpty);
+  return false;
+}
+
 export default function HomeEndcapSection({
   eyebrow,
   title,
@@ -20,6 +28,8 @@ export default function HomeEndcapSection({
   buttonHref,
   editMode = false,
 }: HomeEndcapSectionProps) {
+  const hasDescription = !isContentEmpty(description);
+
   return (
     <section className="relative isolate flex min-h-[68vh] w-full items-center overflow-hidden border-t border-white/10 bg-black py-24 md:py-32">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_45%)]" />
@@ -36,13 +46,13 @@ export default function HomeEndcapSection({
             {title}
           </h2>
 
-          {description ? (
+          {hasDescription ? (
             <p className="mx-auto mt-8 max-w-3xl font-futura text-sm uppercase leading-[1.8] tracking-[0.14em] text-white/55 md:text-base">
               {description}
             </p>
           ) : null}
 
-          <div className="mt-12">
+          <div className={hasDescription ? "mt-12" : "mt-8"}>
             <Link
               href={buttonHref}
               onClick={(event) => {

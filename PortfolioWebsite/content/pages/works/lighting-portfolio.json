@@ -11,8 +11,8 @@
         "id": "hero-1",
         "title": "LIGHTING",
         "subtitle": "PORTFOLIO",
-        "descriptionLine1": "A Curated Selection",
-        "descriptionLine2": "Unreal Engine 5",
+        "descriptionLine1": "",
+        "descriptionLine2": "",
         "ctaLabel": "OPEN CMS EDITOR",
         "ctaHref": "/admin/works/lighting-portfolio"
       }
@@ -22,9 +22,10 @@
       "props": {
         "id": "collection-1",
         "number": "01",
-        "title": "CITY ADD",
+        "title": "",
         "coverImage": "/images/city-2026/002.webp",
-        "href": "/works/lighting-portfolio/collection-1"
+        "href": "/works/lighting-portfolio/collection-1",
+        "imagePreset": "native"
       }
     },
     {
@@ -32,9 +33,10 @@
       "props": {
         "id": "collection-2",
         "number": "02",
-        "title": "RAINFOREST ECHO",
-        "coverImage": "/images/rainforest/Version2Output.0029.webp",
-        "href": "/works/lighting-portfolio/collection-2"
+        "title": "",
+        "coverImage": "/images/train-station/Cut2Day.webp",
+        "href": "/works/lighting-portfolio/collection-2",
+        "imagePreset": "native"
       }
     },
     {
@@ -42,9 +44,11 @@
       "props": {
         "id": "collection-3",
         "number": "03",
-        "title": "TRAIN STATION",
-        "coverImage": "/images/train-station/2Day.webp",
-        "href": "/works/lighting-portfolio/collection-3"
+        "title": "",
+        "coverImage": "/images/west/CDay.webp",
+        "href": "/works/lighting-portfolio/collection-3",
+        "imagePreset": "ratio-21-9",
+        "imageFitMode": "cover"
       }
     },
     {
@@ -52,20 +56,13 @@
       "props": {
         "id": "collection-4",
         "number": "04",
-        "title": "WEST - DOUBLE COMPOSITION",
-        "coverImage": "/images/west/CDay.webp",
-        "href": "/works/lighting-portfolio/collection-4"
-      }
-    },
-    {
-      "type": "LightingProjectCard",
-      "props": {
-        "id": "collection-5",
-        "number": "05",
-        "title": "ATMOSPHERE PRACTICE",
+        "title": "",
         "coverImage": "/images/penguin/01.webp",
-        "href": "/works/lighting-portfolio/collection-5"
+        "href": "/works/lighting-portfolio/collection-4",
+        "imagePreset": "native",
+        "imageFitMode": "cover"
       }
     }
-  ]
+  ],
+  "zones": {}
 }

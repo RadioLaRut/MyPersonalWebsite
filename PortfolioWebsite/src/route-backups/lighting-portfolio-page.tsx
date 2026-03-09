@@ -25,27 +25,20 @@ const collections: LightingCollection[] = [
     {
         id: "collection-2",
         number: "02",
-        title: "RAINFOREST ECHO",
-        colSpanClass: "col-span-12 md:col-start-7 md:col-span-5",
-        coverImage: "/images/rainforest/Version2Output.0029.webp",
-    },
-    {
-        id: "collection-3",
-        number: "03",
         title: "TRAIN STATION",
         colSpanClass: "col-span-12 md:col-start-3 md:col-span-8",
         coverImage: "/images/train-station/2Day.webp",
     },
     {
-        id: "collection-4",
-        number: "04",
+        id: "collection-3",
+        number: "03",
         title: "WEST - DOUBLE COMPOSITION",
         colSpanClass: "col-span-12 md:col-start-1 md:col-span-5",
         coverImage: "/images/west/CDay.webp",
     },
     {
-        id: "collection-5",
-        number: "05",
+        id: "collection-4",
+        number: "04",
         title: "ATMOSPHERE PRACTICE",
         colSpanClass: "col-span-12 md:col-start-7 md:col-span-5",
         coverImage: "/images/penguin/01.webp",
@@ -56,10 +49,9 @@ export default function LightingPortfolioPage() {
     const cmsPreviewEnabled = isCmsPreviewEnabled();
     const cmsCollectionHref: Record<string, string> = {
         "collection-1": "/p/works/lighting-atmosphere",
-        "collection-2": "/p/works/atmosphere-practice",
+        "collection-2": "/p/works/lighting-atmosphere",
         "collection-3": "/p/works/lighting-atmosphere",
-        "collection-4": "/p/works/atmosphere-practice",
-        "collection-5": "/p/works/atmosphere-practice",
+        "collection-4": "/p/works/lighting-atmosphere",
     };
     // const [hoveredId, setHoveredId] = useState<string | null>(null);
 

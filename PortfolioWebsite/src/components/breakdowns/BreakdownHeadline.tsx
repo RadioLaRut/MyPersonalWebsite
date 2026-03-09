@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { type ReactNode } from 'react';
 
 interface SectionHeadlineProps {
-    title: string;
+    title: ReactNode;
 }
 
 export default function BreakdownSectionHeadline({ title }: SectionHeadlineProps) {

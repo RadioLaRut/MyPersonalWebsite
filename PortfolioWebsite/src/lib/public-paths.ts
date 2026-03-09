@@ -70,6 +70,12 @@ export function normalizeImageSrc(src: string | null | undefined): string {
     return CANONICAL_PLACEHOLDER_PATH;
   }
 
+  // 验证路径格式：必须以 "/" 开头或者是绝对 URL (http:// 或 https://)
+  const isValidPath = trimmed.startsWith("/") || /^https?:\/\//i.test(trimmed);
+  if (!isValidPath) {
+    return CANONICAL_PLACEHOLDER_PATH;
+  }
+
   return trimmed;
 }
 

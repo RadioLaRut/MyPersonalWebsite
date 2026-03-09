@@ -1,7 +1,7 @@
 {
   "root": {
     "props": {
-      "title": "TRAIN STATION"
+      "title": "WEST - DOUBLE COMPOSITION"
     }
   },
   "content": [
@@ -9,52 +9,109 @@
       "type": "LightingCollectionHeader",
       "props": {
         "id": "collection-3-header",
-        "title": "TRAIN STATION",
+        "title": "WEST",
         "number": "03",
-        "description": "A detailed breakdown of lighting setup, mood exploration, and before/after comparisons for train station.",
+        "description": "",
         "backHref": "/works/lighting-portfolio"
       }
     },
     {
       "type": "LightingCollectionItem",
       "props": {
+        "id": "collection-3-image-5",
+        "src": "/images/west/CDay.webp",
+        "caption": "DAY",
+        "preset": "ratio-21-9",
+        "fitMode": "x"
+      }
+    },
+    {
+      "type": "LightingCollectionItem",
+      "props": {
+        "id": "collection-3-image-6",
+        "src": "/images/west/CDust.webp",
+        "caption": "DUSK",
+        "preset": "ratio-21-9",
+        "fitMode": "x"
+      }
+    },
+    {
+      "type": "LightingCollectionItem",
+      "props": {
+        "id": "collection-3-image-7",
+        "src": "/images/west/CNight.webp",
+        "caption": "NIGHT",
+        "preset": "ratio-21-9",
+        "fitMode": "x"
+      }
+    },
+    {
+      "type": "ImageSlider",
+      "props": {
+        "unlitSrc": "/images/west/CNoLight.webp",
+        "litSrc": "/images/west/CDay.webp",
+        "alt": "Lighting Comparison",
+        "imagePreset": "ratio-21-9",
+        "imageFitMode": "x",
+        "id": "ImageSlider-45aed034-2cb1-4994-b18a-49fcf3e43eff",
+        "leftLabel": "无光照",
+        "rightLabel": "光照"
+      }
+    },
+    {
+      "type": "LightingCollectionItem",
+      "props": {
         "id": "collection-3-image-1",
-        "lit": "/images/train-station/2Day.webp",
-        "caption": "DAY"
+        "src": "/images/west/Day.webp",
+        "caption": "DAY",
+        "preset": "ratio-21-9",
+        "fitMode": "x"
       }
     },
     {
       "type": "LightingCollectionItem",
       "props": {
         "id": "collection-3-image-2",
-        "lit": "/images/train-station/2Dust.webp",
-        "caption": "DUSK"
+        "src": "/images/west/Dust.webp",
+        "caption": "DUSK",
+        "preset": "ratio-21-9",
+        "fitMode": "x"
       }
     },
     {
       "type": "LightingCollectionItem",
       "props": {
         "id": "collection-3-image-3",
-        "lit": "/images/train-station/2Fog.webp",
-        "caption": "FOG"
+        "src": "/images/west/Night.webp",
+        "caption": "NIGHT",
+        "preset": "ratio-21-9",
+        "fitMode": "x"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImageSlider",
       "props": {
-        "id": "collection-3-image-4",
-        "lit": "/images/train-station/2Night.webp",
-        "caption": "NIGHT"
+        "unlitSrc": "/images/west/NoLight.webp",
+        "litSrc": "/images/west/Day.webp",
+        "alt": "Lighting Comparison",
+        "imagePreset": "ratio-21-9",
+        "imageFitMode": "x",
+        "id": "ImageSlider-fdcfce2e-8290-4e78-899a-66d4e5428702",
+        "leftLabel": "无光照",
+        "rightLabel": "光照"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "HomeEndcapSection",
       "props": {
-        "id": "collection-3-image-5",
-        "lit": "/images/train-station/2Day.webp",
-        "unlit": "/images/train-station/2NoLight.webp",
-        "caption": "LIGHTING COMPARISON"
+        "eyebrow": "下一个作品",
+        "title": "NEXT",
+        "description": "\n",
+        "buttonLabel": "ENTER",
+        "buttonHref": "/works/lighting-portfolio/colletion-4",
+        "id": "HomeEndcapSection-126ef42e-89cf-4e42-a9ef-5b99a0c8a838"
       }
     }
-  ]
+  ],
+  "zones": {}
 }

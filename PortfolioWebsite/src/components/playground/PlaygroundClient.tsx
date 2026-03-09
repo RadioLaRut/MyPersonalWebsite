@@ -9,7 +9,6 @@ import BilingualText from "@/components/common/BilingualText";
 
 const EXCLUDED_COMPONENT_KEYS = new Set(["ContactFlashlight"]);
 const HIDDEN_LEGACY_COMPONENT_KEYS = new Set([
-  "HeroHeadline",
   "PortfolioHeroHeader",
   "MetadataListItem",
   "TextParagraphBlock",
@@ -18,7 +17,6 @@ const HIDDEN_LEGACY_COMPONENT_KEYS = new Set([
   "WorksListEntry",
 ]);
 const COMPONENT_DISPLAY_NAMES: Record<string, string> = {
-  BreakdownIntroHeader: "BreakdownIntroHeader",
   BreakdownHeadline: "BreakdownSectionHeadline",
   LightingCollectionHeroHeader: "LightingCollectionHeroHeader",
 };
@@ -26,17 +24,17 @@ const PLAYGROUND_GROUPS = [
   {
     label: "Headline Blocks",
     description: "所有标题与页面头图模块。",
-    keys: ["BreakdownIntroHeader", "BreakdownHeadline", "LightingCollectionHeroHeader"],
+    keys: ["HeroHeadline", "BreakdownHeadline", "LightingCollectionHeroHeader"],
   },
   {
     label: "Text Blocks",
     description: "纯文字与图文叙事模块。",
-    keys: ["RichParagraph", "TextSplitLayout", "MediaTextCard", "HighDensityInfoBlock", "StatementBlock"],
+    keys: ["RichParagraph", "TextSplitLayout", "ContentCard", "HighDensityInfoBlock", "StatementBlock"],
   },
   {
     label: "Media Blocks",
     description: "图片、滑块、参数和拼贴模块。",
-    keys: ["ImagePanel", "ImageSlider", "GalleryItem", "BreakdownTriptych", "ParameterGrid"],
+    keys: ["ImagePanel", "ImageSlider", "BreakdownTriptych", "ParameterGrid"],
   },
   {
     label: "Lighting Blocks",
@@ -51,8 +49,67 @@ const PLAYGROUND_GROUPS = [
 ] as const;
 
 const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
-  TextSplitLayout: {
+  HeroHeadline: {
+    eyebrow: "BREAKDOWN",
+    title: "PROJECT TITLE",
+    subtitle: "这是一个项目分解页面的标题组件，用于展示项目的主要信息和跳转链接。",
+    heroImage: "/images/train-station/2Day.webp",
+    navLink: "https://www.bilibili.com",
+  },
+
+  BreakdownHeadline: {
+    title: "SECTION TITLE",
+  },
+  LightingCollectionHeroHeader: {
+    title: "LIGHTING",
+    subtitle: "PORTFOLIO",
+    descriptionLine1: "A Curated Selection",
+    descriptionLine2: "Unreal Engine 5",
+  },
+  RichParagraph: {
+    content: "这是一个富文本段落组件，支持中英文混排。This is a rich paragraph component supporting bilingual text. 可以用于展示项目描述、设计思路或任何需要详细说明的内容。",
+  },
+  ContentCard: {
+    title: "CONTENT CARD TITLE",
+    description: "这是一个内容卡片组件，支持图文混排和纯文本两种模式。可以切换图片左右位置，无图片时自动切换为纯文本模式。",
     imageSrc: "/images/train-station/2Day.webp",
+    tags: ["Tag 1", "Tag 2", "Tag 3"],
+    imagePosition: "right",
+  },
+  TextSplitLayout: {
+    heading: "SPLIT LAYOUT HEADING",
+    paragraphs: "这是文本分割布局组件。左侧展示标题和段落，右侧展示图片。适合用于需要图文并排展示的场景。",
+    imageSrc: "/images/train-station/2Day.webp",
+  },
+  ImagePanel: {
+    src: "/images/train-station/2Day.webp",
+    caption: "Image Panel Caption",
+    variant: "content",
+  },
+  ImageSlider: {
+    leftImage: "/images/city-2026/001.webp",
+    rightImage: "/images/city-2026/002.webp",
+    leftLabel: "DAY",
+    rightLabel: "NIGHT",
+  },
+  BreakdownTriptych: {
+    col1Title: "Column 1",
+    col1Text: "First column content description.",
+    col1Img: "/images/train-station/2Day.webp",
+    col2Title: "Column 2",
+    col2Text: "Second column content description.",
+    col2Img: "/images/city-2026/001.webp",
+    col3Title: "Column 3",
+    col3Text: "Third column content description.",
+    col3Img: "/images/city-2026/002.webp",
+  },
+  ParameterGrid: {
+    mediaSrc: "/images/train-station/2Day.webp",
+    parameters: [
+      { label: "Parameter 1", value: "Value 1" },
+      { label: "Parameter 2", value: "Value 2" },
+      { label: "Parameter 3", value: "Value 3" },
+    ],
   },
   StatementBlock: {
     content: "这是一个过渡区域组件，用于在项目之间创造呼吸感，让浏览体验更加舒适。",
@@ -61,7 +118,25 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     minHeight: "medium",
   },
   HighDensityInfoBlock: {
+    phase1Label: "PHASE 01 / CONTEXT",
+    phase1Title: "Context",
+    phase1Subtitle: "Phase 1 Subtitle",
+    phase1Content: "Problem background and initial constraints.",
+    phase2Label: "PHASE 02 / SYSTEM ARCHITECTURE",
+    phase2Title: "Architecture",
+    phase2Subtitle: "Phase 2 Subtitle",
+    phase2Content: "Solution structure and implementation approach.",
+    phase3Label: "PHASE 03 / EXECUTION & RESULTS",
+    phase3Title: "Execution",
+    phase3Subtitle: "Phase 3 Subtitle",
+    phase3Content: "Results and lessons learned.",
     phase3ImageSrc: "/images/train-station/2Day.webp",
+  },
+  HeroSection: {
+    title: "HERO SECTION",
+    subtitle: "Portfolio / Design / Development",
+    imageSrc: "/images/train-station/2Day.webp",
+    link: "/works",
   },
   ProjectSection: {
     title: "PENGUIN TRADING CO.",
@@ -71,7 +146,15 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     index: 1,
     align: "auto",
   },
+  HomeEndcapSection: {
+    eyebrow: "Selected Archive",
+    title: "ALL WORKS",
+    description: "A full index of interactive narrative, systems, lighting studies, and production experiments.",
+    buttonLabel: "ENTER ARCHIVE",
+    buttonHref: "/works",
+  },
   WorksList: {
+    heading: "All Selected Works",
     entries: [
       {
         type: "WorksListEntry",
@@ -100,7 +183,8 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     ],
   },
   LightingProjectCard: {
-    href: "/works/lighting-portfolio/collection-1",
+    id: "collection-1",
+    title: "CITY ADD",
     coverImage: "/images/city-2026/002.webp",
   },
   NextProjectBlock: {
@@ -115,7 +199,7 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     backHref: "/works/lighting-portfolio",
   },
   LightingCollectionItem: {
-    lit: "/images/city-2026/001.webp",
+    src: "/images/city-2026/001.webp",
     caption: "DAY",
   },
   GalleryItem: {

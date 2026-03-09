@@ -19,6 +19,8 @@ interface ImageSliderProps {
     className?: string;
     imagePreset?: ImagePreset;
     imageFitMode?: ImageFitMode;
+    leftLabel?: string;
+    rightLabel?: string;
 }
 
 export default function ImageSlider({
@@ -28,6 +30,8 @@ export default function ImageSlider({
     className = "",
     imagePreset = "ratio-16-9",
     imageFitMode = "x",
+    leftLabel,
+    rightLabel,
 }: ImageSliderProps) {
     const [sliderPosition, setSliderPosition] = useState(50);
     const [isDragging, setIsDragging] = useState(false);
@@ -67,78 +71,89 @@ export default function ImageSlider({
     }, []);
 
     return (
-        <div className={`w-full flex justify-center my-16 ${className}`}>
-            <div className="w-full max-w-5xl">
-                <div
-                    ref={containerRef}
-                    className={`${frameClassName} cursor-ew-resize select-none`}
-                    onMouseMove={handleMouseMove}
-                    onTouchMove={handleTouchMove}
-                    onMouseDown={() => setIsDragging(true)}
-                    onTouchStart={() => setIsDragging(true)}
-                >
-                    {/* Lit Image (Background) */}
-                    <div className="absolute inset-0">
-                        {/* Fallback color/placeholder if no image */}
-                        <div className="absolute inset-0 bg-neutral-900" />
-                        {litSrc && (
-                            <div className={canvasClassName}>
-                                <OptimizedImage
-                                    src={litSrc}
-                                    alt={`${alt} Lit`}
-                                    width={1920}
-                                    height={1080}
-                                    className={imageClassName}
-                                    draggable={false}
-                                />
-                            </div>
-                        )}
-                        <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 text-white font-mono text-xs tracking-widest pointer-events-none">
-                            STATUS: LIT
-                        </div>
-                    </div>
-
-                    {/* Unlit Image (Foreground, clipped) */}
+        <div className={`w-full my-16 ${className}`}>
+            <div className="grid-container">
+                <div className="col-span-4 md:col-start-2 md:col-span-10">
                     <div
-                        className="absolute inset-0"
-                        style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
+                        ref={containerRef}
+                        className={`${frameClassName} cursor-ew-resize select-none`}
+                        onMouseMove={handleMouseMove}
+                        onTouchMove={handleTouchMove}
+                        onMouseDown={() => setIsDragging(true)}
+                        onTouchStart={() => setIsDragging(true)}
                     >
-                        <div className="absolute inset-0 bg-neutral-800" />
-                        {unlitSrc && (
-                            <div className={canvasClassName}>
-                                <OptimizedImage
-                                    src={unlitSrc}
-                                    alt={`${alt} Unlit`}
-                                    width={1920}
-                                    height={1080}
-                                    className={imageClassName}
-                                    draggable={false}
-                                />
-                            </div>
-                        )}
-                        <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1 text-white/70 font-mono text-xs tracking-widest pointer-events-none">
-                            STATUS: UNLIT
+                        {/* Lit Image (Background) */}
+                        <div className="absolute inset-0">
+                            <div className="absolute inset-0 bg-neutral-900" />
+                            {litSrc && (
+                                <div className={canvasClassName}>
+                                    <OptimizedImage
+                                        src={litSrc}
+                                        alt={rightLabel ? `${alt} ${rightLabel}` : alt}
+                                        width={1920}
+                                        height={1080}
+                                        className={imageClassName}
+                                        draggable={false}
+                                    />
+                                </div>
+                            )}
                         </div>
-                    </div>
 
-                    {/* Slider line and button */}
-                    <div
-                        className="absolute top-0 bottom-0 w-0.5 bg-white pointer-events-none"
-                        style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
-                    >
+                        {/* Unlit Image (Foreground, clipped) */}
                         <div
-                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg transition-shadow duration-150"
-                            data-cursor-magnet="slider-handle"
-                            data-cursor-magnet-size="32"
+                            className="absolute inset-0"
+                            style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
                         >
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="15 18 9 12 15 6"></polyline>
-                            </svg>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="rotate-180">
-                                <polyline points="15 18 9 12 15 6"></polyline>
-                            </svg>
+                            <div className="absolute inset-0 bg-neutral-800" />
+                            {unlitSrc && (
+                                <div className={canvasClassName}>
+                                    <OptimizedImage
+                                        src={unlitSrc}
+                                        alt={leftLabel ? `${alt} ${leftLabel}` : alt}
+                                        width={1920}
+                                        height={1080}
+                                        className={imageClassName}
+                                        draggable={false}
+                                    />
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Slider line and button */}
+                        <div
+                            className="absolute top-0 bottom-0 w-0.5 bg-white pointer-events-none"
+                            style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
+                        >
+                            <div
+                                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg transition-shadow duration-150"
+                                data-cursor-magnet="slider-handle"
+                                data-cursor-magnet-size="32"
+                            >
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="15 18 9 12 15 6"></polyline>
+                                </svg>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="rotate-180">
+                                    <polyline points="15 18 9 12 15 6"></polyline>
+                                </svg>
+                            </div>
                         </div>
                     </div>
+
+                    {/* Labels - 遵循网格对齐 */}
+                    {(leftLabel || rightLabel) ? (
+                        <div className="mt-4 flex justify-between items-center px-2">
+                            {leftLabel ? (
+                                <span className="font-mono text-xs tracking-widest text-white/70">
+                                    {leftLabel}
+                                </span>
+                            ) : <span />}
+                            {rightLabel ? (
+                                <span className="font-mono text-xs tracking-widest text-white/70">
+                                    {rightLabel}
+                                </span>
+                            ) : null}
+                        </div>
+                    ) : null}
                 </div>
             </div>
         </div>

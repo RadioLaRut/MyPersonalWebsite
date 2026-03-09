@@ -17,65 +17,35 @@
       }
     },
     {
-      "type": "RichParagraph",
+      "type": "ContentCard",
       "props": {
-        "id": "holytank-desc-1",
-        "content": "帅油桶是一款探讨敌意建筑主题的叙事游戏。受 Florence 启发，游戏通过轨迹球的直观操作让玩家体验不同的互动场景。其中最核心的关卡设计是让玩家使用轨迹球模拟轮椅操作，在充满敌意建筑的城市环境中前进。通过这种不便的操作体验，玩家能够切身感受到残疾人在日常生活中面对的障碍和困难。游戏采用多关卡结构，每个关卡通过不同的交互方式传达主题。这是一个 2-3 人团队在 1-2 周内完成的课程项目，我主要负责主题设定和交互实现，项目最终获得了课程高分。"
+        "id": "holytank-card-2",
+        "title": "敌意建筑",
+        "description": "敌意建筑是在建筑环境中故意用一些设计要素来引导或限制某些行为，例如阻止人们躺下或坐下、玩滑板、乱丢垃圾、游荡和随地小便。受影响的大多是时常使用或依赖公共空间的人，例如年轻人、穷人、和露宿者。\n\n最典型的敌意建筑即“反游民尖刺”——嵌在平坦表面上的螺柱等结构会使之变得粗糙，无法在上面睡觉。",
+        "imageSrc": "/images/holy-tank/HostileArchitecture.webp",
+        "tags": [],
+        "imagePreset": "native"
       }
     },
     {
       "type": "HighDensityInfoBlock",
       "props": {
+        "phase2Items": [],
+        "phase1Items": [],
         "id": "holytank-info-1",
         "phase1Title": "项目背景",
         "phase1Subtitle": "Context",
-        "phase1Content": "这是一个探讨社会议题的游戏项目。通过游戏化的方式让玩家体验残疾人在城市中面对的敌意建筑问题。项目受 Florence 启发，采用轨迹球作为核心交互方式，在 1-2 周内由 2-3 人团队完成。",
-        "phase1Items": [
-          {
-            "type": "MetadataListItem",
-            "props": {
-              "id": "item-1",
-              "label": "引擎",
-              "value": "Unity",
-              "align": "end"
-            }
-          },
-          {
-            "type": "MetadataListItem",
-            "props": {
-              "id": "item-2",
-              "label": "开发周期",
-              "value": "1-2 周",
-              "align": "end"
-            }
-          },
-          {
-            "type": "MetadataListItem",
-            "props": {
-              "id": "item-3",
-              "label": "团队规模",
-              "value": "2-3 人",
-              "align": "end"
-            }
-          },
-          {
-            "type": "MetadataListItem",
-            "props": {
-              "id": "item-4",
-              "label": "项目性质",
-              "value": "课程项目",
-              "align": "end"
-            }
-          }
-        ],
+        "phase1Content": "敌意建筑时时刻刻充满我们的身边，他们带来了秩序的同时也给城市添加上了一点尖锐和冷漠感我们想尝试探讨敌意建筑是否会给城市中的人带来不便和冷漠。",
         "phase2Title": "核心创新",
         "phase2Subtitle": "Innovation",
-        "phase2Content": "游戏的核心创新在于使用轨迹球模拟轮椅操作。玩家需要通过轨迹球的物理阻力来体验推动轮椅的困难，这种操作上的不便与角色的身体残障形成了强烈的通感。游戏通过这种方式让玩家切身感受到敌意建筑对残疾人的影响。",
-        "phase2Items": [],
+        "phase2Content": "游戏的核心创新在于分析并创新轨迹球能带来的操作感觉。玩家需要通过推动轨迹球的感觉来体验推动轮椅的困难，这种操作上的不便与角色的身体残障形成了强烈的通感。游戏通过这种方式让玩家切身感受到敌意建筑对残疾人的影响。",
         "phase3Title": "我的贡献",
         "phase3Subtitle": "My Role",
         "phase3Content": "我主要负责游戏的主题设定和交互实现。设计了轨迹球与轮椅操作的映射逻辑，确保玩家能够通过操作体验到残疾人的困难。同时负责整体系统设计，将敌意建筑的概念融入关卡设计中。",
-        "phase3ImageSrc": ""
+        "phase3ImageSrc": "",
+        "phase1Label": "Phese 01",
+        "phase2Label": "Phese 02",
+        "phase3Label": "Phese 03"
       }
     },
     {
@@ -86,64 +56,13 @@
       }
     },
     {
-      "type": "MediaTextCard",
+      "type": "ContentCard",
       "props": {
         "id": "holytank-card-1",
         "title": "轨迹球交互设计",
-        "description": "游戏抛弃了传统的键鼠操作，完全使用实体轨迹球进行控制。轨迹球的物理阻力模拟了推动轮椅的困难，玩家需要用力滚动轨迹球才能让角色前进。这种操作上的不便与角色的身体残障形成了强烈的通感，让玩家能够切身体验到残疾人的日常困难。",
-        "imageSrc": "",
-        "tags": [
-          {
-            "tag": "轨迹球交互",
-            "_arrayItem": {
-              "id": "tag-1"
-            }
-          },
-          {
-            "tag": "通感设计",
-            "_arrayItem": {
-              "id": "tag-2"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "MediaTextCard",
-      "props": {
-        "id": "holytank-card-2",
-        "title": "敌意建筑主题",
-        "description": "游戏通过关卡设计展现城市中的敌意建筑元素：没有无障碍通道的台阶、过窄的门、不合理的坡道等。玩家在使用轨迹球操作时会发现这些看似普通的建筑设计对残疾人来说是多么困难。游戏通过环境叙事的方式，让玩家反思城市设计中的隐性偏见。",
-        "imageSrc": "",
-        "tags": [
-          {
-            "tag": "敌意建筑",
-            "_arrayItem": {
-              "id": "tag-3"
-            }
-          },
-          {
-            "tag": "环境叙事",
-            "_arrayItem": {
-              "id": "tag-4"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "BreakdownTriptych",
-      "props": {
-        "id": "holytank-triptych-1",
-        "col1Title": "通感设计",
-        "col1Text": "纯轨迹球物理阻力操控模拟系统架构设计，让玩家通过操作体验残疾人的困难。",
-        "col1Img": "/images/holy-tank/f0f6239817a545ccad2f7dc47aff8acc.webp",
-        "col2Title": "叙事体验",
-        "col2Text": "环境叙事展现社会隐性偏见，通过关卡设计让玩家反思敌意建筑问题。",
-        "col2Img": "/images/holy-tank/f0f6239817a545ccad2f7dc47aff8acc.webp",
-        "col3Title": "概念方向",
-        "col3Text": "针对带有显性恶意的公共城市建筑体系发起的探究与批判。",
-        "col3Img": "/images/holy-tank/7d9ca92e5ade09bfc1c349a49001b2eb.webp"
+        "description": "游戏抛弃了传统的键鼠操作，完全使用实体轨迹球进行控制。轨迹球最大的交互优势在于：用户可以用手握住轨迹球，像是拧一颗球一样进行操作。轨迹球移动鼠标时本身是固定的，将其放在座椅扶手后进行操作，这种操作与角色形成了强烈的通感，让玩家能够切身体验到残疾人的日常困难。",
+        "imageSrc": "/images/holy-tank/GameScreenshot.webp",
+        "tags": []
       }
     },
     {
@@ -155,5 +74,6 @@
         "nextBg": "/images/penguin/PCG/PCG01.webp"
       }
     }
-  ]
+  ],
+  "zones": {}
 }
