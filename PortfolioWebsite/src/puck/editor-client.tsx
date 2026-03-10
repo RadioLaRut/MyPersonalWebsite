@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { type ComponentProps, type ReactNode, useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { Puck, type Data } from "@measured/puck";
 import "@measured/puck/puck.css";
 import { MotionConfig } from "framer-motion";
@@ -61,10 +61,7 @@ type HeaderOverrideProps = {
 
 type SidebarTextFieldProps = {
   children?: ReactNode;
-  name: string;
-  onChange: (value: string) => void;
-  value?: string;
-};
+} & ComponentProps<typeof ChineseTextInputField>;
 
 function IframePreviewChrome({
   children,
@@ -489,19 +486,17 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
       <IframePreviewChrome document={frameDocument}>{children}</IframePreviewChrome>
     ),
     fieldTypes: {
-      text: ({ value, onChange, name }: SidebarTextFieldProps) => (
+      text: (props: SidebarTextFieldProps) => (
         <ChineseTextInputField
-          value={typeof value === "string" ? value : ""}
-          onChange={onChange}
-          name={name}
+          {...props}
+          value={typeof props.value === "string" ? props.value : ""}
         />
       ),
-      textarea: ({ value, onChange, name }: SidebarTextFieldProps) => (
+      textarea: (props: SidebarTextFieldProps) => (
         <ChineseTextInputField
-          value={typeof value === "string" ? value : ""}
-          onChange={onChange}
+          {...props}
+          value={typeof props.value === "string" ? props.value : ""}
           multiline
-          name={name}
         />
       ),
     },

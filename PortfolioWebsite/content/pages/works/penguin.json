@@ -13,65 +13,30 @@
         "title": "企鹅贸易公司",
         "subtitle": "Penguin Trading Company",
         "heroImage": "/assets/images/placeholder.svg",
-        "navLink": ""
+        "navLink": "",
+        "heroImagePreset": "ratio-21-9",
+        "heroImageFitMode": "x"
       }
     },
     {
       "type": "RichParagraph",
       "props": {
         "id": "penguin-desc-1",
-        "content": "企鹅贸易公司是一款融合模拟经营、资源管理与遗传培育的黑色幽默游戏。玩家作为企鹅太空殖民地的总督，在遥远的外星冰川上指挥企鹅员工采集资源、转化热能、扩张由蒸汽朋克机器驱动的冰山基地。游戏的核心创新在于将企鹅设计为消耗品——玩家可以繁殖新企鹅、让其工作、吃掉、卖掉，甚至当作燃料燃烧。某些特性甚至能让企鹅被吃掉后为其他企鹅增加增益效果。通过这种荒诞的设计，游戏以黑色幽默的方式讽刺资本主义的剥削逻辑。这是我最重要的游戏项目，我在其中担任主策划、项目管理和 TA 三重角色。"
+        "content": "企鹅贸易公司是一款融合模拟经营、资源管理与遗传培育的黑色幽默游戏。玩家作为企鹅太空殖民地的总督，在遥远的外星冰川上指挥企鹅员工采集资源、转化热能、扩张由蒸汽朋克机器驱动的冰山基地。游戏的核心创新在于将企鹅设计为消耗品——玩家可以繁殖新企鹅、让其工作、吃掉、卖掉，甚至当作燃料燃烧。某些特性甚至能让企鹅被吃掉后为其他企鹅增加增益效果。通过这种荒诞的设计，游戏以黑色幽默的方式讽刺资本主义的剥削逻辑。我在其中担任主策划、项目管理和 TA 三重角色。"
       }
     },
     {
       "type": "HighDensityInfoBlock",
       "props": {
+        "phase2Items": [],
+        "phase1Items": [],
         "id": "penguin-info-1",
         "phase1Title": "项目背景",
         "phase1Subtitle": "Context",
         "phase1Content": "这是一个个人发起的长期游戏项目，目标是创作一款黑色幽默风格的模拟经营游戏。项目参考了《辐射避难所》和《动物园之星》的设计，由 8 人团队协作开发，目前已完成 30-50% 的开发进度，目标是实现 1 小时的完整可玩体验。",
-        "phase1Items": [
-          {
-            "type": "MetadataListItem",
-            "props": {
-              "id": "item-1",
-              "label": "引擎",
-              "value": "Unreal Engine 5",
-              "align": "end"
-            }
-          },
-          {
-            "type": "MetadataListItem",
-            "props": {
-              "id": "item-2",
-              "label": "开发周期",
-              "value": "3 个月以上",
-              "align": "end"
-            }
-          },
-          {
-            "type": "MetadataListItem",
-            "props": {
-              "id": "item-3",
-              "label": "团队规模",
-              "value": "8 人",
-              "align": "end"
-            }
-          },
-          {
-            "type": "MetadataListItem",
-            "props": {
-              "id": "item-4",
-              "label": "开发进度",
-              "value": "30-50%",
-              "align": "end"
-            }
-          }
-        ],
         "phase2Title": "核心机制",
         "phase2Subtitle": "Core Mechanics",
         "phase2Content": "游戏包含三大核心系统：遗传繁育系统通过基因和性状组合产生不同样貌的企鹅，玩家需要在繁育与消耗之间做出策略选择；基地管理系统让玩家扩张蒸汽朋克风格的冰山基地；Q 币交易系统体现资本主义的经济逻辑。企鹅作为消耗品的设计是游戏的核心创新。",
-        "phase2Items": [],
         "phase3Title": "团队构成",
         "phase3Subtitle": "Team Structure",
         "phase3Content": "团队由 8 人组成：我担任主策划、项目管理和 TA，3 人负责 3D 美术，1 人负责原画和 2D 美术，2 人负责程序开发，1 人负责音效。这是团队第一次完整的 3D 项目，大部分成员缺乏全流程经验，需要从零建立工作流程。",
@@ -141,8 +106,6 @@
     {
       "type": "TextSplitLayout",
       "props": {
-        "id": "penguin-split-1",
-        "heading": "管线建设挑战",
         "paragraphs": [
           {
             "type": "TextParagraphBlock",
@@ -159,6 +122,8 @@
             }
           }
         ],
+        "id": "penguin-split-1",
+        "heading": "管线建设挑战",
         "imageSrc": "",
         "layoutVariant": "split-left"
       }
@@ -219,8 +184,6 @@
     {
       "type": "TextSplitLayout",
       "props": {
-        "id": "penguin-split-2",
-        "heading": "飞书项目管理系统",
         "paragraphs": [
           {
             "type": "TextParagraphBlock",
@@ -237,6 +200,8 @@
             }
           }
         ],
+        "id": "penguin-split-2",
+        "heading": "飞书项目管理系统",
         "imageSrc": "",
         "layoutVariant": "split-right"
       }
@@ -341,5 +306,6 @@
         "nextBg": "/images/train-station/2Day.webp"
       }
     }
-  ]
+  ],
+  "zones": {}
 }
