@@ -33,13 +33,14 @@ body::-webkit-scrollbar {
 }
 
 /**
- * 全局响应式栅格系统 (12-Column Grid)
+ * 全局统一栅格系统 (12-Column Grid)
  * 用于确保所有页面组件在对齐上保持严丝合缝。
+ * 所有设备统一使用12列网格。
  */
 .grid-container {
   display: grid;
-  /* 移动端默认 4 列布局 */
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* 统一使用 12 列布局 */
+  grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 1rem;
   width: 100%;
 
@@ -54,10 +55,9 @@ body::-webkit-scrollbar {
   overflow-wrap: break-word;
 }
 
-/* 桌面端 (1024px+) 切换为 12 列标准布局 */
+/* 桌面端 (1024px+) 增加间距 */
 @media (min-width: 1024px) {
   .grid-container {
-    grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: 1.5rem;
   }
 }
@@ -203,42 +203,42 @@ html[data-site-mode="normal"] svg {
 @layer components {
   /* 标准内容区：两侧留边距，内容居中 (col-start-2, col-span-10) */
   .grid-content {
-    @apply col-span-4 lg:col-start-2 lg:col-span-10;
+    @apply col-start-2 col-span-10;
   }
 
   /* 窄内容区：更集中的内容展示 (col-start-3, col-span-8) */
   .grid-narrow {
-    @apply col-span-4 lg:col-start-3 lg:col-span-8;
+    @apply col-start-3 col-span-8;
   }
 
   /* 全宽内容区：从边到边 (col-start-1, col-span-12) */
   .grid-full {
-    @apply col-span-4 lg:col-start-1 lg:col-span-12;
+    @apply col-start-1 col-span-12;
   }
 
   /* 左对齐内容区 (col-start-2, col-span-5) */
   .grid-left {
-    @apply col-span-4 lg:col-start-2 lg:col-span-5;
+    @apply col-start-2 col-span-5;
   }
 
   /* 右对齐内容区 (col-start-7, col-span-5) */
   .grid-right {
-    @apply col-span-4 lg:col-start-7 lg:col-span-5;
+    @apply col-start-7 col-span-5;
   }
 
   /* 右侧边栏区域 (col-start-9, col-span-4) */
   .grid-sidebar {
-    @apply col-span-4 lg:col-start-9 lg:col-span-4;
+    @apply col-start-9 col-span-4;
   }
 
   /* 左侧偏移区域 (col-start-5, col-span-4) - 用于三联图中间列 */
   .grid-offset-center {
-    @apply col-span-4 lg:col-start-5 lg:col-span-4;
+    @apply col-start-5 col-span-4;
   }
 
   /* 最右侧区域 (col-start-10, col-span-3) - 用于三联图右侧列 */
   .grid-offset-right {
-    @apply col-span-4 lg:col-start-10 lg:col-span-3;
+    @apply col-start-10 col-span-3;
   }
 }
 

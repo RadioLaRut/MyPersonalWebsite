@@ -50,8 +50,8 @@ export default function ProjectSection({
   const opacity = useTransform(scrollYProgress, [0, 0.4, 0.6, 1], [0, 1, 1, 0]);
   const shouldAlignRight = align === "right" || (align === "auto" && index % 2 !== 0);
   const textColumnClassName = shouldAlignRight
-    ? "lg:col-start-5 items-end text-right"
-    : "lg:col-start-2 items-start";
+    ? "col-start-5 items-end text-right"
+    : "col-start-2 items-start";
   const subtitleClassName = shouldAlignRight ? "text-right" : "";
   const underlineClassName = shouldAlignRight ? "origin-right self-end" : "origin-left";
 
@@ -94,7 +94,7 @@ export default function ProjectSection({
       >
         <div className={`grid-container w-full relative ${editMode ? "" : "mix-blend-difference"}`}>
           <div
-            className={`col-span-4 lg:col-span-8 flex flex-col ${textColumnClassName}`}
+            className={`col-span-8 flex flex-col ${textColumnClassName}`}
           >
             {subtitle && (
               <p className={`text-textPrimary font-gothic tracking-[0.4em] mb-4 text-xs sm:text-sm font-medium uppercase ${subtitleClassName}`}>

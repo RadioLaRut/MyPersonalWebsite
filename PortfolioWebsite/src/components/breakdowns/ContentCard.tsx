@@ -76,7 +76,7 @@ export default function ContentCard({
   if (!hasImage) {
     return (
       <div className="w-full my-24 grid-container">
-        <div className="col-span-4 lg:col-start-3 lg:col-span-8">{TextContent}</div>
+        <div className="col-start-3 col-span-8">{TextContent}</div>
       </div>
     );
   }
@@ -87,17 +87,17 @@ export default function ContentCard({
     <div className="w-full my-24 grid-container">
       {isImageLeft ? (
         <>
-          <div className="col-span-4 lg:col-span-8 lg:col-start-1 order-2 lg:order-1 mt-12 lg:mt-0">
+          <div className="col-span-8 col-start-1 order-2 lg:order-1 mt-12 lg:mt-0">
             {ImageContent}
           </div>
-          <div className="col-span-4 lg:col-span-4 lg:col-start-9 order-1 lg:order-2">
+          <div className="col-span-4 col-start-9 order-1 lg:order-2">
             {TextContent}
           </div>
         </>
       ) : (
         <>
-          <div className="col-span-4 lg:col-span-4 lg:col-start-1">{TextContent}</div>
-          <div className="col-span-4 lg:col-span-8 lg:col-start-5 mt-12 lg:mt-0">
+          <div className="col-span-4 col-start-1">{TextContent}</div>
+          <div className="col-span-8 col-start-5 mt-12 lg:mt-0">
             {ImageContent}
           </div>
         </>

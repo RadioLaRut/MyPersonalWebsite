@@ -17,7 +17,7 @@ export default function SampleBreakdownPage() {
             <div className="grid-container">
 
                 {/* Header Section */}
-                <div className="col-span-4 lg:col-start-2 lg:col-span-10 mb-24">
+                <div className="col-start-2 col-span-10 mb-24">
                     <Link href="/" className="inline-block mb-8 font-mono text-xs uppercase tracking-[0.3em] text-textMuted hover:text-white transition-colors">
                         ← 返回主页
                     </Link>
@@ -39,9 +39,9 @@ export default function SampleBreakdownPage() {
                 </div>
 
                 {/* Divider */}
-                <div className="col-span-4 lg:col-span-12 border-b border-white/20 mb-24"></div>
+                <div className="col-span-12 border-b border-white/20 mb-24"></div>
 
-                <div className="col-span-4 lg:col-span-12">
+                <div className="col-span-12">
                     <MetaDataBlock
                         items={[
                             { label: "职责", value: "打光 / 技术美术" },
@@ -52,7 +52,7 @@ export default function SampleBreakdownPage() {
                     />
                 </div>
 
-                <div className="col-span-4 lg:col-span-12 mt-16">
+                <div className="col-span-12 mt-16">
                     <TextSplitLayout
                         heading="01. 确立视觉锚点"
                         layoutVariant="split-left"
@@ -63,7 +63,7 @@ export default function SampleBreakdownPage() {
                     />
                 </div>
 
-                <div className="col-span-4 lg:col-span-12">
+                <div className="col-span-12">
                     <ImageSlider
                         unlitSrc="/images/train-station/2NoLight.webp"
                         litSrc="/images/train-station/2Day.webp"
@@ -71,7 +71,7 @@ export default function SampleBreakdownPage() {
                     />
                 </div>
 
-                <div className="col-span-4 lg:col-span-12 mt-16">
+                <div className="col-span-12 mt-16">
                     <ContentCard
                         title="灯光绑定与自动曝光体验系统"
                         description="不仅是静态的美术调整，我还开发了一套蓝图工具，用于根据不同的镜头焦段和机位自动校准 Auto Exposure。\n这样可以确保在切换特写与远景时，高光不会溢出，暗部始终保持克制的细节。"
@@ -80,18 +80,18 @@ export default function SampleBreakdownPage() {
                     />
                 </div>
 
-                <div className="col-span-4 lg:col-span-12 mt-16">
+                <div className="col-span-12 mt-16">
                     <ParameterGrid
                         mediaSrc="/images/train-station/2Day.webp"
                         parameters={[
-                            { name: "体积雾消散系数 (VOLUMETRIC SCATTER)", value: "0.25", description: "控制光线在空气中传播时的衰减，实现更密集的‘丁达尔’效应。" },
+                            { name: "体积雾消散系数 (VOLUMETRIC SCATTER)", value: "0.25", description: "控制光线在空气中传播时的衰减，实现更密集的'丁达尔'效应。" },
                             { name: "曝光补偿 (EV100)", value: "-2.0", description: "全局降低曝光基准，强制使场景大部分处于非常昏暗甚至死黑的阴影之中。" },
                             { name: "色彩校正 (COLOR GRADING)", description: "使用后期处理材质，对阴影中去饱和，只保留高光处的微弱暖色。你会发现没有配制底下的数值，这段文字会被很顺滑地向上补齐。" }
                         ]}
                     />
                 </div>
 
-                <div className="col-span-4 lg:col-span-12 mt-16">
+                <div className="col-span-12 mt-16">
                     <TextSplitLayout
                         heading="02. 迭代与推演"
                         layoutVariant="stack"
@@ -103,7 +103,7 @@ export default function SampleBreakdownPage() {
 
 
 
-                <div className="col-span-4 lg:col-span-12 mt-24 mb-32 border-t border-white/20 pt-24">
+                <div className="col-span-12 mt-24 mb-32 border-t border-white/20 pt-24">
                     <div className="mb-24">
                         <span className="font-mono text-xs text-textMuted uppercase tracking-[0.3em]">WORKFLOW DEEP DIVE</span>
                         <h2 className="text-4xl lg:text-5xl font-luna mt-2">工作流痛点解决</h2>

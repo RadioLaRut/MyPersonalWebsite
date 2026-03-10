@@ -73,7 +73,7 @@ export default function ImageSlider({
     return (
         <div className={`w-full my-16 ${className}`}>
             <div className="grid-container">
-                <div className="col-span-4 lg:col-start-2 lg:col-span-10">
+                <div className="col-start-2 col-span-10">
                     <div
                         ref={containerRef}
                         className={`${frameClassName} cursor-ew-resize select-none`}

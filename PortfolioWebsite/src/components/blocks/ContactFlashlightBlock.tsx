@@ -92,7 +92,7 @@ export default function ContactFlashlightBlock({
 
     const renderContentData = () => (
         <div className="grid-container w-full py-16 sm:py-32">
-            <section className="col-span-4 lg:col-start-3 lg:col-span-8 flex flex-col gap-6 mb-16 sm:mb-24">
+            <section className="col-start-3 col-span-8 flex flex-col gap-6 mb-16 sm:mb-24">
                 <motion.h1
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -117,7 +117,7 @@ export default function ContactFlashlightBlock({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6, duration: 1 }}
-                className="col-span-4 lg:col-start-4 lg:col-span-8 grid grid-cols-1 lg:grid-cols-2 gap-16 text-left border-t border-current pt-16"
+                className="col-start-4 col-span-8 grid grid-cols-1 lg:grid-cols-2 gap-16 text-left border-t border-current pt-16"
             >
                 <div className="space-y-8">
                     <span className="text-xs uppercase tracking-[0.4em] font-mono opacity-40 mix-blend-normal">
@@ -160,7 +160,7 @@ export default function ContactFlashlightBlock({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.9, duration: 1 }}
-                className="col-span-4 lg:col-start-4 lg:col-span-8 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-12 lg:gap-20 text-left border-t border-current pt-16 mt-24 items-start"
+                className="col-start-4 col-span-8 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-12 lg:gap-20 text-left border-t border-current pt-16 mt-24 items-start"
             >
                 <div className="space-y-6">
                     <span className="text-xs uppercase tracking-[0.4em] font-mono opacity-40 mix-blend-normal">

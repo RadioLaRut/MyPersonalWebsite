@@ -42,7 +42,7 @@ export default function StatementBlock({
     >
       <div className="grid-container w-full">
         <motion.div
-          className={`col-span-4 lg:col-start-3 lg:col-span-8 flex flex-col ${alignClass} ${editMode ? "pointer-events-auto" : ""}`}
+          className={`col-start-3 col-span-8 flex flex-col ${alignClass} ${editMode ? "pointer-events-auto" : ""}`}
           initial={editMode ? false : { opacity: 0, y: 20 }}
           whileInView={editMode ? undefined : { opacity: 1, y: 0 }}
           viewport={editMode ? undefined : { once: true, margin: "-100px" }}

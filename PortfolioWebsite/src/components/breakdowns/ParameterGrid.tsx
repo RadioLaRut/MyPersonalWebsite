@@ -57,7 +57,7 @@ export default function ParameterGrid({
             {parameters && parameters.length > 0 && (
                 <div className="grid-container">
                     {parameters.map((param, i) => (
-                        <div key={i} className="col-span-4 lg:col-span-3 border-t border-white/20 pt-6 group">
+                        <div key={i} className="col-span-3 border-t border-white/20 pt-6 group">
                             <h4 className="font-mono text-textMuted text-[10px] lg:text-xs tracking-[0.24em] uppercase mb-4 transition-colors group-hover:text-white break-words">
                                 {param.name}
                             </h4>

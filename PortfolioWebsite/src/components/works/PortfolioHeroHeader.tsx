@@ -29,10 +29,10 @@ export default function LightingCollectionHeroHeader({
     return (
         <section className="pt-40 pb-20 border-b border-white/10">
             <div className="grid-container">
-                <div className="col-span-4 lg:col-start-1 lg:col-span-12 pb-8">
+                <div className="col-span-12 pb-8">
                     {testingMode && ctaLabel && ctaHref ? (
                         <div className="grid grid-cols-4 lg:grid-cols-12 gap-4 mb-8">
-                            <div className="col-span-4 lg:col-start-1 lg:col-span-12">
+                            <div className="col-span-12">
                                 <Link
                                     href={ctaHref}
                                     onClick={(event) => {
@@ -48,7 +48,7 @@ export default function LightingCollectionHeroHeader({
                         </div>
                     ) : null}
                     <div className="grid grid-cols-4 lg:grid-cols-12">
-                        <div className="col-span-4 lg:col-start-1 lg:col-span-12">
+                        <div className="col-span-12">
                             <h1 className="text-[12vw] sm:text-[8vw] font-black tracking-tighter uppercase leading-none font-luna transform translate-y-2 text-white break-words">
                                 {title}
                             </h1>

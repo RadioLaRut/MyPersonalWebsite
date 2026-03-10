@@ -241,7 +241,7 @@ export default function PlaygroundClient() {
     <main className="min-h-screen bg-black text-white pt-24 md:pt-32 pb-24 md:pb-32">
       <div className="grid-container">
         {/* Header Section */}
-        <div className="col-span-4 lg:col-start-2 lg:col-span-10 mb-16 lg:mb-24">
+        <div className="col-start-2 col-span-10 mb-16 lg:mb-24">
           {/* Back Button */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -286,11 +286,11 @@ export default function PlaygroundClient() {
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="col-span-4 lg:col-span-12 border-b border-white/15 mb-16 lg:mb-20 origin-left"
+          className="col-span-12 border-b border-white/15 mb-16 lg:mb-20 origin-left"
         />
 
         {/* BilingualText Component Showcase */}
-        <div className="col-span-4 lg:col-span-12 mb-16 lg:mb-24">
+        <div className="col-span-12 mb-16 lg:mb-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -418,7 +418,7 @@ export default function PlaygroundClient() {
 
         {/* Component Groups */}
         {groupedPlaygroundComponents.map((group, groupIndex) => (
-          <div key={group.label} className="col-span-4 lg:col-span-12 mb-16 lg:mb-24">
+          <div key={group.label} className="col-span-12 mb-16 lg:mb-24">
             {/* Group Header */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -490,7 +490,7 @@ export default function PlaygroundClient() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="col-span-4 lg:col-span-12 mt-16 lg:mt-24 pt-12 border-t border-white/10 text-center"
+          className="col-span-12 mt-16 lg:mt-24 pt-12 border-t border-white/10 text-center"
         >
           <p className="font-mono text-xs text-textMuted tracking-[0.2em]">
             END OF PLAYGROUND

@@ -90,7 +90,7 @@ function renderHeroHeadlineBlock({
 
         <div className="relative z-10 flex min-h-[560px] items-end py-16 md:py-20">
           <div className="grid-container w-full">
-            <div className="col-span-4 lg:col-start-2 lg:col-span-10 flex flex-col items-start gap-4 lg:gap-6">
+            <div className="col-start-2 col-span-10 flex flex-col items-start gap-4 lg:gap-6">
               <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-textMuted">
                 {resolvedEyebrow}
               </span>
@@ -132,7 +132,7 @@ function renderHeroHeadlineBlock({
 
       <div className="absolute inset-0 z-10 flex flex-col justify-end pb-24 md:pb-32 pointer-events-none">
         <div className="grid-container w-full mix-blend-difference pointer-events-auto">
-          <div className="col-span-4 lg:col-start-2 lg:col-span-10 flex flex-col items-start gap-4">
+          <div className="col-start-2 col-span-10 flex flex-col items-start gap-4">
             {resolvedEyebrow ? (
               <span className="font-mono text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.4em] uppercase text-textMuted">
                 {resolvedEyebrow}
@@ -303,7 +303,7 @@ export const config: Config = {
         return (
           <article className="w-full py-24 md:py-32 relative z-20 bg-black">
             <div className="grid-container w-full">
-              <div className="col-span-4 lg:col-start-3 lg:col-span-8">
+              <div className="col-start-3 col-span-8">
                 <p className="text-xl md:text-[24px] leading-loose text-textPrimary text-justify tracking-wide">
                   <BilingualText text={content} weight="medium" />
                 </p>

@@ -16,7 +16,7 @@ export default function MetaDataBlock({ items }: MetaDataBlockProps) {
         <div className="w-full my-24 border-t border-white/20 pt-8 pb-8 bg-black">
             <div className="grid-container text-center lg:text-left">
                 {items.map((item, i) => (
-                    <div key={i} className="col-span-4 lg:col-span-3 mb-8 lg:mb-0">
+                    <div key={i} className="col-span-3 mb-8 lg:mb-0">
                         <div className="font-mono text-[10px] uppercase tracking-[0.4em] text-textMuted mb-2">
                             {item.label}
                         </div>
