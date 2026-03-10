@@ -74,18 +74,6 @@
             "props": {
               "id": "w6",
               "number": "06",
-              "href": "/works/parallax",
-              "title": "SOMEWHERE BETWEEN PARALLAX",
-              "category": "UI 设计",
-              "imageSrc": "/assets/images/placeholder.svg",
-              "desc": "碎片化记忆空间的VR互动叙事探索"
-            }
-          },
-          {
-            "type": "WorksListEntry",
-            "props": {
-              "id": "w7",
-              "number": "07",
               "href": "/works/wow-otto",
               "title": "WOW, OTTO!",
               "category": "主策划 / 交互设计",
@@ -96,8 +84,8 @@
           {
             "type": "WorksListEntry",
             "props": {
-              "id": "w8",
-              "number": "08",
+              "id": "w7",
+              "number": "07",
               "href": "/works/im-explode",
               "title": "I'M EXPLODE WITH U",
               "category": "主策划",
@@ -108,8 +96,8 @@
           {
             "type": "WorksListEntry",
             "props": {
-              "id": "w9",
-              "number": "09",
+              "id": "w8",
+              "number": "08",
               "href": "/works/houdini-pcg",
               "title": "HOUDINI PCG",
               "category": "程序化生成",
@@ -120,8 +108,8 @@
           {
             "type": "WorksListEntry",
             "props": {
-              "id": "w10",
-              "number": "10",
+              "id": "w9",
+              "number": "09",
               "href": "/works/epic-stage",
               "title": "EPIC ",
               "category": "舞台灯光设计",

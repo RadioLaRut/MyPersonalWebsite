@@ -41,8 +41,8 @@
   overflow: hidden !important;
 }
 
-.adminShell :global(.Puck) > :first-child,
-.adminShell :global(.Puck) > :first-child > [class*="_PuckLayout_"] {
+.adminShell :global(.Puck)> :first-child,
+.adminShell :global(.Puck)> :first-child>[class*="_PuckLayout_"] {
   flex: 1 1 auto;
   width: 100%;
   height: 100%;
@@ -71,8 +71,8 @@
 }
 
 .adminShell :global(.Puck),
-.adminShell :global(.Puck) > :first-child,
-.adminShell :global(.Puck) > :first-child > [class*="_PuckLayout_"],
+.adminShell :global(.Puck)> :first-child,
+.adminShell :global(.Puck)> :first-child>[class*="_PuckLayout_"],
 .adminShell [class*="_PuckLayout-inner_"] {
   height: 100% !important;
   max-height: 100% !important;
@@ -84,20 +84,21 @@
   overflow: hidden;
 }
 
-.adminShell :global(._PuckCanvas_18jay_1),
-.adminShell :global(._Sidebar_1xksb_1),
-.adminShell :global(._PuckCanvas-inner_18jay_21) {
+.adminShell :global([class*="_PuckCanvas_"]:not([class*="_PuckCanvas-inner_"]):not([class*="_PuckCanvas-root_"]):not([class*="_PuckCanvas-controls_"]):not([class*="_PuckCanvas-loader_"])),
+.adminShell :global([class*="_Sidebar_"]),
+.adminShell :global([class*="_PuckCanvas-inner_"]) {
   min-height: 0 !important;
   max-height: 100% !important;
 }
 
-.adminShell :global(._PuckCanvas_18jay_1) {
-  overflow-x: auto !important;
-  overflow-y: auto !important;
-  overscroll-behavior: contain;
+.adminShell :global([class*="_PuckCanvas_"]:not([class*="_PuckCanvas-inner_"]):not([class*="_PuckCanvas-root_"]):not([class*="_PuckCanvas-controls_"]):not([class*="_PuckCanvas-loader_"])) {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden !important;
+  overscroll-behavior: none;
 }
 
-.adminShell :global(._Sidebar_1xksb_1) {
+.adminShell :global([class*="_Sidebar_"]) {
   overflow-x: hidden !important;
   overflow-y: auto !important;
   overscroll-behavior: contain;
@@ -106,7 +107,7 @@
   -moz-user-select: text;
 }
 
-.adminShell :global(._Sidebar_1xksb_1)::selection {
+.adminShell :global([class*="_Sidebar_"])::selection {
   background-color: #1579f2;
   color: #ffffff;
 }
@@ -123,15 +124,18 @@
   border-bottom: 0;
 }
 
-.adminShell :global(._PuckCanvas_18jay_1) {
+.adminShell :global([class*="_PuckCanvas_"]:not([class*="_PuckCanvas-inner_"]):not([class*="_PuckCanvas-root_"]):not([class*="_PuckCanvas-controls_"]):not([class*="_PuckCanvas-loader_"])) {
   background: linear-gradient(180deg, #eef3f8 0%, #e9eef5 100%);
 }
 
-.adminShell :global(._PuckCanvas-inner_18jay_21) {
+.adminShell :global([class*="_PuckCanvas-inner_"]) {
+  flex: 1 1 auto;
+  height: auto !important;
   align-items: flex-start;
+  overflow: hidden;
 }
 
-.adminShell :global(._PuckCanvas-controls_18jay_16) {
+.adminShell :global([class*="_PuckCanvas-controls_"]) {
   position: sticky;
   top: 0;
   z-index: 30;
@@ -146,7 +150,7 @@
   backdrop-filter: blur(12px);
 }
 
-.adminShell :global(._PuckCanvas-root_18jay_30) {
+.adminShell :global([class*="_PuckCanvas-root_"]) {
   border-color: #d5dde7;
   box-shadow: 0 24px 60px rgba(15, 23, 32, 0.12);
 }
@@ -231,4 +235,38 @@
 .adminShell :global(._ExternalInputModal-searchInput_91ls0_299::-moz-selection) {
   background-color: #1579f2;
   color: #ffffff;
+}
+
+/* Enhancing Puck canvas item hover and selection states */
+
+/* Give selected zones a more prominent outline */
+.adminShell :global(._DropZone-content_1v0l0_85:focus-within) {
+  outline: 2px solid #1579f2 !important;
+  outline-offset: -2px;
+}
+
+/* Enforce higher contrast outline on selected components */
+.adminShell :global(._PuckCanvas-item_18jay_53[data-selected="true"]) {
+  outline: 3px solid #0f6bd7 !important;
+  outline-offset: -3px;
+  box-shadow: 0 0 0 4px rgba(15, 107, 215, 0.2);
+}
+
+/* Make drag handles more noticeable on item hover */
+.adminShell :global(._PuckCanvas-item_18jay_53:hover > ._DragIcon_17p8x_1) {
+  opacity: 1 !important;
+  background-color: #f8fbff;
+  border: 1px solid #d5dde7;
+  border-radius: 4px;
+}
+
+/* Style the drag handle explicitly */
+.adminShell :global(._DragIcon_17p8x_1) {
+  opacity: 0.7;
+  transition: all 0.2s ease;
+  cursor: grab;
+}
+
+.adminShell :global(._DragIcon_17p8x_1:active) {
+  cursor: grabbing;
 }

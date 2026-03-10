@@ -14,6 +14,8 @@ const config: Config = {
         foreground: "var(--foreground)",
         black: "#000000",
         white: "#ffffff",
+        textPrimary: "rgba(255, 255, 255, 0.75)",
+        textMuted: "rgba(255, 255, 255, 0.45)",
       },
       fontFamily: {
         sans: ["var(--font-futura)", "var(--font-han-yi-qi-hei)", "sans-serif"],
@@ -34,7 +36,16 @@ const config: Config = {
       },
       lineHeight: {
         none: "1",
-        loose: "1.8",
+        relaxed: "1.6",
+        loose: "1.85",
+      },
+      transitionTimingFunction: {
+        DEFAULT: "cubic-bezier(0.22, 1, 0.36, 1)",
+        "apple": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "fluid": "cubic-bezier(0.8, 0, 0.1, 1)",
+      },
+      transitionDuration: {
+        DEFAULT: "400ms",
       },
     },
   },

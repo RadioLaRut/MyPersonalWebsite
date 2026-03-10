@@ -29,10 +29,10 @@ export default function LightingCollectionHeroHeader({
     return (
         <section className="pt-40 pb-20 border-b border-white/10">
             <div className="grid-container">
-                <div className="col-span-4 md:col-start-1 md:col-span-12 pb-8">
+                <div className="col-span-4 lg:col-start-1 lg:col-span-12 pb-8">
                     {testingMode && ctaLabel && ctaHref ? (
-                        <div className="grid grid-cols-4 md:grid-cols-12 gap-4 mb-8">
-                            <div className="col-span-4 md:col-start-1 md:col-span-12">
+                        <div className="grid grid-cols-4 lg:grid-cols-12 gap-4 mb-8">
+                            <div className="col-span-4 lg:col-start-1 lg:col-span-12">
                                 <Link
                                     href={ctaHref}
                                     onClick={(event) => {
@@ -47,22 +47,26 @@ export default function LightingCollectionHeroHeader({
                             </div>
                         </div>
                     ) : null}
-                    <div className="grid grid-cols-4 md:grid-cols-12">
-                        <div className="col-span-4 md:col-start-1 md:col-span-12">
-                            <h1 className="text-[12vw] sm:text-[8vw] font-black tracking-tighter uppercase leading-none font-luna transform translate-y-2 text-white">
-                                {title || "TITLE"}
+                    <div className="grid grid-cols-4 lg:grid-cols-12">
+                        <div className="col-span-4 lg:col-start-1 lg:col-span-12">
+                            <h1 className="text-[12vw] sm:text-[8vw] font-black tracking-tighter uppercase leading-none font-luna transform translate-y-2 text-white break-words">
+                                {title}
                             </h1>
-                            <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-4 mt-4">
-                                <h2 className="text-[12vw] sm:text-[8vw] font-black tracking-tighter uppercase leading-none font-luna text-white/40">
-                                    {subtitle || "SUBTITLE"}
+                            <div className="flex flex-col lg:flex-row lg:items-baseline lg:justify-between gap-4 mt-4">
+                                <h2 className="text-[12vw] sm:text-[8vw] font-black tracking-tighter uppercase leading-none font-luna text-textMuted break-words">
+                                    {subtitle}
                                 </h2>
-                                <div className="md:text-right md:self-end pb-1">
-                                    <p className="font-mono text-xs uppercase tracking-[0.3em] text-white/40">
-                                        {descriptionLine1 || "Description Line 1"}
-                                    </p>
-                                    <p className="font-futura text-sm tracking-widest text-white/70 mt-2">
-                                        {descriptionLine2 || "Description Line 2"}
-                                    </p>
+                                <div className="lg:text-right lg:self-end pb-1">
+                                    {descriptionLine1 && (
+                                        <p className="font-mono text-xs uppercase tracking-[0.3em] text-textMuted break-words">
+                                            {descriptionLine1}
+                                        </p>
+                                    )}
+                                    {descriptionLine2 && (
+                                        <p className="font-futura text-sm tracking-widest text-textPrimary mt-2 break-words">
+                                            {descriptionLine2}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </div>

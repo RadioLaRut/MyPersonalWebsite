@@ -42,13 +42,13 @@ export default function StatementBlock({
     >
       <div className="grid-container w-full">
         <motion.div
-          className={`col-span-4 md:col-start-3 md:col-span-8 flex flex-col ${alignClass} ${editMode ? "pointer-events-auto" : ""}`}
+          className={`col-span-4 lg:col-start-3 lg:col-span-8 flex flex-col ${alignClass} ${editMode ? "pointer-events-auto" : ""}`}
           initial={editMode ? false : { opacity: 0, y: 20 }}
           whileInView={editMode ? undefined : { opacity: 1, y: 0 }}
           viewport={editMode ? undefined : { once: true, margin: "-100px" }}
           transition={editMode ? undefined : { duration: 0.8, ease: "easeOut" }}
         >
-          <p className="text-[clamp(0.875rem,2vw,1.25rem)] leading-[2] text-white/90 tracking-[0.15em] max-w-4xl">
+          <p className="text-[clamp(0.875rem,2vw,1.25rem)] leading-loose text-textPrimary tracking-[0.15em] max-w-4xl">
             <BilingualText text={content} weight="light" />
           </p>
         </motion.div>

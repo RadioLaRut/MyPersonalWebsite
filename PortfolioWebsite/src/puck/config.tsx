@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ReactNode } from "react";
 import type { Config } from "@measured/puck";
 import { PresetImage } from "../components/common/PresetImage";
@@ -12,25 +11,26 @@ import ParameterGrid from "../components/breakdowns/ParameterGrid";
 import TextSplitLayout from "../components/breakdowns/TextSplitLayout";
 import BreakdownSectionHeadline from "../components/breakdowns/BreakdownHeadline";
 import ContactFlashlightBlock from "../components/blocks/ContactFlashlightBlock";
-import ContactDirectionItem from "../components/blocks/ContactDirectionItem";
-import ContactExperienceItem from "../components/blocks/ContactExperienceItem";
 import StatementBlock from "../components/transitions/StatementBlock";
 import ProjectSection from "../components/home/ProjectSection";
 import HeroSection from "../components/home/HeroSection";
 import HomeEndcapSection from "../components/home/HomeEndcapSection";
 import NextProjectBlock from "../components/blocks/NextProjectBlock";
 import LightingCollectionHeader from "../components/works/LightingCollectionHeader";
-import LightingCollectionItem from "../components/works/LightingCollectionItem";
-import LightingProjectCard from "../components/works/LightingProjectCard";
 import PortfolioHeroHeader from "../components/works/PortfolioHeroHeader";
 import WorksList from "../components/works/WorksList";
 import WorksListEntry from "../components/works/WorksListEntry";
 import MetadataListItem from "../components/common/MetadataListItem";
 import TextParagraphBlock from "../components/common/TextParagraphBlock";
 import { CANONICAL_PLACEHOLDER_PATH, toAdminPathFromPublicPath, normalizeLegacyPublicPath } from "@/lib/public-paths";
-import { IMAGE_FIT_MODE_OPTIONS, IMAGE_PRESET_OPTIONS } from "@/lib/image-presentation";
 import { resolveEditableText, toPlainText } from "@/lib/editable-text";
+import { createFieldGroup, FieldGroups, FieldTypes } from "@/puck/fields/field-groups";
+import { imagePresetField, imageFitModeField, createImageFields, createImageDefaults } from "@/puck/fields/image-fields";
 
+/**
+ * 编辑器链接转换工具
+ * 根据编辑模式转换链接路径
+ */
 function toEditorAwareHref(href: string | undefined, editMode?: boolean): string | undefined {
   if (!href || !href.startsWith("/")) {
     return href;
@@ -44,16 +44,6 @@ function toEditorAwareHref(href: string | undefined, editMode?: boolean): string
 
   return normalizedHref;
 }
-
-const imagePresetField = {
-  type: "select" as const,
-  options: IMAGE_PRESET_OPTIONS.map((option) => ({ ...option })),
-};
-
-const imageFitModeField = {
-  type: "select" as const,
-  options: IMAGE_FIT_MODE_OPTIONS.map((option) => ({ ...option })),
-};
 
 function renderHeroHeadlineBlock({
   eyebrow,
@@ -100,18 +90,18 @@ function renderHeroHeadlineBlock({
 
         <div className="relative z-10 flex min-h-[560px] items-end py-16 md:py-20">
           <div className="grid-container w-full">
-            <div className="col-span-4 md:col-start-2 md:col-span-10 flex flex-col items-start gap-4 md:gap-6">
-              <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/60">
+            <div className="col-span-4 lg:col-start-2 lg:col-span-10 flex flex-col items-start gap-4 lg:gap-6">
+              <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-textMuted">
                 {resolvedEyebrow}
               </span>
               <h1 className="text-white text-[12vw] sm:text-[7vw] font-black tracking-normal uppercase leading-[0.85] font-futura">
                 {resolvedTitle}
               </h1>
-              <p className="max-w-3xl text-sm font-medium leading-[1.9] tracking-wide text-white/80 md:text-base font-futura">
+              <p className="max-w-3xl text-sm font-medium leading-loose tracking-wide text-textPrimary md:text-base font-futura">
                 {resolvedSubtitle}
               </p>
               {navLink ? (
-                <div className="mt-4 border border-white/20 px-6 py-3 text-xs uppercase tracking-[0.24em] text-white/70 font-mono">
+                <div className="mt-4 border border-white/20 px-6 py-3 text-xs uppercase tracking-[0.24em] text-textPrimary font-mono">
                   播放演示视频 (Bilibili)
                 </div>
               ) : null}
@@ -142,9 +132,9 @@ function renderHeroHeadlineBlock({
 
       <div className="absolute inset-0 z-10 flex flex-col justify-end pb-24 md:pb-32 pointer-events-none">
         <div className="grid-container w-full mix-blend-difference pointer-events-auto">
-          <div className="col-span-4 md:col-start-2 md:col-span-10 flex flex-col items-start gap-4">
+          <div className="col-span-4 lg:col-start-2 lg:col-span-10 flex flex-col items-start gap-4">
             {resolvedEyebrow ? (
-              <span className="font-mono text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.4em] uppercase text-white/50">
+              <span className="font-mono text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.4em] uppercase text-textMuted">
                 {resolvedEyebrow}
               </span>
             ) : null}
@@ -154,7 +144,7 @@ function renderHeroHeadlineBlock({
               </h1>
             ) : null}
             {resolvedSubtitle ? (
-              <p className="text-white/75 text-sm md:text-base font-medium leading-[1.9] font-futura tracking-wide max-w-3xl">
+              <p className="text-textPrimary text-sm md:text-base font-medium leading-loose font-futura tracking-wide max-w-3xl">
                 {resolvedSubtitle}
               </p>
             ) : null}
@@ -176,13 +166,59 @@ function renderHeroHeadlineBlock({
 }
 
 export const config: Config = {
+  categories: {
+    layout: {
+      title: "基础布局",
+      components: [
+        "HeroSection",
+        "HeroHeadline",
+        "StatementBlock",
+        "TextSplitLayout",
+        "HomeEndcapSection",
+        "RichParagraph",
+        "ImagePanel",
+      ],
+    },
+    works: {
+      title: "作品展示",
+      components: [
+        "PortfolioHeroHeader",
+        "ProjectSection",
+        "WorksList",
+        "WorksListEntry",
+        "ContentCard",
+        "ParameterGrid",
+        "HighDensityInfoBlock",
+        "ImageSlider",
+        "BreakdownHeadline",
+        "BreakdownTriptych",
+        "NextProjectBlock",
+      ],
+    },
+    lighting: {
+      title: "灯光作品特供",
+      components: [
+        "LightingCollectionHeader",
+      ],
+    },
+    contact: {
+      title: "联系信息与履历",
+      components: [
+        "ContactFlashlight",
+        "MetadataListItem",
+        "TextParagraphBlock",
+      ],
+    },
+  },
   components: {
     // --------------------------------------------------------
     // Transition Components
     // --------------------------------------------------------
     StatementBlock: {
       fields: {
+        _g_content: createFieldGroup("文本内容"),
         content: { type: "textarea", contentEditable: true, label: "Content" },
+        _g_style: createFieldGroup("样式设置"),
         align: {
           type: "select",
           label: "Align",
@@ -211,7 +247,7 @@ export const config: Config = {
         },
       },
       defaultProps: {
-        content: "",
+        content: "We blur the lines between virtual and reality.",
         align: "center",
         backgroundColor: "black",
         minHeight: "medium",
@@ -233,19 +269,22 @@ export const config: Config = {
     // Legacy Puck type name kept for existing JSON content.
     HeroHeadline: {
       fields: {
+        _g_text: createFieldGroup("文本内容"),
         eyebrow: { type: "text", contentEditable: true, label: "Eyebrow" },
         title: { type: "text", contentEditable: true, label: "Title" },
         subtitle: { type: "textarea", contentEditable: true, label: "Subtitle" },
+        _g_image: createFieldGroup("Hero 图片"),
         heroImage: { type: "text", label: "Hero Image" },
         heroImagePreset: { ...imagePresetField, label: "Image Preset" },
         heroImageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
+        _g_link: createFieldGroup("导航链接"),
         navLink: { type: "text", label: "Nav Link" },
       },
       defaultProps: {
         eyebrow: "PROJECT",
         title: "PROJECT TITLE",
         subtitle: "Add a short project summary.",
-        heroImage: "/images/train-station/2Day.webp",
+        heroImage: "",
         heroImagePreset: "ratio-21-9",
         heroImageFitMode: "x",
         navLink: "",
@@ -258,14 +297,14 @@ export const config: Config = {
         content: { type: "textarea", contentEditable: true, label: "Content" },
       },
       defaultProps: {
-        content: "",
+        content: "Enter your paragraph text here.",
       },
       render: ({ content }) => {
         return (
           <article className="w-full py-24 md:py-32 relative z-20 bg-black">
             <div className="grid-container w-full">
-              <div className="col-span-4 md:col-start-3 md:col-span-8">
-                <p className="text-xl md:text-[24px] leading-[2.2] text-white/90 text-justify tracking-wide">
+              <div className="col-span-4 lg:col-start-3 lg:col-span-8">
+                <p className="text-xl md:text-[24px] leading-loose text-textPrimary text-justify tracking-wide">
                   <BilingualText text={content} weight="medium" />
                 </p>
               </div>
@@ -276,9 +315,11 @@ export const config: Config = {
     },
     ImagePanel: {
       fields: {
+        _g_image: createFieldGroup("图片"),
         src: { type: "text", label: "Image Source" },
         alt: { type: "text", label: "Alt Text" },
         caption: { type: "text", label: "Caption" },
+        _g_display: createFieldGroup("显示设置"),
         preset: { ...imagePresetField, label: "Preset" },
         fitMode: { ...imageFitModeField, label: "Fit Mode" },
         variant: {
@@ -291,9 +332,9 @@ export const config: Config = {
         },
       },
       defaultProps: {
-        src: "/images/train-station/2Day.webp",
+        src: "",
         alt: "",
-        caption: "",
+        caption: "Enter an image caption",
         preset: "ratio-16-9",
         fitMode: "x",
         variant: "content",
@@ -328,11 +369,14 @@ export const config: Config = {
 
     ImageSlider: {
       fields: {
+        _g_images: createFieldGroup("对比图片"),
         unlitSrc: { type: "text", label: "Unlit Source" },
         litSrc: { type: "text", label: "Lit Source" },
         alt: { type: "text", label: "Alt Text" },
+        _g_display: createFieldGroup("显示设置"),
         imagePreset: { ...imagePresetField, label: "Image Preset" },
         imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
+        _g_labels: createFieldGroup("标签文字"),
         leftLabel: { type: "text", label: "Left Label" },
         rightLabel: { type: "text", label: "Right Label" },
       },
@@ -358,12 +402,20 @@ export const config: Config = {
 
     ContentCard: {
       fields: {
+        _g_text: createFieldGroup("文本内容"),
         title: { type: "text", contentEditable: true, label: "Title" },
         description: { type: "textarea", contentEditable: true, label: "Description" },
+        _g_image: createFieldGroup("图片配置"),
         imageSrc: { type: "text", label: "Image Source" },
         imagePreset: { ...imagePresetField, label: "Image Preset" },
         imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
-        tags: { type: "array", arrayFields: { tag: { type: "text", label: "Tag" } }, label: "Tags" },
+        _g_layout: createFieldGroup("标签与布局"),
+        tags: {
+          type: "array",
+          arrayFields: { tag: { type: "text", label: "Tag" } },
+          label: "Tags",
+          getItemSummary: (item) => item.tag || "Empty Tag",
+        },
         imagePosition: {
           type: "select" as const,
           label: "Image Position",
@@ -374,8 +426,8 @@ export const config: Config = {
         },
       },
       defaultProps: {
-        title: "",
-        description: "",
+        title: "Section Title",
+        description: "Add a paragraph of description here.",
         imageSrc: "",
         imagePreset: "ratio-16-9",
         imageFitMode: "x",
@@ -396,16 +448,19 @@ export const config: Config = {
     },
     BreakdownTriptych: {
       fields: {
+        _g_col1: createFieldGroup("列 1"),
         col1Title: { type: "text", contentEditable: true, label: "Column 1 Title" },
         col1Text: { type: "textarea", contentEditable: true, label: "Column 1 Text" },
         col1Img: { type: "text", label: "Column 1 Image" },
         col1Preset: { ...imagePresetField, label: "Column 1 Preset" },
         col1FitMode: { ...imageFitModeField, label: "Column 1 Fit Mode" },
+        _g_col2: createFieldGroup("列 2"),
         col2Title: { type: "text", contentEditable: true, label: "Column 2 Title" },
         col2Text: { type: "textarea", contentEditable: true, label: "Column 2 Text" },
         col2Img: { type: "text", label: "Column 2 Image" },
         col2Preset: { ...imagePresetField, label: "Column 2 Preset" },
         col2FitMode: { ...imageFitModeField, label: "Column 2 Fit Mode" },
+        _g_col3: createFieldGroup("列 3"),
         col3Title: { type: "text", contentEditable: true, label: "Column 3 Title" },
         col3Text: { type: "textarea", contentEditable: true, label: "Column 3 Text" },
         col3Img: { type: "text", label: "Column 3 Image" },
@@ -468,6 +523,7 @@ export const config: Config = {
 
     ParameterGrid: {
       fields: {
+        _g_media: createFieldGroup("媒体配置"),
         mediaSrc: { type: "text", label: "Media Source" },
         imagePreset: { ...imagePresetField, label: "Image Preset" },
         imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
@@ -479,9 +535,11 @@ export const config: Config = {
             { label: "Video", value: "true" }
           ]
         },
+        _g_params: createFieldGroup("参数列表"),
         parameters: {
           type: "array",
           label: "Parameters",
+          getItemSummary: (item) => item.name || "Unnamed Parameter",
           arrayFields: {
             name: { type: "text", label: "Name" },
             value: { type: "text", label: "Value" },
@@ -509,11 +567,14 @@ export const config: Config = {
 
     TextSplitLayout: {
       fields: {
+        _g_text: createFieldGroup("文本内容"),
         heading: { type: "text", contentEditable: true, label: "Heading" },
         paragraphs: { type: "slot", label: "Paragraphs" },
+        _g_image: createFieldGroup("图片配置"),
         imageSrc: { type: "text", label: "Image Source" },
         imagePreset: { ...imagePresetField, label: "Image Preset" },
         imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
+        _g_layout: createFieldGroup("布局设置"),
         layoutVariant: {
           type: "select",
           label: "Layout Variant",
@@ -525,7 +586,7 @@ export const config: Config = {
         }
       },
       defaultProps: {
-        heading: "",
+        heading: "Feature Description",
         paragraphs: [] as any,
         imageSrc: "",
         imagePreset: "ratio-16-9",
@@ -554,16 +615,19 @@ export const config: Config = {
 
     HighDensityInfoBlock: {
       fields: {
+        _g_phase1: createFieldGroup("阶段 1"),
         phase1Label: { type: "text", contentEditable: true, label: "Phase 1 Label" },
         phase1Title: { type: "text", contentEditable: true, label: "Phase 1 Title" },
         phase1Subtitle: { type: "text", contentEditable: true, label: "Phase 1 Subtitle" },
         phase1Content: { type: "textarea", contentEditable: true, label: "Phase 1 Content" },
         phase1Items: { type: "slot", label: "Phase 1 Items" },
+        _g_phase2: createFieldGroup("阶段 2"),
         phase2Label: { type: "text", contentEditable: true, label: "Phase 2 Label" },
         phase2Title: { type: "text", contentEditable: true, label: "Phase 2 Title" },
         phase2Subtitle: { type: "text", contentEditable: true, label: "Phase 2 Subtitle" },
         phase2Content: { type: "textarea", contentEditable: true, label: "Phase 2 Content" },
         phase2Items: { type: "slot", label: "Phase 2 Items" },
+        _g_phase3: createFieldGroup("阶段 3"),
         phase3Label: { type: "text", contentEditable: true, label: "Phase 3 Label" },
         phase3Title: { type: "text", contentEditable: true, label: "Phase 3 Title" },
         phase3Subtitle: { type: "text", contentEditable: true, label: "Phase 3 Subtitle" },
@@ -645,11 +709,14 @@ export const config: Config = {
 
     ProjectSection: {
       fields: {
+        _g_text: createFieldGroup("文本内容"),
         title: { type: "text", contentEditable: true, label: "Title" },
         subtitle: { type: "text", contentEditable: true, label: "Subtitle" },
+        _g_image: createFieldGroup("图片配置"),
         imageSrc: { type: "text", label: "Image Source" },
         imagePreset: { ...imagePresetField, label: "Image Preset" },
         imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
+        _g_link: createFieldGroup("链接与布局"),
         link: { type: "text", label: "Link" },
         index: { type: "number", label: "Index" },
         align: {
@@ -663,8 +730,8 @@ export const config: Config = {
         },
       },
       defaultProps: {
-        title: "",
-        subtitle: "",
+        title: "Project Name",
+        subtitle: "Project Category",
         imageSrc: "",
         imagePreset: "ratio-16-9",
         imageFitMode: "x",
@@ -689,9 +756,11 @@ export const config: Config = {
 
     HeroSection: {
       fields: {
+        _g_text: createFieldGroup("文本内容"),
         title: { type: "text", contentEditable: true, label: "Title" },
         subtitle: { type: "text", contentEditable: true, label: "Subtitle" },
         description: { type: "textarea", contentEditable: true, label: "Description" },
+        _g_image: createFieldGroup("图片配置"),
         imageSrc: { type: "text", label: "Image Source" },
         imageAlt: { type: "text", label: "Image Alt" },
         imagePreset: { ...imagePresetField, label: "Image Preset" },
@@ -722,18 +791,20 @@ export const config: Config = {
 
     HomeEndcapSection: {
       fields: {
+        _g_text: createFieldGroup("文本内容"),
         eyebrow: { type: "text", contentEditable: true, label: "Eyebrow" },
         title: { type: "text", contentEditable: true, label: "Title" },
         description: { type: "textarea", contentEditable: true, label: "Description" },
+        _g_button: createFieldGroup("按钮设置"),
         buttonLabel: { type: "text", contentEditable: true, label: "Button Label" },
         buttonHref: { type: "text", label: "Button Href" },
       },
       defaultProps: {
-        eyebrow: "",
-        title: "",
-        description: "",
-        buttonLabel: "",
-        buttonHref: "",
+        eyebrow: "NEXT STEP",
+        title: "Ready to start a project?",
+        description: "Let's create something amazing together.",
+        buttonLabel: "Contact Me",
+        buttonHref: "/contact",
       },
       render: ({ eyebrow, title, description, buttonLabel, buttonHref, editMode }) => (
         <HomeEndcapSection
@@ -749,39 +820,12 @@ export const config: Config = {
 
     PortfolioHeroHeader: {
       fields: {
+        _g_text: createFieldGroup("文本内容"),
         title: { type: "text", contentEditable: true, label: "Title" },
         subtitle: { type: "text", contentEditable: true, label: "Subtitle" },
         descriptionLine1: { type: "text", contentEditable: true, label: "Description Line 1" },
         descriptionLine2: { type: "text", contentEditable: true, label: "Description Line 2" },
-        ctaLabel: { type: "text", label: "CTA Label" },
-        ctaHref: { type: "text", label: "CTA Href" },
-      },
-      defaultProps: {
-        title: "",
-        subtitle: "",
-        descriptionLine1: "",
-        descriptionLine2: "",
-        ctaLabel: "",
-        ctaHref: "",
-      },
-      render: ({ title, subtitle, descriptionLine1, descriptionLine2, ctaLabel, ctaHref, editMode }) => (
-        <PortfolioHeroHeader
-          title={title}
-          subtitle={subtitle}
-          descriptionLine1={descriptionLine1}
-          descriptionLine2={descriptionLine2}
-          ctaLabel={ctaLabel}
-          ctaHref={toEditorAwareHref(ctaHref, false)}
-          editMode={editMode}
-        />
-      )
-    },
-    LightingCollectionHeroHeader: {
-      fields: {
-        title: { type: "text", contentEditable: true, label: "Title" },
-        subtitle: { type: "text", contentEditable: true, label: "Subtitle" },
-        descriptionLine1: { type: "text", contentEditable: true, label: "Description Line 1" },
-        descriptionLine2: { type: "text", contentEditable: true, label: "Description Line 2" },
+        _g_cta: createFieldGroup("行动按钮 (CTA)"),
         ctaLabel: { type: "text", label: "CTA Label" },
         ctaHref: { type: "text", label: "CTA Href" },
       },
@@ -806,37 +850,7 @@ export const config: Config = {
       )
     },
 
-    LightingProjectCard: {
-      fields: {
-        id: { type: "text", label: "ID" },
-        number: { type: "text", label: "Number" },
-        title: { type: "text", label: "Title" },
-        coverImage: { type: "text", label: "Cover Image" },
-        imagePreset: { ...imagePresetField, label: "Image Preset" },
-        imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
-        href: { type: "text", label: "Href" },
-      },
-      defaultProps: {
-        id: "collection-1",
-        number: "01",
-        title: "NEW COLLECTION",
-        coverImage: "/images/city-2026/002.webp",
-        imagePreset: "ratio-21-9",
-        imageFitMode: "x",
-        href: "/works/lighting-portfolio/collection-1",
-      },
-      render: ({ id, number, title, coverImage, imagePreset, imageFitMode, href, editMode }) => (
-        <LightingProjectCard
-          id={id}
-          number={number}
-          title={title}
-          coverImage={coverImage}
-          imagePreset={imagePreset as any}
-          imageFitMode={imageFitMode as any}
-          href={toEditorAwareHref(href ?? `/works/lighting-portfolio/${id}`, editMode)}
-        />
-      )
-    },
+    // LightingProjectCard removed
 
     WorksList: {
       fields: {
@@ -876,14 +890,16 @@ export const config: Config = {
 
     WorksListEntry: {
       fields: {
+        _g_info: createFieldGroup("基本信息"),
         number: { type: "text", contentEditable: true, label: "Number" },
         href: { type: "text", label: "Href" },
         title: { type: "text", contentEditable: true, label: "Title" },
         category: { type: "text", label: "Category" },
+        desc: { type: "textarea", label: "Description" },
+        _g_image: createFieldGroup("图片配置"),
         imageSrc: { type: "text", label: "Image Source" },
         imagePreset: { ...imagePresetField, label: "Image Preset" },
         imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
-        desc: { type: "textarea", label: "Description" },
       },
       defaultProps: {
         number: "",
@@ -913,8 +929,10 @@ export const config: Config = {
 
     NextProjectBlock: {
       fields: {
+        _g_info: createFieldGroup("项目信息"),
         nextId: { type: "text", label: "Next ID" },
         nextName: { type: "text", label: "Next Name" },
+        _g_image: createFieldGroup("图片配置"),
         nextBg: { type: "text", label: "Next Background" },
         imagePreset: { ...imagePresetField, label: "Image Preset" },
         imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
@@ -960,44 +978,26 @@ export const config: Config = {
       ),
     },
 
-    LightingCollectionItem: {
-      fields: {
-        src: { type: "text", label: "Source" },
-        caption: { type: "text", label: "Caption" },
-        preset: { ...imagePresetField, label: "Preset" },
-        fitMode: { ...imageFitModeField, label: "Fit Mode" },
-      },
-      defaultProps: {
-        src: "/images/train-station/2Day.webp",
-        caption: "IMAGE",
-        preset: "ratio-16-9",
-        fitMode: "x",
-      },
-      render: ({ src, caption, preset, fitMode, editMode }) => (
-        <LightingCollectionItem
-          src={src}
-          caption={caption}
-          preset={preset as any}
-          fitMode={fitMode as any}
-          editMode={editMode}
-        />
-      ),
-    },
+    // LightingCollectionItem removed
 
     // --------------------------------------------------------
     // Black Box Special Effect Blocks
     // --------------------------------------------------------
     ContactFlashlight: {
       fields: {
+        _g_fx: createFieldGroup("视觉效果"),
         maskRadius: { type: "number", label: "Mask Radius" },
         maskSmoothness: { type: "number", label: "Mask Smoothness" },
         darkTextColor: { type: "text", label: "Dark Text Color" },
         lightTextColor: { type: "text", label: "Light Text Color" },
+        _g_identity: createFieldGroup("个人信息"),
         name: { type: "text", contentEditable: true, label: "Name" },
         taglineText: { type: "text", contentEditable: true, label: "Tagline Text" },
         taglineSub: { type: "text", contentEditable: true, label: "Tagline Sub" },
+        _g_contact: createFieldGroup("联系方式"),
         email: { type: "text", contentEditable: true, label: "Email" },
         wechat: { type: "text", contentEditable: true, label: "WeChat" },
+        _g_slots: createFieldGroup("内容槽"),
         experienceHistory: { type: "slot", label: "Experience History" },
         creativeDirection: { type: "slot", label: "Creative Direction" }
       },
@@ -1006,11 +1006,11 @@ export const config: Config = {
         maskSmoothness: 40,
         darkTextColor: "rgba(255,255,255,0.4)",
         lightTextColor: "rgba(255,255,255,1)",
-        name: "",
-        taglineText: "",
-        taglineSub: "",
-        email: "",
-        wechat: "",
+        name: "JIANG CHENGYAN",
+        taglineText: "艺术与科技 / 交互叙事设计 / 游戏设计",
+        taglineSub: "CUC '2028",
+        email: "hello@example.com",
+        wechat: "wechat_id",
         experienceHistory: [] as any,
         creativeDirection: [] as any
       },
@@ -1053,8 +1053,8 @@ export const config: Config = {
                 subtitle: entry?.props?.subtitle ?? entry?.subtitle ?? "",
               }))
               : undefined}
-            experienceContent={ExperienceSlot ? <ExperienceSlot allow={["ContactExperienceItem"]} className="space-y-6" minEmptyHeight={20} /> : undefined}
-            creativeContent={CreativeSlot ? <CreativeSlot allow={["ContactDirectionItem"]} className="space-y-6" minEmptyHeight={20} /> : undefined}
+            experienceContent={ExperienceSlot ? <ExperienceSlot allow={["MetadataListItem"]} className="space-y-6" minEmptyHeight={20} /> : undefined}
+            creativeContent={CreativeSlot ? <CreativeSlot allow={["MetadataListItem"]} className="space-y-6" minEmptyHeight={20} /> : undefined}
           />
         );
       }
@@ -1086,34 +1086,12 @@ export const config: Config = {
         text: { type: "textarea", contentEditable: true, label: "Text" },
       },
       defaultProps: {
-        text: "",
+        text: "Sample paragraph text.",
       },
       render: ({ text }) => <TextParagraphBlock text={text} />,
     },
 
-    ContactExperienceItem: {
-      fields: {
-        company: { type: "text", contentEditable: true, label: "Company" },
-        role: { type: "text", contentEditable: true, label: "Role" },
-      },
-      defaultProps: {
-        company: "",
-        role: "",
-      },
-      render: ({ company, role }) => <ContactExperienceItem company={company} role={role} />,
-    },
-
-    ContactDirectionItem: {
-      fields: {
-        title: { type: "text", contentEditable: true, label: "Title" },
-        subtitle: { type: "text", contentEditable: true, label: "Subtitle" },
-      },
-      defaultProps: {
-        title: "",
-        subtitle: "",
-      },
-      render: ({ title, subtitle }) => <ContactDirectionItem title={title} subtitle={subtitle} />,
-    }
+    // Contact items removed
   },
 };
 

@@ -48,35 +48,65 @@ export default function BreakdownTriptych({
   return (
     <section className="w-full relative z-20 bg-black pb-32">
       <div className="grid-container w-full pt-16 border-t border-white/10">
-        <div className="col-span-4 md:col-span-3 space-y-4">
-          <h4 className="text-white text-base font-bold tracking-[0.18em] uppercase border-l-2 pl-3 border-white/80 leading-snug font-futura break-words">
-            {col1Title}
-          </h4>
-          <p className="text-white/70 text-sm md:text-[15px] leading-[1.95] break-words"><BilingualText text={col1Text} weight="medium" /></p>
-          <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-            <PresetImage src={col1Img} alt={col1Alt} preset={col1Preset} fitMode={col1FitMode} />
+        {(col1Title || col1Text || col1Img) && (
+          <div className="col-span-4 lg:col-span-3 space-y-4">
+            {col1Title && (
+              <h4 className="text-white text-base font-bold tracking-[0.18em] uppercase border-l-2 pl-3 border-white/80 leading-snug font-futura break-words">
+                {col1Title}
+              </h4>
+            )}
+            {col1Text && (
+              <p className="text-textPrimary text-sm lg:text-[15px] leading-[1.95] break-words">
+                <BilingualText text={col1Text} weight="medium" />
+              </p>
+            )}
+            {col1Img && (
+              <div className="w-full relative overflow-hidden mt-6 border border-white/10">
+                <PresetImage src={col1Img} alt={col1Alt} preset={col1Preset} fitMode={col1FitMode} />
+              </div>
+            )}
           </div>
-        </div>
+        )}
 
-        <div className="col-span-4 md:col-start-5 md:col-span-4 space-y-4 mt-16 md:mt-0">
-          <h4 className="text-white text-base font-bold tracking-[0.18em] uppercase border-l-2 pl-3 border-white/80 leading-snug font-futura break-words">
-            {col2Title}
-          </h4>
-          <p className="text-white/70 text-sm md:text-[15px] leading-[1.95] break-words"><BilingualText text={col2Text} weight="medium" /></p>
-          <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-            <PresetImage src={col2Img} alt={col2Alt} preset={col2Preset} fitMode={col2FitMode} />
+        {(col2Title || col2Text || col2Img) && (
+          <div className="col-span-4 lg:col-start-5 lg:col-span-4 space-y-4 mt-16 lg:mt-0">
+            {col2Title && (
+              <h4 className="text-white text-base font-bold tracking-[0.18em] uppercase border-l-2 pl-3 border-white/80 leading-snug font-futura break-words">
+                {col2Title}
+              </h4>
+            )}
+            {col2Text && (
+              <p className="text-textPrimary text-sm lg:text-[15px] leading-[1.95] break-words">
+                <BilingualText text={col2Text} weight="medium" />
+              </p>
+            )}
+            {col2Img && (
+              <div className="w-full relative overflow-hidden mt-6 border border-white/10">
+                <PresetImage src={col2Img} alt={col2Alt} preset={col2Preset} fitMode={col2FitMode} />
+              </div>
+            )}
           </div>
-        </div>
+        )}
 
-        <div className="col-span-4 md:col-start-10 md:col-span-3 space-y-4 mt-16 md:mt-0">
-          <h4 className="text-white text-base font-bold tracking-[0.18em] uppercase border-l-2 pl-3 border-white/80 leading-snug font-futura break-words">
-            {col3Title}
-          </h4>
-          <p className="text-white/70 text-sm md:text-[15px] leading-[1.95] break-words"><BilingualText text={col3Text} weight="medium" /></p>
-          <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-            <PresetImage src={col3Img} alt={col3Alt} preset={col3Preset} fitMode={col3FitMode} />
+        {(col3Title || col3Text || col3Img) && (
+          <div className="col-span-4 lg:col-start-10 lg:col-span-3 space-y-4 mt-16 lg:mt-0">
+            {col3Title && (
+              <h4 className="text-white text-base font-bold tracking-[0.18em] uppercase border-l-2 pl-3 border-white/80 leading-snug font-futura break-words">
+                {col3Title}
+              </h4>
+            )}
+            {col3Text && (
+              <p className="text-textPrimary text-sm lg:text-[15px] leading-[1.95] break-words">
+                <BilingualText text={col3Text} weight="medium" />
+              </p>
+            )}
+            {col3Img && (
+              <div className="w-full relative overflow-hidden mt-6 border border-white/10">
+                <PresetImage src={col3Img} alt={col3Alt} preset={col3Preset} fitMode={col3FitMode} />
+              </div>
+            )}
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

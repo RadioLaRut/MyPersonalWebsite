@@ -29,8 +29,8 @@ export default function HeroSection({
   const [isMobile, setIsMobile] = useState(false);
   const resolvedImagePreset = normalizeImagePreset(imagePreset);
   const outerSectionClassName = editMode
-    ? "relative w-full min-h-[540px] md:min-h-[620px] flex flex-col items-center justify-center px-0 overflow-hidden bg-black"
-    : "relative w-full h-screen flex flex-col items-center justify-center px-0 overflow-hidden bg-black";
+    ? "relative w-full lg:min-h-[620px] min-h-screen min-h-[100dvh] flex flex-col items-center justify-center px-0 overflow-hidden bg-black"
+    : "relative w-full min-h-screen min-h-[100dvh] flex flex-col items-center justify-center px-0 overflow-hidden bg-black";
   const presetViewportClassName = resolvedImagePreset === "native"
     ? "h-full min-h-[540px]"
     : resolvedImagePreset === "ratio-21-9"
@@ -41,7 +41,7 @@ export default function HeroSection({
     : `relative w-full overflow-hidden bg-black shadow-none ${isMobile ? "h-full" : `${presetViewportClassName} border-y border-white/5`}`;
 
   useEffect(() => {
-    const checkViewport = () => setIsMobile(window.innerWidth < 768);
+    const checkViewport = () => setIsMobile(window.innerWidth < 1024);
     checkViewport();
     window.addEventListener("resize", checkViewport);
     return () => window.removeEventListener("resize", checkViewport);
@@ -81,10 +81,10 @@ export default function HeroSection({
         </motion.div>
 
         {/* Front Content Overlay based on Grid */}
-        <div className={`absolute inset-0 z-20 mix-blend-normal flex flex-col justify-end ${editMode ? "pointer-events-auto pt-24 pb-24 md:pb-28" : "pointer-events-none pt-32 pb-24 md:pb-28"}`}>
+        <div className={`absolute inset-0 z-20 mix-blend-normal flex flex-col justify-end ${editMode ? "pointer-events-auto pt-24 pb-24 lg:pb-28" : "pointer-events-none pt-32 pb-24 lg:pb-28"}`}>
           <div className="grid-container w-full relative">
             <motion.div
-              className="col-span-4 md:col-start-2 md:col-span-10 flex flex-col justify-end md:translate-y-6"
+              className="col-span-4 lg:col-start-2 lg:col-span-10 flex flex-col justify-end lg:translate-y-6"
               initial={editMode ? false : { opacity: 0 }}
               animate={editMode ? undefined : { opacity: 1 }}
               transition={editMode ? undefined : { duration: 1.5, delay: 0.5, ease: "easeOut" }}
@@ -93,14 +93,14 @@ export default function HeroSection({
                 {title}
               </h1>
               <div className="flex items-center gap-4 mt-2">
-                <span className="inline-block w-8 md:w-16 h-px bg-white/40"></span>
-                <h1 className="font-gothic font-light text-[clamp(1rem,2.5vw,1.5rem)] tracking-widest text-white/50 uppercase select-none">
+                <span className="inline-block w-8 lg:w-16 h-px bg-white/40"></span>
+                <h1 className="font-gothic font-light text-[clamp(1rem,2.5vw,1.5rem)] tracking-widest text-textMuted uppercase select-none">
                   {subtitle}
                 </h1>
               </div>
 
               <motion.p
-                className="mt-12 font-futura text-white/40 text-xs md:text-sm tracking-[0.3em] uppercase max-w-sm select-none whitespace-pre-line"
+                className="mt-12 font-futura text-textMuted text-xs lg:text-sm tracking-[0.3em] uppercase max-w-sm select-none whitespace-pre-line"
                 initial={editMode ? false : { opacity: 0, x: -20 }}
                 animate={editMode ? undefined : { opacity: 1, x: 0 }}
                 transition={editMode ? undefined : { duration: 1.5, delay: 1, ease: "easeOut" }}

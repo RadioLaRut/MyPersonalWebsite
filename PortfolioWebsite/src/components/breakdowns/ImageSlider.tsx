@@ -73,7 +73,7 @@ export default function ImageSlider({
     return (
         <div className={`w-full my-16 ${className}`}>
             <div className="grid-container">
-                <div className="col-span-4 md:col-start-2 md:col-span-10">
+                <div className="col-span-4 lg:col-start-2 lg:col-span-10">
                     <div
                         ref={containerRef}
                         className={`${frameClassName} cursor-ew-resize select-none`}
@@ -143,12 +143,12 @@ export default function ImageSlider({
                     {(leftLabel || rightLabel) ? (
                         <div className="mt-4 flex justify-between items-center px-2">
                             {leftLabel ? (
-                                <span className="font-mono text-xs tracking-widest text-white/70">
+                                <span className="font-mono text-xs tracking-widest text-textPrimary">
                                     {leftLabel}
                                 </span>
                             ) : <span />}
                             {rightLabel ? (
-                                <span className="font-mono text-xs tracking-widest text-white/70">
+                                <span className="font-mono text-xs tracking-widest text-textPrimary">
                                     {rightLabel}
                                 </span>
                             ) : null}

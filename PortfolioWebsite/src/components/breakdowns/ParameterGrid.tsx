@@ -57,16 +57,16 @@ export default function ParameterGrid({
             {parameters && parameters.length > 0 && (
                 <div className="grid-container">
                     {parameters.map((param, i) => (
-                        <div key={i} className="col-span-4 md:col-span-3 border-t border-white/20 pt-6 group">
-                            <h4 className="font-mono text-white/50 text-[10px] md:text-xs tracking-[0.24em] uppercase mb-4 transition-colors group-hover:text-white break-words">
+                        <div key={i} className="col-span-4 lg:col-span-3 border-t border-white/20 pt-6 group">
+                            <h4 className="font-mono text-textMuted text-[10px] lg:text-xs tracking-[0.24em] uppercase mb-4 transition-colors group-hover:text-white break-words">
                                 {param.name}
                             </h4>
                             {param.value && (
-                                <div className="text-3xl md:text-5xl font-black text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.4)] transition-all duration-300 group-hover:[-webkit-text-stroke:1px_rgba(255,255,255,1)] group-hover:ml-2 mb-4 font-futura break-words leading-[1.05]">
+                                <div className="text-3xl lg:text-5xl font-black text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.4)] transition-all duration-300 group-hover:[-webkit-text-stroke:1px_rgba(255,255,255,1)] group-hover:ml-2 mb-4 font-futura break-words leading-[1.05]">
                                     {param.value}
                                 </div>
                             )}
-                            <p className="text-white/50 text-sm md:text-base leading-[1.9] break-words max-w-[32ch]">
+                            <p className="text-textMuted text-sm lg:text-base leading-loose break-words max-w-[32ch]">
                                 <BilingualText text={param.description} weight="light" />
                             </p>
                         </div>

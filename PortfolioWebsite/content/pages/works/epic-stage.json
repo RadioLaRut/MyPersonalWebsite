@@ -17,10 +17,44 @@
       }
     },
     {
-      "type": "RichParagraph",
+      "type": "TextSplitLayout",
       "props": {
-        "id": "desc-1",
-        "content": "这是一个基于音乐剧《Epic》的舞台灯光设计项目，我独立完成了概念舞台的设计搭建、舞台调度和灯光设计。通过对该剧的理解，我为希腊诸神设计了带有性格象征的色彩语言，当剧情中出现神的影响时，后方的两个希腊石像就会被用对应的颜色打亮。"
+        "id": "tsl-1",
+        "heading": "叙事概念构建",
+        "paragraphs": [
+          "这是一个基于音乐剧《Epic》的舞台灯光设计项目，我独立完成了概念舞台的设计搭建、舞台调度和灯光设计。",
+          "通过对该剧的理解，我为希腊诸神设计了带有性格象征的色彩语言，当剧情中出现神的影响时，后方的两个希腊石像就会被用对应的颜色打亮。"
+        ],
+        "imageSrc": "/images/train-station/2Day.webp",
+        "imagePreset": "ratio-16-9",
+        "imageFitMode": "cover",
+        "layoutVariant": "split-left"
+      }
+    },
+    {
+      "type": "ParameterGrid",
+      "props": {
+        "id": "param-1",
+        "mediaSrc": "/images/penguin/Epic.webp",
+        "imagePreset": "ratio-21-9",
+        "isVideo": false,
+        "parameters": [
+          {
+            "name": "核心概念",
+            "value": "性格隐喻",
+            "description": "通过高饱和冷暖色映射希腊众神的个性特征。"
+          },
+          {
+            "name": "空间调度",
+            "value": "纵深分层",
+            "description": "利用前景实体打光与后方幕布色彩对撞，增强舞台透视感。"
+          },
+          {
+            "name": "制作栈",
+            "value": "Unreal Engine",
+            "description": "全流程虚幻引擎实施概念打光与即时演算推演。"
+          }
+        ]
       }
     },
     {

@@ -28,13 +28,13 @@ export default function WorksList({ heading = "All Selected Works", works = [], 
     const hasEntriesContent = Boolean(entriesContent);
 
     if (!hasLegacyWorks && !hasEntriesContent) {
-        return <div className="p-12 text-white/50 text-center font-mono text-xs">No works available. Add some works to the list.</div>
+        return <div className="p-12 text-textMuted text-center font-mono text-xs">No works available. Add some works to the list.</div>
     }
 
     return (
         <div className="w-full text-white flex flex-col justify-center pt-32 pb-20">
             <div className={`px-8 sm:px-16 mb-16 relative z-20 ${editMode ? "pointer-events-auto" : "mix-blend-difference pointer-events-none"}`}>
-                <h1 className="text-sm tracking-widest text-white/50 uppercase font-medium">
+                <h1 className="text-sm tracking-widest text-textMuted uppercase font-medium">
                     {heading}
                 </h1>
             </div>

@@ -17,14 +17,14 @@ const HIDDEN_LEGACY_COMPONENT_KEYS = new Set([
   "WorksListEntry",
 ]);
 const COMPONENT_DISPLAY_NAMES: Record<string, string> = {
-  BreakdownHeadline: "BreakdownSectionHeadline",
-  LightingCollectionHeroHeader: "LightingCollectionHeroHeader",
+  BreakdownHeadline: "BreakdownHeadline",
+  PortfolioHeroHeader: "PortfolioHeroHeader",
 };
 const PLAYGROUND_GROUPS = [
   {
     label: "Headline Blocks",
     description: "所有标题与页面头图模块。",
-    keys: ["HeroHeadline", "BreakdownHeadline", "LightingCollectionHeroHeader"],
+    keys: ["HeroHeadline", "BreakdownHeadline", "PortfolioHeroHeader"],
   },
   {
     label: "Text Blocks",
@@ -39,12 +39,12 @@ const PLAYGROUND_GROUPS = [
   {
     label: "Lighting Blocks",
     description: "灯光作品集专用模块。",
-    keys: ["LightingCollectionHeader", "LightingCollectionItem"],
+    keys: ["LightingCollectionHeader"],
   },
   {
     label: "Page Blocks",
     description: "首页、作品流和跳转模块。",
-    keys: ["HeroSection", "ProjectSection", "HomeEndcapSection", "WorksList", "LightingProjectCard", "NextProjectBlock"],
+    keys: ["HeroSection", "ProjectSection", "HomeEndcapSection", "WorksList", "NextProjectBlock"],
   },
 ] as const;
 
@@ -60,7 +60,7 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
   BreakdownHeadline: {
     title: "SECTION TITLE",
   },
-  LightingCollectionHeroHeader: {
+  PortfolioHeroHeader: {
     title: "LIGHTING",
     subtitle: "PORTFOLIO",
     descriptionLine1: "A Curated Selection",
@@ -73,22 +73,31 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     title: "CONTENT CARD TITLE",
     description: "这是一个内容卡片组件，支持图文混排和纯文本两种模式。可以切换图片左右位置，无图片时自动切换为纯文本模式。",
     imageSrc: "/images/train-station/2Day.webp",
-    tags: ["Tag 1", "Tag 2", "Tag 3"],
+    imagePreset: "ratio-16-9",
+    imageFitMode: "x",
+    tags: [{ tag: "Tag 1" }, { tag: "Tag 2" }, { tag: "Tag 3" }],
     imagePosition: "right",
   },
   TextSplitLayout: {
     heading: "SPLIT LAYOUT HEADING",
-    paragraphs: "这是文本分割布局组件。左侧展示标题和段落，右侧展示图片。适合用于需要图文并排展示的场景。",
+    paragraphs: [{ text: "这是文本分割布局组件。左侧展示标题和段落，右侧展示图片。适合用于需要图文并排展示的场景。" }],
     imageSrc: "/images/train-station/2Day.webp",
+    imagePreset: "ratio-16-9",
+    imageFitMode: "x",
+    layoutVariant: "split-left",
   },
   ImagePanel: {
     src: "/images/train-station/2Day.webp",
+    alt: "",
     caption: "Image Panel Caption",
+    preset: "ratio-16-9",
+    fitMode: "x",
     variant: "content",
   },
   ImageSlider: {
-    leftImage: "/images/city-2026/001.webp",
-    rightImage: "/images/city-2026/002.webp",
+    unlitSrc: "/images/train-station/2Day.webp",
+    litSrc: "/images/train-station/2Night.webp",
+    alt: "Lighting Comparison",
     leftLabel: "DAY",
     rightLabel: "NIGHT",
   },
@@ -96,19 +105,28 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     col1Title: "Column 1",
     col1Text: "First column content description.",
     col1Img: "/images/train-station/2Day.webp",
+    col1Preset: "ratio-16-9",
+    col1FitMode: "x",
     col2Title: "Column 2",
     col2Text: "Second column content description.",
     col2Img: "/images/city-2026/001.webp",
+    col2Preset: "ratio-16-9",
+    col2FitMode: "x",
     col3Title: "Column 3",
     col3Text: "Third column content description.",
     col3Img: "/images/city-2026/002.webp",
+    col3Preset: "ratio-16-9",
+    col3FitMode: "x",
   },
   ParameterGrid: {
     mediaSrc: "/images/train-station/2Day.webp",
+    imagePreset: "ratio-21-9",
+    imageFitMode: "x",
+    isVideo: "false",
     parameters: [
-      { label: "Parameter 1", value: "Value 1" },
-      { label: "Parameter 2", value: "Value 2" },
-      { label: "Parameter 3", value: "Value 3" },
+      { name: "Parameter 1", value: "Value 1", description: "Description 1" },
+      { name: "Parameter 2", value: "Value 2", description: "Description 2" },
+      { name: "Parameter 3", value: "Value 3", description: "Description 3" },
     ],
   },
   StatementBlock: {
@@ -122,26 +140,35 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     phase1Title: "Context",
     phase1Subtitle: "Phase 1 Subtitle",
     phase1Content: "Problem background and initial constraints.",
+    phase1Items: [],
     phase2Label: "PHASE 02 / SYSTEM ARCHITECTURE",
     phase2Title: "Architecture",
     phase2Subtitle: "Phase 2 Subtitle",
     phase2Content: "Solution structure and implementation approach.",
+    phase2Items: [],
     phase3Label: "PHASE 03 / EXECUTION & RESULTS",
     phase3Title: "Execution",
     phase3Subtitle: "Phase 3 Subtitle",
     phase3Content: "Results and lessons learned.",
     phase3ImageSrc: "/images/train-station/2Day.webp",
+    phase3ImagePreset: "ratio-16-9",
+    phase3ImageFitMode: "x",
   },
   HeroSection: {
     title: "HERO SECTION",
     subtitle: "Portfolio / Design / Development",
-    imageSrc: "/images/train-station/2Day.webp",
-    link: "/works",
+    description: "GAME DIRECTOR\n& DEVELOPER",
+    imageSrc: "/images/covers/2026/ShotForCrewWithoutWord.0004.webp",
+    imageAlt: "Hero Background",
+    imagePreset: "ratio-21-9",
+    imageFitMode: "x",
   },
   ProjectSection: {
     title: "PENGUIN TRADING CO.",
     subtitle: "Lead Designer / PM / Tech Art",
     imageSrc: CANONICAL_PLACEHOLDER_PATH,
+    imagePreset: "ratio-16-9",
+    imageFitMode: "x",
     link: "/works/penguin",
     index: 1,
     align: "auto",
@@ -165,6 +192,8 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
           title: "LIGHTING PORTFOLIO",
           category: "Lighting Art",
           imageSrc: "/images/train-station/2Day.webp",
+          imagePreset: "ratio-21-9",
+          imageFitMode: "x",
           desc: "A curated collection of lighting and mood practices",
         },
       },
@@ -177,34 +206,25 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
           title: "PENGUIN TRADING CO.",
           category: "Lead Designer / PM / Tech Art",
           imageSrc: CANONICAL_PLACEHOLDER_PATH,
+          imagePreset: "ratio-21-9",
+          imageFitMode: "x",
           desc: "Simulation management game with asset lock systems",
         },
       },
     ],
   },
-  LightingProjectCard: {
-    id: "collection-1",
-    title: "CITY ADD",
-    coverImage: "/images/city-2026/002.webp",
-  },
   NextProjectBlock: {
     nextId: "insight",
     nextName: "INSIGHT",
     nextBg: "/images/insight/InsightOnlyCover.webp",
+    imagePreset: "ratio-21-9",
+    imageFitMode: "x",
   },
   LightingCollectionHeader: {
     title: "CITY ADD",
     number: "01",
     description: "A detailed breakdown of lighting setup, mood exploration, and before/after comparisons for city add.",
     backHref: "/works/lighting-portfolio",
-  },
-  LightingCollectionItem: {
-    src: "/images/city-2026/001.webp",
-    caption: "DAY",
-  },
-  GalleryItem: {
-    src: "/images/train-station/2Day.webp",
-    caption: "Demo Image",
   },
 };
 
@@ -221,7 +241,7 @@ export default function PlaygroundClient() {
     <main className="min-h-screen bg-black text-white pt-24 md:pt-32 pb-24 md:pb-32">
       <div className="grid-container">
         {/* Header Section */}
-        <div className="col-span-4 md:col-start-2 md:col-span-10 mb-16 md:mb-24">
+        <div className="col-span-4 lg:col-start-2 lg:col-span-10 mb-16 lg:mb-24">
           {/* Back Button */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -230,9 +250,9 @@ export default function PlaygroundClient() {
           >
             <Link
               href="/"
-              className="group inline-flex items-center gap-4 mb-10 md:mb-12"
+              className="group inline-flex items-center gap-4 mb-10 lg:mb-12"
             >
-              <span className="font-mono text-sm uppercase tracking-[0.25em] text-white/50 group-hover:text-white transition-colors duration-300">
+              <span className="font-mono text-sm uppercase tracking-[0.25em] text-textMuted group-hover:text-white transition-colors duration-300">
                 ← 返回首页
               </span>
             </Link>
@@ -243,7 +263,7 @@ export default function PlaygroundClient() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-[12vw] sm:text-[10vw] md:text-[6vw] font-luna font-black leading-[0.9] tracking-tighter mb-6 md:mb-8"
+            className="text-[12vw] sm:text-[10vw] md:text-[6vw] font-luna font-black leading-[0.9] tracking-tighter mb-6 lg:mb-8"
           >
             PLAYGROUND
           </motion.h1>
@@ -255,7 +275,7 @@ export default function PlaygroundClient() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="flex flex-col md:flex-row md:items-end justify-between gap-6"
           >
-            <p className="font-futura text-white/60 tracking-wide text-base md:text-lg max-w-2xl leading-relaxed">
+            <p className="font-futura text-textMuted tracking-wide text-base md:text-lg max-w-2xl leading-relaxed">
               组件预览与交互测试空间。展示 Puck 中全部常规组件，用于统一预览布局与交互效果。
             </p>
           </motion.div>
@@ -266,27 +286,27 @@ export default function PlaygroundClient() {
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="col-span-4 md:col-span-12 border-b border-white/15 mb-16 md:mb-20 origin-left"
+          className="col-span-4 lg:col-span-12 border-b border-white/15 mb-16 lg:mb-20 origin-left"
         />
 
         {/* BilingualText Component Showcase */}
-        <div className="col-span-4 md:col-span-12 mb-16 md:mb-24">
+        <div className="col-span-4 lg:col-span-12 mb-16 lg:mb-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6 }}
-            className="mb-10 md:mb-12 border-b border-white/10 pb-6"
+            className="mb-10 lg:mb-12 border-b border-white/10 pb-6"
           >
             <div className="flex items-baseline gap-4 mb-3">
-              <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/30">
+              <span className="font-mono text-xs uppercase tracking-[0.3em] text-textMuted">
                 00
               </span>
               <h2 className="text-2xl md:text-3xl font-futura tracking-[0.1em] uppercase text-white">
                 BilingualText
               </h2>
             </div>
-            <p className="font-futura text-sm md:text-base tracking-wide text-white/50 ml-10">
+            <p className="font-futura text-sm md:text-base tracking-wide text-textMuted ml-10">
               双语文本组件，支持三种字重与自动中英文混排。
             </p>
           </motion.div>
@@ -299,25 +319,25 @@ export default function PlaygroundClient() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6 }}
             >
-              <h3 className="text-lg md:text-xl font-futura tracking-wider text-white/70 mb-6">
+              <h3 className="text-lg md:text-xl font-futura tracking-wider text-textPrimary mb-6">
                 三种字重对比
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="space-y-3">
-                  <span className="font-mono text-xs text-white/40 uppercase tracking-[0.2em]">light</span>
-                  <p className="text-white/80 text-lg leading-relaxed">
+                  <span className="font-mono text-xs text-textMuted uppercase tracking-[0.2em]">light</span>
+                  <p className="text-textPrimary text-lg leading-relaxed">
                     <BilingualText text="中文轻量字重 / Light English Weight" weight="light" />
                   </p>
                 </div>
                 <div className="space-y-3">
-                  <span className="font-mono text-xs text-white/40 uppercase tracking-[0.2em]">medium</span>
-                  <p className="text-white/80 text-lg leading-relaxed">
+                  <span className="font-mono text-xs text-textMuted uppercase tracking-[0.2em]">medium</span>
+                  <p className="text-textPrimary text-lg leading-relaxed">
                     <BilingualText text="中文中等字重 / Medium English Weight" weight="medium" />
                   </p>
                 </div>
                 <div className="space-y-3">
-                  <span className="font-mono text-xs text-white/40 uppercase tracking-[0.2em]">black</span>
-                  <p className="text-white/80 text-lg leading-relaxed">
+                  <span className="font-mono text-xs text-textMuted uppercase tracking-[0.2em]">black</span>
+                  <p className="text-textPrimary text-lg leading-relaxed">
                     <BilingualText text="中文粗黑字重 / Black English Weight" weight="black" />
                   </p>
                 </div>
@@ -331,17 +351,17 @@ export default function PlaygroundClient() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
-              <h3 className="text-lg md:text-xl font-futura tracking-wider text-white/70 mb-6">
+              <h3 className="text-lg md:text-xl font-futura tracking-wider text-textPrimary mb-6">
                 中英文混排效果
               </h3>
               <div className="bg-white/[0.02] rounded-lg p-6 md:p-8 space-y-6">
-                <p className="text-white/80 text-base md:text-lg leading-[1.9]">
+                <p className="text-textPrimary text-base md:text-lg leading-loose">
                   <BilingualText
                     text="这是一个BilingualText组件示例，展示中英文混排效果。This is a demo showing Chinese and English mixed text rendering with proper weight and baseline alignment."
                     weight="medium"
                   />
                 </p>
-                <p className="text-white/60 text-sm md:text-base leading-[1.85]">
+                <p className="text-textMuted text-sm md:text-base leading-[1.85]">
                   <BilingualText
                     text="组件会自动检测文本中的中英文内容，并分别应用不同的字体和字重。The component automatically detects Chinese and English text, applying appropriate fonts and weights."
                     weight="light"
@@ -357,35 +377,35 @@ export default function PlaygroundClient() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <h3 className="text-lg md:text-xl font-futura tracking-wider text-white/70 mb-6">
+              <h3 className="text-lg md:text-xl font-futura tracking-wider text-textPrimary mb-6">
                 更多混排示例
               </h3>
               <div className="bg-white/[0.02] rounded-lg p-6 md:p-8 space-y-6">
-                <p className="text-white/80 text-base md:text-lg leading-[1.9]">
+                <p className="text-textPrimary text-base md:text-lg leading-loose">
                   <BilingualText
                     text="在UnrealEngine5中，我们使用Lumen全局光照系统来实现真实的光影效果。In Unreal Engine 5, we use the Lumen global illumination system to achieve realistic lighting effects."
                     weight="medium"
                   />
                 </p>
-                <p className="text-white/70 text-base md:text-lg leading-[1.9]">
+                <p className="text-textPrimary text-base md:text-lg leading-loose">
                   <BilingualText
                     text="本项目的GitHub仓库地址是github.com/example/project，欢迎提交Issue和PR。The GitHub repository for this project is github.com/example/project, welcome to submit Issues and PRs."
                     weight="medium"
                   />
                 </p>
-                <p className="text-white/60 text-sm md:text-base leading-[1.85]">
+                <p className="text-textMuted text-sm md:text-base leading-[1.85]">
                   <BilingualText
                     text="版本号v2.1.0已于2024年1月15日发布，包含15个新功能和23个Bug修复。Version v2.1.0 was released on January 15, 2024, including 15 new features and 23 bug fixes."
                     weight="light"
                   />
                 </p>
-                <p className="text-white/90 text-lg md:text-xl leading-[1.9] font-black">
+                <p className="text-textPrimary text-lg md:text-xl leading-loose font-black">
                   <BilingualText
                     text="CSS3和HTML5是现代Web开发的基础技术，配合TypeScript使用效果更佳。CSS3 and HTML5 are fundamental technologies for modern web development, and work even better with TypeScript."
                     weight="black"
                   />
                 </p>
-                <p className="text-white/80 text-base md:text-lg leading-[1.9]">
+                <p className="text-textPrimary text-base md:text-lg leading-loose">
                   <BilingualText
                     text="请访问我们的官网www.example.com或发送邮件至contact@example.com获取更多信息。Please visit our website www.example.com or email contact@example.com for more information."
                     weight="medium"
@@ -398,24 +418,24 @@ export default function PlaygroundClient() {
 
         {/* Component Groups */}
         {groupedPlaygroundComponents.map((group, groupIndex) => (
-          <div key={group.label} className="col-span-4 md:col-span-12 mb-16 md:mb-24">
+          <div key={group.label} className="col-span-4 lg:col-span-12 mb-16 lg:mb-24">
             {/* Group Header */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6 }}
-              className="mb-10 md:mb-12 border-b border-white/10 pb-6"
+              className="mb-10 lg:mb-12 border-b border-white/10 pb-6"
             >
               <div className="flex items-baseline gap-4 mb-3">
-                <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/30">
+                <span className="font-mono text-xs uppercase tracking-[0.3em] text-textMuted">
                   {String(groupIndex + 1).padStart(2, "0")}
                 </span>
                 <h2 className="text-2xl md:text-3xl font-futura tracking-[0.1em] uppercase text-white">
                   {group.label}
                 </h2>
               </div>
-              <p className="font-futura text-sm md:text-base tracking-wide text-white/50 ml-10">
+              <p className="font-futura text-sm md:text-base tracking-wide text-textMuted ml-10">
                 {group.description}
               </p>
             </motion.div>
@@ -430,8 +450,8 @@ export default function PlaygroundClient() {
                 } as never;
 
                 return (
-                  <motion.div 
-                    key={componentKey} 
+                  <motion.div
+                    key={componentKey}
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-50px" }}
@@ -439,15 +459,15 @@ export default function PlaygroundClient() {
                     className="group"
                   >
                     {/* Component Label */}
-                    <div className="mb-6 md:mb-8 flex items-start justify-between">
+                    <div className="mb-6 lg:mb-8 flex items-start justify-between">
                       <div>
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="font-mono text-[10px] text-white/30 uppercase tracking-[0.25em]">
+                          <span className="font-mono text-[10px] text-textMuted uppercase tracking-[0.25em]">
                             COMP {String(componentIndex + 1).padStart(2, "0")}
                           </span>
                           <div className="h-px w-8 bg-white/10"></div>
                         </div>
-                        <h3 className="text-xl md:text-2xl font-futura tracking-wider text-white/90 group-hover:text-white transition-colors">
+                        <h3 className="text-xl md:text-2xl font-futura tracking-wider text-textPrimary group-hover:text-white transition-colors">
                           {`<${COMPONENT_DISPLAY_NAMES[componentKey] ?? componentKey} />`}
                         </h3>
                       </div>
@@ -466,13 +486,13 @@ export default function PlaygroundClient() {
         ))}
 
         {/* Footer */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="col-span-4 md:col-span-12 mt-16 md:mt-24 pt-12 border-t border-white/10 text-center"
+          className="col-span-4 lg:col-span-12 mt-16 lg:mt-24 pt-12 border-t border-white/10 text-center"
         >
-          <p className="font-mono text-xs text-white/30 tracking-[0.2em]">
+          <p className="font-mono text-xs text-textMuted tracking-[0.2em]">
             END OF PLAYGROUND
           </p>
         </motion.div>

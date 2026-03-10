@@ -17,31 +17,31 @@ export default function SampleBreakdownPage() {
             <div className="grid-container">
 
                 {/* Header Section */}
-                <div className="col-span-4 md:col-start-2 md:col-span-10 mb-24">
-                    <Link href="/" className="inline-block mb-8 font-mono text-xs uppercase tracking-[0.3em] text-white/50 hover:text-white transition-colors">
+                <div className="col-span-4 lg:col-start-2 lg:col-span-10 mb-24">
+                    <Link href="/" className="inline-block mb-8 font-mono text-xs uppercase tracking-[0.3em] text-textMuted hover:text-white transition-colors">
                         ← 返回主页
                     </Link>
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-[8vw] md:text-[6vw] font-luna font-black leading-none tracking-tighter mb-6 uppercase"
+                        className="text-[8vw] lg:text-[6vw] font-luna font-black leading-none tracking-tighter mb-6 uppercase"
                     >
-                        Project: <br /> <span className="text-white/50">Abandoned World</span>
+                        Project: <br /> <span className="text-textMuted">Abandoned World</span>
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="font-futura text-white/70 tracking-wide text-lg md:text-xl max-w-2xl"
+                        className="font-futura text-textPrimary tracking-wide text-lg lg:text-xl max-w-2xl"
                     >
                         这是一个向您展示如何使用预制组件拼接出一个完整项目 Breakdown 的样板页面。这里展示了能够适应从宏观灯光氛围、到具体工具开发流的排版组合逻辑。
                     </motion.p>
                 </div>
 
                 {/* Divider */}
-                <div className="col-span-4 md:col-span-12 border-b border-white/20 mb-24"></div>
+                <div className="col-span-4 lg:col-span-12 border-b border-white/20 mb-24"></div>
 
-                <div className="col-span-4 md:col-span-12">
+                <div className="col-span-4 lg:col-span-12">
                     <MetaDataBlock
                         items={[
                             { label: "职责", value: "打光 / 技术美术" },
@@ -52,7 +52,7 @@ export default function SampleBreakdownPage() {
                     />
                 </div>
 
-                <div className="col-span-4 md:col-span-12 mt-16">
+                <div className="col-span-4 lg:col-span-12 mt-16">
                     <TextSplitLayout
                         heading="01. 确立视觉锚点"
                         layoutVariant="split-left"
@@ -63,7 +63,7 @@ export default function SampleBreakdownPage() {
                     />
                 </div>
 
-                <div className="col-span-4 md:col-span-12">
+                <div className="col-span-4 lg:col-span-12">
                     <ImageSlider
                         unlitSrc="/images/train-station/2NoLight.webp"
                         litSrc="/images/train-station/2Day.webp"
@@ -71,7 +71,7 @@ export default function SampleBreakdownPage() {
                     />
                 </div>
 
-                <div className="col-span-4 md:col-span-12 mt-16">
+                <div className="col-span-4 lg:col-span-12 mt-16">
                     <ContentCard
                         title="灯光绑定与自动曝光体验系统"
                         description="不仅是静态的美术调整，我还开发了一套蓝图工具，用于根据不同的镜头焦段和机位自动校准 Auto Exposure。\n这样可以确保在切换特写与远景时，高光不会溢出，暗部始终保持克制的细节。"
@@ -80,7 +80,7 @@ export default function SampleBreakdownPage() {
                     />
                 </div>
 
-                <div className="col-span-4 md:col-span-12 mt-16">
+                <div className="col-span-4 lg:col-span-12 mt-16">
                     <ParameterGrid
                         mediaSrc="/images/train-station/2Day.webp"
                         parameters={[
@@ -91,7 +91,7 @@ export default function SampleBreakdownPage() {
                     />
                 </div>
 
-                <div className="col-span-4 md:col-span-12 mt-16">
+                <div className="col-span-4 lg:col-span-12 mt-16">
                     <TextSplitLayout
                         heading="02. 迭代与推演"
                         layoutVariant="stack"
@@ -103,10 +103,10 @@ export default function SampleBreakdownPage() {
 
 
 
-                <div className="col-span-4 md:col-span-12 mt-24 mb-32 border-t border-white/20 pt-24">
+                <div className="col-span-4 lg:col-span-12 mt-24 mb-32 border-t border-white/20 pt-24">
                     <div className="mb-24">
-                        <span className="font-mono text-xs text-white/40 uppercase tracking-[0.3em]">WORKFLOW DEEP DIVE</span>
-                        <h2 className="text-4xl md:text-5xl font-luna mt-2">工作流痛点解决</h2>
+                        <span className="font-mono text-xs text-textMuted uppercase tracking-[0.3em]">WORKFLOW DEEP DIVE</span>
+                        <h2 className="text-4xl lg:text-5xl font-luna mt-2">工作流痛点解决</h2>
                     </div>
 
                     <HighDensityInfoBlock

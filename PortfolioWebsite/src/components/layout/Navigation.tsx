@@ -159,7 +159,7 @@ export default function Navigation() {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: "100%" }}
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="relative w-full sm:w-[40vw] h-screen border-l border-white/10 bg-black/92 backdrop-blur-2xl shadow-[-20px_0_60px_rgba(0,0,0,0.2)]"
+              className="relative w-full sm:w-[40vw] h-full min-h-screen min-h-[100dvh] border-l border-white/10 bg-black/92 backdrop-blur-2xl shadow-[-20px_0_60px_rgba(0,0,0,0.2)]"
               id="site-navigation-drawer"
               role="dialog"
               aria-modal="true"
@@ -171,7 +171,7 @@ export default function Navigation() {
               <div className="h-full flex flex-col justify-center px-16 relative">
                 <button
                   onClick={closeMenu}
-                  className="absolute top-8 right-8 text-white/50 hover:text-white interactive p-4 tracking-widest text-sm"
+                  className="absolute top-8 right-8 text-textMuted hover:text-white interactive p-4 tracking-widest text-sm"
                   aria-label="Close menu"
                 >
                   CLOSE
@@ -201,7 +201,7 @@ export default function Navigation() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
-                  className="absolute bottom-16 left-16 text-white/30 text-sm tracking-widest font-futura"
+                  className="absolute bottom-16 left-16 text-textMuted text-sm tracking-widest font-futura"
                 >
                   JIANG CHENGYAN © 2026
                 </motion.div>

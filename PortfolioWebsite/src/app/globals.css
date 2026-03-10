@@ -1,63 +1,94 @@
+/* 引入 Tailwind CSS 的基础、组件和工具类 */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
+  /* 全局背景色：纯黑 */
   --background: #000000;
-  --foreground: #ffffff;
+
+  /* 全局前景/文字颜色：使用 90% 透明度的白色，避免在纯黑背景下产生过强的“辉光/溢色”感 (Halation Effect) */
+  --foreground: rgba(255, 255, 255, 0.9);
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
+
+  /* 字体渲染优化：开启抗锯齿，使文字在深色背景下更清晰 */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
   margin: 0;
   padding: 0;
+
+  /* 系统默认滚动条设置为自动 */
   scrollbar-width: auto;
 }
 
+/* Chrome/Safari 浏览器滚动条宽度配置 */
 body::-webkit-scrollbar {
   width: 12px;
   height: 12px;
 }
 
-/* Global 12-Column Grid System */
+/**
+ * 全局响应式栅格系统 (12-Column Grid)
+ * 用于确保所有页面组件在对齐上保持严丝合缝。
+ */
 .grid-container {
   display: grid;
+  /* 移动端默认 4 列布局 */
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
   width: 100%;
+
+  /* 安全边距：两端保留 4% 视口宽度的呼吸感 */
   padding-left: 4vw;
   padding-right: 4vw;
   margin-left: auto;
   margin-right: auto;
+
+  /* 安全词断裂器：防止长单词撑破屏幕 */
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
-@media (min-width: 768px) {
+/* 桌面端 (1024px+) 切换为 12 列标准布局 */
+@media (min-width: 1024px) {
   .grid-container {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: 1.5rem;
   }
 }
 
+/**
+ * 站点运行模式 (Site Mode) 调整
+ * data-site-mode="testing": 用于内部测试或设计演示，允许文字选择
+ * data-site-mode="normal":  用于正式发布，增强交互的沉浸感
+ */
+
+/* 测试模式下，选中文本呈现黑色背景白色文字的高反差效果 */
 html[data-site-mode="testing"] ::selection {
   background: rgba(255, 255, 255, 0.99);
   color: #000;
 }
 
+/* 正式模式下：禁止全局文字选择（增强画廊感/作品集沉浸感） */
 html[data-site-mode="normal"] {
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
 }
 
+/* 特殊类：即使在正式模式下也允许复制的内容（如邮箱、电话） */
 .copyable-contact {
   -webkit-user-select: text;
   -moz-user-select: text;
   user-select: text;
 }
 
+/* 正式模式下：禁止媒体元素的默认拖拽（防止用户误触拖出图片） */
 html[data-site-mode="normal"] img,
 html[data-site-mode="normal"] video,
 html[data-site-mode="normal"] canvas,
@@ -66,26 +97,41 @@ html[data-site-mode="normal"] svg {
   user-select: none;
 }
 
+/* 强制所有元素继承指针样式，由 Custom Cursor 统一控制逻辑 */
 * {
   cursor: inherit;
 }
 
-/* Custom Cursor */
+/**
+ * 自定义光标 (Custom Cursor)
+ * 实现思路：基于 fixed 定位和 mix-blend-mode 差值混合，跟随鼠标位置。
+ */
 .custom-cursor {
   position: fixed;
   top: 0;
   left: 0;
+
+  /* 默认大小：12px */
   width: var(--cursor-size, 12px);
   height: var(--cursor-size, 12px);
+
   background-color: white;
   border-radius: 50%;
   pointer-events: none;
+  /* 穿透光标，确保下方链接可点击 */
   z-index: 9999;
+
+  /* 居中定位 */
   transform: translate(-50%, -50%);
+
+  /* 平滑过渡：当切换各种 Hover 状态时，大小和颜色的拉伸效果 */
   transition: width 0.22s ease-out, height 0.22s ease-out, background-color 0.22s ease-out, border 0.22s ease-out, opacity 0.22s ease-out, box-shadow 0.22s ease-out, filter 0.22s ease-out;
+
+  /* 核心视觉：差值模式。光标在白色背景变黑，黑色背景变白 */
   mix-blend-mode: difference;
 }
 
+/* 悬停在文字段落上：光标变大，变为镂空状态 */
 .custom-cursor.hovering-text {
   width: 80px;
   height: 80px;
@@ -93,6 +139,7 @@ html[data-site-mode="normal"] svg {
   border: 1px solid white;
 }
 
+/* 悬停在按钮/链接上：光标尺寸适中，强调点击感 */
 .custom-cursor.hovering-interactive {
   width: 60px;
   height: 60px;
@@ -100,6 +147,7 @@ html[data-site-mode="normal"] svg {
   border: 1px solid white;
 }
 
+/* 磁吸状态：光标吸附在按钮中心，带有轻微发光和模糊感 */
 .custom-cursor.cursor-magnetized {
   width: var(--cursor-magnet-size, 32px);
   height: var(--cursor-magnet-size, 32px);
@@ -109,6 +157,7 @@ html[data-site-mode="normal"] svg {
   filter: blur(0.2px);
 }
 
+/* 磁吸目标元素的视觉反馈 */
 [data-cursor-magnet] {
   transition: box-shadow 0.18s ease-out, opacity 0.18s ease-out;
 }
@@ -117,27 +166,100 @@ html[data-site-mode="normal"] svg {
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.32);
 }
 
+/**
+ * 降级与交互微调
+ */
+
+/* 仅在支持高精度指针（如鼠标）且用户未关闭系统动画的情况下隐藏原生指针 */
 @media (pointer: fine) and (prefers-reduced-motion: no-preference) {
   body {
     scrollbar-width: none;
+    /* 隐藏 Firefox 滚动条 */
   }
 
   body::-webkit-scrollbar {
     display: none;
+    /* 隐藏 Chrome/Safari 滚动条 */
   }
 
+  /* 非管理模式下隐藏系统默认鼠标 */
   html:not([data-admin-mode]) * {
     cursor: none !important;
   }
 }
 
-@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+/* 移动端/触摸屏降级：隐藏自定义光标，恢复系统默认样式 */
+@media (pointer: coarse),
+(prefers-reduced-motion: reduce) {
   .custom-cursor {
     display: none !important;
   }
 }
 
-/* Lenis smooth scroll global styles */
+/**
+ * 标准化网格内容区域工具类
+ * 用于统一组件中的列偏移，避免硬编码
+ */
+@layer components {
+  /* 标准内容区：两侧留边距，内容居中 (col-start-2, col-span-10) */
+  .grid-content {
+    @apply col-span-4 lg:col-start-2 lg:col-span-10;
+  }
+
+  /* 窄内容区：更集中的内容展示 (col-start-3, col-span-8) */
+  .grid-narrow {
+    @apply col-span-4 lg:col-start-3 lg:col-span-8;
+  }
+
+  /* 全宽内容区：从边到边 (col-start-1, col-span-12) */
+  .grid-full {
+    @apply col-span-4 lg:col-start-1 lg:col-span-12;
+  }
+
+  /* 左对齐内容区 (col-start-2, col-span-5) */
+  .grid-left {
+    @apply col-span-4 lg:col-start-2 lg:col-span-5;
+  }
+
+  /* 右对齐内容区 (col-start-7, col-span-5) */
+  .grid-right {
+    @apply col-span-4 lg:col-start-7 lg:col-span-5;
+  }
+
+  /* 右侧边栏区域 (col-start-9, col-span-4) */
+  .grid-sidebar {
+    @apply col-span-4 lg:col-start-9 lg:col-span-4;
+  }
+
+  /* 左侧偏移区域 (col-start-5, col-span-4) - 用于三联图中间列 */
+  .grid-offset-center {
+    @apply col-span-4 lg:col-start-5 lg:col-span-4;
+  }
+
+  /* 最右侧区域 (col-start-10, col-span-3) - 用于三联图右侧列 */
+  .grid-offset-right {
+    @apply col-span-4 lg:col-start-10 lg:col-span-3;
+  }
+}
+
+/**
+ * 非桌面设备光标隐藏
+ * 统一隐藏逻辑：触摸设备、小屏幕、或偏好减少动画
+ */
+@media (pointer: coarse),
+(prefers-reduced-motion: reduce),
+(max-width: 1023px) {
+  .custom-cursor {
+    display: none !important;
+  }
+
+  /* 恢复系统默认光标 */
+  html:not([data-admin-mode]) * {
+    cursor: auto !important;
+  }
+}
+
+/* Lenis 平滑滚动全局样式兼容 */
 html.lenis,
 html.lenis body {
   height: auto;

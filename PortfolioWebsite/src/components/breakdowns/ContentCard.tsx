@@ -36,7 +36,7 @@ export default function ContentCard({
           {tags.map((tag, i) => (
             <span
               key={i}
-              className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/40 border border-white/10 px-2 py-1"
+              className="font-mono text-[10px] uppercase tracking-[0.2em] text-textMuted border border-white/10 px-2 py-1"
             >
               {tag}
             </span>
@@ -44,11 +44,11 @@ export default function ContentCard({
         </div>
       )}
 
-      <h3 className="text-4xl md:text-5xl font-black tracking-tighter mb-8 leading-[0.95] font-futura break-words">
+      <h3 className="text-4xl lg:text-5xl font-black tracking-tighter mb-8 leading-[0.95] font-futura break-words">
         {title}
       </h3>
 
-      <div className="text-white/60 tracking-[0.02em] text-base md:text-lg leading-[1.95] space-y-5 max-w-none md:max-w-[36ch]">
+      <div className="text-textMuted tracking-[0.02em] text-base lg:text-lg leading-[1.95] space-y-5 max-w-none lg:max-w-[36ch]">
         {paragraphs.map((paragraph, i) => (
           <p key={i} className="text-balance">
             <BilingualText text={paragraph} weight="medium" />
@@ -76,7 +76,7 @@ export default function ContentCard({
   if (!hasImage) {
     return (
       <div className="w-full my-24 grid-container">
-        <div className="col-span-4 md:col-start-3 md:col-span-8">{TextContent}</div>
+        <div className="col-span-4 lg:col-start-3 lg:col-span-8">{TextContent}</div>
       </div>
     );
   }
@@ -87,17 +87,17 @@ export default function ContentCard({
     <div className="w-full my-24 grid-container">
       {isImageLeft ? (
         <>
-          <div className="col-span-4 md:col-span-8 md:col-start-1 order-2 md:order-1 mt-12 md:mt-0">
+          <div className="col-span-4 lg:col-span-8 lg:col-start-1 order-2 lg:order-1 mt-12 lg:mt-0">
             {ImageContent}
           </div>
-          <div className="col-span-4 md:col-span-4 md:col-start-9 order-1 md:order-2">
+          <div className="col-span-4 lg:col-span-4 lg:col-start-9 order-1 lg:order-2">
             {TextContent}
           </div>
         </>
       ) : (
         <>
-          <div className="col-span-4 md:col-span-4 md:col-start-1">{TextContent}</div>
-          <div className="col-span-4 md:col-span-8 md:col-start-5 mt-12 md:mt-0">
+          <div className="col-span-4 lg:col-span-4 lg:col-start-1">{TextContent}</div>
+          <div className="col-span-4 lg:col-span-8 lg:col-start-5 mt-12 lg:mt-0">
             {ImageContent}
           </div>
         </>

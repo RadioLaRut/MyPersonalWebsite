@@ -29,7 +29,7 @@ export default function ImagePanel({
 
   if (variant === "fullscreen") {
     return (
-      <div className="relative h-screen w-full bg-black">
+      <div className="relative h-full min-h-screen min-h-[100dvh] w-full bg-black">
         <div className="flex h-full w-full items-center justify-center">
           <PresetImage
             src={src}
@@ -42,7 +42,7 @@ export default function ImagePanel({
         </div>
         {caption ? (
           <div className="absolute bottom-8 right-8 bg-black/65 border border-white/15 px-4 py-2">
-            <span className="font-futura text-xs tracking-[0.2em] uppercase text-white/80">{caption}</span>
+            <span className="font-futura text-xs tracking-[0.2em] uppercase text-textPrimary">{caption}</span>
           </div>
         ) : null}
       </div>
@@ -54,7 +54,7 @@ export default function ImagePanel({
       <figure className="overflow-hidden border border-white/15 bg-white/[0.03]">
         <PresetImage alt={imageAlt} src={src} preset={preset} fitMode={fitMode} />
         {caption ? (
-          <figcaption className="border-t border-white/15 px-4 py-3 text-xs uppercase tracking-[0.18em] text-white/70">
+          <figcaption className="border-t border-white/15 px-4 py-3 text-xs uppercase tracking-[0.18em] text-textPrimary">
             {caption}
           </figcaption>
         ) : null}

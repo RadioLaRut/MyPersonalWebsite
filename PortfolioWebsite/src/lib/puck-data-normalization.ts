@@ -12,13 +12,6 @@ const ITEM_DEFAULT_PROPS: Record<string, Record<string, unknown>> = {
     heroImageFitMode: "x",
     navLink: "",
   },
-
-  LightingCollectionItem: {
-    src: "/images/train-station/2Day.webp",
-    caption: "IMAGE",
-    preset: "ratio-16-9",
-    fitMode: "x",
-  },
 };
 
 function isPlainRecord(value: unknown): value is Record<string, unknown> {
@@ -37,23 +30,11 @@ function shouldHydrateUninitializedProps(type: string, props: Record<string, unk
   if (type === "HeroHeadline") {
     return ["eyebrow", "title", "subtitle", "heroImage", "navLink"].every((key) => isBlankText(props[key]));
   }
-
-  if (type === "LightingCollectionItem") {
-    return isBlankText(props.src) && isBlankText(props.caption);
-  }
-
   return false;
 }
 
 function applyLegacyPropAliases(type: string, props: Record<string, unknown>) {
   const nextProps = { ...props };
-
-  if (type === "LightingCollectionItem" && typeof nextProps.src !== "string") {
-    if (typeof nextProps.lit === "string" && nextProps.lit.length > 0) {
-      nextProps.src = nextProps.lit;
-    }
-  }
-
   if (type === "ImageSlider") {
     if (typeof nextProps.unlitSrc !== "string" && typeof nextProps.leftImage === "string") {
       nextProps.unlitSrc = nextProps.leftImage;

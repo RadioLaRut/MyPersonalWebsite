@@ -158,11 +158,13 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
     const updateCursor = () => {
       const targetX = mouseX + (magnetX - mouseX) * magnetStrength;
       const targetY = mouseY + (magnetY - mouseY) * magnetStrength;
-      currentX += (targetX - currentX) * 0.34;
-      currentY += (targetY - currentY) * 0.34;
+
+      // Tight lerp, no bounce. Weakened presence.
+      currentX += (targetX - currentX) * 0.6;
+      currentY += (targetY - currentY) * 0.6;
 
       if (cursor) {
-        const scale = isPressed ? 0.8 : 1;
+        const scale = isPressed ? 0.85 : 1;
         cursor.style.transform = `translate(${currentX}px, ${currentY}px) translate(-50%, -50%) scale(${scale})`;
       }
       rafId = requestAnimationFrame(updateCursor);

@@ -31,23 +31,23 @@ export default function HomeEndcapSection({
   const hasDescription = !isContentEmpty(description);
 
   return (
-    <section className="relative isolate flex min-h-[68vh] w-full items-center overflow-hidden border-t border-white/10 bg-black py-24 md:py-32">
+    <section className="relative isolate flex min-h-[68vh] w-full items-center overflow-hidden border-t border-white/10 bg-black py-24 lg:py-32">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_45%)]" />
 
       <div className="grid-container relative z-10">
-        <div className="col-span-4 md:col-start-3 md:col-span-8 text-center">
+        <div className="col-span-4 lg:col-start-3 lg:col-span-8 text-center">
           {eyebrow ? (
             <p className="font-mono text-[11px] uppercase tracking-[0.32em] text-white/35">
               {eyebrow}
             </p>
           ) : null}
 
-          <h2 className="mt-6 font-luna text-[clamp(4.8rem,13vw,10rem)] uppercase leading-[0.92] tracking-[0.015em] text-white md:text-[clamp(5.6rem,8vw,8.6rem)]">
+          <h2 className="mt-6 font-luna text-[clamp(4.8rem,13vw,10rem)] uppercase leading-[0.92] tracking-[0.015em] text-white lg:text-[clamp(5.6rem,8vw,8.6rem)]">
             {title}
           </h2>
 
           {hasDescription ? (
-            <p className="mx-auto mt-8 max-w-3xl font-futura text-sm uppercase leading-[1.8] tracking-[0.14em] text-white/55 md:text-base">
+            <p className="mx-auto mt-8 max-w-3xl font-futura text-sm uppercase leading-loose tracking-[0.14em] text-white/55 lg:text-base">
               {description}
             </p>
           ) : null}
