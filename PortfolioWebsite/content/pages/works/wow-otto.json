@@ -12,7 +12,7 @@
         "eyebrow": "Project / 主策划",
         "title": "WOW, OTTO!",
         "subtitle": "帅油桶 — Trackball Narrative Experience",
-        "heroImage": "/images/holy-tank/7d9ca92e5ade09bfc1c349a49001b2eb.webp",
+        "heroImage": "/images/holy-tank/HostileArchitecture.webp",
         "navLink": ""
       }
     },
@@ -29,13 +29,13 @@
         "id": "triptych-1",
         "col1Title": "交互方案设计",
         "col1Text": "对比键鼠与轨迹球输入差异，提出并落地轨迹球交互方案，将「轮椅操控感」精准映射为游戏的核心操作体验。",
-        "col1Img": "/images/holy-tank/7d9ca92e5ade09bfc1c349a49001b2eb.webp",
+        "col1Img": "/images/holy-tank/GameScreenshot.webp",
         "col2Title": "机制服务叙事",
         "col2Text": "围绕轨迹球的物理阻力操控体验设计交互逻辑，使玩法机制直接服务于情绪表达与叙事目标。",
-        "col2Img": "/images/holy-tank/f0f6239817a545ccad2f7dc47aff8acc.webp",
+        "col2Img": "/images/holy-tank/HostileArchitecture.webp",
         "col3Title": "通感与批判",
         "col3Text": "针对带有显性恶意的公共城市建筑体系，通过游戏语言发起系统性探究与社会批判。",
-        "col3Img": "/images/holy-tank/7d9ca92e5ade09bfc1c349a49001b2eb.webp"
+        "col3Img": "/images/holy-tank/GameScreenshot.webp"
       }
     },
     {

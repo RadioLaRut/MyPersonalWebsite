@@ -6,11 +6,12 @@
   "scripts": {
     "dev": "NEXT_PUBLIC_SITE_MODE=normal next dev",
     "dev:test": "NEXT_PUBLIC_SITE_MODE=testing next dev",
-    "build": "next build",
+    "build": "npm run test:assets && next build",
     "start": "next start",
     "lint": "next lint",
     "build:puck-preview-css": "tailwindcss -i src/app/globals.css -o public/puck-preview.css",
     "test:slug": "node --test src/lib/puck-slug.test.ts",
+    "test:assets": "node scripts/check-public-assets.mjs",
     "convert:images": "node scripts/convert-to-webp.mjs"
   },
   "dependencies": {
