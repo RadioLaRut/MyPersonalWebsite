@@ -20,6 +20,7 @@ type PresetImageProps = {
   preset?: ImagePreset | string;
   fitMode?: ImageFitMode | string;
   priority?: boolean;
+  loading?: "eager" | "lazy";
   sizes?: string;
   draggable?: boolean;
   lockFrame?: boolean;
@@ -34,6 +35,7 @@ export function PresetImage({
   preset = "ratio-16-9",
   fitMode = "x",
   priority = false,
+  loading,
   sizes,
   draggable,
   lockFrame = true,
@@ -61,7 +63,7 @@ export function PresetImage({
         <img
           src={normalizedSrc}
           alt={alt}
-          loading={priority ? "eager" : "lazy"}
+          loading={loading ?? (priority ? "eager" : "lazy")}
           fetchPriority={priority ? "high" : "auto"}
           decoding="async"
           sizes={sizes}

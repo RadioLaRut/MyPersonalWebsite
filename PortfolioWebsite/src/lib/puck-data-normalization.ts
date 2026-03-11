@@ -1,5 +1,6 @@
 const COMPONENT_TYPE_ALIASES: Record<string, string> = {
   Heroheadline: "HeroHeadline",
+  LightingCollectionItem: "ImagePanel",
 };
 
 const ITEM_DEFAULT_PROPS: Record<string, Record<string, unknown>> = {
@@ -33,7 +34,7 @@ function shouldHydrateUninitializedProps(type: string, props: Record<string, unk
   return false;
 }
 
-function applyLegacyPropAliases(type: string, props: Record<string, unknown>) {
+function applyLegacyPropAliases(type: string, props: Record<string, unknown>, rawType = type) {
   const nextProps = { ...props };
   if (type === "ImageSlider") {
     if (typeof nextProps.unlitSrc !== "string" && typeof nextProps.leftImage === "string") {
@@ -42,6 +43,20 @@ function applyLegacyPropAliases(type: string, props: Record<string, unknown>) {
 
     if (typeof nextProps.litSrc !== "string" && typeof nextProps.rightImage === "string") {
       nextProps.litSrc = nextProps.rightImage;
+    }
+  }
+
+  if (rawType === "LightingCollectionItem") {
+    if (typeof nextProps.src !== "string" && typeof nextProps.lit === "string") {
+      nextProps.src = nextProps.lit;
+    }
+
+    if (typeof nextProps.caption !== "string" || nextProps.caption.trim().length === 0) {
+      nextProps.caption = "IMAGE";
+    }
+
+    if (typeof nextProps.variant !== "string") {
+      nextProps.variant = "large";
     }
   }
 
@@ -104,7 +119,7 @@ function normalizeNode(value: unknown): unknown {
   normalizedRecord.type = normalizedType;
   normalizedRecord.props = hydrateMissingProps(
     normalizedType,
-    applyLegacyPropAliases(normalizedType, normalizedProps),
+    applyLegacyPropAliases(normalizedType, normalizedProps, rawType),
   );
 
   return normalizedRecord;

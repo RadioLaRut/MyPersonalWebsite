@@ -1,8 +1,8 @@
 "use client";
 
 import React, { type ReactNode } from "react";
-import BilingualText from "@/components/common/BilingualText";
 import { PresetImage } from "@/components/common/PresetImage";
+import Typography from "@/components/common/Typography";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 import { toPlainText } from "@/lib/editable-text";
 
@@ -51,14 +51,14 @@ export default function BreakdownTriptych({
         {(col1Title || col1Text || col1Img) && (
           <div className="col-span-3 space-y-4">
             {col1Title && (
-              <h4 className="text-white text-base font-bold tracking-[0.18em] uppercase border-l-2 pl-3 border-white/80 leading-snug font-futura break-words">
+              <Typography as="h4" preset="sans-body" size="label" weight="strong" wrapPolicy="label" className="border-l-2 pl-3 border-white/80 text-white">
                 {col1Title}
-              </h4>
+              </Typography>
             )}
             {col1Text && (
-              <p className="text-textPrimary text-sm lg:text-[15px] leading-[1.95] break-words">
-                <BilingualText text={col1Text} weight="medium" />
-              </p>
+              <Typography as="p" preset="sans-body" size="body-sm" weight="medium" wrapPolicy="prose" className="text-textPrimary">
+                {col1Text}
+              </Typography>
             )}
             {col1Img && (
               <div className="w-full relative overflow-hidden mt-6 border border-white/10">
@@ -71,14 +71,14 @@ export default function BreakdownTriptych({
         {(col2Title || col2Text || col2Img) && (
           <div className="col-start-5 col-span-4 space-y-4 mt-16 lg:mt-0">
             {col2Title && (
-              <h4 className="text-white text-base font-bold tracking-[0.18em] uppercase border-l-2 pl-3 border-white/80 leading-snug font-futura break-words">
+              <Typography as="h4" preset="sans-body" size="label" weight="strong" wrapPolicy="label" className="border-l-2 pl-3 border-white/80 text-white">
                 {col2Title}
-              </h4>
+              </Typography>
             )}
             {col2Text && (
-              <p className="text-textPrimary text-sm lg:text-[15px] leading-[1.95] break-words">
-                <BilingualText text={col2Text} weight="medium" />
-              </p>
+              <Typography as="p" preset="sans-body" size="body-sm" weight="medium" wrapPolicy="prose" className="text-textPrimary">
+                {col2Text}
+              </Typography>
             )}
             {col2Img && (
               <div className="w-full relative overflow-hidden mt-6 border border-white/10">
@@ -91,14 +91,14 @@ export default function BreakdownTriptych({
         {(col3Title || col3Text || col3Img) && (
           <div className="col-start-10 col-span-3 space-y-4 mt-16 lg:mt-0">
             {col3Title && (
-              <h4 className="text-white text-base font-bold tracking-[0.18em] uppercase border-l-2 pl-3 border-white/80 leading-snug font-futura break-words">
+              <Typography as="h4" preset="sans-body" size="label" weight="strong" wrapPolicy="label" className="border-l-2 pl-3 border-white/80 text-white">
                 {col3Title}
-              </h4>
+              </Typography>
             )}
             {col3Text && (
-              <p className="text-textPrimary text-sm lg:text-[15px] leading-[1.95] break-words">
-                <BilingualText text={col3Text} weight="medium" />
-              </p>
+              <Typography as="p" preset="sans-body" size="body-sm" weight="medium" wrapPolicy="prose" className="text-textPrimary">
+                {col3Text}
+              </Typography>
             )}
             {col3Img && (
               <div className="w-full relative overflow-hidden mt-6 border border-white/10">

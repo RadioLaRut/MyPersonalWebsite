@@ -4,16 +4,31 @@
 @tailwind utilities;
 
 :root {
-  /* 全局背景色：纯黑 */
-  --background: #000000;
-
-  /* 全局前景/文字颜色：使用 90% 透明度的白色，避免在纯黑背景下产生过强的“辉光/溢色”感 (Halation Effect) */
+  --background: #050505;
   --foreground: rgba(255, 255, 255, 0.9);
+  --surface-elevated: rgba(255, 255, 255, 0.05);
+  --surface-muted: rgba(255, 255, 255, 0.03);
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --grid-max-width: 1680px;
+}
+
+html {
+  background:
+    radial-gradient(circle at top, rgba(146, 146, 146, 0.1), transparent 28%),
+    radial-gradient(circle at 80% 18%, rgba(255, 255, 255, 0.08), transparent 18%),
+    #050505;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
+  --font-latin-sans: var(--font-futura);
+  --font-cjk-sans: var(--font-han-yi-qi-hei);
+  --font-latin-editorial: var(--font-luna);
+  --font-cjk-editorial: var(--font-noto-serif);
+  --font-latin-gothic: var(--font-gothic);
+  --font-latin-classical: var(--font-dm-serif);
+  --font-cjk-classical: var(--font-noto-serif);
 
   /* 字体渲染优化：开启抗锯齿，使文字在深色背景下更清晰 */
   -webkit-font-smoothing: antialiased;
@@ -21,9 +36,22 @@ body {
 
   margin: 0;
   padding: 0;
+  min-height: 100vh;
+  position: relative;
 
   /* 系统默认滚动条设置为自动 */
   scrollbar-width: auto;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, transparent 18%, transparent 82%, rgba(255, 255, 255, 0.04) 100%),
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.06), transparent 36%);
 }
 
 /* Chrome/Safari 浏览器滚动条宽度配置 */
@@ -49,10 +77,8 @@ body::-webkit-scrollbar {
   padding-right: 4vw;
   margin-left: auto;
   margin-right: auto;
+  max-width: var(--grid-max-width);
 
-  /* 安全词断裂器：防止长单词撑破屏幕 */
-  word-break: break-word;
-  overflow-wrap: break-word;
 }
 
 /* 桌面端 (1024px+) 增加间距 */
@@ -86,6 +112,69 @@ html[data-site-mode="normal"] {
   -webkit-user-select: text;
   -moz-user-select: text;
   user-select: text;
+}
+
+.glass-panel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.055) 0%, rgba(255, 255, 255, 0.025) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px);
+}
+
+.text-edge-shadow {
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.95);
+}
+
+.typography-root {
+  margin: 0;
+}
+
+.typography-root[data-typography-autospace="normal"] {
+  text-autospace: normal;
+}
+
+.typography-run {
+  display: inline;
+  position: relative;
+}
+
+.typography-run--latin,
+.typography-run--cjk {
+  display: inline;
+}
+
+.font-lab-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 1.5rem 1.5rem;
+}
+
+.font-lab-baseline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 1px dashed rgba(255, 122, 89, 0.55);
+  pointer-events: none;
+}
+
+.font-lab-left-edge::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-left: 1px dashed rgba(103, 232, 249, 0.55);
+  pointer-events: none;
+}
+
+.font-lab-run-highlight .typography-run--latin {
+  background: rgba(103, 232, 249, 0.12);
+}
+
+.font-lab-run-highlight .typography-run--cjk {
+  background: rgba(255, 122, 89, 0.12);
 }
 
 /* 正式模式下：禁止媒体元素的默认拖拽（防止用户误触拖出图片） */
@@ -201,6 +290,7 @@ html[data-site-mode="normal"] svg {
  * 用于统一组件中的列偏移，避免硬编码
  */
 @layer components {
+
   /* 标准内容区：两侧留边距，内容居中 (col-start-2, col-span-10) */
   .grid-content {
     @apply col-start-2 col-span-10;

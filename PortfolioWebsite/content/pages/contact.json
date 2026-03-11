@@ -20,69 +20,69 @@
         "wechat": "radiowithouthead",
         "experienceHistory": [
           {
-            "type": "ContactExperienceItem",
+            "type": "MetadataListItem",
             "props": {
               "id": "exp-1",
-              "company": "腾讯光子工作室",
-              "role": "Lighting Technical Art Intern"
+              "label": "腾讯光子工作室",
+              "value": "Lighting Technical Art Intern"
             }
           },
           {
-            "type": "ContactExperienceItem",
+            "type": "MetadataListItem",
             "props": {
               "id": "exp-2",
-              "company": "企鹅贸易公司 (Penguin Trading)",
-              "role": "Lead Designer & PM"
+              "label": "企鹅贸易公司 (Penguin Trading)",
+              "value": "Lead Designer & PM"
             }
           },
           {
-            "type": "ContactExperienceItem",
+            "type": "MetadataListItem",
             "props": {
               "id": "exp-3",
-              "company": "暗喻之间 (Insight)",
-              "role": "Lead Narrative System & Engineering"
+              "label": "暗喻之间 (Insight)",
+              "value": "Lead Narrative System & Engineering"
             }
           },
           {
-            "type": "ContactExperienceItem",
+            "type": "MetadataListItem",
             "props": {
               "id": "exp-4",
-              "company": "杀毒奇兵 (Slay the Virus)",
-              "role": "Core UI & UX Direction"
+              "label": "杀毒奇兵 (Slay the Virus)",
+              "value": "Core UI & UX Direction"
             }
           }
         ],
         "creativeDirection": [
           {
-            "type": "ContactDirectionItem",
+            "type": "MetadataListItem",
             "props": {
               "id": "cd-1",
-              "title": "交互叙事与关卡设计",
-              "subtitle": "Interactive Narrative & Level Design"
+              "label": "交互叙事与关卡设计",
+              "value": "Interactive Narrative & Level Design"
             }
           },
           {
-            "type": "ContactDirectionItem",
+            "type": "MetadataListItem",
             "props": {
               "id": "cd-2",
-              "title": "光影表现与视觉引导",
-              "subtitle": "Lighting Atmosphere & Visual Guidance"
+              "label": "光影表现与视觉引导",
+              "value": "Lighting Atmosphere & Visual Guidance"
             }
           },
           {
-            "type": "ContactDirectionItem",
+            "type": "MetadataListItem",
             "props": {
               "id": "cd-3",
-              "title": "程序化生成与创作工具链",
-              "subtitle": "Procedural Generation & Toolchains"
+              "label": "程序化生成与创作工具链",
+              "value": "Procedural Generation & Toolchains"
             }
           },
           {
-            "type": "ContactDirectionItem",
+            "type": "MetadataListItem",
             "props": {
               "id": "cd-4",
-              "title": "UI系统与交互原型落地",
-              "subtitle": "UI Systems & Rapid Prototyping"
+              "label": "UI系统与交互原型落地",
+              "value": "UI Systems & Rapid Prototyping"
             }
           }
         ]

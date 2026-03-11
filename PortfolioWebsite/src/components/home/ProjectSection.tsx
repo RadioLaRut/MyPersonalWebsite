@@ -2,6 +2,7 @@
 import React, { type ReactNode, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { PresetImage } from "@/components/common/PresetImage";
+import Typography from "@/components/common/Typography";
 import { type ImageFitMode, type ImagePreset, normalizeImagePreset } from "@/lib/image-presentation";
 
 interface ProjectSectionProps {
@@ -50,8 +51,8 @@ export default function ProjectSection({
   const opacity = useTransform(scrollYProgress, [0, 0.4, 0.6, 1], [0, 1, 1, 0]);
   const shouldAlignRight = align === "right" || (align === "auto" && index % 2 !== 0);
   const textColumnClassName = shouldAlignRight
-    ? "col-start-5 items-end text-right"
-    : "col-start-2 items-start";
+    ? "lg:col-start-5 items-end text-right"
+    : "lg:col-start-2 items-start";
   const subtitleClassName = shouldAlignRight ? "text-right" : "";
   const underlineClassName = shouldAlignRight ? "origin-right self-end" : "origin-left";
 
@@ -94,16 +95,31 @@ export default function ProjectSection({
       >
         <div className={`grid-container w-full relative ${editMode ? "" : "mix-blend-difference"}`}>
           <div
-            className={`col-span-8 flex flex-col ${textColumnClassName}`}
+            className={`col-span-4 lg:col-span-8 flex flex-col ${textColumnClassName}`}
           >
             {subtitle && (
-              <p className={`text-textPrimary font-gothic tracking-[0.4em] mb-4 text-xs sm:text-sm font-medium uppercase ${subtitleClassName}`}>
+              <Typography
+                as="p"
+                preset="gothic-editorial"
+                size="label"
+                weight="medium"
+                wrapPolicy="label"
+                className={`mb-4 text-textPrimary ${subtitleClassName}`}
+              >
                 {subtitle}
-              </p>
+              </Typography>
             )}
-            <h2 className={`text-[clamp(2rem,7vw,5rem)] font-futura font-black tracking-tight leading-[0.9] text-white antialiased [transform:translateZ(0)] ${editMode ? "whitespace-normal break-words max-w-full" : "origin-left lg:whitespace-nowrap transition-all duration-500 group-hover:tracking-normal group-hover:scale-[1.02]"}`}>
+            <Typography
+              as="h2"
+              preset="sans-body"
+              size="title"
+              weight="display"
+              wrapPolicy="heading"
+              align={shouldAlignRight ? "right" : "left"}
+              className={`text-white antialiased [transform:translateZ(0)] ${editMode ? "max-w-full" : "origin-left lg:whitespace-nowrap transition-all duration-500 group-hover:tracking-normal group-hover:scale-[1.02]"}`}
+            >
               {title}
-            </h2>
+            </Typography>
             <div className={`h-1 bg-white mt-8 ${editMode ? "w-1/3 max-w-40" : `w-0 transition-all duration-700 ease-out group-hover:w-1/3 ${underlineClassName}`}`}></div>
           </div>
         </div>

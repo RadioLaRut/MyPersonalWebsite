@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Typography from "@/components/common/Typography";
 
 export interface LightingCollectionHeaderProps {
   title: string;
@@ -16,36 +17,68 @@ export default function LightingCollectionHeader({
   backHref = "/works/lighting-portfolio",
 }: LightingCollectionHeaderProps) {
   return (
-    <section className="pt-40 pb-20 border-b border-white/10">
+    <section className="border-b border-white/10 pt-36 pb-20 md:pt-40 md:pb-24">
       <div className="grid-container">
-        <div className="col-span-12">
-          <div className="grid grid-cols-4 lg:grid-cols-12 gap-8">
-            <div className="col-span-12 mb-12">
+        <div className="col-span-12 grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-8 lg:col-start-2">
+            <div className="mb-10">
               <Link
                 href={backHref}
-                className="inline-flex items-center text-textMuted hover:text-white transition-colors uppercase tracking-[0.25em] text-sm font-mono px-4 py-2 border border-white/20 hover:border-white/40 rounded"
+                className="group interactive inline-flex items-center gap-2 text-textMuted transition-colors duration-300 hover:text-white"
               >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                <span className="h-px w-4 bg-white/30 transition-all duration-300 group-hover:w-6 group-hover:bg-white/60"></span>
+                <svg className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
                 </svg>
-                BACK TO PORTFOLIO
+                <Typography
+                  preset="sans-body"
+                  size="label"
+                  weight="medium"
+                  wrapPolicy="label"
+                  className="text-inherit"
+                >
+                  BACK TO LIGHTING
+                </Typography>
               </Link>
             </div>
+
+            <Typography
+              as="p"
+              preset="sans-body"
+              size="caption"
+              weight="medium"
+              wrapPolicy="label"
+              className="text-white/38"
+            >
+              COLLECTION {number}
+            </Typography>
+            <Typography
+              as="h1"
+              preset="luna-editorial"
+              size="title"
+              weight="display"
+              wrapPolicy="heading"
+              className="mt-5 text-white"
+            >
+              {title}
+            </Typography>
           </div>
-          <div className="grid grid-cols-4 lg:grid-cols-12">
-            <div className="col-span-12">
-              <p className="font-mono text-textMuted tracking-[0.4em] text-sm mb-4">COLLECTION {number}</p>
-              <div className="flex flex-col lg:flex-row lg:items-baseline lg:justify-between gap-8">
-                <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase font-luna text-white leading-none">
-                  {title}
-                </h1>
-                {description ? (
-                  <p className="font-futura tracking-widest text-textMuted text-sm max-w-sm lg:text-right lg:self-end">
-                    {description}
-                  </p>
-                ) : null}
+
+          <div className="lg:col-span-3 lg:col-start-10">
+            {description ? (
+              <div className="flex flex-col items-start lg:pl-4">
+                <Typography
+                  as="p"
+                  preset="sans-body"
+                  size="body"
+                  weight="regular"
+                  wrapPolicy="prose"
+                  className="text-textPrimary/90"
+                >
+                  {description}
+                </Typography>
               </div>
-            </div>
+            ) : null}
           </div>
         </div>
       </div>

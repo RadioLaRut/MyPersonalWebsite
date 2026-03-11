@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Typography from "@/components/common/Typography";
 
 interface MetaDataBlockProps {
     items: {
@@ -17,12 +18,26 @@ export default function MetaDataBlock({ items }: MetaDataBlockProps) {
             <div className="grid-container text-center lg:text-left">
                 {items.map((item, i) => (
                     <div key={i} className="col-span-3 mb-8 lg:mb-0">
-                        <div className="font-mono text-[10px] uppercase tracking-[0.4em] text-textMuted mb-2">
+                        <Typography
+                            as="div"
+                            preset="sans-body"
+                            size="caption"
+                            weight="medium"
+                            wrapPolicy="label"
+                            className="mb-2 text-textMuted"
+                        >
                             {item.label}
-                        </div>
-                        <div className="font-mono text-sm lg:text-base uppercase tracking-widest text-textPrimary">
+                        </Typography>
+                        <Typography
+                            as="div"
+                            preset="sans-body"
+                            size="body-sm"
+                            weight="medium"
+                            wrapPolicy="label"
+                            className="text-textPrimary"
+                        >
                             {item.value}
-                        </div>
+                        </Typography>
                     </div>
                 ))}
             </div>

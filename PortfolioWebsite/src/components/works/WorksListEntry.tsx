@@ -3,8 +3,8 @@
 import React, { type ReactNode, useEffect, useState, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-import BilingualText from "@/components/common/BilingualText";
 import { PresetImage } from "@/components/common/PresetImage";
+import Typography from "@/components/common/Typography";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 interface WorksListEntryProps {
@@ -93,12 +93,14 @@ export default function WorksListEntry({
     window.addEventListener("touchmove", handlePointerMove as EventListener, { passive: true });
 
     // 初始检测
-    handlePointerMove(new TouchEvent("touchmove", { touches: [new Touch({
-      identifier: 0,
-      target: document.body,
-      clientX: window.innerWidth / 2,
-      clientY: window.innerHeight / 2,
-    })] }) as unknown as TouchEvent);
+    handlePointerMove(new TouchEvent("touchmove", {
+      touches: [new Touch({
+        identifier: 0,
+        target: document.body,
+        clientX: window.innerWidth / 2,
+        clientY: window.innerHeight / 2,
+      })]
+    }) as unknown as TouchEvent);
 
     return () => {
       window.removeEventListener("scroll", handlePointerMove as EventListener);
@@ -125,7 +127,7 @@ export default function WorksListEntry({
   return (
     <div
       ref={entryRef}
-      className={`relative w-full border-b border-white/10 group min-h-[30vh] sm:min-h-[40vh] flex flex-col justify-center ${editMode ? "cursor-default" : "interactive cursor-pointer"}`}
+      className={`group relative flex min-h-[34vh] w-full flex-col justify-center border-b border-white/10 ${editMode ? "cursor-default" : "interactive cursor-pointer"} sm:min-h-[42vh]`}
       onClick={handleInteraction}
       onMouseEnter={() => !isMobile && !editMode && setIsExpanded(true)}
       onMouseLeave={() => !isMobile && !editMode && setIsExpanded(false)}
@@ -137,9 +139,9 @@ export default function WorksListEntry({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
-            className="absolute inset-0 z-0 overflow-hidden pointer-events-none"
+            className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
           >
-            <div className="absolute inset-0 bg-black/60 z-10 mix-blend-multiply" />
+            <div className="absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.4)_0%,rgba(0,0,0,0.52)_40%,rgba(0,0,0,0.8)_100%)]" />
             <motion.div
               initial={editMode ? false : { scale: 1.05 }}
               animate={editMode ? undefined : { scale: 1 }}
@@ -160,18 +162,31 @@ export default function WorksListEntry({
       </AnimatePresence>
 
       <div className={`grid-container relative z-10 items-center py-12 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
-        <div className="hidden lg:block col-span-1 text-textMuted font-futura text-xl tracking-widest">
-          {number ?? "00"}
+        <div className="hidden lg:block col-span-1 text-textMuted">
+          <Typography
+            preset="sans-body"
+            size="title-sm"
+            weight="strong"
+            wrapPolicy="label"
+            className="text-textMuted"
+          >
+            {number ?? "00"}
+          </Typography>
         </div>
 
-        <div className="grid-content lg:col-span-7 flex flex-col justify-center py-4">
-          <h2
-            className={`text-6xl sm:text-[4vw] font-black tracking-tighter uppercase leading-none font-luna transition-all duration-700 ease-out whitespace-normal break-words py-2 ${active
+        <div className="grid-content flex flex-col justify-center py-4 lg:col-span-7">
+          <Typography
+            as="h2"
+            preset="luna-editorial"
+            size="title"
+            weight="display"
+            wrapPolicy="heading"
+            className={`py-2 uppercase transition-all duration-700 ease-out ${active
               ? "text-white"
               : "text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.3)]"}`}
           >
             {title}
-          </h2>
+          </Typography>
         </div>
 
         <motion.div
@@ -181,14 +196,30 @@ export default function WorksListEntry({
             x: active ? 0 : -20,
           }}
           transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
-          className="grid-sidebar flex flex-col justify-center lg:border-l lg:border-white/20 lg:pl-8 mt-6 lg:mt-0"
+          className="grid-sidebar mt-6 flex flex-col justify-center lg:mt-0 lg:pl-8"
         >
-          <p className="font-serif font-semibold tracking-widest text-sm sm:text-base text-textPrimary uppercase">
-            {category}
-          </p>
-          <p className="mt-3 text-[10px] sm:text-xs text-textMuted font-medium tracking-[0.14em] uppercase leading-loose [&_span]:align-[-0.06em]">
-            <BilingualText text={desc} weight="light" />
-          </p>
+          <div className="flex flex-col">
+            <Typography
+              as="p"
+              preset="gothic-editorial"
+              size="label"
+              weight="strong"
+              wrapPolicy="label"
+              className="text-textPrimary"
+            >
+              {category}
+            </Typography>
+            <Typography
+              as="p"
+              preset="sans-body"
+              size="body-sm"
+              weight="light"
+              wrapPolicy="prose"
+              className="mt-4 text-textMuted"
+            >
+              {desc}
+            </Typography>
+          </div>
         </motion.div>
       </div>
     </div>

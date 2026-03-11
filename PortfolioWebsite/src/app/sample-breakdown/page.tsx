@@ -10,6 +10,7 @@ import ParameterGrid from '@/components/breakdowns/ParameterGrid';
 
 import MetaDataBlock from '@/components/breakdowns/MetaDataBlock';
 import HighDensityInfoBlock from '@/components/breakdowns/HighDensityInfoBlock';
+import Typography from '@/components/common/Typography';
 
 export default function SampleBreakdownPage() {
     return (
@@ -18,23 +19,61 @@ export default function SampleBreakdownPage() {
 
                 {/* Header Section */}
                 <div className="col-start-2 col-span-10 mb-24">
-                    <Link href="/" className="inline-block mb-8 font-mono text-xs uppercase tracking-[0.3em] text-textMuted hover:text-white transition-colors">
-                        ← 返回主页
+                    <Link href="/" className="mb-8 inline-block transition-colors hover:text-white">
+                        <Typography
+                            as="span"
+                            preset="sans-body"
+                            size="caption"
+                            weight="medium"
+                            wrapPolicy="label"
+                            className="text-textMuted"
+                        >
+                            ← 返回主页
+                        </Typography>
                     </Link>
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-[8vw] lg:text-[6vw] font-luna font-black leading-none tracking-tighter mb-6 uppercase"
+                        className="mb-6"
                     >
-                        Project: <br /> <span className="text-textMuted">Abandoned World</span>
+                        <Typography
+                            as="span"
+                            preset="luna-editorial"
+                            size="display"
+                            weight="display"
+                            wrapPolicy="heading"
+                            className="text-white uppercase"
+                        >
+                            Project:
+                        </Typography>
+                        <br />
+                        <Typography
+                            as="span"
+                            preset="luna-editorial"
+                            size="display"
+                            weight="display"
+                            wrapPolicy="heading"
+                            className="text-textMuted uppercase"
+                        >
+                            Abandoned World
+                        </Typography>
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="font-futura text-textPrimary tracking-wide text-lg lg:text-xl max-w-2xl"
+                        className="max-w-2xl"
                     >
-                        这是一个向您展示如何使用预制组件拼接出一个完整项目 Breakdown 的样板页面。这里展示了能够适应从宏观灯光氛围、到具体工具开发流的排版组合逻辑。
+                        <Typography
+                            as="span"
+                            preset="sans-body"
+                            size="body-lg"
+                            weight="regular"
+                            wrapPolicy="prose"
+                            className="text-textPrimary"
+                        >
+                            这是一个向您展示如何使用预制组件拼接出一个完整项目 Breakdown 的样板页面。这里展示了能够适应从宏观灯光氛围、到具体工具开发流的排版组合逻辑。
+                        </Typography>
                     </motion.p>
                 </div>
 
@@ -105,8 +144,26 @@ export default function SampleBreakdownPage() {
 
                 <div className="col-span-12 mt-24 mb-32 border-t border-white/20 pt-24">
                     <div className="mb-24">
-                        <span className="font-mono text-xs text-textMuted uppercase tracking-[0.3em]">WORKFLOW DEEP DIVE</span>
-                        <h2 className="text-4xl lg:text-5xl font-luna mt-2">工作流痛点解决</h2>
+                        <Typography
+                            as="span"
+                            preset="sans-body"
+                            size="label"
+                            weight="medium"
+                            wrapPolicy="label"
+                            className="text-textMuted"
+                        >
+                            WORKFLOW DEEP DIVE
+                        </Typography>
+                        <Typography
+                            as="h2"
+                            preset="luna-editorial"
+                            size="title"
+                            weight="strong"
+                            wrapPolicy="heading"
+                            className="mt-2 text-white"
+                        >
+                            工作流痛点解决
+                        </Typography>
                     </div>
 
                     <HighDensityInfoBlock

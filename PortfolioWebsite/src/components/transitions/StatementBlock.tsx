@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import BilingualText from "@/components/common/BilingualText";
+import Typography from "@/components/common/Typography";
 
 interface StatementBlockProps {
   content: string;
@@ -48,9 +48,17 @@ export default function StatementBlock({
           viewport={editMode ? undefined : { once: true, margin: "-100px" }}
           transition={editMode ? undefined : { duration: 0.8, ease: "easeOut" }}
         >
-          <p className="text-[clamp(0.875rem,2vw,1.25rem)] leading-loose text-textPrimary tracking-[0.15em] max-w-4xl">
-            <BilingualText text={content} weight="light" />
-          </p>
+          <Typography
+            as="p"
+            preset="sans-body"
+            size="body-lg"
+            weight="light"
+            wrapPolicy="prose"
+            className="max-w-4xl text-textPrimary"
+            align={align}
+          >
+            {content}
+          </Typography>
         </motion.div>
       </div>
     </section>

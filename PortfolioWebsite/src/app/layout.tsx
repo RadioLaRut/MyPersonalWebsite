@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { DM_Serif_Display } from "next/font/google";
 import SmoothScroll from "@/components/layout/SmoothScroll";
 import CustomCursor from "@/components/layout/CustomCursor";
 import Navigation from "@/components/layout/Navigation";
@@ -8,7 +9,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "JIANG CHENGYAN",
-  description: "2026 Portfolio of Jiang Chengyan",
+  description: "江承彦作品集：灯光、技术美术、游戏设计与交互叙事案例。",
 };
 
 const notoSerif = localFont({
@@ -119,6 +120,11 @@ const futura = localFont({
       weight: "500",
       style: "normal",
     },
+    {
+      path: "./fonts/Futura Black.ttf",
+      weight: "900",
+      style: "normal",
+    },
   ],
   variable: "--font-futura",
   display: "swap",
@@ -171,14 +177,21 @@ const gothic = localFont({
   adjustFontFallback: false,
 });
 
+const dmSerifDisplay = DM_Serif_Display({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-dm-serif",
+  display: "swap",
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const testingMode = isTestingMode();
 
   return (
-    <html lang="en" data-site-mode={testingMode ? "testing" : "normal"}>
-      <body className={`bg-black text-white antialiased ${notoSerif.variable} ${hanYiQiHei.variable} ${futura.variable} ${luna.variable} ${gothic.variable}`}>
+    <html lang="zh-CN" data-site-mode={testingMode ? "testing" : "normal"}>
+      <body className={`bg-black text-white antialiased ${notoSerif.variable} ${hanYiQiHei.variable} ${futura.variable} ${luna.variable} ${gothic.variable} ${dmSerifDisplay.variable}`}>
         <SmoothScroll>
           <CustomCursor />
           <Navigation />

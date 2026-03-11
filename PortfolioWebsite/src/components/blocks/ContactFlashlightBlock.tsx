@@ -1,6 +1,7 @@
 "use client";
 import React, { type ReactNode, useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
+import Typography from "@/components/common/Typography";
 
 export interface ContactFlashlightBlockProps {
     maskRadius?: number;
@@ -33,8 +34,6 @@ export default function ContactFlashlightBlock({
     experienceContent,
     creativeContent,
 }: ContactFlashlightBlockProps) {
-    const wechatTextClass = "copyable-contact block whitespace-nowrap text-[clamp(1.35rem,1.9vw,2.2rem)] font-medium mix-blend-normal tracking-tight leading-[1] font-serif text-left";
-    const emailTextClass = "copyable-contact block whitespace-nowrap text-[clamp(1.25rem,1.75vw,2rem)] font-medium mix-blend-normal tracking-tight leading-[1] font-serif";
     const containerRef = useRef<HTMLDivElement>(null);
     const [mousePos, setMousePos] = useState({ x: "50%", y: "50%" });
     const [isTouchDevice, setIsTouchDevice] = useState(false);
@@ -97,20 +96,47 @@ export default function ContactFlashlightBlock({
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1 }}
-                    className="text-[12vw] sm:text-[9vw] font-black tracking-tighter mix-blend-normal leading-none font-luna"
+                    className="mix-blend-normal"
                 >
-                    {name}
+                    <Typography
+                        as="span"
+                        preset="luna-editorial"
+                        size="hero"
+                        weight="display"
+                        wrapPolicy="heading"
+                        className="text-inherit"
+                    >
+                        {name}
+                    </Typography>
                 </motion.h1>
-                <motion.p
+                <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3, duration: 1 }}
-                    className="text-xl sm:text-2xl lg:text-3xl leading-loose font-semibold text-left max-w-2xl mix-blend-normal font-serif tracking-widest mt-8"
+                    className="text-left max-w-2xl mix-blend-normal mt-8"
                 >
-                    {taglineText}
+                    <Typography
+                        as="p"
+                        preset="sans-body"
+                        size="body-lg"
+                        weight="strong"
+                        wrapPolicy="prose"
+                        className="text-inherit"
+                    >
+                        {taglineText}
+                    </Typography>
                     <br />
-                    <span className="text-sm font-mono opacity-50 tracking-[0.2em]">{taglineSub}</span>
-                </motion.p>
+                    <Typography
+                        as="span"
+                        preset="sans-body"
+                        size="label"
+                        weight="medium"
+                        wrapPolicy="label"
+                        className="opacity-50"
+                    >
+                        {taglineSub}
+                    </Typography>
+                </motion.div>
             </section>
 
             <motion.section
@@ -120,17 +146,42 @@ export default function ContactFlashlightBlock({
                 className="col-start-4 col-span-8 grid grid-cols-1 lg:grid-cols-2 gap-16 text-left border-t border-current pt-16"
             >
                 <div className="space-y-8">
-                    <span className="text-xs uppercase tracking-[0.4em] font-mono opacity-40 mix-blend-normal">
+                    <Typography
+                        as="span"
+                        preset="sans-body"
+                        size="label"
+                        weight="medium"
+                        wrapPolicy="label"
+                        className="opacity-40 mix-blend-normal"
+                    >
                         Experience History
-                    </span>
-                    <div className="space-y-6 text-lg sm:text-xl font-medium mix-blend-normal leading-relaxed font-serif">
+                    </Typography>
+                    <div className="space-y-6 mix-blend-normal">
                         {experienceContent ? (
                             experienceContent
                         ) : (
                             experienceHistory.map((item, i) => (
                                 <div key={i} className="flex flex-col">
-                                    <span>{item.company}</span>
-                                    <span className="text-sm font-mono opacity-50 mt-1">{item.role}</span>
+                                    <Typography
+                                        as="span"
+                                        preset="sans-body"
+                                        size="body"
+                                        weight="strong"
+                                        wrapPolicy="prose"
+                                        className="text-inherit"
+                                    >
+                                        {item.company}
+                                    </Typography>
+                                    <Typography
+                                        as="span"
+                                        preset="sans-body"
+                                        size="label"
+                                        weight="medium"
+                                        wrapPolicy="label"
+                                        className="mt-1 opacity-50"
+                                    >
+                                        {item.role}
+                                    </Typography>
                                 </div>
                             ))
                         )}
@@ -138,17 +189,42 @@ export default function ContactFlashlightBlock({
                 </div>
 
                 <div className="space-y-8">
-                    <span className="text-xs uppercase tracking-[0.4em] font-mono opacity-40 mix-blend-normal">
+                    <Typography
+                        as="span"
+                        preset="sans-body"
+                        size="label"
+                        weight="medium"
+                        wrapPolicy="label"
+                        className="opacity-40 mix-blend-normal"
+                    >
                         Creative Direction
-                    </span>
-                    <div className="space-y-6 text-lg sm:text-xl font-medium mix-blend-normal leading-relaxed font-serif tracking-wide">
+                    </Typography>
+                    <div className="space-y-6 mix-blend-normal">
                         {creativeContent ? (
                             creativeContent
                         ) : (
                             creativeDirection.map((item, i) => (
                                 <div key={i} className="flex flex-col">
-                                    <span>{item.title}</span>
-                                    <span className="text-sm font-mono opacity-50 mt-1">{item.subtitle}</span>
+                                    <Typography
+                                        as="span"
+                                        preset="sans-body"
+                                        size="body"
+                                        weight="strong"
+                                        wrapPolicy="prose"
+                                        className="text-inherit"
+                                    >
+                                        {item.title}
+                                    </Typography>
+                                    <Typography
+                                        as="span"
+                                        preset="sans-body"
+                                        size="label"
+                                        weight="medium"
+                                        wrapPolicy="label"
+                                        className="mt-1 opacity-50"
+                                    >
+                                        {item.subtitle}
+                                    </Typography>
                                 </div>
                             ))
                         )}
@@ -163,28 +239,56 @@ export default function ContactFlashlightBlock({
                 className="col-start-4 col-span-8 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-12 lg:gap-20 text-left border-t border-current pt-16 mt-24 items-start"
             >
                 <div className="space-y-6">
-                    <span className="text-xs uppercase tracking-[0.4em] font-mono opacity-40 mix-blend-normal">
+                    <Typography
+                        as="span"
+                        preset="sans-body"
+                        size="label"
+                        weight="medium"
+                        wrapPolicy="label"
+                        className="opacity-40 mix-blend-normal"
+                    >
                         WeChat / Social
-                    </span>
-                    <span className={wechatTextClass}>
+                    </Typography>
+                    <Typography
+                        as="span"
+                        preset="gothic-editorial"
+                        size="body-lg"
+                        weight="medium"
+                        wrapPolicy="url"
+                        className="copyable-contact block whitespace-nowrap text-left mix-blend-normal"
+                    >
                         {wechat}
-                    </span>
+                    </Typography>
                 </div>
 
                 <div className="space-y-6">
-                    <span className="text-xs uppercase tracking-[0.4em] font-mono opacity-40 mix-blend-normal">
+                    <Typography
+                        as="span"
+                        preset="sans-body"
+                        size="label"
+                        weight="medium"
+                        wrapPolicy="label"
+                        className="opacity-40 mix-blend-normal"
+                    >
                         Email / Contact
-                    </span>
-                    <span className={emailTextClass}>
+                    </Typography>
+                    <Typography
+                        as="span"
+                        preset="gothic-editorial"
+                        size="body-lg"
+                        weight="medium"
+                        wrapPolicy="url"
+                        className="copyable-contact block whitespace-nowrap mix-blend-normal"
+                    >
                         {email}
-                    </span>
+                    </Typography>
                 </div>
             </motion.section>
         </div>
     );
 
     return (
-        <div className="relative w-full overflow-hidden font-luna selection:bg-white selection:text-black">
+        <div className="relative w-full overflow-hidden selection:bg-white selection:text-black">
             <div ref={containerRef} className="relative w-full mx-auto pb-12">
                 {/* Base Layer (Dark Text) */}
                 <div

@@ -1,0 +1,125 @@
+{
+  "root": {
+    "props": {
+      "title": "About"
+    }
+  },
+  "content": [
+    {
+      "type": "PortfolioHeroHeader",
+      "props": {
+        "id": "about-hero-1",
+        "title": "ABOUT",
+        "subtitle": "JIANG CHENGYAN",
+        "descriptionLine1": "LIGHTING / TECH ART / GAME DESIGN",
+        "descriptionLine2": "我更关心如何让氛围、系统和落地流程一起服务体验，而不是把这些能力拆成孤立条目。",
+        "ctaLabel": "进入全部作品",
+        "ctaHref": "/works"
+      }
+    },
+    {
+      "type": "RichParagraph",
+      "props": {
+        "id": "about-intro-1",
+        "content": "我目前的创作重心是把灯光氛围、技术美术思维和游戏设计组织成同一个叙事系统。对我来说，灯光不是最后的美术修饰，而是空间秩序、节奏控制与信息引导的一部分；技术美术也不仅是工具实现，而是把团队协作、编辑效率与视觉质量放进同一条生产链。"
+      }
+    },
+    {
+      "type": "HighDensityInfoBlock",
+      "props": {
+        "id": "about-info-1",
+        "phase1Title": "我在做什么",
+        "phase1Subtitle": "Current Focus",
+        "phase1Content": "以灯光与氛围塑造为入口，同时延伸到技术美术、工具链和交互叙事设计。近期的重点在于：让视觉氛围服务可读性，让系统设计服务情绪，让生产流程支持更稳定的创作输出。",
+        "phase2Title": "我如何推进项目",
+        "phase2Subtitle": "How I Work",
+        "phase2Content": "我习惯先拆出项目真正需要解决的问题，再回到版式、机制、工具或流程层面做收束。面对多人协作，我会优先建立命名、资产、版本控制与验证标准；面对单人项目，我会把交互、视觉与叙事节奏放在同一条设计链路里反复迭代。",
+        "phase3Title": "我能带来的结果",
+        "phase3Subtitle": "What I Bring",
+        "phase3Content": "我能在策划、美术、程序之间进行翻译和推进，也能直接动手实现关键节点。无论是灯具蓝图、编辑器控件、版本控制辅助、UE 蓝图逻辑，还是项目级的视觉和信息组织，我都更关注它们最终是否让体验更完整、团队更顺畅。",
+        "phase3ImageSrc": "/images/train-station/2Night.webp",
+        "phase3ImagePreset": "ratio-16-9",
+        "phase3ImageFitMode": "cover"
+      }
+    },
+    {
+      "type": "ContactFlashlight",
+      "props": {
+        "id": "about-contact-1",
+        "maskRadius": 480,
+        "maskSmoothness": 42,
+        "darkTextColor": "rgba(255,255,255,0.38)",
+        "lightTextColor": "rgba(255,255,255,1)",
+        "name": "JIANG CHENGYAN",
+        "taglineText": "灯光 / 技术美术 / 游戏设计",
+        "taglineSub": "中国传媒大学 CUC '2028",
+        "email": "3115437519@qq.com",
+        "wechat": "radiowithouthead",
+        "experienceHistory": [
+          {
+            "type": "MetadataListItem",
+            "props": {
+              "id": "about-exp-1",
+              "label": "腾讯光子艺术部",
+              "value": "Lighting Technical Art Intern"
+            }
+          },
+          {
+            "type": "MetadataListItem",
+            "props": {
+              "id": "about-exp-2",
+              "label": "企鹅贸易公司",
+              "value": "Lead Designer / Tech Art / PM"
+            }
+          },
+          {
+            "type": "MetadataListItem",
+            "props": {
+              "id": "about-exp-3",
+              "label": "Insight",
+              "value": "Lead Designer / Blueprint / Writer"
+            }
+          }
+        ],
+        "creativeDirection": [
+          {
+            "type": "MetadataListItem",
+            "props": {
+              "id": "about-dir-1",
+              "label": "氛围塑造与视觉引导",
+              "value": "Lighting, Mood, Spatial Hierarchy"
+            }
+          },
+          {
+            "type": "MetadataListItem",
+            "props": {
+              "id": "about-dir-2",
+              "label": "工具化流程与团队效率",
+              "value": "Tooling, Pipeline, Validation"
+            }
+          },
+          {
+            "type": "MetadataListItem",
+            "props": {
+              "id": "about-dir-3",
+              "label": "叙事系统与交互结构",
+              "value": "Narrative Systems, Game Design"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "HomeEndcapSection",
+      "props": {
+        "id": "about-endcap-1",
+        "eyebrow": "ARCHIVE",
+        "title": "RETURN TO WORKS",
+        "description": "继续看完整项目、拆解页和灯光集合。",
+        "buttonLabel": "进入作品归档",
+        "buttonHref": "/works"
+      }
+    }
+  ],
+  "zones": {}
+}

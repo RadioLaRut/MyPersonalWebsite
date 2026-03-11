@@ -1,6 +1,7 @@
 "use client";
 import React, { type ReactNode } from "react";
 
+import Typography from "@/components/common/Typography";
 import WorksListEntry from "@/components/works/WorksListEntry";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
@@ -28,15 +29,37 @@ export default function WorksList({ heading = "All Selected Works", works = [], 
     const hasEntriesContent = Boolean(entriesContent);
 
     if (!hasLegacyWorks && !hasEntriesContent) {
-        return <div className="p-12 text-textMuted text-center font-mono text-xs">No works available. Add some works to the list.</div>
+        return (
+            <div className="p-12 text-center">
+                <Typography
+                    as="p"
+                    preset="sans-body"
+                    size="caption"
+                    weight="medium"
+                    wrapPolicy="label"
+                    className="text-textMuted"
+                >
+                    No works available. Add some works to the list.
+                </Typography>
+            </div>
+        );
     }
 
     return (
-        <div className="w-full text-white flex flex-col justify-center pt-32 pb-20">
-            <div className={`px-8 sm:px-16 mb-16 relative z-20 ${editMode ? "pointer-events-auto" : "mix-blend-difference pointer-events-none"}`}>
-                <h1 className="text-sm tracking-widest text-textMuted uppercase font-medium">
-                    {heading}
-                </h1>
+        <div className="flex w-full flex-col justify-center pt-20 pb-20 text-white md:pt-24">
+            <div className={`grid-container relative z-20 mb-12 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
+                <div className="col-start-2 col-span-10 border-b border-white/10 pb-6">
+                    <Typography
+                        as="h1"
+                        preset="sans-body"
+                        size="caption"
+                        weight="medium"
+                        wrapPolicy="label"
+                        className="text-textMuted"
+                    >
+                        {heading}
+                    </Typography>
+                </div>
             </div>
 
             {entriesContent ? (

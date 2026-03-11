@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import BilingualText from '@/components/common/BilingualText';
 import { PresetImage } from '@/components/common/PresetImage';
+import Typography from "@/components/common/Typography";
 import { type ImageFitMode, type ImagePreset } from '@/lib/image-presentation';
 
 interface Parameter {
@@ -48,8 +48,17 @@ export default function ParameterGrid({
                         imageClassName="opacity-80"
                     />
                 )}
-                <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1 text-white font-mono text-xs tracking-widest border border-white/10">
-                    PROCEDURAL GENERATION PREVIEW
+                <div className="absolute top-4 left-4 border border-white/10 bg-black/60 px-3 py-1 backdrop-blur-md">
+                    <Typography
+                        as="span"
+                        preset="sans-body"
+                        size="caption"
+                        weight="medium"
+                        wrapPolicy="label"
+                        className="text-white"
+                    >
+                        PROCEDURAL GENERATION PREVIEW
+                    </Typography>
                 </div>
             </div>
 
@@ -58,17 +67,38 @@ export default function ParameterGrid({
                 <div className="grid-container">
                     {parameters.map((param, i) => (
                         <div key={i} className="col-span-3 border-t border-white/20 pt-6 group">
-                            <h4 className="font-mono text-textMuted text-[10px] lg:text-xs tracking-[0.24em] uppercase mb-4 transition-colors group-hover:text-white break-words">
+                            <Typography
+                                as="h4"
+                                preset="sans-body"
+                                size="caption"
+                                weight="medium"
+                                wrapPolicy="label"
+                                className="mb-4 text-textMuted transition-colors group-hover:text-white"
+                            >
                                 {param.name}
-                            </h4>
+                            </Typography>
                             {param.value && (
-                                <div className="text-3xl lg:text-5xl font-black text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.4)] transition-all duration-300 group-hover:[-webkit-text-stroke:1px_rgba(255,255,255,1)] group-hover:ml-2 mb-4 font-futura break-words leading-[1.05]">
+                                <Typography
+                                    as="div"
+                                    preset="sans-body"
+                                    size="title"
+                                    weight="display"
+                                    wrapPolicy="heading"
+                                    className="mb-4 text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.4)] transition-all duration-300 group-hover:[-webkit-text-stroke:1px_rgba(255,255,255,1)] group-hover:ml-2"
+                                >
                                     {param.value}
-                                </div>
+                                </Typography>
                             )}
-                            <p className="text-textMuted text-sm lg:text-base leading-loose break-words max-w-[32ch]">
-                                <BilingualText text={param.description} weight="light" />
-                            </p>
+                            <Typography
+                                as="p"
+                                preset="sans-body"
+                                size="body-sm"
+                                weight="light"
+                                wrapPolicy="prose"
+                                className="max-w-[32ch] text-textMuted"
+                            >
+                                {param.description}
+                            </Typography>
                         </div>
                     ))}
                 </div>

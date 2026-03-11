@@ -1,8 +1,8 @@
 'use client';
 
 import React, { type ReactNode } from 'react';
-import BilingualText from '@/components/common/BilingualText';
 import { PresetImage } from '@/components/common/PresetImage';
+import Typography from "@/components/common/Typography";
 import { type ImageFitMode, type ImagePreset } from '@/lib/image-presentation';
 import { toParagraphNodes } from '@/lib/editable-text';
 
@@ -34,25 +34,45 @@ export default function ContentCard({
       {tags && tags.length > 0 && (
         <div className="flex flex-wrap gap-3 mb-6">
           {tags.map((tag, i) => (
-            <span
+            <Typography
               key={i}
-              className="font-mono text-[10px] uppercase tracking-[0.2em] text-textMuted border border-white/10 px-2 py-1"
+              as="span"
+              preset="sans-body"
+              size="caption"
+              weight="medium"
+              wrapPolicy="label"
+              className="border border-white/10 px-2 py-1 text-textMuted"
             >
               {tag}
-            </span>
+            </Typography>
           ))}
         </div>
       )}
 
-      <h3 className="text-4xl lg:text-5xl font-black tracking-tighter mb-8 leading-[0.95] font-futura break-words">
+      <Typography
+        as="h3"
+        preset="sans-body"
+        size="title"
+        weight="display"
+        wrapPolicy="heading"
+        className="mb-8 text-white"
+      >
         {title}
-      </h3>
+      </Typography>
 
-      <div className="text-textMuted tracking-[0.02em] text-base lg:text-lg leading-[1.95] space-y-5 max-w-none lg:max-w-[36ch]">
+      <div className="max-w-none space-y-5 lg:max-w-[36ch]">
         {paragraphs.map((paragraph, i) => (
-          <p key={i} className="text-balance">
-            <BilingualText text={paragraph} weight="medium" />
-          </p>
+          <Typography
+            key={i}
+            as="p"
+            preset="sans-body"
+            size="body"
+            weight="medium"
+            wrapPolicy="prose"
+            className="text-textMuted"
+          >
+            {paragraph}
+          </Typography>
         ))}
       </div>
     </div>

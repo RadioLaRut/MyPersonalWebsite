@@ -47,8 +47,6 @@ export function createImageFields(options: ImageFieldOptions = {}) {
     prefix = "",
     includeAlt = false,
     includeCaption = false,
-    defaultPreset = "ratio-16-9",
-    defaultFitMode = "x",
   } = options;
 
   const p = prefix ? `${prefix}_` : "";

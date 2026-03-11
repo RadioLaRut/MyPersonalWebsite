@@ -2,8 +2,7 @@
 
 import React, { type ReactNode } from "react";
 import Link from "next/link";
-
-import { isTestingMode } from "@/lib/site-mode";
+import Typography from "@/components/common/Typography";
 
 interface LightingCollectionHeroHeaderProps {
     title: ReactNode;
@@ -24,50 +23,92 @@ export default function LightingCollectionHeroHeader({
     ctaHref,
     editMode = false,
 }: LightingCollectionHeroHeaderProps) {
-    const testingMode = isTestingMode();
-
     return (
-        <section className="pt-40 pb-20 border-b border-white/10">
+        <section className="border-b border-white/10 pt-36 pb-20 md:pt-40 md:pb-24">
             <div className="grid-container">
-                <div className="col-span-12 pb-8">
-                    {testingMode && ctaLabel && ctaHref ? (
-                        <div className="grid grid-cols-4 lg:grid-cols-12 gap-4 mb-8">
-                            <div className="col-span-12">
-                                <Link
-                                    href={ctaHref}
-                                    onClick={(event) => {
-                                        if (editMode) {
-                                            event.preventDefault();
-                                        }
-                                    }}
-                                    className="inline-flex items-center border border-white/30 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/85 transition-colors hover:bg-white hover:text-black"
-                                >
-                                    {ctaLabel}
-                                </Link>
-                            </div>
-                        </div>
-                    ) : null}
-                    <div className="grid grid-cols-4 lg:grid-cols-12">
-                        <div className="col-span-12">
-                            <h1 className="text-[12vw] sm:text-[8vw] font-black tracking-tighter uppercase leading-none font-luna transform translate-y-2 text-white break-words">
+                <div className="col-span-12">
+                    <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-end">
+                        <div className="lg:col-span-8 lg:col-start-2">
+                            <Typography
+                                as="p"
+                                preset="sans-body"
+                                size="caption"
+                                weight="medium"
+                                wrapPolicy="label"
+                                className="text-white/38"
+                            >
+                                CURATED INDEX
+                            </Typography>
+                            <Typography
+                                as="h1"
+                                preset="luna-editorial"
+                                size="display"
+                                weight="display"
+                                wrapPolicy="heading"
+                                className="mt-5 text-white"
+                            >
                                 {title}
-                            </h1>
-                            <div className="flex flex-col lg:flex-row lg:items-baseline lg:justify-between gap-4 mt-4">
-                                <h2 className="text-[12vw] sm:text-[8vw] font-black tracking-tighter uppercase leading-none font-luna text-textMuted break-words">
-                                    {subtitle}
-                                </h2>
-                                <div className="lg:text-right lg:self-end pb-1">
-                                    {descriptionLine1 && (
-                                        <p className="font-mono text-xs uppercase tracking-[0.3em] text-textMuted break-words">
-                                            {descriptionLine1}
-                                        </p>
-                                    )}
-                                    {descriptionLine2 && (
-                                        <p className="font-futura text-sm tracking-widest text-textPrimary mt-2 break-words">
-                                            {descriptionLine2}
-                                        </p>
-                                    )}
-                                </div>
+                            </Typography>
+                            <Typography
+                                as="h2"
+                                preset="luna-editorial"
+                                size="title"
+                                weight="strong"
+                                wrapPolicy="heading"
+                                className="mt-3 text-white/42"
+                            >
+                                {subtitle}
+                            </Typography>
+                        </div>
+
+                        <div className="lg:col-span-3 lg:col-start-10">
+                            <div className="flex flex-col items-start lg:pl-4">
+                                {descriptionLine1 && (
+                                    <Typography
+                                        as="p"
+                                        preset="sans-body"
+                                        size="caption"
+                                        weight="medium"
+                                        wrapPolicy="label"
+                                        className="text-textMuted"
+                                    >
+                                        {descriptionLine1}
+                                    </Typography>
+                                )}
+                                {descriptionLine2 && (
+                                    <Typography
+                                        as="p"
+                                        preset="sans-body"
+                                        size="body"
+                                        weight="regular"
+                                        wrapPolicy="prose"
+                                        className="mt-5 text-textPrimary/90"
+                                    >
+                                        {descriptionLine2}
+                                    </Typography>
+                                )}
+                                {ctaLabel && ctaHref ? (
+                                    <Link
+                                        href={ctaHref}
+                                        onClick={(event) => {
+                                            if (editMode) {
+                                                event.preventDefault();
+                                            }
+                                        }}
+                                        className="group interactive mt-10 inline-flex items-center gap-3 text-textMuted transition-colors duration-300 hover:text-white"
+                                    >
+                                        <span className="h-px w-6 bg-white/30 transition-all duration-300 group-hover:w-10 group-hover:bg-white"></span>
+                                        <Typography
+                                            preset="sans-body"
+                                            size="label"
+                                            weight="medium"
+                                            wrapPolicy="label"
+                                            className="text-inherit"
+                                        >
+                                            {ctaLabel}
+                                        </Typography>
+                                    </Link>
+                                ) : null}
                             </div>
                         </div>
                     </div>

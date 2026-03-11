@@ -1,8 +1,8 @@
 'use client';
 
 import React, { type ReactNode } from 'react';
-import BilingualText from '@/components/common/BilingualText';
 import { PresetImage } from '@/components/common/PresetImage';
+import Typography from "@/components/common/Typography";
 import { type ImageFitMode, type ImagePreset } from '@/lib/image-presentation';
 
 interface InfoItem {
@@ -27,19 +27,23 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
 
                 {/* Phase 1 Column (Dense text + metadata) */}
                 <div className="col-span-3 pr-0 lg:pr-5 mb-12 lg:mb-0 border-r border-white/5">
-                    <div className="font-mono text-textMuted text-[10px] tracking-[0.2em] mb-4">{phase1.label || "PHASE 01 / CONTEXT"}</div>
-                    <h3 className="text-xl lg:text-2xl font-futura text-textPrimary mb-2 break-words">{phase1.title}</h3>
-                    {phase1.subtitle && <h4 className="text-sm font-futura italic text-textMuted mb-6">{phase1.subtitle}</h4>}
-                    <p className="text-textMuted text-sm lg:text-[15px] leading-[1.95] mb-8 pr-0 lg:pr-4 break-words">
-                        <BilingualText text={phase1.content} weight="medium" />
-                    </p>
+                    <Typography as="div" preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="mb-4 text-textMuted">
+                        {phase1.label || "PHASE 01 / CONTEXT"}
+                    </Typography>
+                    <Typography as="h3" preset="sans-body" size="title-sm" weight="strong" wrapPolicy="heading" className="mb-2 text-textPrimary">{phase1.title}</Typography>
+                    {phase1.subtitle && <Typography as="h4" preset="sans-body" size="body-sm" weight="light" wrapPolicy="prose" className="mb-6 text-textMuted italic">{phase1.subtitle}</Typography>}
+                    <Typography as="p" preset="sans-body" size="body-sm" weight="medium" wrapPolicy="prose" className="mb-8 pr-0 text-textMuted lg:pr-4">
+                        {phase1.content}
+                    </Typography>
 
                     {phase1.items && (
                         <div className="space-y-3 mt-8 pt-6 border-t border-white/10">
                             {phase1.items.map((item, i) => (
-                                <div key={i} className="flex flex-col gap-1 text-xs">
-                                    <span className="font-mono text-textMuted break-words">{item.label}</span>
-                                    <span className="font-mono text-textPrimary text-left lg:text-right max-w-full lg:max-w-[75%] self-start lg:self-end break-words leading-relaxed">{item.value}</span>
+                                <div key={i} className="flex flex-col gap-1">
+                                    <Typography as="span" preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="text-textMuted">
+                                        {item.label}
+                                    </Typography>
+                                    <Typography as="div" preset="sans-body" size="body-sm" weight="regular" wrapPolicy="prose" align="right" className="text-textPrimary text-left lg:text-right max-w-full lg:max-w-[75%] self-start lg:self-end">{item.value}</Typography>
                                 </div>
                             ))}
                         </div>
@@ -54,19 +58,23 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
 
                 {/* Phase 2 Column (Dense text + architecture abstract) */}
                 <div className="col-span-4 px-0 lg:px-8 mb-12 lg:mb-0 border-r border-transparent lg:border-white/5">
-                    <div className="font-mono text-textMuted text-[10px] tracking-[0.2em] mb-4">{phase2.label || "PHASE 02 / SYSTEM ARCHITECTURE"}</div>
-                    <h3 className="text-xl lg:text-2xl font-futura text-textPrimary mb-2 break-words">{phase2.title}</h3>
-                    {phase2.subtitle && <h4 className="text-sm font-futura italic text-textMuted mb-6">{phase2.subtitle}</h4>}
-                    <p className="text-textMuted text-sm lg:text-[15px] leading-[1.95] mb-8 break-words">
-                        <BilingualText text={phase2.content} weight="medium" />
-                    </p>
+                    <Typography as="div" preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="mb-4 text-textMuted">
+                        {phase2.label || "PHASE 02 / SYSTEM ARCHITECTURE"}
+                    </Typography>
+                    <Typography as="h3" preset="sans-body" size="title-sm" weight="strong" wrapPolicy="heading" className="mb-2 text-textPrimary">{phase2.title}</Typography>
+                    {phase2.subtitle && <Typography as="h4" preset="sans-body" size="body-sm" weight="light" wrapPolicy="prose" className="mb-6 text-textMuted italic">{phase2.subtitle}</Typography>}
+                    <Typography as="p" preset="sans-body" size="body-sm" weight="medium" wrapPolicy="prose" className="mb-8 text-textMuted">
+                        {phase2.content}
+                    </Typography>
 
                     {phase2.items && (
                         <div className="space-y-3 mt-8 pt-6 border-t border-white/10">
                             {phase2.items.map((item, i) => (
-                                <div key={i} className="flex flex-col gap-1 text-xs">
-                                    <span className="font-mono text-textMuted break-words">{item.label}</span>
-                                    <span className="font-futura text-textPrimary leading-[1.85] break-words">{item.value}</span>
+                                <div key={i} className="flex flex-col gap-1">
+                                    <Typography as="span" preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="text-textMuted">
+                                        {item.label}
+                                    </Typography>
+                                    <Typography as="span" preset="sans-body" size="body-sm" weight="regular" wrapPolicy="prose" className="text-textPrimary">{item.value}</Typography>
                                 </div>
                             ))}
                         </div>
@@ -81,12 +89,14 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
 
                 {/* Phase 3 Column (Execution & Visual Result) */}
                 <div className="col-span-5 pl-0 lg:pl-8">
-                    <div className="font-mono text-textMuted text-[10px] tracking-[0.2em] mb-4">{phase3.label || "PHASE 03 / EXECUTION & RESULTS"}</div>
-                    <h3 className="text-xl lg:text-2xl font-futura text-textPrimary mb-2 break-words">{phase3.title}</h3>
-                    {phase3.subtitle && <h4 className="text-sm font-futura italic text-textMuted mb-6">{phase3.subtitle}</h4>}
-                    <p className="text-textMuted text-sm lg:text-[15px] leading-[1.95] mb-8 break-words">
-                        <BilingualText text={phase3.content} weight="medium" />
-                    </p>
+                    <Typography as="div" preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="mb-4 text-textMuted">
+                        {phase3.label || "PHASE 03 / EXECUTION & RESULTS"}
+                    </Typography>
+                    <Typography as="h3" preset="sans-body" size="title-sm" weight="strong" wrapPolicy="heading" className="mb-2 text-textPrimary">{phase3.title}</Typography>
+                    {phase3.subtitle && <Typography as="h4" preset="sans-body" size="body-sm" weight="light" wrapPolicy="prose" className="mb-6 text-textMuted italic">{phase3.subtitle}</Typography>}
+                    <Typography as="p" preset="sans-body" size="body-sm" weight="medium" wrapPolicy="prose" className="mb-8 text-textMuted">
+                        {phase3.content}
+                    </Typography>
 
                     {phase3.imageSrc && (
                         <div className="relative mt-6 w-full overflow-hidden border border-white/10 bg-neutral-900">

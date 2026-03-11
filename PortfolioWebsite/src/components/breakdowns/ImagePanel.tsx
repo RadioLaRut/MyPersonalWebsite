@@ -2,6 +2,7 @@
 
 import React from "react";
 import { PresetImage } from "@/components/common/PresetImage";
+import Typography from "@/components/common/Typography";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 export interface ImagePanelProps {
@@ -10,7 +11,7 @@ export interface ImagePanelProps {
   caption?: string;
   preset?: ImagePreset;
   fitMode?: ImageFitMode;
-  variant?: "content" | "fullscreen";
+  variant?: "content" | "large" | "fullscreen";
 }
 
 export default function ImagePanel({
@@ -36,16 +37,47 @@ export default function ImagePanel({
             alt={imageAlt}
             preset={preset}
             fitMode={fitMode}
+            priority
             sizes="100vw"
             frameClassName="w-full pointer-events-none"
           />
         </div>
         {caption ? (
           <div className="absolute bottom-8 right-8 bg-black/65 border border-white/15 px-4 py-2">
-            <span className="font-futura text-xs tracking-[0.2em] uppercase text-textPrimary">{caption}</span>
+            <Typography preset="sans-body" size="label" weight="medium" wrapPolicy="label" className="text-textPrimary">
+              {caption}
+            </Typography>
           </div>
         ) : null}
       </div>
+    );
+  }
+
+  if (variant === "large") {
+    return (
+      <section className="w-full py-6 md:py-8">
+        <div className="grid-container">
+          <figure className="col-start-2 col-span-10 overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.02]">
+            <PresetImage
+              alt={imageAlt}
+              src={src}
+              preset={preset}
+              fitMode={fitMode}
+              priority
+              sizes="(min-width: 1024px) 84vw, 92vw"
+              frameClassName="w-full"
+              imageClassName="select-none"
+            />
+            {caption ? (
+              <figcaption className="border-t border-white/10 px-5 py-4 md:px-6">
+                <Typography preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="text-textPrimary">
+                  {caption}
+                </Typography>
+              </figcaption>
+            ) : null}
+          </figure>
+        </div>
+      </section>
     );
   }
 
@@ -54,8 +86,10 @@ export default function ImagePanel({
       <figure className="overflow-hidden border border-white/15 bg-white/[0.03]">
         <PresetImage alt={imageAlt} src={src} preset={preset} fitMode={fitMode} />
         {caption ? (
-          <figcaption className="border-t border-white/15 px-4 py-3 text-xs uppercase tracking-[0.18em] text-textPrimary">
-            {caption}
+          <figcaption className="border-t border-white/15 px-4 py-3">
+            <Typography preset="sans-body" size="label" weight="medium" wrapPolicy="label" className="text-textPrimary">
+              {caption}
+            </Typography>
           </figcaption>
         ) : null}
       </figure>

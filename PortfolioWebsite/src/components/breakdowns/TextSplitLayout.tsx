@@ -1,8 +1,8 @@
 'use client';
 
 import React, { type ReactNode } from 'react';
-import BilingualText from '@/components/common/BilingualText';
 import { PresetImage } from '@/components/common/PresetImage';
+import Typography from "@/components/common/Typography";
 import { type ImageFitMode, type ImagePreset } from '@/lib/image-presentation';
 
 interface TextSplitLayoutProps {
@@ -28,7 +28,17 @@ export default function TextSplitLayout({
     const paragraphContent = paragraphsContent ?? (
         <>
             {paragraphs.map((p, i) => (
-                    <p key={i} className="break-words">{typeof p === "string" ? <BilingualText text={p} weight="medium" /> : p}</p>
+                <Typography
+                    key={i}
+                    as="p"
+                    preset="sans-body"
+                    size="body-lg"
+                    weight="medium"
+                    wrapPolicy="prose"
+                    className="text-textMuted"
+                >
+                    {p}
+                </Typography>
                 ))}
         </>
     );
@@ -41,9 +51,9 @@ export default function TextSplitLayout({
                     <>
                         {/* Heading Left */}
                         <div className="col-span-6 col-start-1 mb-12 lg:mb-0">
-                            <h3 className="text-5xl sm:text-6xl lg:text-[4.2vw] leading-[1.04] tracking-[0.08em] uppercase break-words hyphens-auto text-white mb-8 font-futura font-light">
+                            <Typography as="h3" preset="sans-body" size="title" weight="light" wrapPolicy="heading" className="mb-8 text-white uppercase">
                                 {heading}
-                            </h3>
+                            </Typography>
                             {imageSrc && (
                                 <div className="relative w-full opacity-90 transition-opacity duration-700 hover:opacity-100">
                                     <PresetImage src={imageSrc} alt={imageAlt} preset={imagePreset} fitMode={imageFitMode} />
@@ -53,7 +63,7 @@ export default function TextSplitLayout({
                         </div>
                         {/* Text Right */}
                         <div className="col-span-5 col-start-8 flex flex-col justify-center">
-                            <div className="text-textMuted tracking-[0.02em] text-lg lg:text-xl leading-loose space-y-6 pl-0 lg:pl-8 border-l border-white/5">
+                            <div className="space-y-6 border-l border-white/5 pl-0 lg:pl-8">
                                 {paragraphContent}
                             </div>
                         </div>
@@ -64,15 +74,15 @@ export default function TextSplitLayout({
                     <>
                         {/* Text Left */}
                         <div className="col-span-5 col-start-1 flex flex-col justify-center mb-12 lg:mb-0 order-2 lg:order-1 mt-12 lg:mt-0">
-                            <div className="text-textMuted tracking-[0.02em] text-lg lg:text-xl leading-loose space-y-6 pr-0 lg:pr-8 border-r border-white/5 text-right lg:text-left">
+                            <div className="space-y-6 border-r border-white/5 pr-0 text-right lg:pr-8 lg:text-left">
                                 {paragraphContent}
                             </div>
                         </div>
                         {/* Heading Right */}
                         <div className="col-span-6 col-start-7 order-1 lg:order-2">
-                            <h3 className="text-5xl sm:text-6xl lg:text-[4.2vw] font-futura font-light leading-[1.04] tracking-[0.08em] uppercase break-words hyphens-auto text-white mb-8 text-right">
+                            <Typography as="h3" preset="sans-body" size="title" weight="light" wrapPolicy="heading" align="right" className="mb-8 text-white uppercase">
                                 {heading}
-                            </h3>
+                            </Typography>
                             {imageSrc && (
                                 <div className="relative w-full opacity-90 transition-opacity duration-700 hover:opacity-100">
                                     <PresetImage src={imageSrc} alt={imageAlt} preset={imagePreset} fitMode={imageFitMode} />
@@ -85,10 +95,10 @@ export default function TextSplitLayout({
 
                 {layoutVariant === 'stack' && (
                     <div className="col-start-3 col-span-8 flex flex-col items-center text-center">
-                        <h3 className="text-5xl sm:text-6xl lg:text-[5.6vw] font-futura leading-[1.02] tracking-normal uppercase break-words hyphens-auto text-white mb-16 px-4">
+                        <Typography as="h3" preset="sans-body" size="display" weight="strong" wrapPolicy="heading" align="center" className="mb-16 px-4 text-white uppercase">
                             {heading}
-                        </h3>
-                        <div className="text-textMuted tracking-[0.02em] text-lg lg:text-xl leading-loose space-y-6 max-w-3xl border-white/5 border-t pt-12">
+                        </Typography>
+                        <div className="max-w-3xl space-y-6 border-t border-white/5 pt-12">
                             {paragraphContent}
                         </div>
                         {imageSrc && (

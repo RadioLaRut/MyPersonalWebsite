@@ -1,6 +1,7 @@
 import React from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
+import Typography from "@/components/common/Typography";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 import { CANONICAL_PLACEHOLDER_PATH } from "@/lib/public-paths";
 
@@ -44,17 +45,49 @@ export default function NextProjectBlock({
                 </div>
 
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-20 mix-blend-difference pointer-events-none">
-                    <span className="font-mono text-xs text-textMuted tracking-[0.3em] uppercase mb-4 opacity-70 group-hover:opacity-100 transition-all duration-700">
+                    <Typography
+                        preset="sans-body"
+                        size="label"
+                        weight="medium"
+                        wrapPolicy="label"
+                        className="mb-4 text-textMuted opacity-70 transition-all duration-700 group-hover:opacity-100"
+                    >
                         NEXT PROJECT
-                    </span>
-                    <h2 className="text-4xl md:text-[6vw] text-white font-black uppercase tracking-tighter transition-all duration-700 leading-none font-futura">
+                    </Typography>
+                    <Typography
+                        as="h2"
+                        preset="sans-body"
+                        size="title"
+                        weight="display"
+                        wrapPolicy="heading"
+                        align="center"
+                        className="text-white uppercase transition-all duration-700"
+                    >
                         {nextName}
-                    </h2>
+                    </Typography>
                 </div>
             </a>
-            <div className="bg-black py-8 px-8 md:px-12 flex flex-col md:flex-row justify-between items-center text-[10px] sm:text-xs font-mono text-textMuted tracking-widest border-t border-white/10">
-                <span className="mb-2 md:mb-0">© 2026 江承彦 / JIANG CHENGYAN</span>
-                <span>Designed for Darkness</span>
+            <div className="flex flex-col items-center justify-between border-t border-white/10 bg-black px-8 py-8 md:flex-row md:px-12">
+                <Typography
+                    as="span"
+                    preset="sans-body"
+                    size="caption"
+                    weight="medium"
+                    wrapPolicy="label"
+                    className="mb-2 text-textMuted md:mb-0"
+                >
+                    © 2026 江承彦 / JIANG CHENGYAN
+                </Typography>
+                <Typography
+                    as="span"
+                    preset="sans-body"
+                    size="caption"
+                    weight="medium"
+                    wrapPolicy="label"
+                    className="text-textMuted"
+                >
+                    Designed for Darkness
+                </Typography>
             </div>
         </footer>
     );

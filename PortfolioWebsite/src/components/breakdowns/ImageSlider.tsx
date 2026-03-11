@@ -1,7 +1,9 @@
-'use client';
+"use client";
 
-import React, { useState, useRef, useEffect } from 'react';
-import { OptimizedImage } from '@/components/common/OptimizedImage';
+import React, { useState, useRef, useEffect } from "react";
+
+import { OptimizedImage } from "@/components/common/OptimizedImage";
+import Typography from "@/components/common/Typography";
 import {
     type ImageFitMode,
     type ImagePreset,
@@ -10,7 +12,7 @@ import {
     getImagePresetFrameClassName,
     normalizeImageFitMode,
     normalizeImagePreset,
-} from '@/lib/image-presentation';
+} from "@/lib/image-presentation";
 
 interface ImageSliderProps {
     unlitSrc: string;
@@ -26,7 +28,7 @@ interface ImageSliderProps {
 export default function ImageSlider({
     unlitSrc,
     litSrc,
-    alt = 'Image Comparison',
+    alt = "Image Comparison",
     className = "",
     imagePreset = "ratio-16-9",
     imageFitMode = "x",
@@ -62,11 +64,11 @@ export default function ImageSlider({
 
     useEffect(() => {
         const handleMouseUp = () => setIsDragging(false);
-        window.addEventListener('mouseup', handleMouseUp);
-        window.addEventListener('touchend', handleMouseUp);
+        window.addEventListener("mouseup", handleMouseUp);
+        window.addEventListener("touchend", handleMouseUp);
         return () => {
-            window.removeEventListener('mouseup', handleMouseUp);
-            window.removeEventListener('touchend', handleMouseUp);
+            window.removeEventListener("mouseup", handleMouseUp);
+            window.removeEventListener("touchend", handleMouseUp);
         };
     }, []);
 
@@ -85,18 +87,18 @@ export default function ImageSlider({
                         {/* Lit Image (Background) */}
                         <div className="absolute inset-0">
                             <div className="absolute inset-0 bg-neutral-900" />
-                            {litSrc && (
+                            {litSrc ? (
                                 <div className={canvasClassName}>
                                     <OptimizedImage
                                         src={litSrc}
                                         alt={rightLabel ? `${alt} ${rightLabel}` : alt}
                                         width={1920}
                                         height={1080}
-                                        className={imageClassName}
+                                        className={`${imageClassName} select-none`}
                                         draggable={false}
                                     />
                                 </div>
-                            )}
+                            ) : null}
                         </div>
 
                         {/* Unlit Image (Foreground, clipped) */}
@@ -105,24 +107,24 @@ export default function ImageSlider({
                             style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
                         >
                             <div className="absolute inset-0 bg-neutral-800" />
-                            {unlitSrc && (
+                            {unlitSrc ? (
                                 <div className={canvasClassName}>
                                     <OptimizedImage
                                         src={unlitSrc}
                                         alt={leftLabel ? `${alt} ${leftLabel}` : alt}
                                         width={1920}
                                         height={1080}
-                                        className={imageClassName}
+                                        className={`${imageClassName} select-none`}
                                         draggable={false}
                                     />
                                 </div>
-                            )}
+                            ) : null}
                         </div>
 
                         {/* Slider line and button */}
                         <div
                             className="absolute top-0 bottom-0 w-0.5 bg-white pointer-events-none"
-                            style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
+                            style={{ left: `${sliderPosition}%`, transform: "translateX(-50%)" }}
                         >
                             <div
                                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg transition-shadow duration-150"
@@ -143,14 +145,28 @@ export default function ImageSlider({
                     {(leftLabel || rightLabel) ? (
                         <div className="mt-4 flex justify-between items-center px-2">
                             {leftLabel ? (
-                                <span className="font-mono text-xs tracking-widest text-textPrimary">
+                                <Typography
+                                    as="span"
+                                    preset="sans-body"
+                                    size="caption"
+                                    weight="medium"
+                                    wrapPolicy="label"
+                                    className="text-textPrimary"
+                                >
                                     {leftLabel}
-                                </span>
+                                </Typography>
                             ) : <span />}
                             {rightLabel ? (
-                                <span className="font-mono text-xs tracking-widest text-textPrimary">
+                                <Typography
+                                    as="span"
+                                    preset="sans-body"
+                                    size="caption"
+                                    weight="medium"
+                                    wrapPolicy="label"
+                                    className="text-textPrimary"
+                                >
                                     {rightLabel}
-                                </span>
+                                </Typography>
                             ) : null}
                         </div>
                     ) : null}

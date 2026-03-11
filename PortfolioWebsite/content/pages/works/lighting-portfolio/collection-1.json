@@ -16,57 +16,63 @@
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "LightingCollectionItem-1416da9f-1777-4b99-9ebb-978379edfaa7",
         "src": "/images/city-2026/001.webp",
         "caption": "",
-        "preset": "native"
+        "preset": "native",
+        "variant": "large"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "collection-1-image-2",
         "src": "/images/city-2026/002.webp",
         "caption": "",
-        "preset": "native"
+        "preset": "native",
+        "variant": "large"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "collection-1-image-3",
         "src": "/images/city-2026/003.webp",
         "caption": "",
-        "preset": "native"
+        "preset": "native",
+        "variant": "large"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "collection-1-image-1",
         "src": "/images/rainforest/Version2Output.0029.webp",
         "caption": "",
-        "preset": "native"
+        "preset": "native",
+        "variant": "large"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "LightingCollectionItem-870ead0a-6e4c-43f6-b972-ad377e9372ab",
         "src": "/images/rainforest/Output.0050.webp",
         "caption": "",
-        "preset": "native"
+        "preset": "native",
+        "variant": "large"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "LightingCollectionItem-a8d5f68e-b363-4b63-a1e2-9c7bd5fa227d",
         "src": "/images/rainforest/Output.0101.webp",
         "caption": "",
-        "preset": "native"
+        "preset": "native",
+        "variant": "large"
       }
     },
     {

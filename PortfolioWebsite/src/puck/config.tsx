@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ReactNode } from "react";
 import type { Config } from "@measured/puck";
 import { PresetImage } from "../components/common/PresetImage";
@@ -17,6 +18,7 @@ import HeroSection from "../components/home/HeroSection";
 import HomeEndcapSection from "../components/home/HomeEndcapSection";
 import NextProjectBlock from "../components/blocks/NextProjectBlock";
 import LightingCollectionHeader from "../components/works/LightingCollectionHeader";
+import LightingProjectCard from "../components/works/LightingProjectCard";
 import PortfolioHeroHeader from "../components/works/PortfolioHeroHeader";
 import WorksList from "../components/works/WorksList";
 import WorksListEntry from "../components/works/WorksListEntry";
@@ -24,8 +26,8 @@ import MetadataListItem from "../components/common/MetadataListItem";
 import TextParagraphBlock from "../components/common/TextParagraphBlock";
 import { CANONICAL_PLACEHOLDER_PATH, toAdminPathFromPublicPath, normalizeLegacyPublicPath } from "@/lib/public-paths";
 import { resolveEditableText, toPlainText } from "@/lib/editable-text";
-import { createFieldGroup, FieldGroups, FieldTypes } from "@/puck/fields/field-groups";
-import { imagePresetField, imageFitModeField, createImageFields, createImageDefaults } from "@/puck/fields/image-fields";
+import { createFieldGroup } from "@/puck/fields/field-groups";
+import { imagePresetField, imageFitModeField } from "@/puck/fields/image-fields";
 
 /**
  * 编辑器链接转换工具
@@ -199,10 +201,11 @@ export const config: Config = {
       title: "灯光作品特供",
       components: [
         "LightingCollectionHeader",
+        "LightingProjectCard",
       ],
     },
     contact: {
-      title: "联系信息与履历",
+      title: "关于与联系",
       components: [
         "ContactFlashlight",
         "MetadataListItem",
@@ -327,6 +330,7 @@ export const config: Config = {
           label: "Variant",
           options: [
             { label: "Content (max-width with border)", value: "content" },
+            { label: "Large (grid-aligned wide figure)", value: "large" },
             { label: "Fullscreen (full viewport height)", value: "fullscreen" },
           ],
         },
@@ -757,9 +761,15 @@ export const config: Config = {
     HeroSection: {
       fields: {
         _g_text: createFieldGroup("文本内容"),
+        eyebrow: { type: "text", contentEditable: true, label: "Eyebrow" },
         title: { type: "text", contentEditable: true, label: "Title" },
         subtitle: { type: "text", contentEditable: true, label: "Subtitle" },
         description: { type: "textarea", contentEditable: true, label: "Description" },
+        _g_cta: createFieldGroup("行动按钮 (CTA)"),
+        primaryCtaLabel: { type: "text", contentEditable: true, label: "Primary CTA Label" },
+        primaryCtaHref: { type: "text", label: "Primary CTA Href" },
+        secondaryCtaLabel: { type: "text", contentEditable: true, label: "Secondary CTA Label" },
+        secondaryCtaHref: { type: "text", label: "Secondary CTA Href" },
         _g_image: createFieldGroup("图片配置"),
         imageSrc: { type: "text", label: "Image Source" },
         imageAlt: { type: "text", label: "Image Alt" },
@@ -767,19 +777,29 @@ export const config: Config = {
         imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
       },
       defaultProps: {
+        eyebrow: "LIGHTING / TECH ART / GAME DESIGN",
         title: "JIANG CHENGYAN",
         subtitle: "PORTFOLIO",
-        description: "GAME DIRECTOR\n& DEVELOPER",
+        description: "以灯光建立氛围与引导，再把技术美术、游戏设计和叙事系统组织成完整体验。",
+        primaryCtaLabel: "ENTER LIGHTING",
+        primaryCtaHref: "/works/lighting-portfolio",
+        secondaryCtaLabel: "ABOUT",
+        secondaryCtaHref: "/about",
         imageSrc: "/images/covers/2026/ShotForCrewWithoutWord.0004.webp",
         imageAlt: "Hero Background",
         imagePreset: "ratio-21-9",
         imageFitMode: "x",
       },
-      render: ({ title, subtitle, description, imageSrc, imageAlt, imagePreset, imageFitMode, editMode }) => (
+      render: ({ eyebrow, title, subtitle, description, primaryCtaLabel, primaryCtaHref, secondaryCtaLabel, secondaryCtaHref, imageSrc, imageAlt, imagePreset, imageFitMode, editMode }) => (
         <HeroSection
+          eyebrow={eyebrow}
           title={title}
           subtitle={subtitle}
           description={description}
+          primaryCtaLabel={primaryCtaLabel}
+          primaryCtaHref={toEditorAwareHref(primaryCtaHref, editMode)}
+          secondaryCtaLabel={secondaryCtaLabel}
+          secondaryCtaHref={toEditorAwareHref(secondaryCtaHref, editMode)}
           imageSrc={imageSrc}
           imageAlt={imageAlt}
           imagePreset={imagePreset as any}
@@ -803,8 +823,8 @@ export const config: Config = {
         eyebrow: "NEXT STEP",
         title: "Ready to start a project?",
         description: "Let's create something amazing together.",
-        buttonLabel: "Contact Me",
-        buttonHref: "/contact",
+        buttonLabel: "About Me",
+        buttonHref: "/about",
       },
       render: ({ eyebrow, title, description, buttonLabel, buttonHref, editMode }) => (
         <HomeEndcapSection
@@ -812,7 +832,7 @@ export const config: Config = {
           title={title}
           description={description}
           buttonLabel={buttonLabel}
-          buttonHref={toEditorAwareHref(buttonHref, false) ?? "/works"}
+          buttonHref={toEditorAwareHref(buttonHref, editMode) ?? "/works"}
           editMode={editMode}
         />
       ),
@@ -844,13 +864,41 @@ export const config: Config = {
           descriptionLine1={descriptionLine1}
           descriptionLine2={descriptionLine2}
           ctaLabel={ctaLabel}
-          ctaHref={toEditorAwareHref(ctaHref, false)}
+          ctaHref={toEditorAwareHref(ctaHref, editMode)}
           editMode={editMode}
         />
       )
     },
 
-    // LightingProjectCard removed
+    LightingProjectCard: {
+      fields: {
+        number: { type: "text", contentEditable: true, label: "Number" },
+        title: { type: "text", contentEditable: true, label: "Title" },
+        coverImage: { type: "text", label: "Cover Image" },
+        href: { type: "text", label: "Href" },
+        imagePreset: { ...imagePresetField, label: "Image Preset" },
+        imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
+      },
+      defaultProps: {
+        number: "01",
+        title: "Collection Title",
+        coverImage: CANONICAL_PLACEHOLDER_PATH,
+        href: "/works/lighting-portfolio/collection-1",
+        imagePreset: "ratio-21-9",
+        imageFitMode: "cover",
+      },
+      render: ({ number, title, coverImage, href, imagePreset, imageFitMode, editMode }) => (
+        <LightingProjectCard
+          number={number}
+          title={title}
+          coverImage={coverImage}
+          href={toEditorAwareHref(href, editMode)}
+          imagePreset={imagePreset as any}
+          imageFitMode={imageFitMode as any}
+          editMode={editMode}
+        />
+      ),
+    },
 
     WorksList: {
       fields: {
@@ -978,8 +1026,6 @@ export const config: Config = {
       ),
     },
 
-    // LightingCollectionItem removed
-
     // --------------------------------------------------------
     // Black Box Special Effect Blocks
     // --------------------------------------------------------
@@ -1043,14 +1089,14 @@ export const config: Config = {
             wechat={wechat}
             experienceHistory={Array.isArray(experienceHistory)
               ? (experienceHistory as any[]).map((entry) => ({
-                company: entry?.props?.company ?? entry?.company ?? "",
-                role: entry?.props?.role ?? entry?.role ?? "",
+                company: entry?.props?.company ?? entry?.company ?? entry?.props?.label ?? entry?.label ?? "",
+                role: entry?.props?.role ?? entry?.role ?? entry?.props?.value ?? entry?.value ?? "",
               }))
               : undefined}
             creativeDirection={Array.isArray(creativeDirection)
               ? (creativeDirection as any[]).map((entry) => ({
-                title: entry?.props?.title ?? entry?.title ?? "",
-                subtitle: entry?.props?.subtitle ?? entry?.subtitle ?? "",
+                title: entry?.props?.title ?? entry?.title ?? entry?.props?.label ?? entry?.label ?? "",
+                subtitle: entry?.props?.subtitle ?? entry?.subtitle ?? entry?.props?.value ?? entry?.value ?? "",
               }))
               : undefined}
             experienceContent={ExperienceSlot ? <ExperienceSlot allow={["MetadataListItem"]} className="space-y-6" minEmptyHeight={20} /> : undefined}

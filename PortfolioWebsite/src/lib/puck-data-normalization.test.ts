@@ -20,13 +20,13 @@ test("normalizePuckData canonicalizes Heroheadline and hydrates hero defaults", 
     },
   });
 
-  const hero = normalized.content[0];
+  const hero = normalized.content[0] as { props: Record<string, unknown>; type: string };
   assert.equal(hero.type, "HeroHeadline");
   assert.equal(hero.props.title, "PROJECT TITLE");
   assert.equal(hero.props.heroImage, "/images/train-station/2Day.webp");
 });
 
-test("normalizePuckData migrates LightingCollectionItem lit to src", () => {
+test("normalizePuckData migrates LightingCollectionItem to ImagePanel.large", () => {
   const normalized = normalizePuckData({
     content: [
       {
@@ -44,9 +44,11 @@ test("normalizePuckData migrates LightingCollectionItem lit to src", () => {
     },
   });
 
-  const item = normalized.content[0];
+  const item = normalized.content[0] as { props: Record<string, unknown>; type: string };
+  assert.equal(item.type, "ImagePanel");
   assert.equal(item.props.src, "/images/city-2026/001.webp");
   assert.equal(item.props.caption, "IMAGE");
+  assert.equal(item.props.variant, "large");
 });
 
 test("normalizePuckData hydrates blank HeroHeadline props", () => {
@@ -71,7 +73,7 @@ test("normalizePuckData hydrates blank HeroHeadline props", () => {
     },
   });
 
-  const header = normalized.content[0];
+  const header = normalized.content[0] as { props: Record<string, unknown> };
   assert.equal(header.props.title, "PROJECT TITLE");
   assert.equal(header.props.heroImage, "/images/train-station/2Day.webp");
 });
@@ -95,7 +97,7 @@ test("normalizePuckData migrates ImageSlider left/right image aliases", () => {
     },
   });
 
-  const slider = normalized.content[0];
+  const slider = normalized.content[0] as { props: Record<string, unknown> };
   assert.equal(slider.props.unlitSrc, "/images/train-station/2NoLight.webp");
   assert.equal(slider.props.litSrc, "/images/train-station/2Day.webp");
 });

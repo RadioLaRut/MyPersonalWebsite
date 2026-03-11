@@ -5,11 +5,10 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import puckConfig from "@/puck/config";
 import { CANONICAL_PLACEHOLDER_PATH } from "@/lib/public-paths";
-import BilingualText from "@/components/common/BilingualText";
+import Typography from "@/components/common/Typography";
 
 const EXCLUDED_COMPONENT_KEYS = new Set(["ContactFlashlight"]);
 const HIDDEN_LEGACY_COMPONENT_KEYS = new Set([
-  "PortfolioHeroHeader",
   "MetadataListItem",
   "TextParagraphBlock",
   "ContactExperienceItem",
@@ -39,7 +38,7 @@ const PLAYGROUND_GROUPS = [
   {
     label: "Lighting Blocks",
     description: "灯光作品集专用模块。",
-    keys: ["LightingCollectionHeader"],
+    keys: ["LightingCollectionHeader", "LightingProjectCard"],
   },
   {
     label: "Page Blocks",
@@ -61,10 +60,12 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     title: "SECTION TITLE",
   },
   PortfolioHeroHeader: {
-    title: "LIGHTING",
-    subtitle: "PORTFOLIO",
-    descriptionLine1: "A Curated Selection",
-    descriptionLine2: "Unreal Engine 5",
+    title: "ALL WORKS",
+    subtitle: "ARCHIVE",
+    descriptionLine1: "CURATED INDEX",
+    descriptionLine2: "按灯光、技术美术与游戏设计线索组织全部项目。",
+    ctaLabel: "ABOUT",
+    ctaHref: "/about",
   },
   RichParagraph: {
     content: "这是一个富文本段落组件，支持中英文混排。This is a rich paragraph component supporting bilingual text. 可以用于展示项目描述、设计思路或任何需要详细说明的内容。",
@@ -92,7 +93,7 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     caption: "Image Panel Caption",
     preset: "ratio-16-9",
     fitMode: "x",
-    variant: "content",
+    variant: "large",
   },
   ImageSlider: {
     unlitSrc: "/images/train-station/2Day.webp",
@@ -155,9 +156,14 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     phase3ImageFitMode: "x",
   },
   HeroSection: {
-    title: "HERO SECTION",
-    subtitle: "Portfolio / Design / Development",
-    description: "GAME DIRECTOR\n& DEVELOPER",
+    eyebrow: "LIGHTING / TECH ART / GAME DESIGN",
+    title: "JIANG CHENGYAN",
+    subtitle: "Lighting-first portfolio",
+    description: "以灯光建立氛围与引导，再把技术美术、游戏设计和叙事系统组织成完整体验。",
+    primaryCtaLabel: "ENTER LIGHTING",
+    primaryCtaHref: "/works/lighting-portfolio",
+    secondaryCtaLabel: "ABOUT",
+    secondaryCtaHref: "/about",
     imageSrc: "/images/covers/2026/ShotForCrewWithoutWord.0004.webp",
     imageAlt: "Hero Background",
     imagePreset: "ratio-21-9",
@@ -223,8 +229,16 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
   LightingCollectionHeader: {
     title: "CITY ADD",
     number: "01",
-    description: "A detailed breakdown of lighting setup, mood exploration, and before/after comparisons for city add.",
+    description: "围绕城市氛围、镜头构图与照明节奏展开的灯光练习集合。",
     backHref: "/works/lighting-portfolio",
+  },
+  LightingProjectCard: {
+    number: "01",
+    title: "CITY AFTER RAIN",
+    coverImage: "/images/city-2026/002.webp",
+    href: "/works/lighting-portfolio/collection-1",
+    imagePreset: "ratio-21-9",
+    imageFitMode: "cover",
   },
 };
 
@@ -252,9 +266,16 @@ export default function PlaygroundClient() {
               href="/"
               className="group inline-flex items-center gap-4 mb-10 lg:mb-12"
             >
-              <span className="font-mono text-sm uppercase tracking-[0.25em] text-textMuted group-hover:text-white transition-colors duration-300">
+              <Typography
+                as="span"
+                preset="sans-body"
+                size="label"
+                weight="medium"
+                wrapPolicy="label"
+                className="text-textMuted transition-colors duration-300 group-hover:text-white"
+              >
                 ← 返回首页
-              </span>
+              </Typography>
             </Link>
           </motion.div>
 
@@ -263,9 +284,18 @@ export default function PlaygroundClient() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-[12vw] sm:text-[10vw] md:text-[6vw] font-luna font-black leading-[0.9] tracking-tighter mb-6 lg:mb-8"
+            className="mb-6 lg:mb-8"
           >
-            PLAYGROUND
+            <Typography
+              as="span"
+              preset="luna-editorial"
+              size="display"
+              weight="display"
+              wrapPolicy="heading"
+              className="text-white"
+            >
+              PLAYGROUND
+            </Typography>
           </motion.h1>
 
           {/* Subtitle */}
@@ -275,9 +305,16 @@ export default function PlaygroundClient() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="flex flex-col md:flex-row md:items-end justify-between gap-6"
           >
-            <p className="font-futura text-textMuted tracking-wide text-base md:text-lg max-w-2xl leading-relaxed">
+            <Typography
+              as="p"
+              preset="sans-body"
+              size="body"
+              weight="regular"
+              wrapPolicy="prose"
+              className="max-w-2xl text-textMuted"
+            >
               组件预览与交互测试空间。展示 Puck 中全部常规组件，用于统一预览布局与交互效果。
-            </p>
+            </Typography>
           </motion.div>
         </div>
 
@@ -289,7 +326,64 @@ export default function PlaygroundClient() {
           className="col-span-12 border-b border-white/15 mb-16 lg:mb-20 origin-left"
         />
 
-        {/* BilingualText Component Showcase */}
+        <div className="col-span-12 mb-16 lg:mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="grid grid-cols-1 lg:grid-cols-12 gap-6"
+          >
+            <div className="lg:col-span-4 border border-white/10 bg-white/[0.02] p-6">
+              <Typography
+                as="span"
+                preset="sans-body"
+                size="caption"
+                weight="medium"
+                wrapPolicy="label"
+                className="text-textMuted"
+              >
+                INTERNAL TOOL
+              </Typography>
+              <Typography
+                as="h2"
+                preset="luna-editorial"
+                size="title-sm"
+                weight="strong"
+                wrapPolicy="heading"
+                className="mt-4 text-white"
+              >
+                Font Lab
+              </Typography>
+              <Typography
+                as="p"
+                preset="sans-body"
+                size="body-sm"
+                weight="regular"
+                wrapPolicy="prose"
+                className="mt-4 text-textMuted"
+              >
+                独立字体实验室。用于实时校准 preset、size、baseline、tracking、wrap policy 与真实组件预览。
+              </Typography>
+              <Link
+                href="/playground/font-lab"
+                className="mt-8 inline-flex items-center gap-3 border border-white/12 px-4 py-3 text-textPrimary transition-colors duration-300 hover:border-white/25 hover:text-white"
+              >
+                <Typography
+                  as="span"
+                  preset="sans-body"
+                  size="caption"
+                  weight="medium"
+                  wrapPolicy="label"
+                  className="text-current"
+                >
+                  ENTER FONT LAB
+                </Typography>
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Typography Mixed Script Showcase */}
         <div className="col-span-12 mb-16 lg:mb-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -299,16 +393,37 @@ export default function PlaygroundClient() {
             className="mb-10 lg:mb-12 border-b border-white/10 pb-6"
           >
             <div className="flex items-baseline gap-4 mb-3">
-              <span className="font-mono text-xs uppercase tracking-[0.3em] text-textMuted">
+              <Typography
+                as="span"
+                preset="sans-body"
+                size="label"
+                weight="medium"
+                wrapPolicy="label"
+                className="text-textMuted"
+              >
                 00
-              </span>
-              <h2 className="text-2xl md:text-3xl font-futura tracking-[0.1em] uppercase text-white">
-                BilingualText
-              </h2>
+              </Typography>
+              <Typography
+                as="h2"
+                preset="sans-body"
+                size="title-sm"
+                weight="strong"
+                wrapPolicy="label"
+                className="text-white"
+              >
+                Typography Mixed Script
+              </Typography>
             </div>
-            <p className="font-futura text-sm md:text-base tracking-wide text-textMuted ml-10">
-              双语文本组件，支持三种字重与自动中英文混排。
-            </p>
+            <Typography
+              as="p"
+              preset="sans-body"
+              size="body-sm"
+              weight="regular"
+              wrapPolicy="prose"
+              className="ml-10 text-textMuted"
+            >
+              `Typography` 已接管中英文混排、字重映射、换行与基线补偿；这里保留一组高密度样本用于校验。
+            </Typography>
           </motion.div>
 
           <div className="space-y-12">
@@ -319,27 +434,27 @@ export default function PlaygroundClient() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6 }}
             >
-              <h3 className="text-lg md:text-xl font-futura tracking-wider text-textPrimary mb-6">
+              <Typography as="h3" preset="sans-body" size="body-lg" weight="strong" wrapPolicy="heading" className="mb-6 text-textPrimary">
                 三种字重对比
-              </h3>
+              </Typography>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="space-y-3">
-                  <span className="font-mono text-xs text-textMuted uppercase tracking-[0.2em]">light</span>
-                  <p className="text-textPrimary text-lg leading-relaxed">
-                    <BilingualText text="中文轻量字重 / Light English Weight" weight="light" />
-                  </p>
+                  <Typography as="span" preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="text-textMuted">light</Typography>
+                  <Typography as="p" preset="sans-body" size="body-lg" weight="light" wrapPolicy="prose" className="text-textPrimary">
+                    中文轻量字重 / Light English Weight
+                  </Typography>
                 </div>
                 <div className="space-y-3">
-                  <span className="font-mono text-xs text-textMuted uppercase tracking-[0.2em]">medium</span>
-                  <p className="text-textPrimary text-lg leading-relaxed">
-                    <BilingualText text="中文中等字重 / Medium English Weight" weight="medium" />
-                  </p>
+                  <Typography as="span" preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="text-textMuted">medium</Typography>
+                  <Typography as="p" preset="sans-body" size="body-lg" weight="medium" wrapPolicy="prose" className="text-textPrimary">
+                    中文中等字重 / Medium English Weight
+                  </Typography>
                 </div>
                 <div className="space-y-3">
-                  <span className="font-mono text-xs text-textMuted uppercase tracking-[0.2em]">black</span>
-                  <p className="text-textPrimary text-lg leading-relaxed">
-                    <BilingualText text="中文粗黑字重 / Black English Weight" weight="black" />
-                  </p>
+                  <Typography as="span" preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="text-textMuted">display</Typography>
+                  <Typography as="p" preset="sans-body" size="body-lg" weight="display" wrapPolicy="prose" className="text-textPrimary">
+                    中文粗黑字重 / Display English Weight
+                  </Typography>
                 </div>
               </div>
             </motion.div>
@@ -351,22 +466,16 @@ export default function PlaygroundClient() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
-              <h3 className="text-lg md:text-xl font-futura tracking-wider text-textPrimary mb-6">
+              <Typography as="h3" preset="sans-body" size="body-lg" weight="strong" wrapPolicy="heading" className="mb-6 text-textPrimary">
                 中英文混排效果
-              </h3>
+              </Typography>
               <div className="bg-white/[0.02] rounded-lg p-6 md:p-8 space-y-6">
-                <p className="text-textPrimary text-base md:text-lg leading-loose">
-                  <BilingualText
-                    text="这是一个BilingualText组件示例，展示中英文混排效果。This is a demo showing Chinese and English mixed text rendering with proper weight and baseline alignment."
-                    weight="medium"
-                  />
-                </p>
-                <p className="text-textMuted text-sm md:text-base leading-[1.85]">
-                  <BilingualText
-                    text="组件会自动检测文本中的中英文内容，并分别应用不同的字体和字重。The component automatically detects Chinese and English text, applying appropriate fonts and weights."
-                    weight="light"
-                  />
-                </p>
+                <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="prose" className="text-textPrimary">
+                  这是一个 Typography 组件示例，展示中英文混排效果。This is a demo showing Chinese and English mixed text rendering with proper weight and baseline alignment.
+                </Typography>
+                <Typography as="p" preset="sans-body" size="body-sm" weight="light" wrapPolicy="prose" className="text-textMuted">
+                  组件会自动检测文本中的中英文内容，并分别应用不同的字体和字重。The component automatically detects Chinese and English text, applying appropriate fonts and weights.
+                </Typography>
               </div>
             </motion.div>
 
@@ -377,40 +486,25 @@ export default function PlaygroundClient() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <h3 className="text-lg md:text-xl font-futura tracking-wider text-textPrimary mb-6">
+              <Typography as="h3" preset="sans-body" size="body-lg" weight="strong" wrapPolicy="heading" className="mb-6 text-textPrimary">
                 更多混排示例
-              </h3>
+              </Typography>
               <div className="bg-white/[0.02] rounded-lg p-6 md:p-8 space-y-6">
-                <p className="text-textPrimary text-base md:text-lg leading-loose">
-                  <BilingualText
-                    text="在UnrealEngine5中，我们使用Lumen全局光照系统来实现真实的光影效果。In Unreal Engine 5, we use the Lumen global illumination system to achieve realistic lighting effects."
-                    weight="medium"
-                  />
-                </p>
-                <p className="text-textPrimary text-base md:text-lg leading-loose">
-                  <BilingualText
-                    text="本项目的GitHub仓库地址是github.com/example/project，欢迎提交Issue和PR。The GitHub repository for this project is github.com/example/project, welcome to submit Issues and PRs."
-                    weight="medium"
-                  />
-                </p>
-                <p className="text-textMuted text-sm md:text-base leading-[1.85]">
-                  <BilingualText
-                    text="版本号v2.1.0已于2024年1月15日发布，包含15个新功能和23个Bug修复。Version v2.1.0 was released on January 15, 2024, including 15 new features and 23 bug fixes."
-                    weight="light"
-                  />
-                </p>
-                <p className="text-textPrimary text-lg md:text-xl leading-loose font-black">
-                  <BilingualText
-                    text="CSS3和HTML5是现代Web开发的基础技术，配合TypeScript使用效果更佳。CSS3 and HTML5 are fundamental technologies for modern web development, and work even better with TypeScript."
-                    weight="black"
-                  />
-                </p>
-                <p className="text-textPrimary text-base md:text-lg leading-loose">
-                  <BilingualText
-                    text="请访问我们的官网www.example.com或发送邮件至contact@example.com获取更多信息。Please visit our website www.example.com or email contact@example.com for more information."
-                    weight="medium"
-                  />
-                </p>
+                <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="prose" className="text-textPrimary">
+                  在 Unreal Engine 5 中，我们使用 Lumen 全局光照系统来实现真实的光影效果。In Unreal Engine 5, we use the Lumen global illumination system to achieve realistic lighting effects.
+                </Typography>
+                <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="url" className="text-textPrimary">
+                  本项目的 GitHub 仓库地址是 github.com/example/project，欢迎提交 Issue 和 PR。The GitHub repository for this project is github.com/example/project, welcome to submit Issues and PRs.
+                </Typography>
+                <Typography as="p" preset="sans-body" size="body-sm" weight="light" wrapPolicy="prose" className="text-textMuted">
+                  版本号 v2.1.0 已于 2024 年 1 月 15 日发布，包含 15 个新功能和 23 个 Bug 修复。Version v2.1.0 was released on January 15, 2024, including 15 new features and 23 bug fixes.
+                </Typography>
+                <Typography as="p" preset="sans-body" size="body-lg" weight="display" wrapPolicy="prose" className="text-textPrimary">
+                  CSS3 和 HTML5 是现代 Web 开发的基础技术，配合 TypeScript 使用效果更佳。CSS3 and HTML5 are fundamental technologies for modern web development, and work even better with TypeScript.
+                </Typography>
+                <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="url" className="text-textPrimary">
+                  请访问我们的官网 www.example.com 或发送邮件至 contact@example.com 获取更多信息。Please visit our website www.example.com or email contact@example.com for more information.
+                </Typography>
               </div>
             </motion.div>
           </div>
@@ -425,19 +519,40 @@ export default function PlaygroundClient() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6 }}
-              className="mb-10 lg:mb-12 border-b border-white/10 pb-6"
-            >
-              <div className="flex items-baseline gap-4 mb-3">
-                <span className="font-mono text-xs uppercase tracking-[0.3em] text-textMuted">
+            className="mb-10 lg:mb-12 border-b border-white/10 pb-6"
+          >
+            <div className="flex items-baseline gap-4 mb-3">
+                <Typography
+                  as="span"
+                  preset="sans-body"
+                  size="label"
+                  weight="medium"
+                  wrapPolicy="label"
+                  className="text-textMuted"
+                >
                   {String(groupIndex + 1).padStart(2, "0")}
-                </span>
-                <h2 className="text-2xl md:text-3xl font-futura tracking-[0.1em] uppercase text-white">
+                </Typography>
+                <Typography
+                  as="h2"
+                  preset="sans-body"
+                  size="title-sm"
+                  weight="strong"
+                  wrapPolicy="label"
+                  className="text-white"
+                >
                   {group.label}
-                </h2>
+                </Typography>
               </div>
-              <p className="font-futura text-sm md:text-base tracking-wide text-textMuted ml-10">
+              <Typography
+                as="p"
+                preset="sans-body"
+                size="body-sm"
+                weight="regular"
+                wrapPolicy="prose"
+                className="ml-10 text-textMuted"
+              >
                 {group.description}
-              </p>
+              </Typography>
             </motion.div>
 
             {/* Components */}
@@ -462,14 +577,28 @@ export default function PlaygroundClient() {
                     <div className="mb-6 lg:mb-8 flex items-start justify-between">
                       <div>
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="font-mono text-[10px] text-textMuted uppercase tracking-[0.25em]">
+                          <Typography
+                            as="span"
+                            preset="sans-body"
+                            size="caption"
+                            weight="medium"
+                            wrapPolicy="label"
+                            className="text-textMuted"
+                          >
                             COMP {String(componentIndex + 1).padStart(2, "0")}
-                          </span>
+                          </Typography>
                           <div className="h-px w-8 bg-white/10"></div>
                         </div>
-                        <h3 className="text-xl md:text-2xl font-futura tracking-wider text-textPrimary group-hover:text-white transition-colors">
+                        <Typography
+                          as="h3"
+                          preset="sans-body"
+                          size="body-lg"
+                          weight="strong"
+                          wrapPolicy="heading"
+                          className="text-textPrimary group-hover:text-white transition-colors"
+                        >
                           {`<${COMPONENT_DISPLAY_NAMES[componentKey] ?? componentKey} />`}
-                        </h3>
+                        </Typography>
                       </div>
                     </div>
 
@@ -492,9 +621,16 @@ export default function PlaygroundClient() {
           viewport={{ once: true }}
           className="col-span-12 mt-16 lg:mt-24 pt-12 border-t border-white/10 text-center"
         >
-          <p className="font-mono text-xs text-textMuted tracking-[0.2em]">
+          <Typography
+            as="p"
+            preset="sans-body"
+            size="caption"
+            weight="medium"
+            wrapPolicy="label"
+            className="text-textMuted"
+          >
             END OF PLAYGROUND
-          </p>
+          </Typography>
         </motion.div>
       </div>
     </main>

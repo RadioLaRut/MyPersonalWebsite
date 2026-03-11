@@ -16,43 +16,47 @@
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "collection-2-image-1",
         "src": "/images/train-station/Cut2Day.webp",
         "caption": "DAY",
         "preset": "native",
-        "fitMode": "x"
+        "fitMode": "x",
+        "variant": "large"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "collection-2-image-2",
         "src": "/images/train-station/Cut2Dusk.webp",
         "caption": "DUSK",
         "preset": "native",
-        "fitMode": "x"
+        "fitMode": "x",
+        "variant": "large"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "collection-2-image-3",
         "src": "/images/train-station/Cut2Fog.webp",
         "caption": "FOG",
         "preset": "native",
-        "fitMode": "x"
+        "fitMode": "x",
+        "variant": "large"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "collection-2-image-4",
         "src": "/images/train-station/Cut2Night.webp",
         "caption": "NIGHT",
         "preset": "native",
-        "fitMode": "x"
+        "fitMode": "x",
+        "variant": "large"
       }
     },
     {
@@ -69,33 +73,36 @@
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "LightingCollectionItem-26dc854a-f6c7-41b8-8e0c-ba79f3d884ed",
         "src": "/images/train-station/Day.webp",
         "caption": "DAY",
         "preset": "native",
-        "fitMode": "x"
+        "fitMode": "x",
+        "variant": "large"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "LightingCollectionItem-cf14ab2b-3033-4d76-b328-5a3d848e59ad",
         "src": "/images/train-station/Dusk.webp",
         "caption": "DUSK",
         "preset": "native",
-        "fitMode": "x"
+        "fitMode": "x",
+        "variant": "large"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "LightingCollectionItem-b03d7461-0991-4cfb-9a83-924326c2b469",
         "src": "/images/train-station/Night.webp",
         "caption": "NIGHT",
         "preset": "native",
-        "fitMode": "x"
+        "fitMode": "x",
+        "variant": "large"
       }
     },
     {

@@ -2,10 +2,7 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/puck/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
@@ -18,14 +15,15 @@ const config: Config = {
         textMuted: "rgba(255, 255, 255, 0.45)",
       },
       fontFamily: {
-        sans: ["var(--font-futura)", "var(--font-han-yi-qi-hei)", "sans-serif"],
-        serif: ["var(--font-noto-serif)", "Noto Serif SC", "serif"],
-        display: ["var(--font-gothic)", "var(--font-noto-serif)", "serif"],
+        sans: ["var(--font-latin-sans)", "var(--font-cjk-sans)", "sans-serif"],
+        serif: ["var(--font-cjk-editorial)", "Noto Serif SC", "serif"],
+        elegant: ["var(--font-latin-classical)", "serif"],
+        display: ["var(--font-latin-gothic)", "var(--font-cjk-editorial)", "serif"],
         mono: ["var(--font-han-yi-qi-hei)", "monospace"],
-        body: ["var(--font-futura)", "var(--font-noto-serif)", "sans-serif"],
-        luna: ["var(--font-luna)", "var(--font-noto-serif)", "sans-serif"],
-        gothic: ["var(--font-gothic)", "var(--font-noto-serif)", "sans-serif"],
-        futura: ["var(--font-futura)", "var(--font-han-yi-qi-hei)", "sans-serif"],
+        body: ["var(--font-latin-sans)", "var(--font-cjk-sans)", "sans-serif"],
+        luna: ["var(--font-latin-editorial)", "var(--font-cjk-editorial)", "sans-serif"],
+        gothic: ["var(--font-latin-gothic)", "var(--font-cjk-editorial)", "sans-serif"],
+        futura: ["var(--font-latin-sans)", "var(--font-cjk-sans)", "sans-serif"],
       },
       aspectRatio: {
         "cinema": "21 / 9",
