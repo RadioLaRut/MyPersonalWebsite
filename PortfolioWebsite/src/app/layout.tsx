@@ -1,9 +1,13 @@
+import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { DM_Serif_Display } from "next/font/google";
+import { unstable_noStore as noStore } from "next/cache";
 import SmoothScroll from "@/components/layout/SmoothScroll";
 import CustomCursor from "@/components/layout/CustomCursor";
+import FontLabGlobalVars from "@/components/layout/FontLabGlobalVars";
 import Navigation from "@/components/layout/Navigation";
+import { buildFontLabDocumentCssVars } from "@/lib/font-lab-css-vars";
+import { readFontLabConfig } from "@/lib/font-lab-config";
 import { isTestingMode } from "@/lib/site-mode";
 import "./globals.css";
 
@@ -12,46 +16,11 @@ export const metadata: Metadata = {
   description: "江承彦作品集：灯光、技术美术、游戏设计与交互叙事案例。",
 };
 
-const notoSerif = localFont({
+const sourceHanSerif = localFont({
   src: [
     {
-      path: "./fonts/NotoSerifSC-ExtraLight.ttf",
-      weight: "200",
-      style: "normal",
-    },
-    {
-      path: "./fonts/NotoSerifSC-Light.ttf",
-      weight: "300",
-      style: "normal",
-    },
-    {
-      path: "./fonts/NotoSerifSC-Regular.ttf",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "./fonts/NotoSerifSC-Medium.ttf",
-      weight: "500",
-      style: "normal",
-    },
-    {
-      path: "./fonts/NotoSerifSC-SemiBold.ttf",
-      weight: "600",
-      style: "normal",
-    },
-    {
-      path: "./fonts/NotoSerifSC-Bold.ttf",
-      weight: "700",
-      style: "normal",
-    },
-    {
-      path: "./fonts/NotoSerifSC-ExtraBold.ttf",
-      weight: "800",
-      style: "normal",
-    },
-    {
-      path: "./fonts/NotoSerifSC-Black.ttf",
-      weight: "900",
+      path: "./fonts/SourceHanSerifSC-VF.otf",
+      weight: "200 900",
       style: "normal",
     },
   ],
@@ -177,21 +146,36 @@ const gothic = localFont({
   adjustFontFallback: false,
 });
 
-const dmSerifDisplay = DM_Serif_Display({
-  subsets: ["latin"],
-  weight: ["400"],
+const dmSerifDisplay = localFont({
+  src: [
+    {
+      path: "./fonts/DMSerifDisplay-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+  ],
   variable: "--font-dm-serif",
   display: "swap",
+  adjustFontFallback: false,
 });
 
-export default function RootLayout({
+type StyleWithVars = CSSProperties & Record<string, string>;
+
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  noStore();
   const testingMode = isTestingMode();
+  const fontLabDocument = await readFontLabConfig();
+  const fontLabCssVars = buildFontLabDocumentCssVars(fontLabDocument) as StyleWithVars;
 
   return (
     <html lang="zh-CN" data-site-mode={testingMode ? "testing" : "normal"}>
-      <body className={`bg-black text-white antialiased ${notoSerif.variable} ${hanYiQiHei.variable} ${futura.variable} ${luna.variable} ${gothic.variable} ${dmSerifDisplay.variable}`}>
+      <body
+        className={`bg-black text-white antialiased ${sourceHanSerif.variable} ${hanYiQiHei.variable} ${futura.variable} ${luna.variable} ${gothic.variable} ${dmSerifDisplay.variable}`}
+        style={fontLabCssVars}
+      >
+        <FontLabGlobalVars initialVars={fontLabCssVars} />
         <SmoothScroll>
           <CustomCursor />
           <Navigation />

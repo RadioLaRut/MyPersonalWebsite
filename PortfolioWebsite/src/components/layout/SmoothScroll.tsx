@@ -10,9 +10,11 @@ export default function SmoothScroll({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const shouldDisableSmoothScroll =
+    pathname?.startsWith("/admin") || pathname?.startsWith("/playground/font-lab");
 
   useEffect(() => {
-    if (pathname?.startsWith("/admin")) {
+    if (shouldDisableSmoothScroll) {
       document.documentElement.classList.remove(
         "lenis",
         "lenis-smooth",
@@ -54,7 +56,7 @@ export default function SmoothScroll({
       cancelAnimationFrame(rafId);
       lenis.destroy();
     };
-  }, [pathname]);
+  }, [shouldDisableSmoothScroll]);
 
   return <>{children}</>;
 }

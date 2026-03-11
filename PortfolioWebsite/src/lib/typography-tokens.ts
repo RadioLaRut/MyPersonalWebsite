@@ -30,6 +30,7 @@ export const TYPOGRAPHY_WRAP_POLICIES = [
   "prose",
   "heading",
   "label",
+  "nowrap",
   "url",
   "code",
 ] as const;
@@ -57,6 +58,11 @@ export type TypographyWeightPair = {
   latin: number;
 };
 
+export type TypographyAvailableWeights = {
+  cjk: readonly number[];
+  latin: readonly number[];
+};
+
 export type TypographyMetricsToken = {
   cjkBaselineOffset: string;
   cjkLetterSpacing: string;
@@ -65,7 +71,9 @@ export type TypographyMetricsToken = {
 };
 
 export type TypographyPresetToken = {
+  availableWeights: TypographyAvailableWeights;
   cjkFontFamily: string;
+  fontLabSizes?: readonly TypographySize[];
   label: string;
   latinFontFamily: string;
   supportedSizes: readonly TypographySize[];
@@ -138,9 +146,40 @@ const SHARED_EDITORIAL_SIZES: readonly TypographySize[] = [
   "hero",
 ] as const;
 
+const SANS_BODY_FONT_LAB_SIZES: readonly TypographySize[] = [
+  "caption",
+  "label",
+  "body-sm",
+  "body",
+  "body-lg",
+  "title-sm",
+  "display",
+  "hero",
+] as const;
+
+const LUNA_EDITORIAL_FONT_LAB_SIZES: readonly TypographySize[] = [
+  "title-sm",
+  "title",
+  "display",
+] as const;
+
+const GOTHIC_EDITORIAL_FONT_LAB_SIZES: readonly TypographySize[] = [
+  "label",
+  "title-sm",
+] as const;
+
+const CLASSICAL_DISPLAY_FONT_LAB_SIZES: readonly TypographySize[] = [
+  "menu",
+] as const;
+
 export const TYPOGRAPHY_PRESET_TOKENS: Record<TypographyPreset, TypographyPresetToken> = {
   "sans-body": {
+    availableWeights: {
+      cjk: [400, 500, 700],
+      latin: [300, 400, 500],
+    },
     cjkFontFamily: "var(--font-cjk-sans), sans-serif",
+    fontLabSizes: SANS_BODY_FONT_LAB_SIZES,
     label: "Futura + 汉仪旗黑",
     latinFontFamily: "var(--font-latin-sans), sans-serif",
     supportedSizes: SHARED_EDITORIAL_SIZES,
@@ -149,11 +188,16 @@ export const TYPOGRAPHY_PRESET_TOKENS: Record<TypographyPreset, TypographyPreset
       regular: { cjk: 400, latin: 400 },
       medium: { cjk: 500, latin: 500 },
       strong: { cjk: 700, latin: 500 },
-      display: { cjk: 900, latin: 900 },
+      display: { cjk: 700, latin: 500 },
     },
   },
   "luna-editorial": {
+    availableWeights: {
+      cjk: [300, 400, 500, 700, 900],
+      latin: [400, 700],
+    },
     cjkFontFamily: "var(--font-cjk-editorial), serif",
+    fontLabSizes: LUNA_EDITORIAL_FONT_LAB_SIZES,
     label: "Luna + 中文衬线体",
     latinFontFamily: "var(--font-latin-editorial), serif",
     supportedSizes: SHARED_EDITORIAL_SIZES,
@@ -166,7 +210,12 @@ export const TYPOGRAPHY_PRESET_TOKENS: Record<TypographyPreset, TypographyPreset
     },
   },
   "gothic-editorial": {
+    availableWeights: {
+      cjk: [300, 400, 500, 700, 900],
+      latin: [300, 400, 800, 900],
+    },
     cjkFontFamily: "var(--font-cjk-editorial), serif",
+    fontLabSizes: GOTHIC_EDITORIAL_FONT_LAB_SIZES,
     label: "Gothic + 中文衬线体",
     latinFontFamily: "var(--font-latin-gothic), serif",
     supportedSizes: SHARED_EDITORIAL_SIZES,
@@ -179,8 +228,13 @@ export const TYPOGRAPHY_PRESET_TOKENS: Record<TypographyPreset, TypographyPreset
     },
   },
   "classical-display": {
+    availableWeights: {
+      cjk: [300, 400, 500, 700, 900],
+      latin: [400],
+    },
     cjkFontFamily: "var(--font-cjk-classical), serif",
-    label: "古典展示占位",
+    fontLabSizes: CLASSICAL_DISPLAY_FONT_LAB_SIZES,
+    label: "古典菜单字 + 思源宋体",
     latinFontFamily: "var(--font-latin-classical), serif",
     supportedSizes: ["menu", "display", "hero"],
     weights: {
@@ -414,6 +468,12 @@ export const TYPOGRAPHY_WRAP_POLICY_TOKENS: Record<
     whiteSpace: "nowrap",
     wordBreak: "keep-all",
   },
+  nowrap: {
+    hyphens: "none",
+    overflowWrap: "normal",
+    whiteSpace: "nowrap",
+    wordBreak: "normal",
+  },
   url: {
     hyphens: "none",
     overflowWrap: "anywhere",
@@ -430,6 +490,55 @@ export const TYPOGRAPHY_WRAP_POLICY_TOKENS: Record<
 
 export function getTypographyPresetToken(preset: TypographyPreset) {
   return TYPOGRAPHY_PRESET_TOKENS[preset];
+}
+
+export function getTypographyFontLabSizes(preset: TypographyPreset) {
+  return TYPOGRAPHY_PRESET_TOKENS[preset].fontLabSizes ?? TYPOGRAPHY_PRESET_TOKENS[preset].supportedSizes;
+}
+
+export function getTypographyLatinWeightOffsetRange(preset: TypographyPreset) {
+  const maxOffset = TYPOGRAPHY_PRESET_TOKENS[preset].availableWeights.latin.length - 1;
+
+  return {
+    max: maxOffset,
+    min: -maxOffset,
+  };
+}
+
+export function clampTypographyLatinWeightOffsetSteps(
+  preset: TypographyPreset,
+  value: number,
+) {
+  const { min, max } = getTypographyLatinWeightOffsetRange(preset);
+  const normalized = Number.isFinite(value) ? Math.trunc(value) : 0;
+
+  return Math.min(max, Math.max(min, normalized));
+}
+
+export function resolveTypographyPresetWeightPair(
+  preset: TypographyPreset,
+  weight: TypographyWeight,
+  latinOffsetSteps = 0,
+): TypographyWeightPair {
+  const presetToken = TYPOGRAPHY_PRESET_TOKENS[preset];
+  const basePair = presetToken.weights[weight];
+  const latinWeights = presetToken.availableWeights.latin;
+  const baseIndex = latinWeights.indexOf(basePair.latin);
+  const clampedOffset = clampTypographyLatinWeightOffsetSteps(preset, latinOffsetSteps);
+
+  if (baseIndex < 0) {
+    return basePair;
+  }
+
+  const nextIndex = Math.min(
+    latinWeights.length - 1,
+    Math.max(0, baseIndex + clampedOffset),
+  );
+
+  return {
+    cjk: basePair.cjk,
+    latin: latinWeights[nextIndex] ?? basePair.latin,
+  };
 }
 
 export function getTypographySizeToken(size: TypographySize) {
@@ -452,4 +561,38 @@ export function isTypographySizeSupported(
   size: TypographySize,
 ) {
   return TYPOGRAPHY_PRESET_TOKENS[preset].supportedSizes.includes(size);
+}
+
+export function isTypographyFontLabSizeSupported(
+  preset: TypographyPreset,
+  size: TypographySize,
+) {
+  return getTypographyFontLabSizes(preset).includes(size);
+}
+
+export function resolveTypographyFontLabSize(
+  preset: TypographyPreset,
+  size: TypographySize,
+) {
+  const sizes = getTypographyFontLabSizes(preset);
+
+  if (sizes.includes(size)) {
+    return size;
+  }
+
+  const fallbackGroups: Record<TypographySize, readonly TypographySize[]> = {
+    caption: ["caption", "label", "body-sm", "body"],
+    label: ["label", "caption", "body-sm", "body"],
+    "body-sm": ["body-sm", "body", "body-lg", "label"],
+    body: ["body", "body-lg", "body-sm", "label"],
+    "body-lg": ["body-lg", "body", "title-sm", "body-sm"],
+    "title-sm": ["title-sm", "body-lg", "display", "title"],
+    menu: ["menu", "display", "title-sm", "title", "body-lg"],
+    title: ["title", "display", "title-sm", "hero", "body-lg"],
+    display: ["display", "hero", "title", "title-sm"],
+    hero: ["hero", "display", "title", "title-sm"],
+  };
+
+  const fallback = fallbackGroups[size].find((candidate) => sizes.includes(candidate));
+  return fallback ?? sizes[0];
 }

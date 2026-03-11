@@ -10,7 +10,7 @@ type CustomCursorProps = {
 export default function CustomCursor({ isWithinIframe, targetDocument }: CustomCursorProps = {}) {
   const cursorRef = useRef<HTMLDivElement>(null);
   const [isCursorEnabled, setIsCursorEnabled] = useState(false);
-  const [isAdminShell, setIsAdminShell] = useState(false);
+  const [isCursorBlockedByRoute, setIsCursorBlockedByRoute] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -20,19 +20,33 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
       ? targetDocument?.defaultView?.location.pathname ?? ""
       : pathname ?? "";
     const adminShell = !isWithinIframe && currentPathname.startsWith("/admin");
-    setIsAdminShell(adminShell);
+    const fontLabMode = !isWithinIframe && currentPathname.startsWith("/playground/font-lab");
+    setIsCursorBlockedByRoute(adminShell || fontLabMode);
 
     // Disable outer custom cursor in the admin dashboard completely
-    if (adminShell) {
-      htmlElement.setAttribute("data-admin-mode", "true");
+    if (adminShell || fontLabMode) {
+      if (adminShell) {
+        htmlElement.setAttribute("data-admin-mode", "true");
+      } else {
+        htmlElement.removeAttribute("data-admin-mode");
+      }
+
+      if (fontLabMode) {
+        htmlElement.setAttribute("data-font-lab-mode", "true");
+      } else {
+        htmlElement.removeAttribute("data-font-lab-mode");
+      }
+
       setIsCursorEnabled(false);
       return () => {
         htmlElement.removeAttribute("data-admin-mode");
+        htmlElement.removeAttribute("data-font-lab-mode");
       };
     }
 
     if (!isWithinIframe) {
       htmlElement.removeAttribute("data-admin-mode");
+      htmlElement.removeAttribute("data-font-lab-mode");
     }
 
     const win = targetDocument?.defaultView || window;
@@ -192,7 +206,7 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
     };
   }, [isCursorEnabled, targetDocument]);
 
-  if (isAdminShell) {
+  if (isCursorBlockedByRoute) {
     return null;
   }
 

@@ -2,7 +2,7 @@
 import type { ReactNode } from "react";
 import type { Config } from "@measured/puck";
 import { PresetImage } from "../components/common/PresetImage";
-import BilingualText from "../components/common/BilingualText";
+import Typography from "../components/common/Typography";
 import HighDensityInfoBlock from "../components/breakdowns/HighDensityInfoBlock";
 import BreakdownTriptych from "../components/breakdowns/BreakdownTriptych";
 import ImageSlider from "../components/breakdowns/ImageSlider";
@@ -93,18 +93,48 @@ function renderHeroHeadlineBlock({
         <div className="relative z-10 flex min-h-[560px] items-end py-16 md:py-20">
           <div className="grid-container w-full">
             <div className="col-start-2 col-span-10 flex flex-col items-start gap-4 lg:gap-6">
-              <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-textMuted">
+              <Typography
+                as="p"
+                preset="sans-body"
+                size="caption"
+                weight="medium"
+                wrapPolicy="label"
+                className="text-textMuted"
+              >
                 {resolvedEyebrow}
-              </span>
-              <h1 className="text-white text-[12vw] sm:text-[7vw] font-black tracking-normal uppercase leading-[0.85] font-futura">
+              </Typography>
+              <Typography
+                as="h1"
+                preset="sans-body"
+                size="hero"
+                weight="display"
+                wrapPolicy="heading"
+                className="text-white"
+              >
                 {resolvedTitle}
-              </h1>
-              <p className="max-w-3xl text-sm font-medium leading-loose tracking-wide text-textPrimary md:text-base font-futura">
+              </Typography>
+              <Typography
+                as="p"
+                preset="sans-body"
+                size="body-lg"
+                weight="medium"
+                wrapPolicy="prose"
+                className="max-w-3xl text-textPrimary"
+              >
                 {resolvedSubtitle}
-              </p>
+              </Typography>
               {navLink ? (
-                <div className="mt-4 border border-white/20 px-6 py-3 text-xs uppercase tracking-[0.24em] text-textPrimary font-mono">
-                  播放演示视频 (Bilibili)
+                <div className="mt-4 border border-white/20 px-6 py-3">
+                  <Typography
+                    as="span"
+                    preset="sans-body"
+                    size="caption"
+                    weight="medium"
+                    wrapPolicy="label"
+                    className="text-textPrimary"
+                  >
+                    播放演示视频 (Bilibili)
+                  </Typography>
                 </div>
               ) : null}
             </div>
@@ -136,28 +166,58 @@ function renderHeroHeadlineBlock({
         <div className="grid-container w-full mix-blend-difference pointer-events-auto">
           <div className="col-start-2 col-span-10 flex flex-col items-start gap-4">
             {resolvedEyebrow ? (
-              <span className="font-mono text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.4em] uppercase text-textMuted">
+              <Typography
+                as="p"
+                preset="sans-body"
+                size="caption"
+                weight="medium"
+                wrapPolicy="label"
+                className="text-textMuted sm:text-xs"
+              >
                 {resolvedEyebrow}
-              </span>
+              </Typography>
             ) : null}
             {resolvedTitle ? (
-              <h1 className="text-white text-[12vw] sm:text-[7vw] font-black tracking-normal uppercase leading-[0.85] font-futura">
+              <Typography
+                as="h1"
+                preset="sans-body"
+                size="hero"
+                weight="display"
+                wrapPolicy="heading"
+                className="text-white"
+              >
                 {resolvedTitle}
-              </h1>
+              </Typography>
             ) : null}
             {resolvedSubtitle ? (
-              <p className="text-textPrimary text-sm md:text-base font-medium leading-loose font-futura tracking-wide max-w-3xl">
+              <Typography
+                as="p"
+                preset="sans-body"
+                size="body-lg"
+                weight="medium"
+                wrapPolicy="prose"
+                className="max-w-3xl text-textPrimary"
+              >
                 {resolvedSubtitle}
-              </p>
+              </Typography>
             ) : null}
             {navLink ? (
               <a
                 href={navLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-8 border border-white/30 px-6 py-3 text-xs tracking-widest hover:bg-white hover:text-black transition-colors uppercase font-mono interactive mix-blend-normal"
+                className="interactive mt-8 border border-white/30 px-6 py-3 transition-colors hover:bg-white hover:text-black mix-blend-normal"
               >
-                播放演示视频 (Bilibili)
+                <Typography
+                  as="span"
+                  preset="sans-body"
+                  size="caption"
+                  weight="medium"
+                  wrapPolicy="label"
+                  className="text-current"
+                >
+                  播放演示视频 (Bilibili)
+                </Typography>
               </a>
             ) : null}
           </div>
@@ -307,9 +367,16 @@ export const config: Config = {
           <article className="w-full py-24 md:py-32 relative z-20 bg-black">
             <div className="grid-container w-full">
               <div className="col-start-3 col-span-8">
-                <p className="text-xl md:text-[24px] leading-loose text-textPrimary text-justify tracking-wide">
-                  <BilingualText text={content} weight="medium" />
-                </p>
+                <Typography
+                  as="p"
+                  preset="sans-body"
+                  size="body-lg"
+                  weight="medium"
+                  wrapPolicy="prose"
+                  className="text-justify text-textPrimary"
+                >
+                  {content}
+                </Typography>
               </div>
             </div>
           </article>

@@ -282,10 +282,7 @@ export default function Navigation() {
                         >
                           <Link
                             href={item.href}
-                            className={`group relative flex items-center transition-all duration-300 ${isActive
-                              ? "text-white"
-                              : "text-white/40"
-                              } hover:text-white`}
+                            className="group relative flex items-center transition-all duration-300 text-white/50 hover:text-white"
                             onClick={closeMenu}
                           >
                             <Typography
@@ -294,7 +291,8 @@ export default function Navigation() {
                               size="menu"
                               weight="regular"
                               wrapPolicy="heading"
-                              className="inline-block text-inherit transition-all duration-400 ease-[0.22,1,0.36,1] group-hover:translate-x-3 group-hover:[transform:skewX(-10deg)] md:max-w-[10ch]"
+                            className={`inline-block text-inherit transition-all duration-500 ease-[0.22,1,0.36,1] group-hover:translate-x-2 relative ${isActive ? "" : ""
+                                }`}
                             >
                               {item.label}
                             </Typography>

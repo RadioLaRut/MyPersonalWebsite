@@ -11,7 +11,13 @@ import {
   segmentTypographyText,
   type TypographyTextRun,
 } from "./typography.ts";
-import { isTypographySizeSupported } from "./typography-tokens.ts";
+import {
+  resolveTypographyPresetWeightPair,
+  getTypographyFontLabSizes,
+  getTypographyWrapToken,
+  isTypographyFontLabSizeSupported,
+  isTypographySizeSupported,
+} from "./typography-tokens.ts";
 
 function rebuildText(input: ReturnType<typeof segmentTypographyText>) {
   return input.map((run) => run.value).join("");
@@ -53,6 +59,7 @@ test("typography validators only accept declared token values", () => {
   assert.equal(isTypographyWeight("display"), true);
   assert.equal(isTypographyWeight("900"), false);
   assert.equal(isTypographyWrapPolicy("url"), true);
+  assert.equal(isTypographyWrapPolicy("nowrap"), true);
   assert.equal(isTypographyWrapPolicy("break-all"), false);
   assert.equal(isTypographyAutospace("normal"), true);
   assert.equal(isTypographyAutospace("inherit"), false);
@@ -65,4 +72,30 @@ test("classical-display remains restricted to display sizes", () => {
   assert.equal(isTypographySizeSupported("classical-display", "display"), true);
   assert.equal(isTypographySizeSupported("classical-display", "hero"), true);
   assert.equal(isTypographySizeSupported("classical-display", "body"), false);
+});
+
+test("font lab preset sizes can be narrower than runtime supported sizes", () => {
+  assert.equal(isTypographySizeSupported("sans-body", "title"), true);
+  assert.equal(isTypographyFontLabSizeSupported("sans-body", "title"), false);
+  assert.equal(isTypographyFontLabSizeSupported("sans-body", "display"), true);
+  assert.deepEqual(getTypographyFontLabSizes("classical-display"), ["menu"]);
+});
+
+test("template-level latin weight offsets shift semantic weights by available steps", () => {
+  const regular = resolveTypographyPresetWeightPair("gothic-editorial", "regular", 1);
+  const display = resolveTypographyPresetWeightPair("gothic-editorial", "display", 1);
+  const clamped = resolveTypographyPresetWeightPair("classical-display", "regular", 99);
+
+  assert.equal(regular.cjk, 400);
+  assert.equal(regular.latin, 800);
+  assert.equal(display.latin, 900);
+  assert.equal(clamped.latin, 400);
+});
+
+test("nowrap wrap policy stays on a single line", () => {
+  const wrapToken = getTypographyWrapToken("nowrap");
+
+  assert.equal(wrapToken.whiteSpace, "nowrap");
+  assert.equal(wrapToken.overflowWrap, "normal");
+  assert.equal(wrapToken.wordBreak, "normal");
 });

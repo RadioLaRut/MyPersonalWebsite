@@ -112,11 +112,11 @@ export default function ProjectSection({
             <Typography
               as="h2"
               preset="sans-body"
-              size="title"
-              weight="display"
+              size="title-sm"
+              weight="strong"
               wrapPolicy="heading"
               align={shouldAlignRight ? "right" : "left"}
-              className={`text-white antialiased [transform:translateZ(0)] ${editMode ? "max-w-full" : "origin-left lg:whitespace-nowrap transition-all duration-500 group-hover:tracking-normal group-hover:scale-[1.02]"}`}
+              className={`text-white antialiased tracking-[0.01em] [transform:translateZ(0)] ${editMode ? "max-w-full" : "origin-left lg:whitespace-nowrap transition-all duration-500 group-hover:tracking-[0.012em] group-hover:scale-[1.02]"}`}
             >
               {title}
             </Typography>

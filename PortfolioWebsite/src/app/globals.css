@@ -149,26 +149,6 @@ html[data-site-mode="normal"] {
   background-size: 1.5rem 1.5rem;
 }
 
-.font-lab-baseline::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  border-top: 1px dashed rgba(255, 122, 89, 0.55);
-  pointer-events: none;
-}
-
-.font-lab-left-edge::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  border-left: 1px dashed rgba(103, 232, 249, 0.55);
-  pointer-events: none;
-}
-
 .font-lab-run-highlight .typography-run--latin {
   background: rgba(103, 232, 249, 0.12);
 }
@@ -271,10 +251,31 @@ html[data-site-mode="normal"] svg {
     /* 隐藏 Chrome/Safari 滚动条 */
   }
 
-  /* 非管理模式下隐藏系统默认鼠标 */
-  html:not([data-admin-mode]) * {
+  /* 非管理模式且非 Font Lab 模式下隐藏系统默认鼠标 */
+  html:not([data-admin-mode]):not([data-font-lab-mode]) * {
     cursor: none !important;
   }
+}
+
+html[data-font-lab-mode] * {
+  cursor: auto !important;
+}
+
+html[data-font-lab-mode] a,
+html[data-font-lab-mode] button,
+html[data-font-lab-mode] select,
+html[data-font-lab-mode] summary,
+html[data-font-lab-mode] [role="button"],
+html[data-font-lab-mode] .interactive,
+html[data-font-lab-mode] input[type="checkbox"],
+html[data-font-lab-mode] input[type="radio"],
+html[data-font-lab-mode] input[type="range"] {
+  cursor: pointer !important;
+}
+
+html[data-font-lab-mode] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html[data-font-lab-mode] textarea {
+  cursor: text !important;
 }
 
 /* 移动端/触摸屏降级：隐藏自定义光标，恢复系统默认样式 */

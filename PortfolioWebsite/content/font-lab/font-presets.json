@@ -1,0 +1,185 @@
+{
+  "activePreset": "sans-body",
+  "activeSize": "hero",
+  "presets": {
+    "sans-body": {
+      "labelZh": "Futura + 汉仪旗黑",
+      "latinWeightOffsetSteps": -1,
+      "sizes": {
+        "caption": {
+          "cjkHorizontalOffset": 0,
+          "cjkLetterSpacing": 0,
+          "cjkVerticalOffset": 0,
+          "fontSize": "0.625rem",
+          "latinHorizontalOffset": 0,
+          "latinLetterSpacing": 0,
+          "latinRelativeOffset": 0.04,
+          "lineHeight": 1.4,
+          "semanticWeight": "medium"
+        },
+        "label": {
+          "cjkHorizontalOffset": 0,
+          "cjkLetterSpacing": 0,
+          "cjkVerticalOffset": 0,
+          "fontSize": "0.75rem",
+          "latinHorizontalOffset": 0,
+          "latinLetterSpacing": 0,
+          "latinRelativeOffset": 0.1,
+          "lineHeight": 1.45,
+          "semanticWeight": "medium"
+        },
+        "body-sm": {
+          "cjkHorizontalOffset": 0,
+          "cjkLetterSpacing": 0,
+          "cjkVerticalOffset": 0,
+          "fontSize": "0.9375rem",
+          "latinHorizontalOffset": 0,
+          "latinLetterSpacing": 0,
+          "latinRelativeOffset": 0.03,
+          "lineHeight": 1.85,
+          "semanticWeight": "regular"
+        },
+        "body": {
+          "cjkHorizontalOffset": 0,
+          "cjkLetterSpacing": 0,
+          "cjkVerticalOffset": 0,
+          "fontSize": "1rem",
+          "latinHorizontalOffset": 0,
+          "latinLetterSpacing": 0,
+          "latinRelativeOffset": 0.03,
+          "lineHeight": 2,
+          "semanticWeight": "regular"
+        },
+        "body-lg": {
+          "cjkHorizontalOffset": 0,
+          "cjkLetterSpacing": 0,
+          "cjkVerticalOffset": 0,
+          "fontSize": "1.375rem",
+          "latinHorizontalOffset": 0,
+          "latinLetterSpacing": 0,
+          "latinRelativeOffset": -0.035,
+          "lineHeight": 1.85,
+          "semanticWeight": "medium"
+        },
+        "title-sm": {
+          "cjkHorizontalOffset": 0,
+          "cjkLetterSpacing": 0,
+          "cjkVerticalOffset": 0,
+          "fontSize": "2rem",
+          "latinHorizontalOffset": 0,
+          "latinLetterSpacing": 0,
+          "latinRelativeOffset": 0.05,
+          "lineHeight": 1.5,
+          "semanticWeight": "strong"
+        },
+        "display": {
+          "cjkHorizontalOffset": 0,
+          "cjkLetterSpacing": 0,
+          "cjkVerticalOffset": 0,
+          "fontSize": "9.2rem",
+          "latinHorizontalOffset": 0,
+          "latinLetterSpacing": 0,
+          "latinRelativeOffset": -0.05,
+          "lineHeight": 0.88,
+          "semanticWeight": "display"
+        },
+        "hero": {
+          "cjkHorizontalOffset": 0,
+          "cjkLetterSpacing": 0,
+          "cjkVerticalOffset": 0,
+          "fontSize": "4.8rem",
+          "latinHorizontalOffset": 0,
+          "latinLetterSpacing": 0,
+          "latinRelativeOffset": 0.08,
+          "lineHeight": 1.3,
+          "semanticWeight": "display"
+        }
+      }
+    },
+    "luna-editorial": {
+      "labelZh": "Luna + 中文衬线体",
+      "latinWeightOffsetSteps": 0,
+      "sizes": {
+        "title-sm": {
+          "cjkHorizontalOffset": 0,
+          "cjkLetterSpacing": 0,
+          "cjkVerticalOffset": 0,
+          "fontSize": "2rem",
+          "latinHorizontalOffset": 0,
+          "latinLetterSpacing": 0.01,
+          "latinRelativeOffset": 0.05,
+          "lineHeight": 1.05,
+          "semanticWeight": "medium"
+        },
+        "title": {
+          "cjkHorizontalOffset": 0,
+          "cjkLetterSpacing": 0,
+          "cjkVerticalOffset": 0,
+          "fontSize": "5.4rem",
+          "latinHorizontalOffset": 0,
+          "latinLetterSpacing": 0,
+          "latinRelativeOffset": 0.08,
+          "lineHeight": 1.2,
+          "semanticWeight": "strong"
+        },
+        "display": {
+          "cjkHorizontalOffset": 0,
+          "cjkLetterSpacing": 0,
+          "cjkVerticalOffset": 0,
+          "fontSize": "9.2rem",
+          "latinHorizontalOffset": 0,
+          "latinLetterSpacing": 0,
+          "latinRelativeOffset": 0.05,
+          "lineHeight": 0.88,
+          "semanticWeight": "display"
+        }
+      }
+    },
+    "gothic-editorial": {
+      "labelZh": "Gothic + 中文衬线体",
+      "latinWeightOffsetSteps": 0,
+      "sizes": {
+        "label": {
+          "cjkHorizontalOffset": 0,
+          "cjkLetterSpacing": 0,
+          "cjkVerticalOffset": 0,
+          "fontSize": "0.75rem",
+          "latinHorizontalOffset": 0,
+          "latinLetterSpacing": 0.01,
+          "latinRelativeOffset": -0.012,
+          "lineHeight": 1.45,
+          "semanticWeight": "medium"
+        },
+        "title-sm": {
+          "cjkHorizontalOffset": 0,
+          "cjkLetterSpacing": 0,
+          "cjkVerticalOffset": 0,
+          "fontSize": "2rem",
+          "latinHorizontalOffset": 0,
+          "latinLetterSpacing": 0.004,
+          "latinRelativeOffset": 0.05,
+          "lineHeight": 1.05,
+          "semanticWeight": "strong"
+        }
+      }
+    },
+    "classical-display": {
+      "labelZh": "古典菜单字 + 思源宋体",
+      "latinWeightOffsetSteps": 0,
+      "sizes": {
+        "menu": {
+          "cjkHorizontalOffset": 0,
+          "cjkLetterSpacing": 0,
+          "cjkVerticalOffset": 0,
+          "fontSize": "2.5rem",
+          "latinHorizontalOffset": 0,
+          "latinLetterSpacing": 0.018,
+          "latinRelativeOffset": 0.05,
+          "lineHeight": 1,
+          "semanticWeight": "display"
+        }
+      }
+    }
+  },
+  "version": 3
+}

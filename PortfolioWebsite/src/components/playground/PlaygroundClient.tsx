@@ -362,7 +362,7 @@ export default function PlaygroundClient() {
                 wrapPolicy="prose"
                 className="mt-4 text-textMuted"
               >
-                独立字体实验室。用于实时校准 preset、size、baseline、tracking、wrap policy 与真实组件预览。
+                独立字体实验室。只负责校准字体模板内部的字号、字重映射、基线与字距；真实组件验收统一在 Playground 中完成。
               </Typography>
               <Link
                 href="/playground/font-lab"
@@ -422,7 +422,7 @@ export default function PlaygroundClient() {
               wrapPolicy="prose"
               className="ml-10 text-textMuted"
             >
-              `Typography` 已接管中英文混排、字重映射、换行与基线补偿；这里保留一组高密度样本用于校验。
+              `Typography` 负责把组件已经选定的模板、字号和字重稳定渲染出来；这里保留一组高密度样本用于校验混排细节。
             </Typography>
           </motion.div>
 

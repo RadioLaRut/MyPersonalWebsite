@@ -3,12 +3,10 @@
 import clsx from "clsx";
 import React, {
   Children,
-  createContext,
   isValidElement,
   type CSSProperties,
   type ElementType,
   type ReactNode,
-  useContext,
 } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -27,52 +25,6 @@ import {
   type TypographyWrapPolicy,
 } from "@/lib/typography-tokens";
 import { segmentTypographyText } from "@/lib/typography";
-
-type TypographyOverrideMap = Partial<
-  Record<
-    TypographyPreset,
-    Partial<{
-      autospace: TypographyAutospace;
-      cjkBaselineOffset: string;
-      cjkLetterSpacing: string;
-      latinBaselineOffset: string;
-      latinLetterSpacing: string;
-      numericStyle: TypographyNumericStyle;
-    }>
-  >
-> & {
-  forcePreset?: TypographyPreset;
-  forceSize?: TypographySize;
-  forceWeight?: TypographyWeight;
-  sizeOverrides?: Partial<
-    Record<
-      TypographySize,
-      Partial<{
-        fontSize: string;
-        letterSpacing: string;
-        lineHeight: string;
-      }>
-    >
-  >;
-};
-
-const TypographyOverrideContext = createContext<TypographyOverrideMap | null>(null);
-
-export interface TypographyProviderProps {
-  children: ReactNode;
-  overrides: TypographyOverrideMap;
-}
-
-export function TypographyProvider({
-  children,
-  overrides,
-}: TypographyProviderProps) {
-  return (
-    <TypographyOverrideContext.Provider value={overrides}>
-      {children}
-    </TypographyOverrideContext.Provider>
-  );
-}
 
 type BaseTypographyProps = {
   align?: "left" | "center" | "right";
@@ -122,10 +74,15 @@ function renderStringNode(
     const isLatin = run.script === "latin";
     const runStyle: StyleWithVars = {
       fontFamily: isLatin ? presetToken.latinFontFamily : presetToken.cjkFontFamily,
-      fontWeight: isLatin ? weightPair.latin : weightPair.cjk,
+      fontWeight: isLatin
+        ? `var(--typography-${preset}-${weight}-latin-weight, ${weightPair.latin})`
+        : `var(--typography-${preset}-${weight}-cjk-weight, ${weightPair.cjk})`,
       letterSpacing: isLatin
         ? `var(--typography-${preset}-${size}-latin-letter-spacing, ${metricsToken.latinLetterSpacing})`
         : `var(--typography-${preset}-${size}-cjk-letter-spacing, ${metricsToken.cjkLetterSpacing})`,
+      left: isLatin
+        ? `var(--typography-${preset}-${size}-latin-horizontal-offset, 0em)`
+        : `var(--typography-${preset}-${size}-cjk-horizontal-offset, 0em)`,
       top: isLatin
         ? `var(--typography-${preset}-${size}-latin-baseline-offset, ${metricsToken.latinBaselineOffset})`
         : `var(--typography-${preset}-${size}-cjk-baseline-offset, ${metricsToken.cjkBaselineOffset})`,
@@ -212,42 +169,33 @@ export default function Typography<T extends ElementType = "span">({
   weight = "regular",
   wrapPolicy = "prose",
 }: TypographyProps<T>) {
-  const overrideContext = useContext(TypographyOverrideContext);
-  const effectivePreset = overrideContext?.forcePreset ?? preset;
-  const requestedSize = overrideContext?.forceSize ?? size;
-  const effectiveWeight = overrideContext?.forceWeight ?? weight;
-  const resolvedSize = isTypographySizeSupported(effectivePreset, requestedSize)
-    ? requestedSize
+  const resolvedSize = isTypographySizeSupported(preset, size)
+    ? size
     : "display";
   const sizeToken = getTypographySizeToken(resolvedSize);
   const wrapToken = getTypographyWrapToken(wrapPolicy);
-  const presetOverride = overrideContext?.[effectivePreset];
-  const sizeOverride = overrideContext?.sizeOverrides?.[resolvedSize];
 
   const Component = (as ?? "span") as ElementType;
   const baseStyle: StyleWithVars = {
-    fontSize: `var(--typography-size-${resolvedSize}-font-size, ${sizeOverride?.fontSize ?? sizeToken.fontSize})`,
+    fontSize: `var(--typography-${preset}-${resolvedSize}-font-size, var(--typography-size-${resolvedSize}-font-size, ${sizeToken.fontSize}))`,
     fontVariantNumeric:
-      (presetOverride?.numericStyle ?? numericStyle) === "tabular"
+      numericStyle === "tabular"
         ? "tabular-nums"
         : "normal",
     hyphens: wrapToken.hyphens,
-    letterSpacing: `var(--typography-size-${resolvedSize}-letter-spacing, ${sizeOverride?.letterSpacing ?? sizeToken.letterSpacing})`,
-    lineHeight: `var(--typography-size-${resolvedSize}-line-height, ${sizeOverride?.lineHeight ?? sizeToken.lineHeight})`,
+    letterSpacing: `var(--typography-${preset}-${resolvedSize}-letter-spacing, var(--typography-size-${resolvedSize}-letter-spacing, ${sizeToken.letterSpacing}))`,
+    lineHeight: `var(--typography-${preset}-${resolvedSize}-line-height, var(--typography-size-${resolvedSize}-line-height, ${sizeToken.lineHeight}))`,
     overflowWrap: wrapToken.overflowWrap,
     textAlign: align,
-    textWrap: wrapPolicy === "heading" ? "balance" : "pretty",
+    textWrap:
+      wrapPolicy === "heading"
+        ? "balance"
+        : wrapPolicy === "prose"
+          ? "pretty"
+          : undefined,
     whiteSpace: wrapToken.whiteSpace,
     wordBreak: wrapToken.wordBreak,
-    "--typography-autospace": presetOverride?.autospace ?? autospace,
-    [`--typography-${effectivePreset}-${resolvedSize}-cjk-baseline-offset`]:
-      presetOverride?.cjkBaselineOffset,
-    [`--typography-${effectivePreset}-${resolvedSize}-cjk-letter-spacing`]:
-      presetOverride?.cjkLetterSpacing,
-    [`--typography-${effectivePreset}-${resolvedSize}-latin-baseline-offset`]:
-      presetOverride?.latinBaselineOffset,
-    [`--typography-${effectivePreset}-${resolvedSize}-latin-letter-spacing`]:
-      presetOverride?.latinLetterSpacing,
+    "--typography-autospace": autospace,
   };
 
   return (
@@ -263,13 +211,11 @@ export default function Typography<T extends ElementType = "span">({
         className,
       )}
       style={{ ...baseStyle, ...style }}
-      data-typography-preset={effectivePreset}
+      data-typography-preset={preset}
       data-typography-size={resolvedSize}
-      data-typography-weight={effectiveWeight}
-      data-typography-autospace={presetOverride?.autospace ?? autospace}
-      data-typography-numeric={
-        presetOverride?.numericStyle ?? numericStyle
-      }
+      data-typography-weight={weight}
+      data-typography-autospace={autospace}
+      data-typography-numeric={numericStyle}
       data-typography-wrap={wrapPolicy}
     >
       {Children.map(children, (child, index) =>
@@ -277,9 +223,9 @@ export default function Typography<T extends ElementType = "span">({
           child,
           `typography-${resolvedSize}-${index}`,
           lang,
-          effectivePreset,
+          preset,
           resolvedSize,
-          effectiveWeight,
+          weight,
         ),
       )}
     </Component>

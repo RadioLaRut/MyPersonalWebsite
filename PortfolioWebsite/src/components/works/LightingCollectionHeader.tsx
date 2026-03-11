@@ -19,7 +19,7 @@ export default function LightingCollectionHeader({
   return (
     <section className="border-b border-white/10 pt-36 pb-20 md:pt-40 md:pb-24">
       <div className="grid-container">
-        <div className="col-span-12 grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-end">
+        <div className="col-span-12 grid grid-cols-1 gap-10 lg:grid-cols-12 lg:[align-items:last_baseline]">
           <div className="lg:col-span-8 lg:col-start-2">
             <div className="mb-10">
               <Link
@@ -74,6 +74,7 @@ export default function LightingCollectionHeader({
                   weight="regular"
                   wrapPolicy="prose"
                   className="text-textPrimary/90"
+                  style={{ lineHeight: 1.2 }}
                 >
                   {description}
                 </Typography>

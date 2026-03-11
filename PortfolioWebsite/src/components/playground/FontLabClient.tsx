@@ -1,233 +1,479 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-
-import ContentCard from "@/components/breakdowns/ContentCard";
-import Typography, { TypographyProvider } from "@/components/common/Typography";
-import HeroSection from "@/components/home/HeroSection";
-import LightingCollectionHeader from "@/components/works/LightingCollectionHeader";
-import LightingProjectCard from "@/components/works/LightingProjectCard";
-import PortfolioHeroHeader from "@/components/works/PortfolioHeroHeader";
-import WorksListEntry from "@/components/works/WorksListEntry";
 import {
-  getTypographyMetricsToken,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
+
+import Typography from "@/components/common/Typography";
+import { FONT_LAB_UPDATED_EVENT } from "@/components/layout/FontLabGlobalVars";
+import { buildFontLabDocumentCssVars } from "@/lib/font-lab-css-vars";
+import {
+  createDefaultFontLabDocument,
+  parseFontLabDocument,
+  type FontLabSizeConfig,
+} from "@/lib/font-lab-config-schema";
+import {
+  createDefaultFontLabSampleLayoutState,
+  getFontLabActiveSizeConfig,
+  updateFontLabActiveSizeConfig,
+  updateFontLabPresetWeightOffset,
+  updateFontLabSelection,
+  type FontLabSampleLayoutState,
+} from "@/lib/font-lab-state";
+import {
+  clampTypographyLatinWeightOffsetSteps,
+  getTypographyFontLabSizes,
+  getTypographyLatinWeightOffsetRange,
   getTypographyPresetToken,
-  getTypographySizeToken,
+  isTypographySizeSupported,
   TYPOGRAPHY_PRESETS,
   TYPOGRAPHY_WEIGHTS,
-  TYPOGRAPHY_WRAP_POLICIES,
-  type TypographyAutospace,
-  type TypographyNumericStyle,
   type TypographyPreset,
   type TypographySize,
   type TypographyWeight,
-  type TypographyWrapPolicy,
 } from "@/lib/typography-tokens";
-import {
-  isTypographyAutospace,
-  isTypographyNumericStyle,
-  isTypographyPreset,
-  isTypographySize,
-  isTypographyWeight,
-  isTypographyWrapPolicy,
-} from "@/lib/typography";
 
-type FontLabState = {
-  align: "left" | "center" | "right";
-  autospace: TypographyAutospace;
-  cjkBaselineOffset: number;
-  cjkLetterSpacing: number;
-  fontSize: string;
-  latinBaselineOffset: number;
-  latinLetterSpacing: number;
-  lineHeight: number;
-  numericStyle: TypographyNumericStyle;
-  preset: TypographyPreset;
-  previewWidth: number;
-  showBaseline: boolean;
-  showGrid: boolean;
-  showLeftEdge: boolean;
-  showRunHighlight: boolean;
-  size: TypographySize;
-  tracking: number;
-  weight: TypographyWeight;
-  wrapPolicy: TypographyWrapPolicy;
+const FALLBACK_CONFIG_PATH = "content/font-lab/font-presets.json";
+const FIELD_STEP = "0.001";
+const BASELINE_TOLERANCE = 2.5;
+const BASELINE_PROBE_ATTRIBUTE = "data-font-lab-baseline-probe";
+const DESCENDER_LATIN_CHARS = new Set(["g", "j", "p", "q", "y"]);
+
+const SIZE_LABELS_ZH: Record<TypographySize, string> = {
+  caption: "说明",
+  label: "标签",
+  "body-sm": "小正文",
+  body: "正文",
+  "body-lg": "大正文",
+  "title-sm": "小标题",
+  menu: "菜单",
+  title: "标题",
+  display: "展示标题",
+  hero: "主视觉标题",
 };
 
-function parseBoolean(value: string | null, fallback: boolean) {
-  if (value == null) {
-    return fallback;
-  }
+const WEIGHT_LABELS_ZH: Record<TypographyWeight, string> = {
+  light: "细",
+  regular: "常规",
+  medium: "中等",
+  strong: "加粗",
+  display: "展示",
+};
 
-  return value === "1";
+type GuideMetrics = {
+  baselinePx: number;
+  opticalAlignmentPx: number | null;
+  stepPx: number;
+};
+
+type StyleWithVars = CSSProperties & Record<string, string>;
+
+type MixedCaseRoleRequirement = {
+  preset: TypographyPreset;
+  size: TypographySize;
+};
+
+type MixedCaseSectionProps = {
+  children: ReactNode;
+  showBaseline: boolean;
+  showOpticalAlignment: boolean;
+  showTick: boolean;
+  className?: string;
+  title: string;
+};
+
+const LONG_READING_SAMPLE_TEXT =
+  "凌晨四点的工业园区不会给排版留多少容错空间。冷色顶光掠过混凝土立面时，Typography 需要同时承受中文、English、数字、版本信息与场景名的连续混排压力，例如 Lighting review / 雨后工业区 / build 2026.03.12 / Unreal Engine 5.3。只有当这段长文本在换行后依然保持统一左边缘、稳定英文基线与清晰阅读节奏时，当前字号才算真正校准完成。";
+
+const CURRENT_HEADING_SAMPLE_TEXT =
+  "Lighting Notes / 雨后工业区 / build 2026.03.12";
+
+const EXTREME_MIXED_TEXT =
+  "极端混排测试会把中文（English）、“引号”、A/B、UI、GPU、Lumen、Nanite、5.3ms、128GB、4K HDR 与版本号 build-2026.03.12 全部压进同一段里，用来观察最容易失控的边缘情况。";
+
+const EXTREME_NARROW_TEXT =
+  "Pneumonoultramicroscopicsilicovolcanoconiosis 在极窄列宽下依然需要保持清晰断行，同时不能破坏中文左边缘秩序与标题节奏。";
+
+const EXTREME_URL_TEXT =
+  "contact@jiangchengyan.dev / review-build v2.4 / frame-001-2048 / assets://lighting/after-rain";
+
+let measurementCanvasContext: CanvasRenderingContext2D | null = null;
+
+function formatPresetLabel(preset: TypographyPreset, labelZh: string) {
+  return `${labelZh} / ${preset}`;
 }
 
-function parseNumber(value: string | null, fallback: number) {
-  if (value == null) {
-    return fallback;
-  }
-
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : fallback;
+function formatSizeLabel(size: TypographySize) {
+  return `${SIZE_LABELS_ZH[size]} / ${size}`;
 }
 
-function createInitialState(): FontLabState {
-  const fallbackPreset: TypographyPreset = "sans-body";
-  const fallbackSize: TypographySize = "body";
-  const sizeToken = getTypographySizeToken(fallbackSize);
-  const metricsToken = getTypographyMetricsToken(fallbackPreset, fallbackSize);
+function formatWeightLabel(weight: TypographyWeight) {
+  return `${WEIGHT_LABELS_ZH[weight]} / ${weight}`;
+}
 
-  if (typeof window === "undefined") {
-    return {
-      align: "left",
-      autospace: "off",
-      cjkBaselineOffset: Number.parseFloat(metricsToken.cjkBaselineOffset),
-      cjkLetterSpacing: Number.parseFloat(metricsToken.cjkLetterSpacing),
-      fontSize: sizeToken.fontSize,
-      latinBaselineOffset: Number.parseFloat(metricsToken.latinBaselineOffset),
-      latinLetterSpacing: Number.parseFloat(metricsToken.latinLetterSpacing),
-      lineHeight: Number.parseFloat(sizeToken.lineHeight),
-      numericStyle: "default",
-      preset: fallbackPreset,
-      previewWidth: 960,
-      showBaseline: true,
-      showGrid: false,
-      showLeftEdge: true,
-      showRunHighlight: false,
-      size: fallbackSize,
-      tracking: Number.parseFloat(sizeToken.letterSpacing),
-      weight: "regular",
-      wrapPolicy: "prose",
+function formatLatinWeightOffsetLabel(offset: number) {
+  if (offset === 0) {
+    return "保持模板默认";
+  }
+
+  if (offset > 0) {
+    return `英文更粗 ${offset} 档`;
+  }
+
+  return `英文更细 ${Math.abs(offset)} 档`;
+}
+
+function formatFontSizeNumber(value: number) {
+  return `${Number.parseFloat(value.toFixed(4))}`;
+}
+
+function parseRemFontSize(value: string) {
+  const match = value.trim().match(/^(-?\d*\.?\d+)rem$/i);
+
+  if (!match) {
+    return null;
+  }
+
+  const parsed = Number(match[1]);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function parseClampFontSize(value: string) {
+  const match = value.trim().match(
+    /^clamp\(\s*(-?\d*\.?\d+)rem\s*,\s*(-?\d*\.?\d+)vw\s*,\s*(-?\d*\.?\d+)rem\s*\)$/i,
+  );
+
+  if (!match) {
+    return null;
+  }
+
+  const minRem = Number(match[1]);
+  const viewportVw = Number(match[2]);
+  const maxRem = Number(match[3]);
+
+  if (
+    !Number.isFinite(minRem) ||
+    !Number.isFinite(viewportVw) ||
+    !Number.isFinite(maxRem)
+  ) {
+    return null;
+  }
+
+  return {
+    maxRem,
+    minRem,
+    viewportVw,
+  };
+}
+
+function getFixedFontSizeRem(value: string) {
+  const parsedRem = parseRemFontSize(value);
+
+  if (parsedRem !== null) {
+    return parsedRem;
+  }
+
+  const parsedClamp = parseClampFontSize(value);
+
+  if (parsedClamp) {
+    return parsedClamp.maxRem;
+  }
+
+  return null;
+}
+
+function buildFixedFontSize(value: string) {
+  const parsed = Number(value.trim());
+
+  if (!Number.isFinite(parsed)) {
+    return null;
+  }
+
+  return `${formatFontSizeNumber(parsed)}rem`;
+}
+
+function isHeadingPreviewSize(size: TypographySize) {
+  return size === "title-sm" ||
+    size === "menu" ||
+    size === "title" ||
+    size === "display" ||
+    size === "hero";
+}
+
+function isFiniteGuideMetrics(
+  value: GuideMetrics | null,
+): value is GuideMetrics {
+  return !!value && Number.isFinite(value.baselinePx) && Number.isFinite(value.stepPx);
+}
+
+function parseLineHeightPx(value: string, fontSizePx: number) {
+  const parsed = Number.parseFloat(value);
+
+  if (Number.isFinite(parsed)) {
+    return parsed;
+  }
+
+  return fontSizePx * 1.2;
+}
+
+function getMeasurementContext() {
+  if (typeof document === "undefined") {
+    return null;
+  }
+
+  if (!measurementCanvasContext) {
+    const canvas = document.createElement("canvas");
+    measurementCanvasContext = canvas.getContext("2d");
+  }
+
+  return measurementCanvasContext;
+}
+
+function buildCanvasFont(style: CSSStyleDeclaration) {
+  if (style.font) {
+    return style.font;
+  }
+
+  return [
+    style.fontStyle,
+    style.fontVariant,
+    style.fontWeight,
+    style.fontStretch,
+    style.fontSize,
+    style.fontFamily,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+function createBaselineProbe() {
+  const probe = document.createElement("span");
+
+  probe.setAttribute(BASELINE_PROBE_ATTRIBUTE, "true");
+  probe.setAttribute("aria-hidden", "true");
+  probe.textContent = "\u200b";
+  Object.assign(probe.style, {
+    display: "inline-block",
+    width: "1px",
+    height: "0",
+    margin: "0 -1px 0 0",
+    padding: "0",
+    border: "0",
+    overflow: "hidden",
+    lineHeight: "0",
+    verticalAlign: "baseline",
+    opacity: "0",
+    pointerEvents: "none",
+  });
+
+  return probe;
+}
+
+function removeBaselineProbe(node: HTMLElement) {
+  node.querySelectorAll(`[${BASELINE_PROBE_ATTRIBUTE}]`).forEach((element) => {
+    element.remove();
+  });
+}
+
+function isCjkCharacter(char: string) {
+  return /[\u3400-\u9fff\uf900-\ufaff]/.test(char);
+}
+
+function isVisibleCharacter(char: string) {
+  return /\S/.test(char);
+}
+
+function selectOpticalReferenceChar(text: string) {
+  const chars = Array.from(text);
+  const matchers = [
+    (char: string) => isCjkCharacter(char),
+    (char: string) => /[A-Z]/.test(char),
+    (char: string) => /[0-9]/.test(char),
+    (char: string) =>
+      /[a-z]/.test(char) && !DESCENDER_LATIN_CHARS.has(char),
+    (char: string) => /[A-Za-z]/.test(char),
+    (char: string) => isVisibleCharacter(char),
+  ];
+
+  for (const matcher of matchers) {
+    const found = chars.find((char) => matcher(char));
+
+    if (found) {
+      return found;
+    }
+  }
+
+  return null;
+}
+
+function measureOpticalAlignmentPx(
+  anchor: HTMLElement,
+  baselinePx: number,
+) {
+  const context = getMeasurementContext();
+  const anchorStyle = window.getComputedStyle(anchor);
+  const referenceChar = selectOpticalReferenceChar(anchor.textContent ?? "");
+
+  if (!context || !referenceChar) {
+    return null;
+  }
+
+  context.font = buildCanvasFont(anchorStyle);
+  const metrics = context.measureText(referenceChar);
+  const descent = Number.isFinite(metrics.actualBoundingBoxDescent)
+    ? metrics.actualBoundingBoxDescent
+    : 0;
+
+  return baselinePx + Math.max(descent, 0);
+}
+
+function measureGuideMetrics(node: HTMLElement): GuideMetrics | null {
+  removeBaselineProbe(node);
+
+  const runs = Array.from(
+    node.querySelectorAll<HTMLElement>(".typography-run"),
+  ).filter((run) => run.textContent?.trim() && run.getClientRects().length > 0);
+
+  if (!runs.length) {
+    return null;
+  }
+
+  const containerRect = node.getBoundingClientRect();
+  const firstLineTop = Math.min(
+    ...runs.map((run) => run.getBoundingClientRect().top),
+  );
+  const firstLineRuns = runs.filter(
+    (run) => Math.abs(run.getBoundingClientRect().top - firstLineTop) <= BASELINE_TOLERANCE,
+  );
+  const anchor =
+    firstLineRuns.find((run) => run.classList.contains("typography-run--cjk")) ??
+    firstLineRuns[0];
+
+  if (!anchor) {
+    return null;
+  }
+
+  const anchorStyle = window.getComputedStyle(anchor);
+  const lineSource = (anchor.closest(".typography-root") as HTMLElement | null) ?? anchor;
+  const lineStyle = window.getComputedStyle(lineSource);
+  const fontSizePx = Number.parseFloat(anchorStyle.fontSize) || 16;
+  const lineHeightPx = parseLineHeightPx(lineStyle.lineHeight, fontSizePx);
+  const probe = createBaselineProbe();
+
+  anchor.prepend(probe);
+  const probeRect = probe.getBoundingClientRect();
+  probe.remove();
+
+  const baselinePx = probeRect.bottom - containerRect.top;
+  if (!Number.isFinite(baselinePx)) {
+    return null;
+  }
+
+  return {
+    baselinePx,
+    opticalAlignmentPx: measureOpticalAlignmentPx(anchor, baselinePx),
+    stepPx: lineHeightPx,
+  };
+}
+
+function useMeasuredGuideMetrics() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [metrics, setMetrics] = useState<GuideMetrics | null>(null);
+
+  useLayoutEffect(() => {
+    const node = containerRef.current;
+
+    if (!node) {
+      return;
+    }
+
+    let frameId = 0;
+    const measure = () => {
+      const nextMetrics = measureGuideMetrics(node);
+      setMetrics((current) => {
+        if (
+          isFiniteGuideMetrics(current) &&
+          isFiniteGuideMetrics(nextMetrics) &&
+          Math.abs(current.baselinePx - nextMetrics.baselinePx) < 0.5 &&
+          Math.abs(
+            (current.opticalAlignmentPx ?? current.baselinePx) -
+            (nextMetrics.opticalAlignmentPx ?? nextMetrics.baselinePx),
+          ) < 0.5 &&
+          Math.abs(current.stepPx - nextMetrics.stepPx) < 0.5
+        ) {
+          return current;
+        }
+
+        return nextMetrics;
+      });
     };
+
+    const queueMeasure = () => {
+      cancelAnimationFrame(frameId);
+      frameId = requestAnimationFrame(measure);
+    };
+
+    queueMeasure();
+
+    const observer = new ResizeObserver(queueMeasure);
+    observer.observe(node);
+    node.querySelectorAll(".typography-root").forEach((element) => {
+      observer.observe(element);
+    });
+
+    window.addEventListener("resize", queueMeasure);
+    void document.fonts.ready.then(queueMeasure).catch(() => {});
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      observer.disconnect();
+      window.removeEventListener("resize", queueMeasure);
+    };
+  });
+
+  return {
+    containerRef,
+    metrics,
+  };
+}
+
+function getCaseSupportText(requirements: MixedCaseRoleRequirement[]) {
+  const unsupportedRequirements = requirements.filter(
+    ({ preset, size }) => !isTypographySizeSupported(preset, size),
+  );
+
+  if (!unsupportedRequirements.length) {
+    return null;
   }
 
-  const params = new URLSearchParams(window.location.search);
-  const preset = params.get("preset");
-  const size = params.get("size");
-  const weight = params.get("weight");
-  const wrapPolicy = params.get("wrap");
-  const autospace = params.get("autospace");
-  const numeric = params.get("numeric");
-  const resolvedPreset = preset && isTypographyPreset(preset) ? preset : fallbackPreset;
-  const resolvedSize = size && isTypographySize(size) ? size : fallbackSize;
-  const resolvedWeight = weight && isTypographyWeight(weight) ? weight : "regular";
-  const resolvedWrap = wrapPolicy && isTypographyWrapPolicy(wrapPolicy) ? wrapPolicy : "prose";
-  const resolvedAutospace =
-    autospace && isTypographyAutospace(autospace) ? autospace : "off";
-  const resolvedNumeric =
-    numeric && isTypographyNumericStyle(numeric) ? numeric : "default";
-  const resolvedSizeToken = getTypographySizeToken(resolvedSize);
-  const resolvedMetrics = getTypographyMetricsToken(resolvedPreset, resolvedSize);
-
-  return {
-    align:
-      params.get("align") === "center" || params.get("align") === "right"
-        ? (params.get("align") as "center" | "right")
-        : "left",
-    autospace: resolvedAutospace,
-    cjkBaselineOffset: parseNumber(
-      params.get("cjkBaseline"),
-      Number.parseFloat(resolvedMetrics.cjkBaselineOffset),
-    ),
-    cjkLetterSpacing: parseNumber(
-      params.get("cjkTracking"),
-      Number.parseFloat(resolvedMetrics.cjkLetterSpacing),
-    ),
-    fontSize: params.get("fontSize") ?? resolvedSizeToken.fontSize,
-    latinBaselineOffset: parseNumber(
-      params.get("latinBaseline"),
-      Number.parseFloat(resolvedMetrics.latinBaselineOffset),
-    ),
-    latinLetterSpacing: parseNumber(
-      params.get("latinTracking"),
-      Number.parseFloat(resolvedMetrics.latinLetterSpacing),
-    ),
-    lineHeight: parseNumber(
-      params.get("lineHeight"),
-      Number.parseFloat(resolvedSizeToken.lineHeight),
-    ),
-    numericStyle: resolvedNumeric,
-    preset: resolvedPreset,
-    previewWidth: parseNumber(params.get("width"), 960),
-    showBaseline: parseBoolean(params.get("baseline"), true),
-    showGrid: parseBoolean(params.get("grid"), false),
-    showLeftEdge: parseBoolean(params.get("edge"), true),
-    showRunHighlight: parseBoolean(params.get("runs"), false),
-    size: resolvedSize,
-    tracking: parseNumber(
-      params.get("tracking"),
-      Number.parseFloat(resolvedSizeToken.letterSpacing),
-    ),
-    weight: resolvedWeight,
-    wrapPolicy: resolvedWrap,
-  };
+  return `该案例所需的固定角色暂未定义：${unsupportedRequirements
+    .map(({ preset, size }) => `${preset} / ${SIZE_LABELS_ZH[size]}`)
+    .join("、")}。`;
 }
 
-function stringifyState(state: FontLabState) {
-  const params = new URLSearchParams();
-  params.set("preset", state.preset);
-  params.set("size", state.size);
-  params.set("weight", state.weight);
-  params.set("wrap", state.wrapPolicy);
-  params.set("align", state.align);
-  params.set("autospace", state.autospace);
-  params.set("numeric", state.numericStyle);
-  params.set("width", String(state.previewWidth));
-  params.set("fontSize", state.fontSize);
-  params.set("lineHeight", String(state.lineHeight));
-  params.set("tracking", String(state.tracking));
-  params.set("latinBaseline", String(state.latinBaselineOffset));
-  params.set("cjkBaseline", String(state.cjkBaselineOffset));
-  params.set("latinTracking", String(state.latinLetterSpacing));
-  params.set("cjkTracking", String(state.cjkLetterSpacing));
-  params.set("grid", state.showGrid ? "1" : "0");
-  params.set("baseline", state.showBaseline ? "1" : "0");
-  params.set("edge", state.showLeftEdge ? "1" : "0");
-  params.set("runs", state.showRunHighlight ? "1" : "0");
-  return params.toString();
+function ActionText({ children }: { children: ReactNode }) {
+  return (
+    <Typography
+      as="span"
+      preset="sans-body"
+      size="caption"
+      weight="medium"
+      wrapPolicy="label"
+      className="block w-full text-center leading-none text-current"
+    >
+      {children}
+    </Typography>
+  );
 }
 
-function buildCssVars(state: FontLabState) {
-  return {
-    [`--typography-size-${state.size}-font-size`]: state.fontSize,
-    [`--typography-size-${state.size}-letter-spacing`]: `${state.tracking}em`,
-    [`--typography-size-${state.size}-line-height`]: String(state.lineHeight),
-    [`--typography-${state.preset}-${state.size}-cjk-baseline-offset`]:
-      `${state.cjkBaselineOffset}em`,
-    [`--typography-${state.preset}-${state.size}-cjk-letter-spacing`]:
-      `${state.cjkLetterSpacing}em`,
-    [`--typography-${state.preset}-${state.size}-latin-baseline-offset`]:
-      `${state.latinBaselineOffset}em`,
-    [`--typography-${state.preset}-${state.size}-latin-letter-spacing`]:
-      `${state.latinLetterSpacing}em`,
-  } as Record<string, string>;
-}
-
-function buildPreviewOverrides(state: FontLabState) {
-  return {
-    forcePreset: state.preset,
-    forceSize: state.size,
-    forceWeight: state.weight,
-    [state.preset]: {
-      autospace: state.autospace,
-      cjkBaselineOffset: `${state.cjkBaselineOffset}em`,
-      cjkLetterSpacing: `${state.cjkLetterSpacing}em`,
-      latinBaselineOffset: `${state.latinBaselineOffset}em`,
-      latinLetterSpacing: `${state.latinLetterSpacing}em`,
-      numericStyle: state.numericStyle,
-    },
-    sizeOverrides: {
-      [state.size]: {
-        fontSize: state.fontSize,
-        letterSpacing: `${state.tracking}em`,
-        lineHeight: String(state.lineHeight),
-      },
-    },
-  };
-}
-
-function FieldLabel({ children }: { children: React.ReactNode }) {
+function FieldLabel({ children }: { children: ReactNode }) {
   return (
     <Typography
       as="span"
@@ -242,15 +488,15 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-function ActionText({ children }: { children: React.ReactNode }) {
+function StatusText({ children }: { children: ReactNode }) {
   return (
     <Typography
-      as="span"
+      as="p"
       preset="sans-body"
       size="caption"
       weight="medium"
-      wrapPolicy="label"
-      className="text-current"
+      wrapPolicy="prose"
+      className="text-textMuted"
     >
       {children}
     </Typography>
@@ -288,12 +534,149 @@ function ToggleField({
   );
 }
 
+function NumberField({
+  helperText,
+  label,
+  onCommit,
+  step = FIELD_STEP,
+  value,
+}: {
+  helperText?: ReactNode;
+  label: string;
+  onCommit: (value: number) => void;
+  step?: string;
+  value: number;
+}) {
+  const [draft, setDraft] = useState(String(value));
+
+  useEffect(() => {
+    setDraft(String(value));
+  }, [value]);
+
+  const commitDraft = () => {
+    const nextValue = draft.trim();
+
+    if (!nextValue) {
+      setDraft("0");
+      onCommit(0);
+      return;
+    }
+
+    const parsed = Number(nextValue);
+    if (!Number.isFinite(parsed)) {
+      setDraft(String(value));
+      return;
+    }
+
+    setDraft(String(parsed));
+    onCommit(parsed);
+  };
+
+  return (
+    <label className="block">
+      <FieldLabel>{label}</FieldLabel>
+      <input
+        type="number"
+        inputMode="decimal"
+        step={step}
+        value={draft}
+        onChange={(event) => setDraft(event.target.value)}
+        onBlur={commitDraft}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            event.currentTarget.blur();
+          }
+        }}
+        className="w-full border border-white/10 bg-black px-3 py-3"
+      />
+      {helperText ? (
+        <Typography
+          as="span"
+          preset="sans-body"
+          size="caption"
+          weight="medium"
+          wrapPolicy="prose"
+          className="mt-2 block text-textMuted"
+        >
+          {helperText}
+        </Typography>
+      ) : null}
+    </label>
+  );
+}
+
+function FontSizeField({
+  label,
+  onCommit,
+  value,
+}: {
+  label: string;
+  onCommit: (value: string) => void;
+  value: string;
+}) {
+  const [draft, setDraft] = useState(() => {
+    const fixedRem = getFixedFontSizeRem(value);
+
+    return fixedRem === null ? "1" : formatFontSizeNumber(fixedRem);
+  });
+
+  useEffect(() => {
+    const fixedRem = getFixedFontSizeRem(value);
+    setDraft(fixedRem === null ? "1" : formatFontSizeNumber(fixedRem));
+  }, [value]);
+
+  const commitFixed = () => {
+    const nextValue = buildFixedFontSize(draft);
+
+    if (!nextValue) {
+      const fixedRem = getFixedFontSizeRem(value);
+      setDraft(fixedRem === null ? "1" : formatFontSizeNumber(fixedRem));
+      return;
+    }
+
+    setDraft(formatFontSizeNumber(getFixedFontSizeRem(nextValue) ?? 1));
+    onCommit(nextValue);
+  };
+
+  return (
+    <label className="block">
+      <FieldLabel>{label}</FieldLabel>
+      <input
+        type="number"
+        inputMode="decimal"
+        step="0.01"
+        value={draft}
+        onChange={(event) => setDraft(event.target.value)}
+        onBlur={commitFixed}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            event.currentTarget.blur();
+          }
+        }}
+        className="w-full border border-white/10 bg-black px-3 py-3"
+      />
+      <Typography
+        as="span"
+        preset="sans-body"
+        size="caption"
+        weight="medium"
+        wrapPolicy="prose"
+        className="mt-2 block text-textMuted"
+      >
+        固定字号只输入 `rem` 数值，响应式 `clamp(...)` 由代码按该档位默认比例自动生成。
+      </Typography>
+    </label>
+  );
+}
+
 function ControlBlock({
   children,
   title,
+  description,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   title: string;
+  description?: string;
 }) {
   return (
     <section className="border border-white/10 bg-white/[0.02] px-4 py-4">
@@ -303,86 +686,342 @@ function ControlBlock({
         size="label"
         weight="medium"
         wrapPolicy="label"
-        className="mb-4 text-textMuted"
+        className="mb-2 text-textMuted"
       >
         {title}
       </Typography>
+      {description ? (
+        <Typography
+          as="p"
+          preset="sans-body"
+          size="body-sm"
+          weight="regular"
+          wrapPolicy="prose"
+          className="mb-4 text-textMuted"
+        >
+          {description}
+        </Typography>
+      ) : null}
       <div className="space-y-3">{children}</div>
     </section>
   );
 }
 
-export default function FontLabClient() {
-  const [state, setState] = useState<FontLabState>(createInitialState);
-  const presetToken = getTypographyPresetToken(state.preset);
-  const metricsToken = getTypographyMetricsToken(state.preset, state.size);
-  const sizeToken = getTypographySizeToken(state.size);
-  const cssVars = useMemo(() => buildCssVars(state), [state]);
-  const previewOverrides = useMemo(() => buildPreviewOverrides(state), [state]);
-  const supportedSizes = presetToken.supportedSizes;
-
-  useEffect(() => {
-    const query = stringifyState(state);
-    window.history.replaceState(null, "", `${window.location.pathname}?${query}`);
-  }, [state]);
-
-  useEffect(() => {
-    const root = document.documentElement;
-    const entries = Object.entries(cssVars);
-
-    entries.forEach(([key, value]) => {
-      root.style.setProperty(key, value);
-    });
-
-    return () => {
-      entries.forEach(([key]) => {
-        root.style.removeProperty(key);
-      });
-    };
-  }, [cssVars]);
-
-  const copyTokenConfig = async () => {
-    const payload = {
-      preset: state.preset,
-      presetLabel: presetToken.label,
-      size: state.size,
-      sizeToken: {
-        defaultFontSize: sizeToken.fontSize,
-        defaultLetterSpacing: sizeToken.letterSpacing,
-        defaultLineHeight: sizeToken.lineHeight,
-        overrideFontSize: state.fontSize,
-        overrideLetterSpacing: `${state.tracking}em`,
-        overrideLineHeight: state.lineHeight,
-      },
-      weight: state.weight,
-      wrapPolicy: state.wrapPolicy,
-      autospace: state.autospace,
-      numericStyle: state.numericStyle,
-    };
-
-    await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
-  };
-
-  const copyMetricsConfig = async () => {
-    const payload = {
-      preset: state.preset,
-      size: state.size,
-      defaults: metricsToken,
-      overrides: {
-        cjkBaselineOffset: `${state.cjkBaselineOffset}em`,
-        cjkLetterSpacing: `${state.cjkLetterSpacing}em`,
-        latinBaselineOffset: `${state.latinBaselineOffset}em`,
-        latinLetterSpacing: `${state.latinLetterSpacing}em`,
-      },
-    };
-
-    await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
-  };
+function GuideRow({
+  children,
+  showBaseline,
+  showOpticalAlignment,
+  showTick,
+  className,
+}: {
+  children: ReactNode;
+  showBaseline: boolean;
+  showOpticalAlignment: boolean;
+  showTick: boolean;
+  className?: string;
+}) {
+  const { containerRef, metrics } = useMeasuredGuideMetrics();
 
   return (
-    <main className="min-h-screen bg-black text-white pt-24 pb-20 md:pt-32 md:pb-24">
+    <div ref={containerRef} className={["relative", className].filter(Boolean).join(" ")}>
+      {showOpticalAlignment &&
+      isFiniteGuideMetrics(metrics) &&
+      Number.isFinite(metrics.opticalAlignmentPx) ? (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+          style={{
+            backgroundImage: `repeating-linear-gradient(to bottom, transparent 0, transparent ${Math.max((metrics.opticalAlignmentPx ?? 0) - 1, 0)}px, rgba(255, 255, 255, 0.24) ${Math.max((metrics.opticalAlignmentPx ?? 0) - 1, 0)}px, rgba(255, 255, 255, 0.24) ${metrics.opticalAlignmentPx}px, transparent ${metrics.opticalAlignmentPx}px, transparent ${metrics.stepPx}px)`,
+            backgroundSize: `100% ${metrics.stepPx}px`,
+          }}
+        />
+      ) : null}
+      {showBaseline && isFiniteGuideMetrics(metrics) ? (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+          style={{
+            backgroundImage: `repeating-linear-gradient(to bottom, transparent 0, transparent ${Math.max(metrics.baselinePx - 1, 0)}px, rgba(255, 122, 89, 0.58) ${Math.max(metrics.baselinePx - 1, 0)}px, rgba(255, 122, 89, 0.58) ${metrics.baselinePx}px, transparent ${metrics.baselinePx}px, transparent ${metrics.stepPx}px)`,
+            backgroundSize: `100% ${metrics.stepPx}px`,
+          }}
+        />
+      ) : null}
+      {showTick && isFiniteGuideMetrics(metrics) ? (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-0 w-4 border-t border-cyan-300/60"
+          style={{ top: metrics.baselinePx }}
+        />
+      ) : null}
+      <div className="relative pl-6 md:pl-8">{children}</div>
+    </div>
+  );
+}
+
+function CalibrationCard({
+  children,
+  showGrid,
+  showRunHighlight,
+  title,
+}: {
+  children: ReactNode;
+  showGrid: boolean;
+  showRunHighlight: boolean;
+  title: string;
+}) {
+  return (
+    <div className="overflow-hidden border border-white/10 bg-white/[0.02]">
+      <div
+        className={[
+          "relative p-6 md:p-8",
+          showGrid ? "font-lab-grid" : "",
+          showRunHighlight ? "font-lab-run-highlight" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      >
+        <Typography
+          as="p"
+          preset="sans-body"
+          size="caption"
+          weight="medium"
+          wrapPolicy="label"
+          className="mb-6 text-textMuted"
+        >
+          {title}
+        </Typography>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function UnsupportedCase({ message }: { message: string }) {
+  return (
+    <div className="border border-dashed border-white/12 px-4 py-4">
+      <Typography
+        as="p"
+        preset="sans-body"
+        size="body-sm"
+        weight="regular"
+        wrapPolicy="prose"
+        className="text-textMuted"
+      >
+        {message}
+      </Typography>
+    </div>
+  );
+}
+
+function MixedCaseSection({
+  children,
+  showBaseline,
+  showOpticalAlignment,
+  showTick,
+  className,
+  title,
+}: MixedCaseSectionProps) {
+  return (
+    <section className={["border-b border-white/8 pb-8", className].filter(Boolean).join(" ")}>
+      <Typography
+        as="p"
+        preset="sans-body"
+        size="caption"
+        weight="medium"
+        wrapPolicy="label"
+        className="mb-4 text-textMuted"
+      >
+        {title}
+      </Typography>
+      <GuideRow
+        showBaseline={showBaseline}
+        showOpticalAlignment={showOpticalAlignment}
+        showTick={showTick}
+      >
+        {children}
+      </GuideRow>
+    </section>
+  );
+}
+
+export default function FontLabClient() {
+  const [fontDocument, setFontDocument] = useState<FontLabDocument>(createDefaultFontLabDocument);
+  const [layoutState, setLayoutState] = useState<FontLabSampleLayoutState>(
+    createDefaultFontLabSampleLayoutState,
+  );
+  const [savedDocument, setSavedDocument] = useState<FontLabDocument | null>(null);
+  const [hasSavedConfig, setHasSavedConfig] = useState(false);
+  const [configPath, setConfigPath] = useState(FALLBACK_CONFIG_PATH);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+  const activePreset = fontDocument.activePreset;
+  const activeSize = fontDocument.activeSize;
+  const presetToken = getTypographyPresetToken(activePreset);
+  const fontLabSizes = getTypographyFontLabSizes(activePreset);
+  const activePresetConfig = fontDocument.presets[activePreset];
+  const activeSizeConfig = getFontLabActiveSizeConfig(fontDocument);
+  const activeSemanticWeight = activeSizeConfig.semanticWeight;
+  const latinWeightOffsetRange = getTypographyLatinWeightOffsetRange(activePreset);
+  const latinWeightOffsetOptions = useMemo(() => {
+    const options: number[] = [];
+
+    for (
+      let offset = latinWeightOffsetRange.min;
+      offset <= latinWeightOffsetRange.max;
+      offset += 1
+    ) {
+      options.push(offset);
+    }
+
+    return options;
+  }, [latinWeightOffsetRange.max, latinWeightOffsetRange.min]);
+  const cssVars = useMemo(
+    () => buildFontLabDocumentCssVars(fontDocument) as StyleWithVars,
+    [fontDocument],
+  );
+
+  useEffect(() => {
+    const htmlElement = document.documentElement;
+    htmlElement.setAttribute("data-font-lab-mode", "true");
+
+    let active = true;
+
+    async function loadSavedConfig() {
+      try {
+        const response = await fetch("/api/font-lab", { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error("Failed to load Font Lab config");
+        }
+
+        const payload = (await response.json()) as {
+          config?: unknown;
+          hasSaved?: boolean;
+          path?: string;
+        };
+        const nextDocument =
+          parseFontLabDocument(payload.config) ?? createDefaultFontLabDocument();
+
+        if (!active) {
+          return;
+        }
+
+        setFontDocument(nextDocument);
+        setSavedDocument(nextDocument);
+        setHasSavedConfig(Boolean(payload.hasSaved));
+        setConfigPath(payload.path ?? FALLBACK_CONFIG_PATH);
+      } catch {
+        if (!active) {
+          return;
+        }
+
+        const defaultDocument = createDefaultFontLabDocument();
+        setFontDocument(defaultDocument);
+        setSavedDocument(defaultDocument);
+        setHasSavedConfig(false);
+        setConfigPath(FALLBACK_CONFIG_PATH);
+        setStatusMessage("未能读取已保存配置，已回退到默认模板。");
+      }
+    }
+
+    void loadSavedConfig();
+
+    return () => {
+      active = false;
+      htmlElement.removeAttribute("data-font-lab-mode");
+    };
+  }, []);
+
+  const handleSave = async () => {
+    setStatusMessage("正在保存当前字体模板...");
+
+    try {
+      const response = await fetch("/api/font-lab", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          activePreset,
+          activeSize,
+          labelZh: activePresetConfig.labelZh,
+          latinWeightOffsetSteps: activePresetConfig.latinWeightOffsetSteps,
+          sizeConfig: activeSizeConfig,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save Font Lab config");
+      }
+
+      const payload = (await response.json()) as {
+        config?: unknown;
+        path?: string;
+      };
+      const persistedDocument =
+        parseFontLabDocument(payload.config) ?? fontDocument;
+      const persistedCssVars = buildFontLabDocumentCssVars(persistedDocument);
+
+      setSavedDocument(persistedDocument);
+      setHasSavedConfig(true);
+      setConfigPath(payload.path ?? FALLBACK_CONFIG_PATH);
+      setStatusMessage(`已保存当前模板：${activePresetConfig.labelZh}`);
+      window.dispatchEvent(
+        new CustomEvent(FONT_LAB_UPDATED_EVENT, {
+          detail: persistedCssVars,
+        }),
+      );
+    } catch {
+      setStatusMessage("保存失败，请检查本地编辑模式是否已开启。");
+    }
+  };
+
+  const handleRestore = () => {
+    if (!savedDocument) {
+      return;
+    }
+
+    setFontDocument(savedDocument);
+    setStatusMessage(`已恢复 ${configPath} 中的模板配置。`);
+  };
+
+  const updateCurrentSizeConfig = (patch: Partial<FontLabSizeConfig>) => {
+    setFontDocument((current) =>
+      updateFontLabActiveSizeConfig(current, current.activePreset, current.activeSize, patch),
+    );
+  };
+
+  const titleSubtitleSupportMessage = getCaseSupportText([
+    { preset: "luna-editorial", size: "display" },
+    { preset: "luna-editorial", size: "title" },
+  ]);
+  const titleBodySupportMessage = getCaseSupportText([
+    { preset: "luna-editorial", size: "title" },
+    { preset: "sans-body", size: "body" },
+  ]);
+  const titleMetaSupportMessage = getCaseSupportText([
+    { preset: "sans-body", size: "title" },
+    { preset: "gothic-editorial", size: "label" },
+    { preset: "sans-body", size: "caption" },
+  ]);
+  const menuLabelSupportMessage = getCaseSupportText([
+    { preset: "classical-display", size: "menu" },
+    { preset: "sans-body", size: "label" },
+  ]);
+  const bodyUrlSupportMessage = getCaseSupportText([
+    { preset: "sans-body", size: "body" },
+    { preset: "sans-body", size: "body-sm" },
+  ]);
+  const bodyMixedSupportMessage = getCaseSupportText([
+    { preset: "sans-body", size: "body" },
+  ]);
+
+  return (
+    <main
+      className="min-h-screen bg-black pb-20 pt-24 text-white md:pb-24 md:pt-32"
+      style={cssVars}
+    >
       <div className="grid-container items-start gap-y-10">
-        <aside className="col-span-12 lg:col-span-4 lg:sticky lg:top-24 self-start space-y-4">
+        <aside className="col-span-12 self-start space-y-4 lg:col-span-4">
           <div className="border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.04)_0%,rgba(255,255,255,0.015)_100%)] px-5 py-5">
             <div className="flex items-center justify-between gap-4">
               <div>
@@ -394,7 +1033,7 @@ export default function FontLabClient() {
                   wrapPolicy="label"
                   className="text-textMuted"
                 >
-                  INTERNAL TYPOGRAPHY WORKBENCH
+                  内部字体校准台
                 </Typography>
                 <Typography
                   as="h1"
@@ -419,560 +1058,627 @@ export default function FontLabClient() {
               wrapPolicy="prose"
               className="mt-4 text-textMuted"
             >
-              当前页面会把选中的 token 覆盖写入页面级 CSS 变量。顶部全局导航也会同步吃到这些覆盖。
+              这里用于校准字体模板本体。保存时只合并当前模板；调试层仅影响当前会话，不写入模板文件。
             </Typography>
             <div className="mt-6 flex flex-wrap gap-3">
               <button
                 type="button"
-                onClick={copyTokenConfig}
-                className="border border-white/12 px-4 py-3 text-textPrimary transition-colors hover:border-white/25 hover:text-white"
+                onClick={handleSave}
+                className="inline-flex min-h-[4.75rem] min-w-[11.75rem] items-center justify-center border border-white/12 px-6 py-3 text-center text-textPrimary transition-colors hover:border-white/25 hover:text-white"
               >
-                <ActionText>复制 Token 配置</ActionText>
+                <ActionText>保存当前模板</ActionText>
               </button>
               <button
                 type="button"
-                onClick={copyMetricsConfig}
-                className="border border-white/12 px-4 py-3 text-textPrimary transition-colors hover:border-white/25 hover:text-white"
+                onClick={handleRestore}
+                disabled={!hasSavedConfig}
+                className="inline-flex min-h-[4.75rem] min-w-[11.75rem] items-center justify-center border border-white/12 px-6 py-3 text-center text-textPrimary transition-colors hover:border-white/25 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
               >
-                <ActionText>复制 Metrics 配置</ActionText>
+                <ActionText>恢复已保存模板</ActionText>
               </button>
+            </div>
+            <div className="mt-5 space-y-2">
+              <StatusText>{statusMessage ?? `配置文件：${configPath}`}</StatusText>
+              <StatusText>{`当前模板：${activePresetConfig.labelZh} / 当前字号：${SIZE_LABELS_ZH[activeSize]}`}</StatusText>
+              <StatusText>{`当前字号语义字重：${WEIGHT_LABELS_ZH[activeSemanticWeight]}`}</StatusText>
+              <StatusText>URL 已保持干净，不再写入任何查询参数。</StatusText>
             </div>
           </div>
 
-          <ControlBlock title="组合">
+          <ControlBlock
+            title="字体模板"
+            description="这里保存模板级与字号级微调。中英字重偏差只在模板层生效；每个字号档位单独保存自己的语义字重、基线、字距与水平对齐。"
+          >
             <label className="block">
-              <FieldLabel>Preset</FieldLabel>
+              <FieldLabel>字体模板</FieldLabel>
               <select
-                value={state.preset}
-                onChange={(event) => {
-                  const nextPreset = event.target.value as TypographyPreset;
-                  const nextPresetToken = getTypographyPresetToken(nextPreset);
-                  const nextSize = nextPresetToken.supportedSizes.includes(state.size)
-                    ? state.size
-                    : nextPresetToken.supportedSizes[0];
-                  const nextSizeToken = getTypographySizeToken(nextSize);
-                  const nextMetrics = getTypographyMetricsToken(nextPreset, nextSize);
-                  setState((current) => ({
-                    ...current,
-                    cjkBaselineOffset: Number.parseFloat(nextMetrics.cjkBaselineOffset),
-                    cjkLetterSpacing: Number.parseFloat(nextMetrics.cjkLetterSpacing),
-                    fontSize: nextSizeToken.fontSize,
-                    latinBaselineOffset: Number.parseFloat(nextMetrics.latinBaselineOffset),
-                    latinLetterSpacing: Number.parseFloat(nextMetrics.latinLetterSpacing),
-                    lineHeight: Number.parseFloat(nextSizeToken.lineHeight),
-                    preset: nextPreset,
-                    size: nextSize,
-                    tracking: Number.parseFloat(nextSizeToken.letterSpacing),
-                  }));
-                }}
+                value={activePreset}
+                onChange={(event) =>
+                  setFontDocument((current) =>
+                    updateFontLabSelection(
+                      current,
+                      event.target.value as TypographyPreset,
+                      current.activeSize,
+                    ),
+                  )
+                }
                 className="w-full border border-white/10 bg-black px-3 py-3"
               >
                 {TYPOGRAPHY_PRESETS.map((preset) => (
                   <option key={preset} value={preset}>
-                    {preset}
+                    {formatPresetLabel(preset, fontDocument.presets[preset].labelZh)}
                   </option>
                 ))}
               </select>
             </label>
+
             <label className="block">
-              <FieldLabel>Size</FieldLabel>
+              <FieldLabel>字号档位</FieldLabel>
               <select
-                value={state.size}
-                onChange={(event) => {
-                  const nextSize = event.target.value as TypographySize;
-                  const nextSizeToken = getTypographySizeToken(nextSize);
-                  const nextMetrics = getTypographyMetricsToken(state.preset, nextSize);
-                  setState((current) => ({
-                    ...current,
-                    cjkBaselineOffset: Number.parseFloat(nextMetrics.cjkBaselineOffset),
-                    cjkLetterSpacing: Number.parseFloat(nextMetrics.cjkLetterSpacing),
-                    fontSize: nextSizeToken.fontSize,
-                    latinBaselineOffset: Number.parseFloat(nextMetrics.latinBaselineOffset),
-                    latinLetterSpacing: Number.parseFloat(nextMetrics.latinLetterSpacing),
-                    lineHeight: Number.parseFloat(nextSizeToken.lineHeight),
-                    size: nextSize,
-                    tracking: Number.parseFloat(nextSizeToken.letterSpacing),
-                  }));
-                }}
+                value={activeSize}
+                onChange={(event) =>
+                  setFontDocument((current) =>
+                    updateFontLabSelection(
+                      current,
+                      current.activePreset,
+                      event.target.value as TypographySize,
+                    ),
+                  )
+                }
                 className="w-full border border-white/10 bg-black px-3 py-3"
               >
-                {supportedSizes.map((size) => (
+                {fontLabSizes.map((size) => (
                   <option key={size} value={size}>
-                    {size}
+                    {formatSizeLabel(size)}
                   </option>
                 ))}
               </select>
             </label>
+
             <label className="block">
-              <FieldLabel>Weight</FieldLabel>
+              <FieldLabel>当前字号语义字重</FieldLabel>
               <select
-                value={state.weight}
+                value={activeSemanticWeight}
                 onChange={(event) =>
-                  setState((current) => ({
-                    ...current,
-                    weight: event.target.value as TypographyWeight,
-                  }))
+                  updateCurrentSizeConfig({
+                    semanticWeight: event.target.value as TypographyWeight,
+                  })
                 }
                 className="w-full border border-white/10 bg-black px-3 py-3"
               >
                 {TYPOGRAPHY_WEIGHTS.map((weight) => (
                   <option key={weight} value={weight}>
-                    {weight}
+                    {formatWeightLabel(weight)}
                   </option>
                 ))}
               </select>
             </label>
-          </ControlBlock>
 
-          <ControlBlock title="排版参数">
             <label className="block">
-              <FieldLabel>Font Size</FieldLabel>
-              <input
-                value={state.fontSize}
-                onChange={(event) =>
-                  setState((current) => ({ ...current, fontSize: event.target.value }))
-                }
-                className="w-full border border-white/10 bg-black px-3 py-3"
-              />
-            </label>
-            <label className="block">
-              <FieldLabel>Line Height</FieldLabel>
-              <input
-                type="number"
-                step="0.01"
-                value={state.lineHeight}
-                onChange={(event) =>
-                  setState((current) => ({
-                    ...current,
-                    lineHeight: Number(event.target.value),
-                  }))
-                }
-                className="w-full border border-white/10 bg-black px-3 py-3"
-              />
-            </label>
-            <label className="block">
-              <FieldLabel>Tracking</FieldLabel>
-              <input
-                type="number"
-                step="0.001"
-                value={state.tracking}
-                onChange={(event) =>
-                  setState((current) => ({
-                    ...current,
-                    tracking: Number(event.target.value),
-                  }))
-                }
-                className="w-full border border-white/10 bg-black px-3 py-3"
-              />
-            </label>
-          </ControlBlock>
-
-          <ControlBlock title="脚本补偿">
-            <label className="block">
-              <FieldLabel>Latin Baseline Offset</FieldLabel>
-              <input
-                type="number"
-                step="0.001"
-                value={state.latinBaselineOffset}
-                onChange={(event) =>
-                  setState((current) => ({
-                    ...current,
-                    latinBaselineOffset: Number(event.target.value),
-                  }))
-                }
-                className="w-full border border-white/10 bg-black px-3 py-3"
-              />
-            </label>
-            <label className="block">
-              <FieldLabel>CJK Baseline Offset</FieldLabel>
-              <input
-                type="number"
-                step="0.001"
-                value={state.cjkBaselineOffset}
-                onChange={(event) =>
-                  setState((current) => ({
-                    ...current,
-                    cjkBaselineOffset: Number(event.target.value),
-                  }))
-                }
-                className="w-full border border-white/10 bg-black px-3 py-3"
-              />
-            </label>
-            <label className="block">
-              <FieldLabel>Latin Letter Spacing</FieldLabel>
-              <input
-                type="number"
-                step="0.001"
-                value={state.latinLetterSpacing}
-                onChange={(event) =>
-                  setState((current) => ({
-                    ...current,
-                    latinLetterSpacing: Number(event.target.value),
-                  }))
-                }
-                className="w-full border border-white/10 bg-black px-3 py-3"
-              />
-            </label>
-            <label className="block">
-              <FieldLabel>CJK Letter Spacing</FieldLabel>
-              <input
-                type="number"
-                step="0.001"
-                value={state.cjkLetterSpacing}
-                onChange={(event) =>
-                  setState((current) => ({
-                    ...current,
-                    cjkLetterSpacing: Number(event.target.value),
-                  }))
-                }
-                className="w-full border border-white/10 bg-black px-3 py-3"
-              />
-            </label>
-          </ControlBlock>
-
-          <ControlBlock title="行为">
-            <label className="block">
-              <FieldLabel>Wrap Policy</FieldLabel>
+              <FieldLabel>中英字重偏差</FieldLabel>
               <select
-                value={state.wrapPolicy}
+                value={activePresetConfig.latinWeightOffsetSteps}
                 onChange={(event) =>
-                  setState((current) => ({
-                    ...current,
-                    wrapPolicy: event.target.value as TypographyWrapPolicy,
-                  }))
+                  setFontDocument((current) =>
+                    updateFontLabPresetWeightOffset(
+                      current,
+                      current.activePreset,
+                      clampTypographyLatinWeightOffsetSteps(
+                        current.activePreset,
+                        Number(event.target.value),
+                      ),
+                    ),
+                  )
                 }
                 className="w-full border border-white/10 bg-black px-3 py-3"
               >
-                {TYPOGRAPHY_WRAP_POLICIES.map((wrapPolicy) => (
-                  <option key={wrapPolicy} value={wrapPolicy}>
-                    {wrapPolicy}
+                {latinWeightOffsetOptions.map((offset) => (
+                  <option key={offset} value={offset}>
+                    {formatLatinWeightOffsetLabel(offset)}
                   </option>
                 ))}
               </select>
-            </label>
-            <label className="block">
-              <FieldLabel>Align</FieldLabel>
-              <select
-                value={state.align}
-                onChange={(event) =>
-                  setState((current) => ({
-                    ...current,
-                    align: event.target.value as "left" | "center" | "right",
-                  }))
-                }
-                className="w-full border border-white/10 bg-black px-3 py-3"
-              >
-                <option value="left">left</option>
-                <option value="center">center</option>
-                <option value="right">right</option>
-              </select>
-            </label>
-            <label className="block">
-              <FieldLabel>Autospace</FieldLabel>
-              <select
-                value={state.autospace}
-                onChange={(event) =>
-                  setState((current) => ({
-                    ...current,
-                    autospace: event.target.value as TypographyAutospace,
-                  }))
-                }
-                className="w-full border border-white/10 bg-black px-3 py-3"
-              >
-                <option value="off">off</option>
-                <option value="normal">normal</option>
-              </select>
-            </label>
-            <label className="block">
-              <FieldLabel>Numeric Style</FieldLabel>
-              <select
-                value={state.numericStyle}
-                onChange={(event) =>
-                  setState((current) => ({
-                    ...current,
-                    numericStyle: event.target.value as TypographyNumericStyle,
-                  }))
-                }
-                className="w-full border border-white/10 bg-black px-3 py-3"
-              >
-                <option value="default">default</option>
-                <option value="tabular">tabular</option>
-              </select>
-            </label>
-            <label className="block">
-              <FieldLabel>Preview Width</FieldLabel>
-              <input
-                type="range"
-                min="360"
-                max="1440"
-                step="10"
-                value={state.previewWidth}
-                onChange={(event) =>
-                  setState((current) => ({
-                    ...current,
-                    previewWidth: Number(event.target.value),
-                  }))
-                }
-                className="w-full"
-              />
               <Typography
                 as="span"
                 preset="sans-body"
                 size="caption"
                 weight="medium"
-                wrapPolicy="label"
+                wrapPolicy="prose"
                 className="mt-2 block text-textMuted"
               >
-                {state.previewWidth}px
+                {`该模板当前提供 ${presetToken.availableWeights.latin.length} 档英文可用字重；偏差会统一作用到全部语义字重槽位。`}
               </Typography>
             </label>
+
+            <div className="grid gap-3 md:grid-cols-2">
+              <FontSizeField
+                label="字号"
+                value={activeSizeConfig.fontSize}
+                onCommit={(fontSize) => updateCurrentSizeConfig({ fontSize })}
+              />
+
+              <NumberField
+                label="行高"
+                value={activeSizeConfig.lineHeight}
+                onCommit={(lineHeight) => updateCurrentSizeConfig({ lineHeight })}
+              />
+            </div>
+
+            <div className="grid gap-3 md:grid-cols-2">
+              <NumberField
+                label="英文相对基线偏移"
+                value={activeSizeConfig.latinRelativeOffset}
+                onCommit={(latinRelativeOffset) =>
+                  updateCurrentSizeConfig({ latinRelativeOffset })
+                }
+              />
+            </div>
+
+            <div className="grid gap-3 md:grid-cols-2">
+              <NumberField
+                label="中文基准校正（高级）"
+                value={activeSizeConfig.cjkVerticalOffset}
+                onCommit={(cjkVerticalOffset) =>
+                  updateCurrentSizeConfig({ cjkVerticalOffset })
+                }
+                helperText="常规保持 0。改这个值会连同参考线一起移动整行中文锚点。"
+              />
+
+              <NumberField
+                label="中文水平对齐"
+                value={activeSizeConfig.cjkHorizontalOffset}
+                onCommit={(cjkHorizontalOffset) =>
+                  updateCurrentSizeConfig({ cjkHorizontalOffset })
+                }
+                helperText="负值向左，正值向右。用于修正中文行首的实际落点。"
+              />
+            </div>
+
+            <div className="grid gap-3 md:grid-cols-2">
+              <NumberField
+                label="英文水平对齐"
+                value={activeSizeConfig.latinHorizontalOffset}
+                onCommit={(latinHorizontalOffset) =>
+                  updateCurrentSizeConfig({ latinHorizontalOffset })
+                }
+                helperText="负值向左，正值向右。用于修正英文在同一左边缘上的起笔位置。"
+              />
+
+              <NumberField
+                label="中文字距"
+                value={activeSizeConfig.cjkLetterSpacing}
+                onCommit={(cjkLetterSpacing) =>
+                  updateCurrentSizeConfig({ cjkLetterSpacing })
+                }
+              />
+            </div>
+
+            <NumberField
+              label="英文字距"
+              value={activeSizeConfig.latinLetterSpacing}
+              onCommit={(latinLetterSpacing) =>
+                updateCurrentSizeConfig({ latinLetterSpacing })
+              }
+            />
           </ControlBlock>
 
           <ControlBlock title="调试层">
             <ToggleField
-              checked={state.showGrid}
+              checked={layoutState.showGrid}
               label="显示网格"
               onChange={(value) =>
-                setState((current) => ({ ...current, showGrid: value }))
+                setLayoutState((current) => ({ ...current, showGrid: value }))
               }
             />
             <ToggleField
-              checked={state.showBaseline}
-              label="显示基线"
+              checked={layoutState.showBaseline}
+              label="显示逐行基线"
               onChange={(value) =>
-                setState((current) => ({ ...current, showBaseline: value }))
+                setLayoutState((current) => ({ ...current, showBaseline: value }))
               }
             />
             <ToggleField
-              checked={state.showLeftEdge}
-              label="显示左边缘"
+              checked={layoutState.showOpticalAlignment}
+              label="显示光学对齐线"
               onChange={(value) =>
-                setState((current) => ({ ...current, showLeftEdge: value }))
+                setLayoutState((current) => ({ ...current, showOpticalAlignment: value }))
               }
             />
             <ToggleField
-              checked={state.showRunHighlight}
+              checked={layoutState.showLeftEdge}
+              label="显示共享左对齐线"
+              onChange={(value) =>
+                setLayoutState((current) => ({ ...current, showLeftEdge: value }))
+              }
+            />
+            <ToggleField
+              checked={layoutState.showRunHighlight}
               label="高亮脚本分段"
               onChange={(value) =>
-                setState((current) => ({ ...current, showRunHighlight: value }))
+                setLayoutState((current) => ({ ...current, showRunHighlight: value }))
               }
             />
           </ControlBlock>
         </aside>
 
-        <section className="col-span-12 lg:col-span-8 space-y-8">
-          <div
-            className={[
-              "relative overflow-hidden border border-white/10 bg-white/[0.02] p-6 md:p-8",
-              state.showGrid ? "font-lab-grid" : "",
-              state.showBaseline ? "font-lab-baseline" : "",
-              state.showLeftEdge ? "font-lab-left-edge" : "",
-              state.showRunHighlight ? "font-lab-run-highlight" : "",
-            ].join(" ")}
-            style={{ ...cssVars, width: "100%", maxWidth: `${state.previewWidth}px` }}
-          >
-            <Typography
-              as="p"
-              preset="sans-body"
-              size="caption"
-              weight="medium"
-              wrapPolicy="label"
-              className="mb-6 text-textMuted"
-            >
-              STANDARD SAMPLES
-            </Typography>
-            <div className="space-y-8">
-              <Typography
-                as="p"
-                preset={state.preset}
-                size={state.size}
-                weight={state.weight}
-                wrapPolicy={state.wrapPolicy}
-                align={state.align}
-                autospace={state.autospace}
-                numericStyle={state.numericStyle}
-                className="text-white"
-              >
-                SHADOW OVER HANGZHOU / 雨后余光
-              </Typography>
-              <Typography
-                as="p"
-                preset={state.preset}
-                size={state.size}
-                weight={state.weight}
-                wrapPolicy="heading"
-                align={state.align}
-                autospace={state.autospace}
-                className="max-w-[18ch] text-white"
-              >
-                当雾气压低到江面，Lighting Direction 仍然需要保持叙事聚焦。
-              </Typography>
-              <Typography
-                as="p"
-                preset={state.preset}
-                size="body"
-                weight="regular"
-                wrapPolicy="prose"
-                autospace={state.autospace}
-                numericStyle={state.numericStyle}
-                className="max-w-[44ch] text-textPrimary"
-              >
-                这是正文测试段落。2026 年 03 月 11 日，版本 v2.1.0 在 Unreal Engine 5.3 环境下完成迭代；设计目标是让中英混排、数字、单位、URL 与中文标点共处时仍保持稳定基线与左边缘。
-              </Typography>
-              <Typography
-                as="p"
-                preset={state.preset}
-                size="body-sm"
-                weight="regular"
-                wrapPolicy="url"
-                autospace={state.autospace}
-                className="max-w-[34ch] text-textMuted"
-              >
-                https://portfolio.example.com/works/lighting-lab?scene=rainy-night&build=v2.1.0
-              </Typography>
-              <Typography
-                as="p"
-                preset={state.preset}
-                size="body-sm"
-                weight="regular"
-                wrapPolicy="prose"
-                autospace={state.autospace}
-                className="max-w-[40ch] text-textMuted whitespace-pre-wrap"
-              >
-                {"人工换行测试：\n第一行是中文说明。\nSecond line keeps English punctuation (A/B testing)."}
-              </Typography>
-            </div>
-          </div>
+        <section className="col-span-12 lg:col-span-8">
+          <div className="relative w-full space-y-8">
+            {layoutState.showLeftEdge ? (
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute bottom-0 top-0 left-6 border-l border-dashed border-cyan-300/55 md:left-8"
+              />
+            ) : null}
 
-          <div
-            className={[
-              "relative overflow-hidden border border-white/10 bg-white/[0.02] p-6 md:p-8",
-              state.showGrid ? "font-lab-grid" : "",
-              state.showBaseline ? "font-lab-baseline" : "",
-              state.showLeftEdge ? "font-lab-left-edge" : "",
-              state.showRunHighlight ? "font-lab-run-highlight" : "",
-            ].join(" ")}
-            style={{ ...cssVars, width: "100%", maxWidth: `${state.previewWidth}px` }}
-          >
-            <Typography
-              as="p"
-              preset="sans-body"
-              size="caption"
-              weight="medium"
-              wrapPolicy="label"
-              className="mb-6 text-textMuted"
+            <CalibrationCard
+              title="当前字号样本"
+              showGrid={layoutState.showGrid}
+              showRunHighlight={layoutState.showRunHighlight}
             >
-              EXTREME CASES
-            </Typography>
-            <div className="space-y-6">
-              <Typography as="p" preset={state.preset} size="body-sm" weight="regular" wrapPolicy="prose" className="text-textPrimary">
-                中文（English）与“引号”混排，A/B、UI、GPU、Lumen、Nanite、5.3ms、128GB、4K HDR 全部同时出现。
-              </Typography>
-              <Typography as="p" preset={state.preset} size="body-sm" weight="regular" wrapPolicy="heading" className="max-w-[16ch] text-textPrimary">
-                Pneumonoultramicroscopicsilicovolcanoconiosis 在极窄宽度下的断行表现。
-              </Typography>
-              <Typography as="p" preset={state.preset} size="body-sm" weight="regular" wrapPolicy="url" numericStyle="tabular" className="text-textPrimary">
-                contact@jiangchengyan.dev / build-2026.03.11-night-pass-04 / 001-2048-4096
-              </Typography>
-            </div>
-          </div>
+              {isHeadingPreviewSize(activeSize) ? (
+                <GuideRow
+                  showBaseline={layoutState.showBaseline}
+                  showOpticalAlignment={layoutState.showOpticalAlignment}
+                  showTick={layoutState.showLeftEdge}
+                >
+                  <Typography
+                    as="p"
+                    preset={activePreset}
+                    size={activeSize}
+                    weight={activeSemanticWeight}
+                    wrapPolicy="heading"
+                    className="max-w-full text-white"
+                  >
+                    {CURRENT_HEADING_SAMPLE_TEXT}
+                  </Typography>
+                </GuideRow>
+              ) : (
+                <GuideRow
+                  showBaseline={layoutState.showBaseline}
+                  showOpticalAlignment={layoutState.showOpticalAlignment}
+                  showTick={layoutState.showLeftEdge}
+                >
+                  <Typography
+                    as="p"
+                    preset={activePreset}
+                    size={activeSize}
+                    weight={activeSemanticWeight}
+                    wrapPolicy="prose"
+                    className="max-w-[56ch] text-textPrimary"
+                  >
+                    {LONG_READING_SAMPLE_TEXT}
+                  </Typography>
+                </GuideRow>
+              )}
+            </CalibrationCard>
 
-          <TypographyProvider overrides={previewOverrides}>
-            <div className="space-y-8">
+            <CalibrationCard
+              title="极端情况"
+              showGrid={layoutState.showGrid}
+              showRunHighlight={layoutState.showRunHighlight}
+            >
+              <div className="space-y-6">
+                <GuideRow
+                  showBaseline={layoutState.showBaseline}
+                  showOpticalAlignment={layoutState.showOpticalAlignment}
+                  showTick={layoutState.showLeftEdge}
+                >
+                  <Typography
+                    as="p"
+                    preset={activePreset}
+                    size={activeSize}
+                    weight={activeSemanticWeight}
+                    wrapPolicy="prose"
+                    className="text-textPrimary"
+                  >
+                    {EXTREME_MIXED_TEXT}
+                  </Typography>
+                </GuideRow>
+
+                <GuideRow
+                  showBaseline={layoutState.showBaseline}
+                  showOpticalAlignment={layoutState.showOpticalAlignment}
+                  showTick={layoutState.showLeftEdge}
+                >
+                  <Typography
+                    as="p"
+                    preset={activePreset}
+                    size={activeSize}
+                    weight={activeSemanticWeight}
+                    wrapPolicy="heading"
+                    className="max-w-[18ch] text-textPrimary"
+                  >
+                    {EXTREME_NARROW_TEXT}
+                  </Typography>
+                </GuideRow>
+
+                <GuideRow
+                  showBaseline={layoutState.showBaseline}
+                  showOpticalAlignment={layoutState.showOpticalAlignment}
+                  showTick={layoutState.showLeftEdge}
+                >
+                  <Typography
+                    as="p"
+                    preset={activePreset}
+                    size={activeSize}
+                    weight={activeSemanticWeight}
+                    wrapPolicy="url"
+                    numericStyle="tabular"
+                    className="text-textPrimary"
+                  >
+                    {EXTREME_URL_TEXT}
+                  </Typography>
+                </GuideRow>
+              </div>
+            </CalibrationCard>
+
+            <CalibrationCard
+              title="全局混排校验"
+              showGrid={layoutState.showGrid}
+              showRunHighlight={layoutState.showRunHighlight}
+            >
+              <div className="space-y-8">
+                <Typography
+                  as="p"
+                  preset="sans-body"
+                  size="body-sm"
+                  weight="regular"
+                  wrapPolicy="prose"
+                  className="max-w-[44rem] text-textMuted"
+                >
+                  这里保留真实系统角色的固定组合，用来验证跨模板共存时的结果。它会继续读取当前已保存的模板细节，但不会整块改成你当前正在编辑的字号档位。
+                </Typography>
+                {titleSubtitleSupportMessage ? (
+                  <UnsupportedCase message={titleSubtitleSupportMessage} />
+                ) : (
+                  <MixedCaseSection
+                    title="标题 + 小标题"
+                    showBaseline={layoutState.showBaseline}
+                    showOpticalAlignment={layoutState.showOpticalAlignment}
+                    showTick={layoutState.showLeftEdge}
+                  >
+                    <div className="flex max-w-[44rem] flex-wrap items-baseline gap-x-6 gap-y-4">
+                      <Typography
+                        as="span"
+                        preset="luna-editorial"
+                        size="display"
+                        weight="display"
+                        wrapPolicy="nowrap"
+                        className="text-white"
+                      >
+                        After Rain
+                      </Typography>
+                      <span className="inline-block w-6" />
+                      <Typography
+                        as="span"
+                        preset="luna-editorial"
+                        size="title"
+                        weight="strong"
+                        wrapPolicy="nowrap"
+                        className="text-textMuted"
+                        style={{ lineHeight: 1 }}
+                      >
+                        雨后余光
+                      </Typography>
+                    </div>
+                  </MixedCaseSection>
+                )}
+
+                {titleBodySupportMessage ? (
+                  <UnsupportedCase message={titleBodySupportMessage} />
+                ) : (
+                  <MixedCaseSection
+                    title="标题 + 正文"
+                    showBaseline={layoutState.showBaseline}
+                    showOpticalAlignment={layoutState.showOpticalAlignment}
+                    showTick={layoutState.showLeftEdge}
+                  >
+                    <div className="flex max-w-[52rem] flex-wrap items-baseline gap-x-6 gap-y-4">
+                      <Typography
+                        as="span"
+                        preset="luna-editorial"
+                        size="title"
+                        weight="display"
+                        wrapPolicy="nowrap"
+                        className="text-white"
+                      >
+                        Lighting Notes
+                      </Typography>
+                      <span className="inline-block w-6" />
+                      <Typography
+                        as="span"
+                        preset="sans-body"
+                        size="body"
+                        weight="regular"
+                        wrapPolicy="prose"
+                        className="max-w-[28ch] text-textPrimary"
+                        style={{ lineHeight: 1.2 }}
+                      >
+                        标题后接正文短句，用来检查展示标题与正文同处一行时的真实关系。
+                      </Typography>
+                    </div>
+                  </MixedCaseSection>
+                )}
+
+                {titleMetaSupportMessage ? (
+                  <UnsupportedCase message={titleMetaSupportMessage} />
+                ) : (
+                  <MixedCaseSection
+                    title="标题 + Meta / 日期 / 版本号"
+                    showBaseline={layoutState.showBaseline}
+                    showOpticalAlignment={layoutState.showOpticalAlignment}
+                    showTick={layoutState.showLeftEdge}
+                  >
+                    <div className="flex max-w-[52rem] flex-wrap items-baseline gap-x-6 gap-y-4">
+                      <Typography
+                        as="span"
+                        preset="sans-body"
+                        size="title"
+                        weight="display"
+                        wrapPolicy="nowrap"
+                        className="text-white"
+                      >
+                        Light Study
+                      </Typography>
+                      <span className="inline-block w-6" />
+                      <Typography
+                        as="span"
+                        preset="gothic-editorial"
+                        size="label"
+                        weight="medium"
+                        wrapPolicy="nowrap"
+                        className="text-textPrimary"
+                        style={{ lineHeight: 1 }}
+                      >
+                        Lighting Direction
+                      </Typography>
+                      <span className="inline-block w-4" />
+                      <Typography
+                        as="span"
+                        preset="sans-body"
+                        size="caption"
+                        weight="medium"
+                        wrapPolicy="nowrap"
+                        numericStyle="tabular"
+                        className="text-textMuted"
+                        style={{ lineHeight: 1 }}
+                      >
+                        2026.03.11 / build v2.1 / 01
+                      </Typography>
+                    </div>
+                  </MixedCaseSection>
+                )}
+
+                {menuLabelSupportMessage ? (
+                  <UnsupportedCase message={menuLabelSupportMessage} />
+                ) : (
+                  <MixedCaseSection
+                    title="菜单 + Label"
+                    showBaseline={layoutState.showBaseline}
+                    showOpticalAlignment={layoutState.showOpticalAlignment}
+                    showTick={layoutState.showLeftEdge}
+                  >
+                    <div className="flex max-w-[48rem] flex-wrap items-baseline gap-x-6 gap-y-4">
+                      <Typography
+                        as="span"
+                        preset="classical-display"
+                        size="menu"
+                        weight="regular"
+                        wrapPolicy="nowrap"
+                        className="text-white"
+                      >
+                        MENU
+                      </Typography>
+                      <span className="inline-block w-6" />
+                      <Typography
+                        as="span"
+                        preset="sans-body"
+                        size="label"
+                        weight="medium"
+                        wrapPolicy="nowrap"
+                        className="text-textMuted"
+                        style={{ lineHeight: 1 }}
+                      >
+                        Navigation Trigger
+                      </Typography>
+                    </div>
+                  </MixedCaseSection>
+                )}
+
+                {bodyUrlSupportMessage ? (
+                  <UnsupportedCase message={bodyUrlSupportMessage} />
+                ) : (
+                  <section className="border-b border-white/8 pb-8">
+                    <Typography
+                      as="p"
+                      preset="sans-body"
+                      size="caption"
+                      weight="medium"
+                      wrapPolicy="label"
+                      className="mb-4 text-textMuted"
+                    >
+                      正文 + URL
+                    </Typography>
+                    <div className="space-y-4">
+                      <GuideRow
+                        showBaseline={layoutState.showBaseline}
+                        showOpticalAlignment={layoutState.showOpticalAlignment}
+                        showTick={layoutState.showLeftEdge}
+                      >
+                        <Typography
+                          as="p"
+                          preset="sans-body"
+                          size="body"
+                          weight="regular"
+                          wrapPolicy="prose"
+                          className="max-w-[42rem] text-textPrimary"
+                        >
+                          该案例用于检查正文说明与 URL 行在真实字号下的间距、基线与换行边界。
+                        </Typography>
+                      </GuideRow>
+                      <GuideRow
+                        showBaseline={layoutState.showBaseline}
+                        showOpticalAlignment={layoutState.showOpticalAlignment}
+                        showTick={layoutState.showLeftEdge}
+                      >
+                        <Typography
+                          as="p"
+                          preset="sans-body"
+                          size="body-sm"
+                          weight="regular"
+                          wrapPolicy="url"
+                          className="max-w-[42rem] text-textMuted"
+                        >
+                          jiangchengyan.dev/works/lighting
+                        </Typography>
+                      </GuideRow>
+                    </div>
+                  </section>
+                )}
+
+                {bodyMixedSupportMessage ? (
+                  <UnsupportedCase message={bodyMixedSupportMessage} />
+                ) : (
+                  <MixedCaseSection
+                    title="正文 + 中英数字混排"
+                    showBaseline={layoutState.showBaseline}
+                    showOpticalAlignment={layoutState.showOpticalAlignment}
+                    showTick={layoutState.showLeftEdge}
+                    className="border-b-0 pb-0"
+                  >
+                    <Typography
+                      as="p"
+                      preset="sans-body"
+                      size="body"
+                      weight="regular"
+                      wrapPolicy="prose"
+                      className="max-w-[44rem] text-textPrimary"
+                    >
+                      第 03 幕在 2026 年 03 月 11 日完成 A/B 版本对齐，目标是在中文、English、UI、4K HDR 与 128GB 这类信息并存时仍然保持统一节奏。
+                    </Typography>
+                  </MixedCaseSection>
+                )}
+              </div>
+            </CalibrationCard>
+
+            <div className="border border-white/10 bg-white/[0.02] px-5 py-5">
               <Typography
                 as="p"
                 preset="sans-body"
-                size="caption"
-                weight="medium"
-                wrapPolicy="label"
+                size="body-sm"
+                weight="regular"
+                wrapPolicy="prose"
                 className="text-textMuted"
               >
-                REAL COMPONENT PREVIEWS
+                真实组件预览已移出本页。需要做最终组件验收时，请进入 Playground 统一检查页面模块，而不是在 Font Lab 内直接注入真实组件。
               </Typography>
-              <Typography
-                as="p"
-                preset="sans-body"
-                size="body-sm"
-                weight="regular"
-                wrapPolicy="prose"
-                className="max-w-[56ch] text-textMuted"
+              <Link
+                href="/playground"
+                className="mt-6 inline-flex items-center border border-white/12 px-4 py-3 text-textPrimary transition-colors hover:border-white/25 hover:text-white"
               >
-                该区域会把当前选中的 preset、size 与 weight 强制注入所有真实组件预览，确保每次参数变化都能即时反映到真实布局。
-              </Typography>
-              <div className="border border-white/10 bg-black">
-                <HeroSection
-                  eyebrow="FONT LAB / LIVE HERO"
-                  title="JIANG CHENGYAN"
-                  subtitle="Typography calibration"
-                  description="在这里直接看真实 Hero 模块如何响应字体 token、基线补偿和换行策略。"
-                  primaryCtaLabel="VIEW WORKS"
-                  primaryCtaHref="/works"
-                  secondaryCtaLabel="BACK"
-                  secondaryCtaHref="/playground"
-                  imageSrc="/images/covers/2026/ShotForCrewWithoutWord.0004.webp"
-                  imageAlt="Font Lab hero background"
-                />
-              </div>
-              <div className="border border-white/10 bg-black px-6 py-10">
-                <PortfolioHeroHeader
-                  title="ALL WORKS"
-                  subtitle="CURATED TYPOGRAPHY"
-                  descriptionLine1="LIVE COMPONENT"
-                  descriptionLine2="这里的页面头图标题与说明会直接读取当前 Typography token。"
-                  ctaLabel="ABOUT"
-                  ctaHref="/about"
-                />
-              </div>
-              <div className="border border-white/10 bg-black px-6 py-10">
-                <WorksListEntry
-                  id="font-lab-work-1"
-                  number="07"
-                  title="CITY AFTER RAIN"
-                  category="Lighting / Atmosphere / Look Dev"
-                  imageSrc="/images/city-2026/002.webp"
-                  desc="在霓虹、体积雾与反射面之间建立可控节奏。Typography 应该在多行与高反差背景里保持稳定。"
-                  href="/works/lighting-portfolio/collection-1"
-                />
-              </div>
-              <div className="grid gap-8 lg:grid-cols-2">
-                <div className="border border-white/10 bg-black">
-                  <LightingCollectionHeader
-                    title="CITY ADD"
-                    number="01"
-                    description="灯光集合页的标题与说明文字也会进入同一套排版系统。"
-                  />
-                </div>
-                <div className="border border-white/10 bg-black p-6">
-                  <LightingProjectCard
-                    number="03"
-                    title="OVERPASS GLOW"
-                    coverImage="/images/city-2026/001.webp"
-                    href="/works/lighting-portfolio/collection-1"
-                  />
-                </div>
-              </div>
-              <div className="border border-white/10 bg-black px-6 py-10">
-                <ContentCard
-                  title="Font Lab Narrative Sample"
-                  description="This card uses the same Typography base component. 你可以在这里观察正文、标题与 URL 换行策略是否同时成立。"
-                  imageSrc="/images/train-station/2Night.webp"
-                  tags={["Typography", "Mixed Script", "Baseline"]}
-                />
-              </div>
+                <ActionText>打开 Playground 做组件验收</ActionText>
+              </Link>
             </div>
-          </TypographyProvider>
-
-          <div className="border border-white/10 bg-white/[0.02] px-5 py-5">
-            <Typography
-              as="p"
-              preset="sans-body"
-              size="body-sm"
-              weight="regular"
-              wrapPolicy="prose"
-              className="text-textMuted"
-            >
-              顶部全局 Navigation 已使用当前页面注入的 CSS 变量；它不在这里重复渲染，但会随着当前配置同步变化。
-            </Typography>
           </div>
         </section>
       </div>
