@@ -17,6 +17,7 @@ import { buildFontLabDocumentCssVars } from "@/lib/font-lab-css-vars";
 import {
   createDefaultFontLabDocument,
   parseFontLabDocument,
+  type FontLabDocument,
   type FontLabSizeConfig,
 } from "@/lib/font-lab-config-schema";
 import {
