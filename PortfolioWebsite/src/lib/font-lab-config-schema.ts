@@ -1,5 +1,6 @@
 import {
   clampTypographyLatinWeightOffsetSteps,
+  getDefaultTypographySemanticWeight,
   getTypographyFontLabSizes,
   getTypographyMetricsToken,
   getTypographyPresetToken,
@@ -115,29 +116,6 @@ function normalizeLatinFontScale(value: unknown) {
   return Number.parseFloat(value.toFixed(4));
 }
 
-function getDefaultFontLabSemanticWeight(size: TypographySize): TypographyWeight {
-  switch (size) {
-    case "caption":
-    case "label":
-      return "medium";
-    case "body-sm":
-    case "body":
-      return "regular";
-    case "body-lg":
-      return "medium";
-    case "title-sm":
-    case "title":
-      return "strong";
-    case "menu":
-      return "regular";
-    case "display":
-    case "hero":
-      return "display";
-    default:
-      return "regular";
-  }
-}
-
 function createDefaultFontLabSizeConfig(
   preset: TypographyPreset,
   size: TypographySize,
@@ -155,7 +133,7 @@ function createDefaultFontLabSizeConfig(
     latinLetterSpacing: Number.parseFloat(metrics.latinLetterSpacing),
     latinRelativeOffset: latinAbsoluteOffset,
     lineHeight: Number.parseFloat(sizeToken.lineHeight),
-    semanticWeight: getDefaultFontLabSemanticWeight(size),
+    semanticWeight: getDefaultTypographySemanticWeight(size),
   };
 }
 
@@ -430,7 +408,7 @@ function migrateLegacyFontLabConfig(
     latinLetterSpacing: legacy.latinLetterSpacing,
     latinRelativeOffset: legacy.latinBaselineOffset - legacy.cjkBaselineOffset,
     lineHeight: legacy.lineHeight,
-    semanticWeight: getDefaultFontLabSemanticWeight(activeSize),
+    semanticWeight: getDefaultTypographySemanticWeight(activeSize),
   };
 
   return document;

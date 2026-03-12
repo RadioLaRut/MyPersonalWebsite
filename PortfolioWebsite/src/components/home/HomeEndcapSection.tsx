@@ -32,7 +32,7 @@ export default function HomeEndcapSection({
   const hasDescription = !isContentEmpty(description);
 
   return (
-    <section className="relative isolate grid min-h-[68vh] w-full items-center overflow-hidden border-t border-white/10 bg-black py-24 lg:py-32">
+    <section className="relative isolate grid min-h-[68vh] w-full items-center overflow-hidden border-t border-white/10 bg-black rhythm-section-spacious">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_45%)]" />
 
       <div className="grid-container relative z-10">
@@ -42,7 +42,7 @@ export default function HomeEndcapSection({
               as="p"
               preset="sans-body"
               size="caption"
-              weight="medium"
+              weight="semantic"
               wrapPolicy="label"
               className="text-white/35"
             >
@@ -54,7 +54,7 @@ export default function HomeEndcapSection({
             as="h2"
             preset="luna-editorial"
             size="hero"
-            weight="display"
+            weight="semantic"
             wrapPolicy="heading"
             className="mt-6 text-white uppercase"
           >
@@ -88,7 +88,7 @@ export default function HomeEndcapSection({
               <Typography
                 preset="sans-body"
                 size="label"
-                weight="medium"
+                weight="semantic"
                 wrapPolicy="label"
                 className="text-inherit"
               >

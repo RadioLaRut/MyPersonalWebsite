@@ -33,7 +33,7 @@ export default function TextSplitLayout({
                     as="p"
                     preset="sans-body"
                     size="body-lg"
-                    weight="medium"
+                    weight="semantic"
                     wrapPolicy="prose"
                     className="text-textMuted"
                 >
@@ -44,7 +44,7 @@ export default function TextSplitLayout({
     );
 
     return (
-        <div className="w-full my-32">
+        <div className="w-full rhythm-block">
             <div className="grid-container items-start">
 
                 {layoutVariant === 'split-left' && (

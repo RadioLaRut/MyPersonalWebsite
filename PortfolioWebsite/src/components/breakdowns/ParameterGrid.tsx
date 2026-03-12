@@ -27,7 +27,7 @@ export default function ParameterGrid({
     parameters
 }: ParameterGridProps) {
     return (
-        <div className="w-full my-32">
+        <div className="w-full rhythm-block">
             {/* 1. Full-width Media */}
             <div className="w-full relative bg-[#050505] overflow-hidden mb-12">
                 {isVideo ? (
@@ -53,7 +53,7 @@ export default function ParameterGrid({
                         as="span"
                         preset="sans-body"
                         size="caption"
-                        weight="medium"
+                        weight="semantic"
                         wrapPolicy="label"
                         className="text-white"
                     >
@@ -71,7 +71,7 @@ export default function ParameterGrid({
                                 as="h4"
                                 preset="sans-body"
                                 size="caption"
-                                weight="medium"
+                                weight="semantic"
                                 wrapPolicy="label"
                                 className="mb-4 text-textMuted transition-colors group-hover:text-white"
                             >

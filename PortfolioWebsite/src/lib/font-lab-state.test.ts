@@ -27,9 +27,9 @@ test("updateFontLabSelection normalizes unsupported sizes for the selected prese
   assert.equal(next.activeSize, "menu");
 });
 
-test("updateFontLabSelection falls back to the closest configured size for narrowed presets", () => {
+test("updateFontLabSelection falls back to the closest configured size for unsupported selections", () => {
   const source = createDefaultFontLabDocument();
-  const next = updateFontLabSelection(source, "sans-body", "title");
+  const next = updateFontLabSelection(source, "sans-body", "menu");
 
   assert.equal(next.activePreset, "sans-body");
   assert.equal(next.activeSize, "display");

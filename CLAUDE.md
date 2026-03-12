@@ -23,6 +23,9 @@
 - 仅当命令具有高风险或不可逆性时，才需要先征得确认。
 - 任何可能越过安全边界的操作，必须先确认影响范围，并优先采用可回滚方案。
 - CodeX 会 review 你的任何内容。
+- 严禁因局部页面需求，直接修改 `PortfolioWebsite/content/font-lab/font-presets.json` 中 Futura+汉仪旗黑、Luna、Gothic 的 FontLab 预设字号配置。
+- 当用户要求某个标题、正文或标签变大、变小、变紧、变松时，只能调整该文本使用的字号档位、组件层级或版式结构，不能改 FontLab 的字号、字重、行高、字距来迎合单点需求。
+- 只有在用户明确提供新的全局 FontLab 配置并要求同步时，才允许改动这些字体 preset；否则必须视为禁止修改项。
 
 ## 开发命令
 
@@ -140,6 +143,23 @@ npm run convert:images
   - `1024px+` 时 gap `1.5rem`
   - 最大宽度 `1680px`
 - 新区块必须落在这套网格或既有 grid helper 上，禁止自由摆放
+
+### 纵向节奏系统
+
+- 当前实现不是只有横向列栅格，而是“12 列栅格 + 纵向节奏系统”
+- `8px` 是最小节奏单位，处理按钮、标签和局部文本组微调
+- `32px` 是主节奏单位，处理 section 级 `pt/pb/mt/mb`、分隔线后的进入留白和页面收束
+- 组件外轮廓优先回到 `32px` 主节奏线，内部堆叠再用 stack token 微调
+- 当前常用工具类：
+  - `rhythm-section-compact`
+  - `rhythm-section-normal`
+  - `rhythm-section-spacious`
+  - `rhythm-section-hero`
+  - `rhythm-block`
+  - `rhythm-block-compact`
+  - `rhythm-divider-top`
+  - `rhythm-stack-2 / 3 / 4 / 6 / 8`
+- `HeroSection`、`PortfolioHeroHeader`、`WorksList`、`HomeEndcapSection`、`StatementBlock` 等 section 级组件优先通过这些 profile 控制纵向节奏，不要继续散写大块 `pt-*`、`pb-*`
 
 ### 排版系统
 

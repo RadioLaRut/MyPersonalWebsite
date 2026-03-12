@@ -161,12 +161,12 @@ export default function WorksListEntry({
         )}
       </AnimatePresence>
 
-      <div className={`grid-container relative z-10 items-center py-12 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
+      <div className={`grid-container relative z-10 items-center py-16 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
         <div className="hidden lg:block col-span-1 text-textMuted">
           <Typography
             preset="sans-body"
             size="title-sm"
-            weight="strong"
+            weight="semantic"
             wrapPolicy="label"
             className="text-textMuted"
           >
@@ -199,14 +199,14 @@ export default function WorksListEntry({
           className="grid-sidebar mt-6 grid content-center lg:mt-0 lg:pl-8"
         >
           <div className="grid gap-1">
-            <Typography
-              as="p"
-              preset="gothic-editorial"
-              size="label"
-              weight="strong"
-              wrapPolicy="label"
-              className="text-textPrimary"
-            >
+              <Typography
+                as="p"
+                preset="gothic-editorial"
+                size="label"
+                weight="semantic"
+                wrapPolicy="label"
+                className="text-textPrimary"
+              >
               {category}
             </Typography>
             <Typography

@@ -45,26 +45,28 @@ export default function NextProjectBlock({
                 </div>
 
                 <div className="absolute inset-0 z-20 grid place-items-center text-center mix-blend-difference pointer-events-none">
-                    <Typography
-                        preset="sans-body"
-                        size="label"
-                        weight="medium"
-                        wrapPolicy="label"
-                        className="mb-4 text-textMuted opacity-70 transition-all duration-700 group-hover:opacity-100"
-                    >
-                        NEXT PROJECT
-                    </Typography>
-                    <Typography
-                        as="h2"
-                        preset="sans-body"
-                        size="title"
-                        weight="display"
-                        wrapPolicy="heading"
-                        align="center"
-                        className="text-white uppercase transition-all duration-700"
-                    >
-                        {nextName}
-                    </Typography>
+                    <div className="rhythm-stack-4">
+                        <Typography
+                            preset="sans-body"
+                            size="label"
+                            weight="semantic"
+                            wrapPolicy="label"
+                            className="text-textMuted opacity-70 transition-all duration-700 group-hover:opacity-100"
+                        >
+                            NEXT PROJECT
+                        </Typography>
+                        <Typography
+                            as="h2"
+                            preset="sans-body"
+                            size="title"
+                            weight="display"
+                            wrapPolicy="heading"
+                            align="center"
+                            className="text-white uppercase transition-all duration-700"
+                        >
+                            {nextName}
+                        </Typography>
+                    </div>
                 </div>
             </a>
             <div className="grid gap-2 border-t border-white/10 bg-black px-8 py-8 text-center md:grid-cols-[1fr_auto] md:items-center md:px-12 md:text-left">
@@ -72,7 +74,7 @@ export default function NextProjectBlock({
                     as="span"
                     preset="sans-body"
                     size="caption"
-                    weight="medium"
+                    weight="semantic"
                     wrapPolicy="label"
                     className="justify-self-center text-textMuted md:justify-self-start"
                 >
@@ -82,7 +84,7 @@ export default function NextProjectBlock({
                     as="span"
                     preset="sans-body"
                     size="caption"
-                    weight="medium"
+                    weight="semantic"
                     wrapPolicy="label"
                     className="justify-self-center text-textMuted md:justify-self-end"
                 >

@@ -60,10 +60,10 @@ test("readFontLabConfig migrates legacy single-config files into the new documen
 
   assert.equal(config.version, 4);
   assert.equal(config.activePreset, "gothic-editorial");
-  assert.equal(config.activeSize, "title-sm");
-  assert.equal(config.presets["gothic-editorial"].sizes["title-sm"]?.fontSize, "1.125rem");
-  assert.equal(config.presets["gothic-editorial"].sizes["title-sm"]?.lineHeight, 1.82);
-  assert.equal(config.presets["gothic-editorial"].sizes["title-sm"]?.semanticWeight, "strong");
+  assert.equal(config.activeSize, "body-lg");
+  assert.equal(config.presets["gothic-editorial"].sizes["body-lg"]?.fontSize, "1.125rem");
+  assert.equal(config.presets["gothic-editorial"].sizes["body-lg"]?.lineHeight, 1.82);
+  assert.equal(config.presets["gothic-editorial"].sizes["body-lg"]?.semanticWeight, "medium");
   assert.equal(config.presets["gothic-editorial"].latinFontScale, 1);
 
   await fs.rm(tempDir, { force: true, recursive: true });

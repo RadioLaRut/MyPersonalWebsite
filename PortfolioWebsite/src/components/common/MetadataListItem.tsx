@@ -19,7 +19,7 @@ export default function MetadataListItem({ label, value, align = "start" }: Meta
         as="span"
         preset="sans-body"
         size="caption"
-        weight="medium"
+        weight="semantic"
         wrapPolicy="label"
         className="text-textMuted"
       >
@@ -29,7 +29,7 @@ export default function MetadataListItem({ label, value, align = "start" }: Meta
         as="span"
         preset="sans-body"
         size="body-sm"
-        weight="regular"
+        weight="semantic"
         wrapPolicy="prose"
         align={align === "end" ? "right" : "left"}
         className={valueClassName}

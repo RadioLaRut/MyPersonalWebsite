@@ -1,6 +1,6 @@
 {
-  "activePreset": "gothic-editorial",
-  "activeSize": "label",
+  "activePreset": "sans-body",
+  "activeSize": "hero",
   "presets": {
     "sans-body": {
       "labelZh": "Futura + 汉仪旗黑",
@@ -9,88 +9,99 @@
       "sizes": {
         "caption": {
           "cjkHorizontalOffset": 0,
-          "cjkLetterSpacing": 0,
+          "cjkLetterSpacing": 0.03,
           "cjkVerticalOffset": 0,
           "fontSize": "0.7rem",
           "latinHorizontalOffset": 0,
-          "latinLetterSpacing": 0,
+          "latinLetterSpacing": 0.03,
           "latinRelativeOffset": 0.08,
           "lineHeight": 1.65,
           "semanticWeight": "regular"
         },
         "label": {
           "cjkHorizontalOffset": 0,
-          "cjkLetterSpacing": 0,
+          "cjkLetterSpacing": 0.03,
           "cjkVerticalOffset": 0,
-          "fontSize": "0.75rem",
+          "fontSize": "0.79rem",
           "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0.03,
           "latinRelativeOffset": 0.1,
-          "lineHeight": 1.45,
-          "semanticWeight": "medium"
+          "lineHeight": 1.65,
+          "semanticWeight": "regular"
         },
         "body-sm": {
           "cjkHorizontalOffset": 0,
-          "cjkLetterSpacing": 0,
+          "cjkLetterSpacing": 0.03,
           "cjkVerticalOffset": 0,
-          "fontSize": "0.9rem",
+          "fontSize": "0.89rem",
           "latinHorizontalOffset": 0,
-          "latinLetterSpacing": 0,
+          "latinLetterSpacing": 0.03,
           "latinRelativeOffset": 0.03,
           "lineHeight": 1.65,
           "semanticWeight": "regular"
         },
         "body": {
           "cjkHorizontalOffset": 0,
-          "cjkLetterSpacing": 0,
+          "cjkLetterSpacing": 0.03,
           "cjkVerticalOffset": 0,
           "fontSize": "1rem",
           "latinHorizontalOffset": 0,
-          "latinLetterSpacing": 0,
+          "latinLetterSpacing": 0.03,
           "latinRelativeOffset": 0.03,
-          "lineHeight": 1.8,
+          "lineHeight": 1.6,
           "semanticWeight": "regular"
         },
         "body-lg": {
           "cjkHorizontalOffset": 0,
-          "cjkLetterSpacing": 0,
+          "cjkLetterSpacing": 0.03,
           "cjkVerticalOffset": 0,
-          "fontSize": "1.27rem",
+          "fontSize": "1.13rem",
           "latinHorizontalOffset": 0,
-          "latinLetterSpacing": 0,
+          "latinLetterSpacing": 0.03,
           "latinRelativeOffset": 0.07,
-          "lineHeight": 1.85,
-          "semanticWeight": "medium"
+          "lineHeight": 1.6,
+          "semanticWeight": "regular"
         },
         "title-sm": {
           "cjkHorizontalOffset": 0,
-          "cjkLetterSpacing": 0,
+          "cjkLetterSpacing": 0.025,
           "cjkVerticalOffset": 0,
-          "fontSize": "4rem",
+          "fontSize": "1.27rem",
           "latinHorizontalOffset": 0,
-          "latinLetterSpacing": 0,
+          "latinLetterSpacing": 0.025,
           "latinRelativeOffset": 0.05,
-          "lineHeight": 1.5,
-          "semanticWeight": "strong"
+          "lineHeight": 1.6,
+          "semanticWeight": "medium"
+        },
+        "title": {
+          "cjkHorizontalOffset": 0,
+          "cjkLetterSpacing": 0.02,
+          "cjkVerticalOffset": 0,
+          "fontSize": "1.62rem",
+          "latinHorizontalOffset": 0,
+          "latinLetterSpacing": 0.02,
+          "latinRelativeOffset": -0.045,
+          "lineHeight": 1.55,
+          "semanticWeight": "medium"
         },
         "display": {
           "cjkHorizontalOffset": 0,
-          "cjkLetterSpacing": 0,
+          "cjkLetterSpacing": 0.015,
           "cjkVerticalOffset": 0,
           "fontSize": "2.62rem",
           "latinHorizontalOffset": 0,
-          "latinLetterSpacing": 0,
+          "latinLetterSpacing": 0.015,
           "latinRelativeOffset": 0.07,
           "lineHeight": 1.55,
-          "semanticWeight": "display"
+          "semanticWeight": "strong"
         },
         "hero": {
-          "cjkHorizontalOffset": 0,
-          "cjkLetterSpacing": 0,
+          "cjkHorizontalOffset": -0.1,
+          "cjkLetterSpacing": 0.008,
           "cjkVerticalOffset": 0,
           "fontSize": "5.39rem",
-          "latinHorizontalOffset": 0,
-          "latinLetterSpacing": 0,
+          "latinHorizontalOffset": -0.03,
+          "latinLetterSpacing": 0.008,
           "latinRelativeOffset": 0.06,
           "lineHeight": 1.5,
           "semanticWeight": "display"
@@ -104,34 +115,45 @@
       "sizes": {
         "title-sm": {
           "cjkHorizontalOffset": 0,
-          "cjkLetterSpacing": 0,
+          "cjkLetterSpacing": 0.025,
           "cjkVerticalOffset": 0,
-          "fontSize": "2.62rem",
+          "fontSize": "1.27rem",
           "latinHorizontalOffset": 0,
-          "latinLetterSpacing": 0.01,
+          "latinLetterSpacing": 0.025,
           "latinRelativeOffset": 0.05,
-          "lineHeight": 1.05,
+          "lineHeight": 1.6,
           "semanticWeight": "medium"
         },
         "title": {
           "cjkHorizontalOffset": 0,
-          "cjkLetterSpacing": 0,
+          "cjkLetterSpacing": 0.02,
           "cjkVerticalOffset": 0,
-          "fontSize": "4.24rem",
-          "latinHorizontalOffset": 0,
-          "latinLetterSpacing": 0,
+          "fontSize": "1.62rem",
+          "latinHorizontalOffset": -0.03,
+          "latinLetterSpacing": 0.02,
           "latinRelativeOffset": 0.07,
-          "lineHeight": 1.5,
-          "semanticWeight": "strong"
+          "lineHeight": 1.55,
+          "semanticWeight": "medium"
         },
         "display": {
           "cjkHorizontalOffset": 0,
-          "cjkLetterSpacing": 0,
+          "cjkLetterSpacing": 0.015,
+          "cjkVerticalOffset": 0,
+          "fontSize": "2.62rem",
+          "latinHorizontalOffset": 0,
+          "latinLetterSpacing": 0.015,
+          "latinRelativeOffset": 0.07,
+          "lineHeight": 1.55,
+          "semanticWeight": "strong"
+        },
+        "hero": {
+          "cjkHorizontalOffset": 0,
+          "cjkLetterSpacing": 0.008,
           "cjkVerticalOffset": 0,
           "fontSize": "5.39rem",
-          "latinHorizontalOffset": 0,
-          "latinLetterSpacing": 0,
-          "latinRelativeOffset": 0.07,
+          "latinHorizontalOffset": -0.02,
+          "latinLetterSpacing": 0.008,
+          "latinRelativeOffset": 0.05,
           "lineHeight": 1.5,
           "semanticWeight": "display"
         }
@@ -144,25 +166,36 @@
       "sizes": {
         "label": {
           "cjkHorizontalOffset": 0,
-          "cjkLetterSpacing": 0,
+          "cjkLetterSpacing": 0.03,
           "cjkVerticalOffset": 0,
-          "fontSize": "1.27rem",
+          "fontSize": "0.79rem",
           "latinHorizontalOffset": 0,
-          "latinLetterSpacing": 0.01,
-          "latinRelativeOffset": -0.012,
-          "lineHeight": 1.45,
-          "semanticWeight": "medium"
+          "latinLetterSpacing": 0.03,
+          "latinRelativeOffset": 0.07,
+          "lineHeight": 1.65,
+          "semanticWeight": "regular"
+        },
+        "body-lg": {
+          "cjkHorizontalOffset": 0,
+          "cjkLetterSpacing": 0.03,
+          "cjkVerticalOffset": 0,
+          "fontSize": "1.13rem",
+          "latinHorizontalOffset": 0,
+          "latinLetterSpacing": 0.03,
+          "latinRelativeOffset": -0.02,
+          "lineHeight": 1.6,
+          "semanticWeight": "regular"
         },
         "title-sm": {
           "cjkHorizontalOffset": 0,
-          "cjkLetterSpacing": 0,
+          "cjkLetterSpacing": 0.025,
           "cjkVerticalOffset": 0,
-          "fontSize": "2rem",
+          "fontSize": "1.27rem",
           "latinHorizontalOffset": 0,
-          "latinLetterSpacing": 0.004,
+          "latinLetterSpacing": 0.025,
           "latinRelativeOffset": 0.05,
-          "lineHeight": 1.05,
-          "semanticWeight": "strong"
+          "lineHeight": 1.6,
+          "semanticWeight": "medium"
         }
       }
     },

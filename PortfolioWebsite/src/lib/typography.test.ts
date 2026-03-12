@@ -74,10 +74,13 @@ test("classical-display remains restricted to display sizes", () => {
   assert.equal(isTypographySizeSupported("classical-display", "body"), false);
 });
 
-test("font lab preset sizes can be narrower than runtime supported sizes", () => {
+test("font lab preset sizes cover public runtime styles while staying narrower than full runtime support", () => {
   assert.equal(isTypographySizeSupported("sans-body", "title"), true);
-  assert.equal(isTypographyFontLabSizeSupported("sans-body", "title"), false);
+  assert.equal(isTypographyFontLabSizeSupported("sans-body", "title"), true);
+  assert.equal(isTypographyFontLabSizeSupported("luna-editorial", "hero"), true);
+  assert.equal(isTypographyFontLabSizeSupported("gothic-editorial", "body-lg"), true);
   assert.equal(isTypographyFontLabSizeSupported("sans-body", "display"), true);
+  assert.equal(isTypographyFontLabSizeSupported("classical-display", "display"), false);
   assert.deepEqual(getTypographyFontLabSizes("classical-display"), ["menu"]);
 });
 

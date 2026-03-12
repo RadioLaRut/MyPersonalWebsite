@@ -726,7 +726,11 @@ function GuideRow({
   const { containerRef, metrics } = useMeasuredGuideMetrics();
 
   return (
-    <div ref={containerRef} className={["relative", className].filter(Boolean).join(" ")}>
+    <div
+      ref={containerRef}
+      data-guide-left-edge={showTick ? "on" : "off"}
+      className={["relative", className].filter(Boolean).join(" ")}
+    >
       {showOpticalAlignment &&
       isFiniteGuideMetrics(metrics) &&
       Number.isFinite(metrics.opticalAlignmentPx) ? (
@@ -749,14 +753,7 @@ function GuideRow({
           }}
         />
       ) : null}
-      {showTick && isFiniteGuideMetrics(metrics) ? (
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute left-0 w-4 border-t border-cyan-300/60"
-          style={{ top: metrics.baselinePx }}
-        />
-      ) : null}
-      <div className="relative pl-6 md:pl-8">{children}</div>
+      <div className="relative">{children}</div>
     </div>
   );
 }
@@ -882,6 +879,10 @@ export default function FontLabClient() {
   const cssVars = useMemo(
     () => buildFontLabDocumentCssVars(fontDocument) as StyleWithVars,
     [fontDocument],
+  );
+  const savedCssVars = useMemo(
+    () => buildFontLabDocumentCssVars(savedDocument ?? fontDocument) as StyleWithVars,
+    [fontDocument, savedDocument],
   );
 
   useEffect(() => {
@@ -1024,7 +1025,7 @@ export default function FontLabClient() {
 
   return (
     <main
-      className="min-h-screen bg-black pb-20 pt-24 text-white md:pb-24 md:pt-32 lg:h-screen lg:overflow-hidden lg:py-0"
+      className="min-h-screen bg-black text-white rhythm-section-spacious lg:h-screen lg:overflow-hidden lg:py-0"
       style={cssVars}
     >
       <div className="grid-container items-start gap-y-10 lg:h-full lg:items-stretch">
@@ -1441,6 +1442,7 @@ export default function FontLabClient() {
               </div>
             </CalibrationCard>
 
+            <div style={savedCssVars}>
             <CalibrationCard
               title="全局混排校验"
               showGrid={layoutState.showGrid}
@@ -1702,6 +1704,7 @@ export default function FontLabClient() {
                 )}
               </div>
             </CalibrationCard>
+            </div>
 
             <div className="border border-white/10 bg-white/[0.02] px-5 py-5">
               <Typography

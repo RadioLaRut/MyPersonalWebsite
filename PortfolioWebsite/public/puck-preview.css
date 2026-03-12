@@ -554,6 +554,60 @@ video {
   display: none;
 }
 
+.rhythm-section-compact {
+  padding-top: var(--section-space-compact);
+  padding-bottom: var(--section-space-compact);
+}
+
+.rhythm-section-normal {
+  padding-top: var(--section-space-normal);
+  padding-bottom: var(--section-space-normal);
+}
+
+.rhythm-section-spacious {
+  padding-top: var(--section-space-normal);
+  padding-bottom: var(--section-space-normal);
+}
+
+.rhythm-section-hero {
+  padding-top: var(--section-space-hero-top);
+  padding-bottom: var(--section-space-hero-bottom);
+}
+
+.rhythm-block {
+  margin-top: var(--section-space-spacious);
+  margin-bottom: var(--section-space-spacious);
+}
+
+.rhythm-block-compact {
+  margin-top: var(--section-space-normal);
+  margin-bottom: var(--section-space-normal);
+}
+
+.rhythm-divider-top {
+  padding-top: var(--section-space-compact);
+}
+
+.rhythm-stack-2 > * + * {
+  margin-top: var(--rhythm-2);
+}
+
+.rhythm-stack-3 > * + * {
+  margin-top: var(--rhythm-3);
+}
+
+.rhythm-stack-4 > * + * {
+  margin-top: var(--rhythm-4);
+}
+
+.rhythm-stack-6 > * + * {
+  margin-top: var(--rhythm-6);
+}
+
+.rhythm-stack-8 > * + * {
+  margin-top: var(--rhythm-8);
+}
+
 /* 标准内容区：两侧留边距，内容居中 (col-start-2, col-span-10) */
 
 .grid-content {
@@ -786,16 +840,6 @@ video {
   margin-bottom: 4rem;
 }
 
-.my-24 {
-  margin-top: 6rem;
-  margin-bottom: 6rem;
-}
-
-.my-32 {
-  margin-top: 8rem;
-  margin-bottom: 8rem;
-}
-
 .mb-10 {
   margin-bottom: 2.5rem;
 }
@@ -814,10 +858,6 @@ video {
 
 .mb-24 {
   margin-bottom: 6rem;
-}
-
-.mb-3 {
-  margin-bottom: 0.75rem;
 }
 
 .mb-32 {
@@ -854,10 +894,6 @@ video {
 
 .mt-1 {
   margin-top: 0.25rem;
-}
-
-.mt-10 {
-  margin-top: 2.5rem;
 }
 
 .mt-12 {
@@ -1894,11 +1930,6 @@ video {
   padding-bottom: 2.5rem;
 }
 
-.py-12 {
-  padding-top: 3rem;
-  padding-bottom: 3rem;
-}
-
 .py-16 {
   padding-top: 4rem;
   padding-bottom: 4rem;
@@ -1907,11 +1938,6 @@ video {
 .py-2 {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-}
-
-.py-20 {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
 }
 
 .py-24 {
@@ -1948,16 +1974,8 @@ video {
   padding-bottom: 0px;
 }
 
-.pb-12 {
-  padding-bottom: 3rem;
-}
-
 .pb-16 {
   padding-bottom: 4rem;
-}
-
-.pb-20 {
-  padding-bottom: 5rem;
 }
 
 .pb-24 {
@@ -1966,10 +1984,6 @@ video {
 
 .pb-32 {
   padding-bottom: 8rem;
-}
-
-.pb-6 {
-  padding-bottom: 1.5rem;
 }
 
 .pb-8 {
@@ -2004,10 +2018,6 @@ video {
   padding-top: 4rem;
 }
 
-.pt-20 {
-  padding-top: 5rem;
-}
-
 .pt-24 {
   padding-top: 6rem;
 }
@@ -2016,20 +2026,12 @@ video {
   padding-top: 7rem;
 }
 
-.pt-32 {
-  padding-top: 8rem;
-}
-
-.pt-36 {
-  padding-top: 9rem;
+.pt-4 {
+  padding-top: 1rem;
 }
 
 .pt-6 {
   padding-top: 1.5rem;
-}
-
-.pt-8 {
-  padding-top: 2rem;
 }
 
 .pt-\[6px\] {
@@ -2429,6 +2431,23 @@ video {
   --surface-muted: rgba(255, 255, 255, 0.03);
   --border-subtle: rgba(255, 255, 255, 0.1);
   --grid-max-width: 1680px;
+  --rhythm-unit: 8px;
+  --rhythm-2: calc(var(--rhythm-unit) * 2);
+  --rhythm-3: calc(var(--rhythm-unit) * 3);
+  --rhythm-4: calc(var(--rhythm-unit) * 4);
+  --rhythm-6: calc(var(--rhythm-unit) * 6);
+  --rhythm-8: calc(var(--rhythm-unit) * 8);
+  --rhythm-12: calc(var(--rhythm-unit) * 12);
+  --rhythm-16: calc(var(--rhythm-unit) * 16);
+  --rhythm-20: calc(var(--rhythm-unit) * 20);
+  --rhythm-major: var(--rhythm-4);
+  --section-space-compact: var(--rhythm-8);
+  --section-space-normal: var(--rhythm-12);
+  --section-space-spacious: var(--rhythm-16);
+  --section-space-hero-top: var(--rhythm-16);
+  --section-space-hero-bottom: var(--rhythm-12);
+  --section-space-hero-top-lg: var(--rhythm-20);
+  --section-space-hero-bottom-lg: var(--rhythm-16);
 }
 
 html {
@@ -2534,7 +2553,7 @@ html[data-site-mode="testing"] ::selection {
     rgba(255, 255, 255, 0.025) 0,
     rgba(255, 255, 255, 0.025) 1px,
     transparent 1px,
-    transparent 32px
+    transparent var(--rhythm-major)
   );
 }
 
@@ -2561,11 +2580,12 @@ html[data-site-mode="testing"] ::selection {
   background: rgba(255, 255, 255, 0.025);
 }
 
+/* 每列单独绘制左右边界，让 gap 作为空白显式保留。 */
 .site-grid-debug__column::before {
   left: 0;
 }
 
-.site-grid-debug__column:last-child::after {
+.site-grid-debug__column::after {
   right: 0;
 }
 
@@ -2768,6 +2788,18 @@ html[data-font-lab-mode] textarea {
  * 标准化网格内容区域工具类
  * 用于统一组件中的列偏移，避免硬编码
  */
+
+@media (min-width: 1024px) {
+  .rhythm-section-spacious {
+    padding-top: var(--section-space-spacious);
+    padding-bottom: var(--section-space-spacious);
+  }
+
+  .rhythm-section-hero {
+    padding-top: var(--section-space-hero-top-lg);
+    padding-bottom: var(--section-space-hero-bottom-lg);
+  }
+}
 
 /**
  * 非桌面设备光标隐藏
@@ -3046,10 +3078,6 @@ html.lenis body {
 }
 
 @media (min-width: 640px) {
-  .sm\:mb-24 {
-    margin-bottom: 6rem;
-  }
-
   .sm\:min-h-\[42vh\] {
     min-height: 42vh;
   }
@@ -3064,11 +3092,6 @@ html.lenis body {
 
   .sm\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .sm\:py-32 {
-    padding-top: 8rem;
-    padding-bottom: 8rem;
   }
 
   .sm\:text-xs {
@@ -3208,10 +3231,6 @@ html.lenis body {
     padding-bottom: 5rem;
   }
 
-  .md\:pb-24 {
-    padding-bottom: 6rem;
-  }
-
   .md\:pb-32 {
     padding-bottom: 8rem;
   }
@@ -3220,16 +3239,8 @@ html.lenis body {
     padding-left: 2rem;
   }
 
-  .md\:pt-24 {
-    padding-top: 6rem;
-  }
-
   .md\:pt-32 {
     padding-top: 8rem;
-  }
-
-  .md\:pt-40 {
-    padding-top: 10rem;
   }
 
   .md\:text-left {
@@ -3302,6 +3313,10 @@ html.lenis body {
     margin-bottom: 6rem;
   }
 
+  .lg\:mb-32 {
+    margin-bottom: 8rem;
+  }
+
   .lg\:mb-8 {
     margin-bottom: 2rem;
   }
@@ -3356,6 +3371,10 @@ html.lenis body {
 
   .lg\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lg\:grid-cols-\[auto_minmax\(0\2c 1fr\)_auto\] {
+    grid-template-columns: auto minmax(0,1fr) auto;
   }
 
   .lg\:grid-cols-\[minmax\(0\2c 1fr\)_auto\] {
@@ -3433,15 +3452,6 @@ html.lenis body {
   .lg\:py-0 {
     padding-top: 0px;
     padding-bottom: 0px;
-  }
-
-  .lg\:py-32 {
-    padding-top: 8rem;
-    padding-bottom: 8rem;
-  }
-
-  .lg\:pb-28 {
-    padding-bottom: 7rem;
   }
 
   .lg\:pl-4 {

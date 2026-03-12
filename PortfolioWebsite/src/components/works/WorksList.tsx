@@ -35,7 +35,7 @@ export default function WorksList({ heading = "All Selected Works", works = [], 
                     as="p"
                     preset="sans-body"
                     size="caption"
-                    weight="medium"
+                    weight="semantic"
                     wrapPolicy="label"
                     className="text-textMuted"
                 >
@@ -46,14 +46,14 @@ export default function WorksList({ heading = "All Selected Works", works = [], 
     }
 
     return (
-        <div className="grid w-full content-center pt-20 pb-20 text-white md:pt-24">
-            <div className={`grid-container relative z-20 mb-12 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
-                <div className="col-start-2 col-span-10 border-b border-white/10 pb-6">
+        <div className="grid w-full content-center text-white rhythm-section-normal">
+            <div className={`grid-container relative z-20 mb-16 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
+                <div className="col-start-2 col-span-10 border-b border-white/10 pb-8">
                     <Typography
                         as="h1"
                         preset="sans-body"
                         size="caption"
-                        weight="medium"
+                        weight="semantic"
                         wrapPolicy="label"
                         className="text-textMuted"
                     >

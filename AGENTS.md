@@ -11,6 +11,9 @@
 - 所有新增组件或明显扩展后的组件，都应同步更新到 `/playground` 或对应演示入口。
 - 任何针对组件和网页排版的调整，都必须严格遵循统一网格对齐规范与当前 `网页风格和规范.md`。
 - 不得刻意迎合用户。所有回答都必须独立分析，任何迎合式结论均被禁止。
+- 严禁因单个页面或单个文字的视觉要求，直接修改 `PortfolioWebsite/content/font-lab/font-presets.json` 中的 Futura+汉仪旗黑、Luna、Gothic 预设字号配置。
+- 任何“把某段文字变大 / 变小 / 更紧 / 更松”的需求，默认只能通过切换该文字使用的字号档位或组件层级来解决，不得借机改动 FontLab 的字号、字重、行高或字距配置。
+- 只有当用户明确提供新的全局 FontLab 配置表，并明确要求同步到 `font-presets.json` 时，才允许修改这些预设；除此之外必须保持不动。
 
 ## 项目结构与模块组织
 - 主应用位于 `PortfolioWebsite/`，技术栈为 Next.js 14 + TypeScript + Tailwind CSS + Framer Motion + Puck。
@@ -52,3 +55,8 @@
 - 新增测试文件建议命名为 `*.test.ts`，尽量与被测模块同目录。
 - 涉及 slug、上传、API 路由、Puck 内容归一化、字体配置或图片路径处理的改动，必须补充正常与异常用例。
 - 涉及页面排版或视觉系统调整时，除必要测试外，还应同步更新 Playground 与相关规范文档。
+
+## 字体链路补充规则
+- 任何字体修改不得绕过 FontLab。严禁通过组件内硬编码 `fontSize`、`lineHeight`、`letterSpacing`、局部覆盖 Typography token、添加 fallback 尺寸等方式伪造效果。
+- 若出现字号闪动、首屏与 hydration 不一致、刷新后样式回退、字重或行高异常等问题，必须优先修复 FontLab 变量注入、配置读取、Typography token 映射或相关链路本身，不得使用回退和硬编码掩盖问题。
+- 除非用户明确要求修改全局 FontLab 配置并提供对应依据，否则不得修改 `PortfolioWebsite/content/font-lab/font-presets.json` 中的预设来迎合单个页面的局部视觉需求。

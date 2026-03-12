@@ -170,7 +170,11 @@ export default async function RootLayout({
   const fontLabCssVars = buildFontLabDocumentCssVars(fontLabDocument) as StyleWithVars;
 
   return (
-    <html lang="zh-CN" data-site-mode={testingMode ? "testing" : "normal"}>
+    <html
+      lang="zh-CN"
+      data-site-mode={testingMode ? "testing" : "normal"}
+      style={fontLabCssVars}
+    >
       <body
         className={`bg-black text-white antialiased ${sourceHanSerif.variable} ${hanYiQiHei.variable} ${futura.variable} ${luna.variable} ${gothic.variable} ${dmSerifDisplay.variable}`}
       >

@@ -104,6 +104,12 @@ export function buildFontLabDocumentCssVars(
         continue;
       }
 
+      const semanticWeightPair = resolveTypographyPresetWeightPair(
+        preset,
+        sizeConfig.semanticWeight,
+        presetConfig.latinWeightOffsetSteps,
+      );
+
       vars[`--typography-${preset}-${size}-font-size`] = resolveResponsiveFontSize(
         sizeConfig.fontSize,
         getTypographySizeToken(size).fontSize,
@@ -123,6 +129,10 @@ export function buildFontLabDocumentCssVars(
         `${sizeConfig.cjkLetterSpacing}em`;
       vars[`--typography-${preset}-${size}-latin-letter-spacing`] =
         `${sizeConfig.latinLetterSpacing}em`;
+      vars[`--typography-${preset}-${size}-semantic-cjk-weight`] =
+        String(semanticWeightPair.cjk);
+      vars[`--typography-${preset}-${size}-semantic-latin-weight`] =
+        String(semanticWeightPair.latin);
     }
 
     for (const weight of TYPOGRAPHY_WEIGHTS) {
