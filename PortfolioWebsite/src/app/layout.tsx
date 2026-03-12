@@ -175,6 +175,18 @@ export default async function RootLayout({
         className={`bg-black text-white antialiased ${sourceHanSerif.variable} ${hanYiQiHei.variable} ${futura.variable} ${luna.variable} ${gothic.variable} ${dmSerifDisplay.variable}`}
       >
         <FontLabGlobalVars initialVars={fontLabCssVars} />
+        {testingMode ? (
+          <div className="site-grid-debug" aria-hidden="true">
+            <div className="site-grid-debug__grid grid-container">
+              {Array.from({ length: 12 }, (_, index) => (
+                <span
+                  key={`site-grid-debug-${index + 1}`}
+                  className="site-grid-debug__column"
+                />
+              ))}
+            </div>
+          </div>
+        ) : null}
         <SmoothScroll>
           <CustomCursor />
           <Navigation />

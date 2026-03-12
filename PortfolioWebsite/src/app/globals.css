@@ -100,6 +100,51 @@ html[data-site-mode="testing"] ::selection {
   background: rgba(255, 255, 255, 0.99);
   color: #000;
 }
+ 
+.site-grid-debug {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 35;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.025) 0,
+    rgba(255, 255, 255, 0.025) 1px,
+    transparent 1px,
+    transparent 32px
+  );
+}
+
+.site-grid-debug__grid {
+  height: 100%;
+  min-height: 100%;
+  grid-template-rows: minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.site-grid-debug__column {
+  display: block;
+  position: relative;
+  min-height: 100%;
+}
+
+.site-grid-debug__column::before,
+.site-grid-debug__column::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.site-grid-debug__column::before {
+  left: 0;
+}
+
+.site-grid-debug__column:last-child::after {
+  right: 0;
+}
 
 /* 正式模式下：禁止全局文字选择（增强画廊感/作品集沉浸感） */
 html[data-site-mode="normal"] {
