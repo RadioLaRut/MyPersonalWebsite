@@ -127,7 +127,7 @@ export default function WorksListEntry({
   return (
     <div
       ref={entryRef}
-      className={`group relative flex min-h-[34vh] w-full flex-col justify-center border-b border-white/10 ${editMode ? "cursor-default" : "interactive cursor-pointer"} sm:min-h-[42vh]`}
+      className={`group relative grid min-h-[34vh] w-full content-center border-b border-white/10 ${editMode ? "cursor-default" : "interactive cursor-pointer"} sm:min-h-[42vh]`}
       onClick={handleInteraction}
       onMouseEnter={() => !isMobile && !editMode && setIsExpanded(true)}
       onMouseLeave={() => !isMobile && !editMode && setIsExpanded(false)}
@@ -174,7 +174,7 @@ export default function WorksListEntry({
           </Typography>
         </div>
 
-        <div className="grid-content flex flex-col justify-center py-4 lg:col-span-7">
+        <div className="grid-content grid content-center py-4 lg:col-span-7">
           <Typography
             as="h2"
             preset="luna-editorial"
@@ -196,9 +196,9 @@ export default function WorksListEntry({
             x: active ? 0 : -20,
           }}
           transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
-          className="grid-sidebar mt-6 flex flex-col justify-center lg:mt-0 lg:pl-8"
+          className="grid-sidebar mt-6 grid content-center lg:mt-0 lg:pl-8"
         >
-          <div className="flex flex-col">
+          <div className="grid gap-1">
             <Typography
               as="p"
               preset="gothic-editorial"

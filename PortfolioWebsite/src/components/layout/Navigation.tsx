@@ -162,11 +162,11 @@ export default function Navigation() {
         transition={{ duration: headerDuration, ease: "easeOut" }}
         className="fixed left-0 top-0 z-40 w-full px-5 py-6 md:px-8 md:py-8"
       >
-        <div className="flex items-center justify-end">
+        <div className="grid items-center justify-items-end">
           <button
             onClick={openMenu}
             ref={menuButtonRef}
-            className="group interactive pointer-events-auto relative flex items-center gap-3 transition-colors duration-300 text-edge-shadow"
+            className="group interactive pointer-events-auto relative inline-grid grid-flow-col auto-cols-max items-center gap-3 transition-colors duration-300 text-edge-shadow"
             aria-label="Menu"
             aria-expanded={isOpen}
             aria-controls="site-navigation-drawer"
@@ -175,14 +175,14 @@ export default function Navigation() {
             <Typography
               as="span"
               preset="sans-body"
-              size="label"
+              size="body-sm"
               weight="medium"
               wrapPolicy="label"
               className="relative z-10 text-white/80 transition-colors duration-300 group-hover:text-white"
             >
               MENU
             </Typography>
-            <span className="relative z-10 flex flex-col items-end gap-[7px] drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">
+            <span className="relative z-10 grid justify-items-end gap-[7px] drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">
               <span className="h-[1.5px] w-10 bg-white/90 transition-all duration-300 group-hover:w-14 group-hover:bg-white md:w-12"></span>
               <span className="h-[1.5px] w-6 bg-white/90 transition-all duration-300 group-hover:w-14 group-hover:bg-white md:w-8"></span>
             </span>
@@ -191,7 +191,7 @@ export default function Navigation() {
       </motion.header>
 
       <div
-        className={`fixed inset-0 z-[99] flex justify-end ${isOverlayActive ? "pointer-events-auto" : "pointer-events-none"}`}
+        className={`fixed inset-0 z-[99] grid justify-items-end ${isOverlayActive ? "pointer-events-auto" : "pointer-events-none"}`}
         data-lenis-prevent="true"
         aria-hidden={!isOverlayActive}
       >
@@ -221,7 +221,7 @@ export default function Navigation() {
               exit={{ x: "100%", opacity: 1 }}
               transition={panelTransition}
               style={{ willChange: "transform" }}
-              className="relative flex min-h-[100dvh] w-full flex-col overflow-y-auto overscroll-contain border-l border-white/10 bg-[linear-gradient(180deg,rgba(8,8,8,0.98)_0%,rgba(5,5,5,0.94)_100%)] shadow-[-24px_0_80px_rgba(0,0,0,0.4)] backdrop-blur-2xl sm:w-[40vw] sm:min-w-[400px]"
+              className="relative min-h-[100dvh] w-full overflow-y-auto overscroll-contain border-l border-white/10 bg-[linear-gradient(180deg,rgba(8,8,8,0.98)_0%,rgba(5,5,5,0.94)_100%)] shadow-[-24px_0_80px_rgba(0,0,0,0.4)] backdrop-blur-2xl sm:w-[40vw] sm:min-w-[400px]"
               id="site-navigation-drawer"
               role="dialog"
               aria-modal="true"
@@ -233,17 +233,17 @@ export default function Navigation() {
               onWheel={(e) => e.stopPropagation()}
               onTouchMove={(e) => e.stopPropagation()}
             >
-              <div className="relative flex min-h-[100dvh] flex-col justify-start px-8 pt-28 pb-16 md:px-16 md:pt-32 md:pb-20">
-                <div className="absolute right-5 top-6 md:right-8 md:top-8 flex justify-end text-edge-shadow">
+              <div className="relative grid min-h-[100dvh] grid-rows-[1fr_auto] px-8 pt-28 pb-16 md:px-16 md:pt-32 md:pb-20">
+                <div className="absolute right-5 top-6 grid justify-items-end text-edge-shadow md:right-8 md:top-8">
                   <button
                     onClick={closeMenu}
-                    className="group interactive outline-none focus:outline-none focus-visible:outline-none flex items-center gap-3 transition-colors duration-300"
+                    className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 outline-none transition-colors duration-300 focus:outline-none focus-visible:outline-none"
                     aria-label="Close menu"
                   >
                     <Typography
                       as="span"
                       preset="sans-body"
-                      size="label"
+                      size="body-sm"
                       weight="medium"
                       wrapPolicy="label"
                       className="text-white/50 transition-colors duration-300 group-hover:text-white"
@@ -265,8 +265,8 @@ export default function Navigation() {
                   </button>
                 </div>
 
-                <div className="flex w-full flex-1 flex-col justify-center">
-                  <nav className="flex flex-col gap-0.5 md:gap-1">
+                <div className="grid w-full content-center justify-items-start">
+                  <nav className="grid justify-items-start gap-0.5 md:gap-1">
                     {menuItems.map((item, i) => {
                       const isActive = pathname === item.href;
                       return (
@@ -282,20 +282,55 @@ export default function Navigation() {
                         >
                           <Link
                             href={item.href}
-                            className="group relative flex items-center transition-all duration-300 text-white/50 hover:text-white"
+                            className={`group relative grid items-center transition-all duration-300 ${isActive ? "text-white" : "text-white/20"} hover:text-white`}
                             onClick={closeMenu}
                           >
-                            <Typography
-                              as="span"
-                              preset="classical-display"
-                              size="menu"
-                              weight="regular"
-                              wrapPolicy="heading"
-                            className={`inline-block text-inherit transition-all duration-500 ease-[0.22,1,0.36,1] group-hover:translate-x-2 relative ${isActive ? "" : ""
-                                }`}
+                            <motion.div 
+                              className="grid grid-cols-[auto_auto] items-center gap-7"
+                              initial="initial"
+                              whileHover="hover"
+                              animate="initial"
                             >
-                              {item.label}
-                            </Typography>
+                              <div className="grid w-1 place-items-center overflow-visible pt-[6px]">
+                                {isActive && (
+                                  <motion.div
+                                    layoutId="active-indicator"
+                                    variants={{
+                                      initial: { scaleY: 1, x: 0, opacity: 0.8 },
+                                      hover: { 
+                                        scaleY: 1.5, 
+                                        x: 8,
+                                        opacity: 1,
+                                        transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] }
+                                      }
+                                    }}
+                                    className="h-8 w-[0.5px] shrink-0 bg-gradient-to-b from-transparent via-white to-transparent origin-center"
+                                    transition={{
+                                      type: "spring",
+                                      stiffness: 300,
+                                      damping: 30,
+                                    }}
+                                  />
+                                )}
+                              </div>
+                              <motion.div
+                                variants={{
+                                  initial: { x: 0 },
+                                  hover: { x: 8, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }
+                                }}
+                              >
+                                <Typography
+                                  as="span"
+                                  preset="classical-display"
+                                  size="menu"
+                                  weight="regular"
+                                  wrapPolicy="heading"
+                                  className={`inline-block text-inherit transition-all duration-500 ease-[0.22,1,0.36,1] ${isActive ? "tracking-widest" : "tracking-normal"}`}
+                                >
+                                  {item.label}
+                                </Typography>
+                              </motion.div>
+                            </motion.div>
                           </Link>
                         </motion.div>
                       );
@@ -307,7 +342,7 @@ export default function Navigation() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: footerDelay, duration: 0.45 }}
-                  className="mt-auto pt-16"
+                  className="pt-16"
                 >
                   <Typography
                     preset="sans-body"

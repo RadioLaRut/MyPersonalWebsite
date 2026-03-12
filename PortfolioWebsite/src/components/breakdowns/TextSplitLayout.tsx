@@ -62,7 +62,7 @@ export default function TextSplitLayout({
                             )}
                         </div>
                         {/* Text Right */}
-                        <div className="col-span-5 col-start-8 flex flex-col justify-center">
+                        <div className="col-span-5 col-start-8 grid content-center">
                             <div className="space-y-6 border-l border-white/5 pl-0 lg:pl-8">
                                 {paragraphContent}
                             </div>
@@ -73,7 +73,7 @@ export default function TextSplitLayout({
                 {layoutVariant === 'split-right' && (
                     <>
                         {/* Text Left */}
-                        <div className="col-span-5 col-start-1 flex flex-col justify-center mb-12 lg:mb-0 order-2 lg:order-1 mt-12 lg:mt-0">
+                        <div className="col-span-5 col-start-1 order-2 mt-12 grid content-center lg:order-1 lg:mb-0 lg:mt-0">
                             <div className="space-y-6 border-r border-white/5 pr-0 text-right lg:pr-8 lg:text-left">
                                 {paragraphContent}
                             </div>
@@ -94,7 +94,7 @@ export default function TextSplitLayout({
                 )}
 
                 {layoutVariant === 'stack' && (
-                    <div className="col-start-3 col-span-8 flex flex-col items-center text-center">
+                    <div className="col-start-3 col-span-8 grid justify-items-center text-center">
                         <Typography as="h3" preset="sans-body" size="display" weight="strong" wrapPolicy="heading" align="center" className="mb-16 px-4 text-white uppercase">
                             {heading}
                         </Typography>

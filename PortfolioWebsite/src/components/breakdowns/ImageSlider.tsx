@@ -127,7 +127,7 @@ export default function ImageSlider({
                             style={{ left: `${sliderPosition}%`, transform: "translateX(-50%)" }}
                         >
                             <div
-                                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg transition-shadow duration-150"
+                                className="absolute top-1/2 left-1/2 grid h-8 w-8 -translate-x-1/2 -translate-y-1/2 grid-flow-col auto-cols-max place-items-center rounded-full bg-white shadow-lg transition-shadow duration-150"
                                 data-cursor-magnet="slider-handle"
                                 data-cursor-magnet-size="32"
                             >
@@ -143,7 +143,7 @@ export default function ImageSlider({
 
                     {/* Labels - 遵循网格对齐 */}
                     {(leftLabel || rightLabel) ? (
-                        <div className="mt-4 flex justify-between items-center px-2">
+                        <div className="mt-4 grid grid-cols-2 items-center px-2">
                             {leftLabel ? (
                                 <Typography
                                     as="span"

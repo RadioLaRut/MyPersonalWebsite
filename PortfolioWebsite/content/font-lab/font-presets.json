@@ -1,21 +1,22 @@
 {
-  "activePreset": "sans-body",
-  "activeSize": "hero",
+  "activePreset": "gothic-editorial",
+  "activeSize": "label",
   "presets": {
     "sans-body": {
       "labelZh": "Futura + 汉仪旗黑",
+      "latinFontScale": 1,
       "latinWeightOffsetSteps": -1,
       "sizes": {
         "caption": {
           "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0,
           "cjkVerticalOffset": 0,
-          "fontSize": "0.625rem",
+          "fontSize": "0.7rem",
           "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0,
-          "latinRelativeOffset": 0.04,
-          "lineHeight": 1.4,
-          "semanticWeight": "medium"
+          "latinRelativeOffset": 0.08,
+          "lineHeight": 1.65,
+          "semanticWeight": "regular"
         },
         "label": {
           "cjkHorizontalOffset": 0,
@@ -23,7 +24,7 @@
           "cjkVerticalOffset": 0,
           "fontSize": "0.75rem",
           "latinHorizontalOffset": 0,
-          "latinLetterSpacing": 0,
+          "latinLetterSpacing": 0.03,
           "latinRelativeOffset": 0.1,
           "lineHeight": 1.45,
           "semanticWeight": "medium"
@@ -32,11 +33,11 @@
           "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0,
           "cjkVerticalOffset": 0,
-          "fontSize": "0.9375rem",
+          "fontSize": "0.9rem",
           "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0,
           "latinRelativeOffset": 0.03,
-          "lineHeight": 1.85,
+          "lineHeight": 1.65,
           "semanticWeight": "regular"
         },
         "body": {
@@ -47,17 +48,17 @@
           "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0,
           "latinRelativeOffset": 0.03,
-          "lineHeight": 2,
+          "lineHeight": 1.8,
           "semanticWeight": "regular"
         },
         "body-lg": {
           "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0,
           "cjkVerticalOffset": 0,
-          "fontSize": "1.375rem",
+          "fontSize": "1.27rem",
           "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0,
-          "latinRelativeOffset": -0.035,
+          "latinRelativeOffset": 0.07,
           "lineHeight": 1.85,
           "semanticWeight": "medium"
         },
@@ -65,7 +66,7 @@
           "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0,
           "cjkVerticalOffset": 0,
-          "fontSize": "2rem",
+          "fontSize": "4rem",
           "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0,
           "latinRelativeOffset": 0.05,
@@ -76,35 +77,36 @@
           "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0,
           "cjkVerticalOffset": 0,
-          "fontSize": "9.2rem",
+          "fontSize": "2.62rem",
           "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0,
-          "latinRelativeOffset": -0.05,
-          "lineHeight": 0.88,
+          "latinRelativeOffset": 0.07,
+          "lineHeight": 1.55,
           "semanticWeight": "display"
         },
         "hero": {
           "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0,
           "cjkVerticalOffset": 0,
-          "fontSize": "4.8rem",
+          "fontSize": "5.39rem",
           "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0,
-          "latinRelativeOffset": 0.08,
-          "lineHeight": 1.3,
+          "latinRelativeOffset": 0.06,
+          "lineHeight": 1.5,
           "semanticWeight": "display"
         }
       }
     },
     "luna-editorial": {
       "labelZh": "Luna + 中文衬线体",
+      "latinFontScale": 1,
       "latinWeightOffsetSteps": 0,
       "sizes": {
         "title-sm": {
           "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0,
           "cjkVerticalOffset": 0,
-          "fontSize": "2rem",
+          "fontSize": "2.62rem",
           "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0.01,
           "latinRelativeOffset": 0.05,
@@ -115,35 +117,36 @@
           "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0,
           "cjkVerticalOffset": 0,
-          "fontSize": "5.4rem",
+          "fontSize": "4.24rem",
           "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0,
-          "latinRelativeOffset": 0.08,
-          "lineHeight": 1.2,
+          "latinRelativeOffset": 0.07,
+          "lineHeight": 1.5,
           "semanticWeight": "strong"
         },
         "display": {
           "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0,
           "cjkVerticalOffset": 0,
-          "fontSize": "9.2rem",
+          "fontSize": "5.39rem",
           "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0,
-          "latinRelativeOffset": 0.05,
-          "lineHeight": 0.88,
+          "latinRelativeOffset": 0.07,
+          "lineHeight": 1.5,
           "semanticWeight": "display"
         }
       }
     },
     "gothic-editorial": {
       "labelZh": "Gothic + 中文衬线体",
-      "latinWeightOffsetSteps": 0,
+      "latinFontScale": 1,
+      "latinWeightOffsetSteps": -1,
       "sizes": {
         "label": {
           "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0,
           "cjkVerticalOffset": 0,
-          "fontSize": "0.75rem",
+          "fontSize": "1.27rem",
           "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0.01,
           "latinRelativeOffset": -0.012,
@@ -165,6 +168,7 @@
     },
     "classical-display": {
       "labelZh": "古典菜单字 + 思源宋体",
+      "latinFontScale": 1,
       "latinWeightOffsetSteps": 0,
       "sizes": {
         "menu": {
@@ -175,11 +179,11 @@
           "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0.018,
           "latinRelativeOffset": 0.05,
-          "lineHeight": 1,
+          "lineHeight": 1.5,
           "semanticWeight": "display"
         }
       }
     }
   },
-  "version": 3
+  "version": 4
 }

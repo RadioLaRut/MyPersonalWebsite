@@ -20,9 +20,9 @@ export default function StatementBlock({
   editMode = false,
 }: StatementBlockProps) {
   const alignClass = {
-    left: "items-start text-left",
-    center: "items-center text-center",
-    right: "items-end text-right",
+    left: "justify-items-start text-left",
+    center: "justify-items-center text-center",
+    right: "justify-items-end text-right",
   }[align];
 
   const bgClass = {
@@ -37,12 +37,10 @@ export default function StatementBlock({
   }[minHeight];
 
   return (
-    <section
-      className={`w-full ${heightClass} ${bgClass} flex flex-col justify-center relative z-20`}
-    >
+    <section className={`relative z-20 grid w-full ${heightClass} ${bgClass} content-center`}>
       <div className="grid-container w-full">
         <motion.div
-          className={`col-start-3 col-span-8 flex flex-col ${alignClass} ${editMode ? "pointer-events-auto" : ""}`}
+          className={`col-start-3 col-span-8 grid ${alignClass} ${editMode ? "pointer-events-auto" : ""}`}
           initial={editMode ? false : { opacity: 0, y: 20 }}
           whileInView={editMode ? undefined : { opacity: 1, y: 0 }}
           viewport={editMode ? undefined : { once: true, margin: "-100px" }}

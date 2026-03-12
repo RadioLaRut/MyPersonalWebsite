@@ -13,6 +13,7 @@
 }
 
 html {
+  font-size: 16px;
   background:
     radial-gradient(circle at top, rgba(146, 146, 146, 0.1), transparent 28%),
     radial-gradient(circle at 80% 18%, rgba(255, 255, 255, 0.08), transparent 18%),

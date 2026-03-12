@@ -16,7 +16,7 @@ import {
   isTypographyWeight,
 } from "./typography.ts";
 
-export const FONT_LAB_SCHEMA_VERSION = 3 as const;
+export const FONT_LAB_SCHEMA_VERSION = 4 as const;
 
 export type FontLabSizeConfig = {
   cjkHorizontalOffset: number;
@@ -32,6 +32,7 @@ export type FontLabSizeConfig = {
 
 export type FontLabPresetConfig = {
   labelZh: string;
+  latinFontScale: number;
   latinWeightOffsetSteps: number;
   sizes: Partial<Record<TypographySize, FontLabSizeConfig>>;
 };
@@ -47,6 +48,7 @@ export type FontLabSavePayload = {
   activePreset: TypographyPreset;
   activeSize: TypographySize;
   labelZh: string;
+  latinFontScale: number;
   latinWeightOffsetSteps: number;
   sizeConfig: FontLabSizeConfig;
 };
@@ -105,6 +107,14 @@ function normalizeFixedFontSizeValue(value: string, fallback: string) {
   return `${Number.parseFloat(fixedRem.toFixed(4))}rem`;
 }
 
+function normalizeLatinFontScale(value: unknown) {
+  if (!isFiniteNumber(value) || value <= 0) {
+    return 1;
+  }
+
+  return Number.parseFloat(value.toFixed(4));
+}
+
 function getDefaultFontLabSemanticWeight(size: TypographySize): TypographyWeight {
   switch (size) {
     case "caption":
@@ -156,6 +166,7 @@ export function createDefaultFontLabPresetConfig(
 
   return {
     labelZh: presetToken.label,
+    latinFontScale: 1,
     latinWeightOffsetSteps: 0,
     sizes: Object.fromEntries(
       getTypographyFontLabSizes(preset).map((size) => [
@@ -314,6 +325,7 @@ export function normalizeFontLabPresetConfig(
     labelZh: typeof source.labelZh === "string" && source.labelZh.trim()
       ? source.labelZh
       : defaults.labelZh,
+    latinFontScale: normalizeLatinFontScale(source.latinFontScale),
     latinWeightOffsetSteps: normalizeLatinWeightOffsetSteps(
       preset,
       source.latinWeightOffsetSteps,
@@ -425,7 +437,7 @@ function migrateLegacyFontLabConfig(
 }
 
 function isSupportedFontLabDocumentVersion(value: unknown) {
-  return value === FONT_LAB_SCHEMA_VERSION || value === 2;
+  return value === FONT_LAB_SCHEMA_VERSION || value === 3 || value === 2;
 }
 
 export function parseFontLabDocument(value: unknown): FontLabDocument | null {
@@ -495,6 +507,7 @@ export function parseFontLabSavePayload(
     activePreset as TypographyPreset,
     {
       labelZh,
+      latinFontScale: value.latinFontScale,
       latinWeightOffsetSteps: value.latinWeightOffsetSteps,
       weights: value.weights,
     },
@@ -504,6 +517,7 @@ export function parseFontLabSavePayload(
     activePreset: activePreset as TypographyPreset,
     activeSize: activeSize as TypographySize,
     labelZh: normalizedPresetConfig.labelZh,
+    latinFontScale: normalizedPresetConfig.latinFontScale,
     latinWeightOffsetSteps: normalizedPresetConfig.latinWeightOffsetSteps,
     sizeConfig: normalizeSizeConfig(
       activePreset as TypographyPreset,

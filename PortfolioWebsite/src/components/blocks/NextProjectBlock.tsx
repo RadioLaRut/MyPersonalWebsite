@@ -32,7 +32,7 @@ export default function NextProjectBlock({
                 className="group block relative h-[40vh] md:h-[60vh] overflow-hidden w-full interactive bg-black"
             >
                 <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 z-10 transition-colors duration-700 pointer-events-none"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
+                <div className="absolute inset-0 grid place-items-center">
                     <PresetImage
                         src={backgroundImage}
                         alt="Next Project"
@@ -44,7 +44,7 @@ export default function NextProjectBlock({
                     />
                 </div>
 
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-20 mix-blend-difference pointer-events-none">
+                <div className="absolute inset-0 z-20 grid place-items-center text-center mix-blend-difference pointer-events-none">
                     <Typography
                         preset="sans-body"
                         size="label"
@@ -67,14 +67,14 @@ export default function NextProjectBlock({
                     </Typography>
                 </div>
             </a>
-            <div className="flex flex-col items-center justify-between border-t border-white/10 bg-black px-8 py-8 md:flex-row md:px-12">
+            <div className="grid gap-2 border-t border-white/10 bg-black px-8 py-8 text-center md:grid-cols-[1fr_auto] md:items-center md:px-12 md:text-left">
                 <Typography
                     as="span"
                     preset="sans-body"
                     size="caption"
                     weight="medium"
                     wrapPolicy="label"
-                    className="mb-2 text-textMuted md:mb-0"
+                    className="justify-self-center text-textMuted md:justify-self-start"
                 >
                     © 2026 江承彦 / JIANG CHENGYAN
                 </Typography>
@@ -84,7 +84,7 @@ export default function NextProjectBlock({
                     size="caption"
                     weight="medium"
                     wrapPolicy="label"
-                    className="text-textMuted"
+                    className="justify-self-center text-textMuted md:justify-self-end"
                 >
                     Designed for Darkness
                 </Typography>

@@ -40,8 +40,8 @@ export default function LightingProjectCard({
         />
       </div>
 
-      <div className="relative z-20 flex min-h-[22rem] flex-col justify-between p-6 md:min-h-[30rem] md:p-8">
-        <div className="flex items-start justify-between gap-6">
+      <div className="relative z-20 grid min-h-[22rem] content-between p-6 md:min-h-[30rem] md:p-8">
+        <div className="grid grid-cols-[1fr_auto] items-start gap-6">
           <Typography
             preset="sans-body"
             size="caption"

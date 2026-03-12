@@ -24,7 +24,7 @@ export default function LightingCollectionHeader({
             <div className="mb-10">
               <Link
                 href={backHref}
-                className="group interactive inline-flex items-center gap-2 text-textMuted transition-colors duration-300 hover:text-white"
+                className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-2 text-textMuted transition-colors duration-300 hover:text-white"
               >
                 <span className="h-px w-4 bg-white/30 transition-all duration-300 group-hover:w-6 group-hover:bg-white/60"></span>
                 <svg className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -66,7 +66,7 @@ export default function LightingCollectionHeader({
 
           <div className="lg:col-span-3 lg:col-start-10">
             {description ? (
-              <div className="flex flex-col items-start lg:pl-4">
+              <div className="grid content-start justify-items-start lg:pl-4">
                 <Typography
                   as="p"
                   preset="sans-body"

@@ -31,7 +31,7 @@ export default function ImagePanel({
   if (variant === "fullscreen") {
     return (
       <div className="relative h-full min-h-screen min-h-[100dvh] w-full bg-black">
-        <div className="flex h-full w-full items-center justify-center">
+        <div className="grid h-full w-full place-items-center">
           <PresetImage
             src={src}
             alt={imageAlt}

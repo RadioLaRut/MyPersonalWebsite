@@ -74,6 +74,9 @@ function renderStringNode(
     const isLatin = run.script === "latin";
     const runStyle: StyleWithVars = {
       fontFamily: isLatin ? presetToken.latinFontFamily : presetToken.cjkFontFamily,
+      fontSize: isLatin
+        ? `calc(1em * var(--typography-${preset}-latin-scale, 1))`
+        : undefined,
       fontWeight: isLatin
         ? `var(--typography-${preset}-${weight}-latin-weight, ${weightPair.latin})`
         : `var(--typography-${preset}-${weight}-cjk-weight, ${weightPair.cjk})`,

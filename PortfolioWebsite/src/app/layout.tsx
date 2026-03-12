@@ -173,7 +173,6 @@ export default async function RootLayout({
     <html lang="zh-CN" data-site-mode={testingMode ? "testing" : "normal"}>
       <body
         className={`bg-black text-white antialiased ${sourceHanSerif.variable} ${hanYiQiHei.variable} ${futura.variable} ${luna.variable} ${gothic.variable} ${dmSerifDisplay.variable}`}
-        style={fontLabCssVars}
       >
         <FontLabGlobalVars initialVars={fontLabCssVars} />
         <SmoothScroll>

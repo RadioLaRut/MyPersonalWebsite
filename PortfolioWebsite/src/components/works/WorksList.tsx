@@ -46,7 +46,7 @@ export default function WorksList({ heading = "All Selected Works", works = [], 
     }
 
     return (
-        <div className="flex w-full flex-col justify-center pt-20 pb-20 text-white md:pt-24">
+        <div className="grid w-full content-center pt-20 pb-20 text-white md:pt-24">
             <div className={`grid-container relative z-20 mb-12 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
                 <div className="col-start-2 col-span-10 border-b border-white/10 pb-6">
                     <Typography
@@ -63,9 +63,9 @@ export default function WorksList({ heading = "All Selected Works", works = [], 
             </div>
 
             {entriesContent ? (
-                <div className="flex flex-col w-full border-t border-white/10">{entriesContent}</div>
+                <div className="grid w-full border-t border-white/10">{entriesContent}</div>
             ) : (
-                <div className="flex flex-col w-full border-t border-white/10">
+                <div className="grid w-full border-t border-white/10">
                     {works.map((work, index) => (
                         <WorksListEntry
                             key={work.id || index}

@@ -40,12 +40,12 @@ export default function HeroSection({
 }: HeroSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const outerSectionClassName = editMode
-    ? "relative flex min-h-[100dvh] w-full flex-col overflow-hidden bg-black px-0 lg:min-h-[720px]"
-    : "relative flex min-h-[100dvh] w-full flex-col overflow-hidden bg-black px-0";
+    ? "relative min-h-[100dvh] w-full overflow-hidden bg-black px-0 lg:min-h-[720px]"
+    : "relative min-h-[100dvh] w-full overflow-hidden bg-black px-0";
 
   const viewportWrapperClassName = editMode
-    ? "relative flex-1 overflow-hidden border-y border-white/5 bg-black"
-    : "relative flex-1 overflow-hidden bg-black lg:border-y lg:border-white/5";
+    ? "relative min-h-[100dvh] w-full overflow-hidden border-y border-white/5 bg-black lg:min-h-[720px]"
+    : "relative min-h-[100dvh] w-full overflow-hidden bg-black lg:border-y lg:border-white/5";
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -81,7 +81,7 @@ export default function HeroSection({
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_18%,rgba(255,255,255,0.14),transparent_26%),radial-gradient(circle_at_78%_0%,rgba(255,255,255,0.1),transparent_18%)]" />
         </motion.div>
 
-        <div className={`absolute inset-0 z-20 flex flex-col justify-end ${editMode ? "pointer-events-auto pt-24 pb-24 lg:pb-28" : "pointer-events-none pt-32 pb-24 lg:pb-28"}`}>
+        <div className={`absolute inset-0 z-20 grid content-end ${editMode ? "pointer-events-auto pt-24 pb-24 lg:pb-28" : "pointer-events-none pt-32 pb-24 lg:pb-28"}`}>
           <div className="grid-container relative w-full">
             <motion.div
               className="col-span-12 grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-end"
@@ -112,7 +112,7 @@ export default function HeroSection({
                 >
                   {title}
                 </Typography>
-                <div className="mt-6 flex items-center gap-4">
+                <div className="mt-6 grid grid-cols-[auto_1fr] items-center gap-4">
                   <span className="h-px w-8 bg-white/35 lg:w-16"></span>
                   <Typography
                     as="p"
@@ -133,7 +133,7 @@ export default function HeroSection({
                 animate={editMode ? undefined : { opacity: 1, x: 0 }}
                 transition={editMode ? undefined : { duration: 1.1, delay: 0.45, ease: "easeOut" }}
               >
-                <div className="flex flex-col items-start lg:pl-4">
+                <div className="grid content-start justify-items-start lg:pl-4">
                   <Typography
                     as="p"
                     preset="sans-body"
@@ -145,7 +145,7 @@ export default function HeroSection({
                     {description}
                   </Typography>
                   {(primaryCtaLabel || secondaryCtaLabel) ? (
-                    <div className={`mt-10 flex flex-wrap gap-6 ${editMode ? "pointer-events-auto" : "pointer-events-auto"}`}>
+                    <div className={`mt-10 grid gap-6 sm:grid-cols-2 ${editMode ? "pointer-events-auto" : "pointer-events-auto"}`}>
                       {primaryCtaLabel && primaryCtaHref ? (
                         <Link
                           href={primaryCtaHref}
@@ -154,7 +154,7 @@ export default function HeroSection({
                               event.preventDefault();
                             }
                           }}
-                          className="group interactive inline-flex items-center gap-3 text-textPrimary transition-colors duration-300 hover:text-white"
+                          className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 text-textPrimary transition-colors duration-300 hover:text-white"
                         >
                           <span className="h-px w-6 bg-white/40 transition-all duration-300 group-hover:w-10 group-hover:bg-white"></span>
                           <Typography
@@ -176,7 +176,7 @@ export default function HeroSection({
                               event.preventDefault();
                             }
                           }}
-                          className="group interactive inline-flex items-center gap-3 text-textMuted transition-colors duration-300 hover:text-white"
+                          className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 text-textMuted transition-colors duration-300 hover:text-white"
                         >
                           <span className="h-px w-6 bg-white/20 transition-all duration-300 group-hover:w-10 group-hover:bg-white"></span>
                           <Typography

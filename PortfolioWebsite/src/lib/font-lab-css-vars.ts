@@ -95,6 +95,7 @@ export function buildFontLabDocumentCssVars(
 
   for (const preset of TYPOGRAPHY_PRESETS) {
     const presetConfig = document.presets[preset];
+    vars[`--typography-${preset}-latin-scale`] = String(presetConfig.latinFontScale);
 
     for (const size of getTypographyFontLabSizes(preset)) {
       const sizeConfig = presetConfig.sizes[size];
@@ -118,6 +119,8 @@ export function buildFontLabDocumentCssVars(
         `${sizeConfig.latinHorizontalOffset}em`;
       vars[`--typography-${preset}-${size}-latin-baseline-offset`] =
         `${sizeConfig.cjkVerticalOffset + sizeConfig.latinRelativeOffset}em`;
+      vars[`--typography-${preset}-${size}-letter-spacing`] =
+        `${sizeConfig.cjkLetterSpacing}em`;
       vars[`--typography-${preset}-${size}-latin-letter-spacing`] =
         `${sizeConfig.latinLetterSpacing}em`;
     }

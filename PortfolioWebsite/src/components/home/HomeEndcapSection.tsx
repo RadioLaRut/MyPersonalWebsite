@@ -32,7 +32,7 @@ export default function HomeEndcapSection({
   const hasDescription = !isContentEmpty(description);
 
   return (
-    <section className="relative isolate flex min-h-[68vh] w-full items-center overflow-hidden border-t border-white/10 bg-black py-24 lg:py-32">
+    <section className="relative isolate grid min-h-[68vh] w-full items-center overflow-hidden border-t border-white/10 bg-black py-24 lg:py-32">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_45%)]" />
 
       <div className="grid-container relative z-10">
@@ -83,7 +83,7 @@ export default function HomeEndcapSection({
                   event.preventDefault();
                 }
               }}
-              className="interactive inline-flex items-center gap-4 border border-white/20 px-6 py-4 text-white transition-colors duration-300 hover:bg-white hover:text-black"
+              className="interactive inline-grid grid-flow-col auto-cols-max items-center gap-4 border border-white/20 px-6 py-4 text-white transition-colors duration-300 hover:bg-white hover:text-black"
             >
               <Typography
                 preset="sans-body"

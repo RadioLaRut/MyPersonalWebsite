@@ -116,3 +116,22 @@ export function updateFontLabPresetWeightOffset(
     },
   };
 }
+
+export function updateFontLabPresetLatinFontScale(
+  document: FontLabDocument,
+  preset: TypographyPreset,
+  latinFontScale: number,
+): FontLabDocument {
+  return {
+    ...document,
+    presets: {
+      ...document.presets,
+      [preset]: {
+        ...document.presets[preset],
+        latinFontScale: Number.isFinite(latinFontScale) && latinFontScale > 0
+          ? Number.parseFloat(latinFontScale.toFixed(4))
+          : 1,
+      },
+    },
+  };
+}

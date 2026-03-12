@@ -39,7 +39,7 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
                     {phase1.items && (
                         <div className="space-y-3 mt-8 pt-6 border-t border-white/10">
                             {phase1.items.map((item, i) => (
-                                <div key={i} className="flex flex-col gap-1">
+                                <div key={i} className="grid gap-1">
                                     <Typography as="span" preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="text-textMuted">
                                         {item.label}
                                     </Typography>
@@ -70,7 +70,7 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
                     {phase2.items && (
                         <div className="space-y-3 mt-8 pt-6 border-t border-white/10">
                             {phase2.items.map((item, i) => (
-                                <div key={i} className="flex flex-col gap-1">
+                                <div key={i} className="grid gap-1">
                                     <Typography as="span" preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="text-textMuted">
                                         {item.label}
                                     </Typography>

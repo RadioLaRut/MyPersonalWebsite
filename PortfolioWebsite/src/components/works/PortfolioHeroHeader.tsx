@@ -62,7 +62,7 @@ export default function LightingCollectionHeroHeader({
                         </div>
 
                         <div className="lg:col-span-3 lg:col-start-10">
-                            <div className="flex flex-col items-start lg:pl-4">
+                            <div className="grid content-start justify-items-start lg:pl-4">
                                 {descriptionLine1 && (
                                     <Typography
                                         as="p"
@@ -95,7 +95,7 @@ export default function LightingCollectionHeroHeader({
                                                 event.preventDefault();
                                             }
                                         }}
-                                        className="group interactive mt-10 inline-flex items-center gap-3 text-textMuted transition-colors duration-300 hover:text-white"
+                                        className="group interactive mt-10 inline-grid grid-flow-col auto-cols-max items-center gap-3 text-textMuted transition-colors duration-300 hover:text-white"
                                     >
                                         <span className="h-px w-6 bg-white/30 transition-all duration-300 group-hover:w-10 group-hover:bg-white"></span>
                                         <Typography

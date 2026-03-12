@@ -32,11 +32,11 @@ export default function ProjectSection({
   const imageAlt = typeof title === "string" ? title : "Project cover";
   const resolvedImagePreset = normalizeImagePreset(imagePreset);
   const sectionClassName = editMode
-    ? "relative w-full min-h-[420px] lg:min-h-[500px] overflow-hidden flex items-center justify-center m-0 p-0 mix-blend-normal group cursor-default"
-    : "relative w-full min-h-screen min-h-[100dvh] overflow-hidden flex items-center justify-center m-0 p-0 mix-blend-normal group interactive cursor-pointer";
+    ? "relative m-0 grid min-h-[420px] w-full place-items-center overflow-hidden p-0 mix-blend-normal group cursor-default lg:min-h-[500px]"
+    : "relative m-0 grid min-h-screen min-h-[100dvh] w-full place-items-center overflow-hidden p-0 mix-blend-normal group interactive cursor-pointer";
   const mediaLayerClassName = editMode
-    ? "absolute inset-0 flex items-center justify-center px-0"
-    : "absolute inset-0 flex items-center justify-center px-0";
+    ? "absolute inset-0 grid place-items-center px-0"
+    : "absolute inset-0 grid place-items-center px-0";
   const frameClassName = resolvedImagePreset === "native"
     ? "w-full h-full"
     : "w-full";
@@ -51,8 +51,8 @@ export default function ProjectSection({
   const opacity = useTransform(scrollYProgress, [0, 0.4, 0.6, 1], [0, 1, 1, 0]);
   const shouldAlignRight = align === "right" || (align === "auto" && index % 2 !== 0);
   const textColumnClassName = shouldAlignRight
-    ? "lg:col-start-5 items-end text-right"
-    : "lg:col-start-2 items-start";
+    ? "lg:col-start-5 justify-items-end text-right"
+    : "lg:col-start-2 justify-items-start";
   const subtitleClassName = shouldAlignRight ? "text-right" : "";
   const underlineClassName = shouldAlignRight ? "origin-right self-end" : "origin-left";
 
@@ -91,20 +91,20 @@ export default function ProjectSection({
 
       <motion.div
         style={editMode ? undefined : { opacity }}
-        className={`absolute inset-0 z-20 flex flex-col justify-center py-20 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}
+        className={`absolute inset-0 z-20 grid content-center py-20 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}
       >
         <div className={`grid-container w-full relative ${editMode ? "" : "mix-blend-difference"}`}>
           <div
-            className={`col-span-4 lg:col-span-8 flex flex-col ${textColumnClassName}`}
+            className={`col-span-4 lg:col-span-8 grid content-start ${textColumnClassName}`}
           >
             {subtitle && (
               <Typography
                 as="p"
                 preset="gothic-editorial"
                 size="label"
-                weight="medium"
+                weight="display"
                 wrapPolicy="label"
-                className={`mb-4 text-textPrimary ${subtitleClassName}`}
+                className={`mb-3 text-textPrimary ${subtitleClassName}`}
               >
                 {subtitle}
               </Typography>
@@ -112,15 +112,15 @@ export default function ProjectSection({
             <Typography
               as="h2"
               preset="sans-body"
-              size="title-sm"
+              size="hero"
               weight="strong"
               wrapPolicy="heading"
               align={shouldAlignRight ? "right" : "left"}
-              className={`text-white antialiased tracking-[0.01em] [transform:translateZ(0)] ${editMode ? "max-w-full" : "origin-left lg:whitespace-nowrap transition-all duration-500 group-hover:tracking-[0.012em] group-hover:scale-[1.02]"}`}
+              className={`text-white antialiased tracking-wider [transform:translateZ(0)] ${editMode ? "max-w-full" : "origin-left lg:whitespace-nowrap transition-all duration-500 group-hover:tracking-[0.06em] group-hover:scale-[1.02]"}`}
             >
               {title}
             </Typography>
-            <div className={`h-1 bg-white mt-8 ${editMode ? "w-1/3 max-w-40" : `w-0 transition-all duration-700 ease-out group-hover:w-1/3 ${underlineClassName}`}`}></div>
+            <div className={`h-[1.5px] bg-white mt-3 ${editMode ? "w-1/3 max-w-40" : `w-0 transition-all duration-1000 ease-out group-hover:w-[45%] ${underlineClassName}`}`}></div>
           </div>
         </div>
       </motion.div>

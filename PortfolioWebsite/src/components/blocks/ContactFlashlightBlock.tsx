@@ -91,7 +91,7 @@ export default function ContactFlashlightBlock({
 
     const renderContentData = () => (
         <div className="grid-container w-full py-16 sm:py-32">
-            <section className="col-start-3 col-span-8 flex flex-col gap-6 mb-16 sm:mb-24">
+            <section className="col-start-3 col-span-8 mb-16 grid gap-6 sm:mb-24">
                 <motion.h1
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -161,7 +161,7 @@ export default function ContactFlashlightBlock({
                             experienceContent
                         ) : (
                             experienceHistory.map((item, i) => (
-                                <div key={i} className="flex flex-col">
+                                <div key={i} className="grid gap-1">
                                     <Typography
                                         as="span"
                                         preset="sans-body"
@@ -204,7 +204,7 @@ export default function ContactFlashlightBlock({
                             creativeContent
                         ) : (
                             creativeDirection.map((item, i) => (
-                                <div key={i} className="flex flex-col">
+                                <div key={i} className="grid gap-1">
                                     <Typography
                                         as="span"
                                         preset="sans-body"

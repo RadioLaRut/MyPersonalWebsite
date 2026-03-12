@@ -30,9 +30,9 @@ export default function ContentCard({
   const hasImage = Boolean(imageSrc);
 
   const TextContent = (
-    <div className="flex flex-col justify-start">
+    <div className="grid content-start">
       {tags && tags.length > 0 && (
-        <div className="flex flex-wrap gap-3 mb-6">
+        <div className="mb-6 grid grid-cols-[repeat(auto-fit,minmax(max-content,max-content))] gap-3">
           {tags.map((tag, i) => (
             <Typography
               key={i}

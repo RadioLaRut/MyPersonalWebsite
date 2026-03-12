@@ -264,7 +264,7 @@ export default function PlaygroundClient() {
           >
             <Link
               href="/"
-              className="group inline-flex items-center gap-4 mb-10 lg:mb-12"
+              className="group mb-10 inline-grid grid-flow-col auto-cols-max items-center gap-4 lg:mb-12"
             >
               <Typography
                 as="span"
@@ -303,7 +303,7 @@ export default function PlaygroundClient() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex flex-col md:flex-row md:items-end justify-between gap-6"
+            className="grid gap-6"
           >
             <Typography
               as="p"
@@ -366,7 +366,7 @@ export default function PlaygroundClient() {
               </Typography>
               <Link
                 href="/playground/font-lab"
-                className="mt-8 inline-flex items-center gap-3 border border-white/12 px-4 py-3 text-textPrimary transition-colors duration-300 hover:border-white/25 hover:text-white"
+                className="mt-8 inline-grid grid-flow-col auto-cols-max items-center gap-3 border border-white/12 px-4 py-3 text-textPrimary transition-colors duration-300 hover:border-white/25 hover:text-white"
               >
                 <Typography
                   as="span"
@@ -392,7 +392,7 @@ export default function PlaygroundClient() {
             transition={{ duration: 0.6 }}
             className="mb-10 lg:mb-12 border-b border-white/10 pb-6"
           >
-            <div className="flex items-baseline gap-4 mb-3">
+            <div className="mb-3 grid grid-cols-[auto_1fr] items-baseline gap-4">
               <Typography
                 as="span"
                 preset="sans-body"
@@ -521,7 +521,7 @@ export default function PlaygroundClient() {
               transition={{ duration: 0.6 }}
             className="mb-10 lg:mb-12 border-b border-white/10 pb-6"
           >
-            <div className="flex items-baseline gap-4 mb-3">
+            <div className="mb-3 grid grid-cols-[auto_1fr] items-baseline gap-4">
                 <Typography
                   as="span"
                   preset="sans-body"
@@ -574,9 +574,9 @@ export default function PlaygroundClient() {
                     className="group"
                   >
                     {/* Component Label */}
-                    <div className="mb-6 lg:mb-8 flex items-start justify-between">
+                    <div className="mb-6 grid items-start lg:mb-8">
                       <div>
-                        <div className="flex items-center gap-3 mb-2">
+                        <div className="mb-2 grid grid-cols-[auto_auto] items-center gap-3">
                           <Typography
                             as="span"
                             preset="sans-body"

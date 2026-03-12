@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   useEffect,
   useLayoutEffect,
@@ -24,6 +25,7 @@ import {
   createDefaultFontLabSampleLayoutState,
   getFontLabActiveSizeConfig,
   updateFontLabActiveSizeConfig,
+  updateFontLabPresetLatinFontScale,
   updateFontLabPresetWeightOffset,
   updateFontLabSelection,
   type FontLabSampleLayoutState,
@@ -514,7 +516,7 @@ function ToggleField({
   onChange: (value: boolean) => void;
 }) {
   return (
-    <label className="flex items-center justify-between gap-4 border-b border-white/8 py-3">
+    <label className="grid grid-cols-[1fr_auto] items-center gap-4 border-b border-white/8 py-3">
       <Typography
         as="span"
         preset="sans-body"
@@ -846,6 +848,7 @@ function MixedCaseSection({
 }
 
 export default function FontLabClient() {
+  const router = useRouter();
   const [fontDocument, setFontDocument] = useState<FontLabDocument>(createDefaultFontLabDocument);
   const [layoutState, setLayoutState] = useState<FontLabSampleLayoutState>(
     createDefaultFontLabSampleLayoutState,
@@ -945,6 +948,7 @@ export default function FontLabClient() {
           activePreset,
           activeSize,
           labelZh: activePresetConfig.labelZh,
+          latinFontScale: activePresetConfig.latinFontScale,
           latinWeightOffsetSteps: activePresetConfig.latinWeightOffsetSteps,
           sizeConfig: activeSizeConfig,
         }),
@@ -963,6 +967,7 @@ export default function FontLabClient() {
       const persistedCssVars = buildFontLabDocumentCssVars(persistedDocument);
 
       setSavedDocument(persistedDocument);
+      setFontDocument(persistedDocument);
       setHasSavedConfig(true);
       setConfigPath(payload.path ?? FALLBACK_CONFIG_PATH);
       setStatusMessage(`已保存当前模板：${activePresetConfig.labelZh}`);
@@ -971,6 +976,7 @@ export default function FontLabClient() {
           detail: persistedCssVars,
         }),
       );
+      router.refresh();
     } catch {
       setStatusMessage("保存失败，请检查本地编辑模式是否已开启。");
     }
@@ -1018,13 +1024,16 @@ export default function FontLabClient() {
 
   return (
     <main
-      className="min-h-screen bg-black pb-20 pt-24 text-white md:pb-24 md:pt-32"
+      className="min-h-screen bg-black pb-20 pt-24 text-white md:pb-24 md:pt-32 lg:h-screen lg:overflow-hidden lg:py-0"
       style={cssVars}
     >
-      <div className="grid-container items-start gap-y-10">
-        <aside className="col-span-12 self-start space-y-4 lg:col-span-4">
+      <div className="grid-container items-start gap-y-10 lg:h-full lg:items-stretch">
+        <aside
+          data-lenis-prevent="true"
+          className="col-span-12 self-start space-y-4 lg:col-span-4 lg:min-h-0 lg:h-full lg:overflow-y-auto lg:overscroll-contain lg:pr-2"
+        >
           <div className="border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.04)_0%,rgba(255,255,255,0.015)_100%)] px-5 py-5">
-            <div className="flex items-center justify-between gap-4">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 md:items-center">
               <div>
                 <Typography
                   as="p"
@@ -1061,11 +1070,11 @@ export default function FontLabClient() {
             >
               这里用于校准字体模板本体。保存时只合并当前模板；调试层仅影响当前会话，不写入模板文件。
             </Typography>
-            <div className="mt-6 flex flex-wrap gap-3">
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
               <button
                 type="button"
                 onClick={handleSave}
-                className="inline-flex min-h-[4.75rem] min-w-[11.75rem] items-center justify-center border border-white/12 px-6 py-3 text-center text-textPrimary transition-colors hover:border-white/25 hover:text-white"
+                className="grid min-h-[4.75rem] min-w-[11.75rem] place-items-center border border-white/12 px-6 py-3 text-center text-textPrimary transition-colors hover:border-white/25 hover:text-white"
               >
                 <ActionText>保存当前模板</ActionText>
               </button>
@@ -1073,7 +1082,7 @@ export default function FontLabClient() {
                 type="button"
                 onClick={handleRestore}
                 disabled={!hasSavedConfig}
-                className="inline-flex min-h-[4.75rem] min-w-[11.75rem] items-center justify-center border border-white/12 px-6 py-3 text-center text-textPrimary transition-colors hover:border-white/25 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+                className="grid min-h-[4.75rem] min-w-[11.75rem] place-items-center border border-white/12 px-6 py-3 text-center text-textPrimary transition-colors hover:border-white/25 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
               >
                 <ActionText>恢复已保存模板</ActionText>
               </button>
@@ -1192,6 +1201,32 @@ export default function FontLabClient() {
             </label>
 
             <div className="grid gap-3 md:grid-cols-2">
+              <NumberField
+                label="英文字体缩放"
+                step="0.01"
+                value={activePresetConfig.latinFontScale}
+                onCommit={(latinFontScale) =>
+                  setFontDocument((current) =>
+                    updateFontLabPresetLatinFontScale(
+                      current,
+                      current.activePreset,
+                      latinFontScale,
+                    ),
+                  )
+                }
+                helperText="默认 1。小于 1 缩小英文，大于 1 放大英文；作用于当前模板的全部字号。"
+              />
+
+              <NumberField
+                label="英文相对基线偏移"
+                value={activeSizeConfig.latinRelativeOffset}
+                onCommit={(latinRelativeOffset) =>
+                  updateCurrentSizeConfig({ latinRelativeOffset })
+                }
+              />
+            </div>
+
+            <div className="grid gap-3 md:grid-cols-2">
               <FontSizeField
                 label="字号"
                 value={activeSizeConfig.fontSize}
@@ -1202,16 +1237,6 @@ export default function FontLabClient() {
                 label="行高"
                 value={activeSizeConfig.lineHeight}
                 onCommit={(lineHeight) => updateCurrentSizeConfig({ lineHeight })}
-              />
-            </div>
-
-            <div className="grid gap-3 md:grid-cols-2">
-              <NumberField
-                label="英文相对基线偏移"
-                value={activeSizeConfig.latinRelativeOffset}
-                onCommit={(latinRelativeOffset) =>
-                  updateCurrentSizeConfig({ latinRelativeOffset })
-                }
               />
             </div>
 
@@ -1302,7 +1327,10 @@ export default function FontLabClient() {
           </ControlBlock>
         </aside>
 
-        <section className="col-span-12 lg:col-span-8">
+        <section
+          data-lenis-prevent="true"
+          className="col-span-12 lg:col-span-8 lg:min-h-0 lg:h-full lg:overflow-y-auto lg:overscroll-contain lg:pr-2"
+        >
           <div className="relative w-full space-y-8">
             {layoutState.showLeftEdge ? (
               <div
@@ -1438,29 +1466,32 @@ export default function FontLabClient() {
                     showOpticalAlignment={layoutState.showOpticalAlignment}
                     showTick={layoutState.showLeftEdge}
                   >
-                    <div className="flex max-w-[44rem] flex-wrap items-baseline gap-x-6 gap-y-4">
-                      <Typography
-                        as="span"
-                        preset="luna-editorial"
-                        size="display"
-                        weight="display"
-                        wrapPolicy="nowrap"
-                        className="text-white"
-                      >
-                        After Rain
-                      </Typography>
-                      <span className="inline-block w-6" />
-                      <Typography
-                        as="span"
-                        preset="luna-editorial"
-                        size="title"
-                        weight="strong"
-                        wrapPolicy="nowrap"
-                        className="text-textMuted"
-                        style={{ lineHeight: 1 }}
-                      >
-                        雨后余光
-                      </Typography>
+                    <div className="grid w-full max-w-[72rem] gap-y-4 lg:grid-cols-12 lg:gap-x-6 lg:items-baseline">
+                      <div className="lg:col-span-7">
+                        <Typography
+                          as="span"
+                          preset="luna-editorial"
+                          size="display"
+                          weight="display"
+                          wrapPolicy="nowrap"
+                          className="text-white"
+                        >
+                          After Rain
+                        </Typography>
+                      </div>
+                      <div className="lg:col-span-5 lg:col-start-8">
+                        <Typography
+                          as="span"
+                          preset="luna-editorial"
+                          size="title"
+                          weight="strong"
+                          wrapPolicy="nowrap"
+                          className="text-textMuted"
+                          style={{ lineHeight: 1 }}
+                        >
+                          雨后余光
+                        </Typography>
+                      </div>
                     </div>
                   </MixedCaseSection>
                 )}
@@ -1474,29 +1505,32 @@ export default function FontLabClient() {
                     showOpticalAlignment={layoutState.showOpticalAlignment}
                     showTick={layoutState.showLeftEdge}
                   >
-                    <div className="flex max-w-[52rem] flex-wrap items-baseline gap-x-6 gap-y-4">
-                      <Typography
-                        as="span"
-                        preset="luna-editorial"
-                        size="title"
-                        weight="display"
-                        wrapPolicy="nowrap"
-                        className="text-white"
-                      >
-                        Lighting Notes
-                      </Typography>
-                      <span className="inline-block w-6" />
-                      <Typography
-                        as="span"
-                        preset="sans-body"
-                        size="body"
-                        weight="regular"
-                        wrapPolicy="prose"
-                        className="max-w-[28ch] text-textPrimary"
-                        style={{ lineHeight: 1.2 }}
-                      >
-                        标题后接正文短句，用来检查展示标题与正文同处一行时的真实关系。
-                      </Typography>
+                    <div className="grid w-full max-w-[72rem] gap-y-4 lg:grid-cols-12 lg:gap-x-6 lg:items-baseline">
+                      <div className="lg:col-span-7">
+                        <Typography
+                          as="span"
+                          preset="luna-editorial"
+                          size="title"
+                          weight="display"
+                          wrapPolicy="nowrap"
+                          className="text-white"
+                        >
+                          Lighting Notes
+                        </Typography>
+                      </div>
+                      <div className="lg:col-span-5 lg:col-start-8">
+                        <Typography
+                          as="span"
+                          preset="sans-body"
+                          size="body"
+                          weight="regular"
+                          wrapPolicy="prose"
+                          className="block max-w-[28ch] text-textPrimary"
+                          style={{ lineHeight: 1.2 }}
+                        >
+                          标题后接正文短句，用来检查展示标题与正文同处一行时的真实关系。
+                        </Typography>
+                      </div>
                     </div>
                   </MixedCaseSection>
                 )}
@@ -1510,42 +1544,46 @@ export default function FontLabClient() {
                     showOpticalAlignment={layoutState.showOpticalAlignment}
                     showTick={layoutState.showLeftEdge}
                   >
-                    <div className="flex max-w-[52rem] flex-wrap items-baseline gap-x-6 gap-y-4">
-                      <Typography
-                        as="span"
-                        preset="sans-body"
-                        size="title"
-                        weight="display"
-                        wrapPolicy="nowrap"
-                        className="text-white"
-                      >
-                        Light Study
-                      </Typography>
-                      <span className="inline-block w-6" />
-                      <Typography
-                        as="span"
-                        preset="gothic-editorial"
-                        size="label"
-                        weight="medium"
-                        wrapPolicy="nowrap"
-                        className="text-textPrimary"
-                        style={{ lineHeight: 1 }}
-                      >
-                        Lighting Direction
-                      </Typography>
-                      <span className="inline-block w-4" />
-                      <Typography
-                        as="span"
-                        preset="sans-body"
-                        size="caption"
-                        weight="medium"
-                        wrapPolicy="nowrap"
-                        numericStyle="tabular"
-                        className="text-textMuted"
-                        style={{ lineHeight: 1 }}
-                      >
-                        2026.03.11 / build v2.1 / 01
-                      </Typography>
+                    <div className="grid w-full max-w-[72rem] gap-y-4 lg:grid-cols-12 lg:gap-x-6 lg:items-baseline">
+                      <div className="lg:col-span-7">
+                        <Typography
+                          as="span"
+                          preset="sans-body"
+                          size="title"
+                          weight="display"
+                          wrapPolicy="nowrap"
+                          className="text-white"
+                        >
+                          Light Study
+                        </Typography>
+                      </div>
+                      <div className="lg:col-span-5 lg:col-start-8">
+                        <div className="grid gap-y-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-baseline lg:gap-x-4">
+                          <Typography
+                            as="span"
+                            preset="gothic-editorial"
+                            size="label"
+                            weight="medium"
+                            wrapPolicy="nowrap"
+                            className="text-textPrimary"
+                            style={{ lineHeight: 1 }}
+                          >
+                            Lighting Direction
+                          </Typography>
+                          <Typography
+                            as="span"
+                            preset="sans-body"
+                            size="caption"
+                            weight="medium"
+                            wrapPolicy="nowrap"
+                            numericStyle="tabular"
+                            className="text-textMuted"
+                            style={{ lineHeight: 1 }}
+                          >
+                            2026.03.11 / build v2.1 / 01
+                          </Typography>
+                        </div>
+                      </div>
                     </div>
                   </MixedCaseSection>
                 )}
@@ -1559,29 +1597,32 @@ export default function FontLabClient() {
                     showOpticalAlignment={layoutState.showOpticalAlignment}
                     showTick={layoutState.showLeftEdge}
                   >
-                    <div className="flex max-w-[48rem] flex-wrap items-baseline gap-x-6 gap-y-4">
-                      <Typography
-                        as="span"
-                        preset="classical-display"
-                        size="menu"
-                        weight="regular"
-                        wrapPolicy="nowrap"
-                        className="text-white"
-                      >
-                        MENU
-                      </Typography>
-                      <span className="inline-block w-6" />
-                      <Typography
-                        as="span"
-                        preset="sans-body"
-                        size="label"
-                        weight="medium"
-                        wrapPolicy="nowrap"
-                        className="text-textMuted"
-                        style={{ lineHeight: 1 }}
-                      >
-                        Navigation Trigger
-                      </Typography>
+                    <div className="grid w-full max-w-[72rem] gap-y-4 lg:grid-cols-12 lg:gap-x-6 lg:items-baseline">
+                      <div className="lg:col-span-7">
+                        <Typography
+                          as="span"
+                          preset="classical-display"
+                          size="menu"
+                          weight="regular"
+                          wrapPolicy="nowrap"
+                          className="text-white"
+                        >
+                          MENU
+                        </Typography>
+                      </div>
+                      <div className="lg:col-span-5 lg:col-start-8">
+                        <Typography
+                          as="span"
+                          preset="sans-body"
+                          size="label"
+                          weight="medium"
+                          wrapPolicy="nowrap"
+                          className="text-textMuted"
+                          style={{ lineHeight: 1 }}
+                        >
+                          Navigation Trigger
+                        </Typography>
+                      </div>
                     </div>
                   </MixedCaseSection>
                 )}
@@ -1675,7 +1716,7 @@ export default function FontLabClient() {
               </Typography>
               <Link
                 href="/playground"
-                className="mt-6 inline-flex items-center border border-white/12 px-4 py-3 text-textPrimary transition-colors hover:border-white/25 hover:text-white"
+                className="mt-6 inline-grid grid-flow-col auto-cols-max items-center border border-white/12 px-4 py-3 text-textPrimary transition-colors hover:border-white/25 hover:text-white"
               >
                 <ActionText>打开 Playground 做组件验收</ActionText>
               </Link>

@@ -14,7 +14,7 @@ export default function MetadataListItem({ label, value, align = "start" }: Meta
       : "text-textPrimary";
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="grid gap-1">
       <Typography
         as="span"
         preset="sans-body"

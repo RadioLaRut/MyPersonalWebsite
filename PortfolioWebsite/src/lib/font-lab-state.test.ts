@@ -6,6 +6,7 @@ import {
   createDefaultFontLabSampleLayoutState,
   getFontLabActiveSizeConfig,
   updateFontLabActiveSizeConfig,
+  updateFontLabPresetLatinFontScale,
   updateFontLabPresetWeightOffset,
   updateFontLabSelection,
 } from "./font-lab-state.ts";
@@ -58,4 +59,13 @@ test("updateFontLabPresetWeightOffset only changes the targeted preset bias", ()
 
   assert.equal(next.presets["gothic-editorial"].latinWeightOffsetSteps, 1);
   assert.deepEqual(next.presets["gothic-editorial"].sizes.label, untouchedLabel);
+});
+
+test("updateFontLabPresetLatinFontScale only changes the targeted preset scale", () => {
+  const source = createDefaultFontLabDocument();
+  const untouchedPreset = source.presets["luna-editorial"];
+  const next = updateFontLabPresetLatinFontScale(source, "gothic-editorial", 1.08);
+
+  assert.equal(next.presets["gothic-editorial"].latinFontScale, 1.08);
+  assert.equal(next.presets["luna-editorial"].latinFontScale, untouchedPreset.latinFontScale);
 });

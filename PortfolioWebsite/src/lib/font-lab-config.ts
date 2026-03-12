@@ -80,6 +80,7 @@ export function mergeFontLabPresetConfig(
   const previousPreset = document.presets[payload.activePreset];
   const nextPreset: FontLabPresetConfig = {
     labelZh: payload.labelZh,
+    latinFontScale: payload.latinFontScale,
     latinWeightOffsetSteps: payload.latinWeightOffsetSteps,
     sizes: {
       ...previousPreset.sizes,
