@@ -3,6 +3,8 @@ import path from "node:path";
 export const CONTENT_PAGES_ROOT = path.resolve(process.cwd(), "content/pages");
 
 const ENCODED_TRAVERSAL_PATTERN = /%2e%2e/i;
+const SAFE_SLUG_SEGMENT_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const WINDOWS_RESERVED_FILE_NAME_PATTERN = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/;
 
 export class SlugValidationError extends Error {
   readonly code = "BAD_REQUEST";
@@ -55,6 +57,42 @@ function normalizeRawStringInput(rawInput: string): string[] {
   return trimmedPath.split("/");
 }
 
+function validateNormalizedSlugSegment(normalized: string) {
+  if (!normalized) {
+    throw makeSlugValidationError("Empty slug segment is not allowed");
+  }
+
+  if (normalized === "." || normalized === "..") {
+    throw makeSlugValidationError("Slug segment is invalid");
+  }
+
+  if (normalized.includes("\0")) {
+    throw makeSlugValidationError("Slug segment contains null byte");
+  }
+
+  if (!SAFE_SLUG_SEGMENT_PATTERN.test(normalized)) {
+    throw makeSlugValidationError("Slug segment must use lowercase letters, numbers, and hyphens only");
+  }
+
+  if (WINDOWS_RESERVED_FILE_NAME_PATTERN.test(normalized)) {
+    throw makeSlugValidationError("Slug segment uses a reserved file name");
+  }
+}
+
+export function normalizePuckSlugSegment(rawSegment: string): string {
+  if (!rawSegment) {
+    throw makeSlugValidationError("Empty slug segment is not allowed");
+  }
+
+  if (rawSegment.includes("/") || rawSegment.includes("\\")) {
+    throw makeSlugValidationError("Slug segment contains path separator");
+  }
+
+  const normalized = rawSegment.trim().toLowerCase();
+  validateNormalizedSlugSegment(normalized);
+  return normalized;
+}
+
 function decodeAndNormalizeSegment(segment: string): string {
   if (!segment) {
     throw makeSlugValidationError("Empty slug segment is not allowed");
@@ -71,16 +109,7 @@ function decodeAndNormalizeSegment(segment: string): string {
     throw makeSlugValidationError("Slug segment contains path separator");
   }
 
-  const normalized = decoded.trim().toLowerCase();
-  if (!normalized || normalized === "." || normalized === "..") {
-    throw makeSlugValidationError("Slug segment is invalid");
-  }
-
-  if (normalized.includes("\0")) {
-    throw makeSlugValidationError("Slug segment contains null byte");
-  }
-
-  return normalized;
+  return normalizePuckSlugSegment(decoded);
 }
 
 export function normalizePuckSlugInput(rawInput: string | string[] | undefined): NormalizedPuckSlug {

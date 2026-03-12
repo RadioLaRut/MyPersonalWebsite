@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "NEXT_PUBLIC_SITE_MODE=normal next dev",
-    "dev:test": "NEXT_PUBLIC_SITE_MODE=testing next dev",
+    "dev": "node scripts/run-next-with-mode.mjs normal dev",
+    "dev:test": "node scripts/run-next-with-mode.mjs testing dev",
     "build": "npm run test:assets && next build",
     "start": "next start",
     "lint": "next lint",

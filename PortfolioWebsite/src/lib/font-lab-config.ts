@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 
 import {
@@ -33,6 +34,20 @@ async function writeJsonAtomically(filePath: string, json: string) {
         throw error;
       }
     });
+  }
+}
+
+async function resolvePreferredLineEnding(filePath: string) {
+  try {
+    const existingContent = await fs.readFile(filePath, "utf8");
+    return existingContent.includes("\r\n") ? "\r\n" : "\n";
+  } catch (error) {
+    const errno = error as NodeJS.ErrnoException;
+    if (errno.code === "ENOENT") {
+      return os.EOL;
+    }
+
+    throw error;
   }
 }
 
@@ -103,8 +118,9 @@ export async function writeFontLabConfig(
   document: FontLabDocument,
   filePath = FONT_LAB_CONFIG_FILE,
 ) {
+  const lineEnding = await resolvePreferredLineEnding(filePath);
   await writeJsonAtomically(
     filePath,
-    `${JSON.stringify(normalizeFontLabDocument(document), null, 2)}\n`,
+    `${JSON.stringify(normalizeFontLabDocument(document), null, 2).replace(/\n/g, lineEnding)}${lineEnding}`,
   );
 }
