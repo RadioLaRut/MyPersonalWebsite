@@ -791,6 +791,12 @@
 /images/文件夹名/文件名.扩展名
 ```
 
+重要约束：
+
+- 网站运行时直接读取 `PortfolioWebsite/public/**` 下的真实图片文件，所有网页图片必须以普通 Git 文件提交，不能通过 Git LFS 管理。
+- 一旦网页图片进入 LFS，仓库中保存的是 pointer 文件而不是真实图片字节，Next.js 页面与静态资源访问会读取失败。
+- 当前仓库通过 `PortfolioWebsite/.gitattributes` 强制将 `public/images/**`、`public/assets/images/**` 以及 `public/**/*.png|jpg|jpeg|webp|gif` 排除在 LFS 之外，后续不要移除或覆盖这组规则。
+
 ### 现有图片目录结构
 
 ```

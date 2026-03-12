@@ -22,6 +22,7 @@
 - 全局样式与设计 token 主要位于 `PortfolioWebsite/src/app/globals.css`、`PortfolioWebsite/tailwind.config.ts`、`PortfolioWebsite/src/lib/typography-tokens.ts`、`PortfolioWebsite/src/lib/image-presentation.ts`。
 - 字体资源位于 `PortfolioWebsite/src/app/fonts/`。
 - 静态资源位于 `PortfolioWebsite/public/`；图片通常位于 `PortfolioWebsite/public/images/`。
+- 网站运行依赖的 `PortfolioWebsite/public/**` 图片资源必须以普通 Git 文件提交，严禁通过 Git LFS 管理；否则仓库中只会留下 LFS pointer，页面将无法正确读取图片。
 - `PortfolioData.md` 可作为历史资料参考，但不是当前页面渲染的权威数据结构。
 
 ## 构建、测试与开发命令
