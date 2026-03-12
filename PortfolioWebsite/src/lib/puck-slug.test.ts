@@ -89,10 +89,10 @@ const validCases: ValidCase[] = [
     name: "keeps plain slug without /p prefix",
   },
   {
-    expectedRelativePath: "a b.json",
-    expectedSlugKey: "a b",
-    input: "/p/a%20b",
-    name: "decodes encoded space via decodeURIComponent",
+    expectedRelativePath: "city-2026.json",
+    expectedSlugKey: "city-2026",
+    input: "/p/City-2026",
+    name: "keeps digits while canonicalizing uppercase input",
   },
 ];
 
@@ -122,12 +122,32 @@ const invalidCases: InvalidCase[] = [
     name: "rejects malformed URI encoding",
   },
   {
+    input: "/p/a%20b",
+    name: "rejects spaces after decoding",
+  },
+  {
+    input: "/p/a%3Fb",
+    name: "rejects question marks after decoding",
+  },
+  {
+    input: "/p/a:b",
+    name: "rejects characters that are invalid in Windows file names",
+  },
+  {
+    input: "/p/con",
+    name: "rejects Windows reserved file names",
+  },
+  {
     input: "/p//A/..",
     name: "rejects PRD high-risk sample with dot-dot",
   },
   {
     input: [".."],
     name: "rejects dot-dot segment for array input",
+  },
+  {
+    input: ["PRN"],
+    name: "rejects reserved file names for array input",
   },
 ];
 

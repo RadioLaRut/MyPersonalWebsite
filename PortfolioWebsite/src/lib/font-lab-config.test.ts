@@ -116,6 +116,21 @@ test("writeFontLabConfig persists and readFontLabConfig restores the same docume
   await fs.rm(tempDir, { force: true, recursive: true });
 });
 
+test("writeFontLabConfig preserves the existing file line endings", async () => {
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "font-lab-config-"));
+  const configFile = path.join(tempDir, "font-presets.json");
+  const expected = createDefaultFontLabDocument();
+
+  await fs.writeFile(configFile, "{\r\n  \"version\": 4\r\n}\r\n", "utf8");
+  await writeFontLabConfig(expected, configFile);
+
+  const raw = await fs.readFile(configFile, "utf8");
+  assert.match(raw, /\r\n/);
+  assert.doesNotMatch(raw, /[^\r]\n/);
+
+  await fs.rm(tempDir, { force: true, recursive: true });
+});
+
 test("parseFontLabSavePayload clamps unsupported template-level latin weight offsets", () => {
   const source = createDefaultFontLabDocument();
   const parsed = parseFontLabSavePayload({
