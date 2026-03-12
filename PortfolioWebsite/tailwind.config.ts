@@ -12,6 +12,7 @@ const config: Config = {
         black: "#000000",
         white: "#ffffff",
         textPrimary: "rgba(255, 255, 255, 0.75)",
+        textSecondary: "rgba(255, 255, 255, 0.6)",
         textMuted: "rgba(255, 255, 255, 0.45)",
       },
       fontFamily: {

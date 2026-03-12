@@ -49,7 +49,7 @@ export default function BreakdownTriptych({
     <section className="w-full relative z-20 bg-black pb-32">
       <div className="grid-container w-full pt-16 border-t border-white/10">
         {(col1Title || col1Text || col1Img) && (
-          <div className="col-span-3 space-y-4">
+          <div className="col-span-4 space-y-4">
             {col1Title && (
               <Typography as="h4" preset="sans-body" size="label" weight="strong" wrapPolicy="label" className="border-l-2 pl-3 border-white/80 text-white">
                 {col1Title}
@@ -69,7 +69,7 @@ export default function BreakdownTriptych({
         )}
 
         {(col2Title || col2Text || col2Img) && (
-          <div className="col-start-5 col-span-4 space-y-4 mt-16 lg:mt-0">
+          <div className="col-span-4 space-y-4 mt-16 lg:mt-0">
             {col2Title && (
               <Typography as="h4" preset="sans-body" size="label" weight="strong" wrapPolicy="label" className="border-l-2 pl-3 border-white/80 text-white">
                 {col2Title}
@@ -89,7 +89,7 @@ export default function BreakdownTriptych({
         )}
 
         {(col3Title || col3Text || col3Img) && (
-          <div className="col-start-10 col-span-3 space-y-4 mt-16 lg:mt-0">
+          <div className="col-span-4 space-y-4 mt-16 lg:mt-0">
             {col3Title && (
               <Typography as="h4" preset="sans-body" size="label" weight="strong" wrapPolicy="label" className="border-l-2 pl-3 border-white/80 text-white">
                 {col3Title}

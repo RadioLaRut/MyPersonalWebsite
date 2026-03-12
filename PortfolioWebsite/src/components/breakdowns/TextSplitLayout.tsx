@@ -50,7 +50,7 @@ export default function TextSplitLayout({
                 {layoutVariant === 'split-left' && (
                     <>
                         {/* Heading Left */}
-                        <div className="col-span-6 col-start-1 mb-12 lg:mb-0">
+                        <div className="col-span-5 col-start-1 mb-12 lg:mb-0">
                             <Typography as="h3" preset="sans-body" size="title" weight="light" wrapPolicy="heading" className="mb-8 text-white uppercase">
                                 {heading}
                             </Typography>
@@ -62,8 +62,8 @@ export default function TextSplitLayout({
                             )}
                         </div>
                         {/* Text Right */}
-                        <div className="col-span-5 col-start-8 grid content-center">
-                            <div className="space-y-6 border-l border-white/5 pl-0 lg:pl-8">
+                        <div className="col-span-7 grid content-center">
+                            <div className="space-y-14 border-l border-white/5 pl-0 lg:pl-8">
                                 {paragraphContent}
                             </div>
                         </div>
@@ -74,12 +74,12 @@ export default function TextSplitLayout({
                     <>
                         {/* Text Left */}
                         <div className="col-span-5 col-start-1 order-2 mt-12 grid content-center lg:order-1 lg:mb-0 lg:mt-0">
-                            <div className="space-y-6 border-r border-white/5 pr-0 text-right lg:pr-8 lg:text-left">
+                            <div className="space-y-14 border-r border-white/5 pr-0 text-right lg:pr-8 lg:text-left">
                                 {paragraphContent}
                             </div>
                         </div>
                         {/* Heading Right */}
-                        <div className="col-span-6 col-start-7 order-1 lg:order-2">
+                        <div className="col-span-7 col-start-6 order-1 lg:order-2">
                             <Typography as="h3" preset="sans-body" size="title" weight="light" wrapPolicy="heading" align="right" className="mb-8 text-white uppercase">
                                 {heading}
                             </Typography>
@@ -98,7 +98,7 @@ export default function TextSplitLayout({
                         <Typography as="h3" preset="sans-body" size="display" weight="strong" wrapPolicy="heading" align="center" className="mb-16 px-4 text-white uppercase">
                             {heading}
                         </Typography>
-                        <div className="max-w-3xl space-y-6 border-t border-white/5 pt-12">
+                        <div className="max-w-3xl space-y-14 border-t border-white/5 pt-12">
                             {paragraphContent}
                         </div>
                         {imageSrc && (

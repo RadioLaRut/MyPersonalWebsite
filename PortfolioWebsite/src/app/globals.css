@@ -85,7 +85,7 @@ body::-webkit-scrollbar {
 /* 桌面端 (1024px+) 增加间距 */
 @media (min-width: 1024px) {
   .grid-container {
-    gap: 1.5rem;
+    gap: 2rem;
   }
 }
 

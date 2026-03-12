@@ -98,12 +98,12 @@ export const TYPOGRAPHY_SIZE_TOKENS: Record<TypographySize, TypographySizeToken>
   },
   body: {
     fontSize: "1rem",
-    letterSpacing: "0.012em",
+    letterSpacing: "0.018em",
     lineHeight: "1.9",
   },
   "body-lg": {
     fontSize: "clamp(1.125rem,1.15vw,1.375rem)",
-    letterSpacing: "0.014em",
+    letterSpacing: "0.018em",
     lineHeight: "1.85",
   },
   "title-sm": {

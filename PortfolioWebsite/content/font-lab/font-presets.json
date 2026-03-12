@@ -1,6 +1,6 @@
 {
-  "activePreset": "gothic-editorial",
-  "activeSize": "label",
+  "activePreset": "luna-editorial",
+  "activeSize": "title-sm",
   "presets": {
     "sans-body": {
       "labelZh": "Futura + 汉仪旗黑",
@@ -111,7 +111,7 @@
           "latinLetterSpacing": 0.01,
           "latinRelativeOffset": 0.05,
           "lineHeight": 1.05,
-          "semanticWeight": "medium"
+          "semanticWeight": "regular"
         },
         "title": {
           "cjkHorizontalOffset": 0,
