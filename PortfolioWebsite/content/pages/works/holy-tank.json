@@ -70,6 +70,7 @@
       "props": {
         "id": "next-1",
         "nextId": "houdini-pcg",
+        "href": "/works/houdini-pcg",
         "nextName": "HOUDINI 驱动生成村镇",
         "nextBg": "/images/penguin/PCG/PCG01.webp"
       }

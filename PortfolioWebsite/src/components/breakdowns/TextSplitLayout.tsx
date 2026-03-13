@@ -1,8 +1,15 @@
 'use client';
 
-import React, { type ReactNode } from 'react';
+import React, { type CSSProperties, type ReactNode } from 'react';
+
 import { PresetImage } from '@/components/common/PresetImage';
 import Typography from "@/components/common/Typography";
+import { useComponentDesign } from '@/components/layout/ComponentDesignProvider';
+import {
+  getGridColumnStyle,
+  getSectionSpacingClassName,
+  getSpacingRem,
+} from '@/lib/component-design-style';
 import { type ImageFitMode, type ImagePreset } from '@/lib/image-presentation';
 
 interface TextSplitLayoutProps {
@@ -15,6 +22,8 @@ interface TextSplitLayoutProps {
     paragraphsContent?: ReactNode;
 }
 
+type StyleWithVars = CSSProperties & Record<string, string>;
+
 export default function TextSplitLayout({
     heading,
     paragraphs,
@@ -24,34 +33,46 @@ export default function TextSplitLayout({
     layoutVariant = 'split-left',
     paragraphsContent,
 }: TextSplitLayoutProps) {
+    const design = useComponentDesign('TextSplitLayout');
     const imageAlt = typeof heading === 'string' ? heading : 'TextSplitLayout image';
+    const splitHeadingGapStyle: StyleWithVars = {
+        "--text-split-heading-image-gap": getSpacingRem(design.headingImageGap),
+    };
     const paragraphContent = paragraphsContent ?? (
-        <>
+        <div
+            className="grid"
+            style={{ rowGap: getSpacingRem(design.paragraphGap) }}
+        >
             {paragraphs.map((p, i) => (
                 <Typography
                     key={i}
                     as="p"
                     preset="sans-body"
-                    size="body-lg"
+                    size={design.bodySize}
                     weight="semantic"
-                    wrapPolicy="prose"
+                    wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"}
                     className="text-textMuted"
                 >
                     {p}
                 </Typography>
                 ))}
-        </>
+        </div>
     );
 
     return (
-        <div className="w-full rhythm-block">
+        <div className={`w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
             <div className="grid-container items-start">
 
                 {layoutVariant === 'split-left' && (
                     <>
-                        {/* Heading Left */}
-                        <div className="col-span-5 col-start-1 mb-12 lg:mb-0">
-                            <Typography as="h3" preset="sans-body" size="title" weight="light" wrapPolicy="heading" className="mb-8 text-white uppercase">
+                        <div
+                            className="mb-[var(--text-split-heading-image-gap)] lg:mb-0"
+                            style={{
+                                ...splitHeadingGapStyle,
+                                ...getGridColumnStyle(design.splitLeftHeadingBounds),
+                            }}
+                        >
+                            <Typography as="h3" preset="sans-body" size={design.splitHeadingSize} weight="light" wrapPolicy={design.headingAutoWrap ? "heading" : "nowrap"} className="mb-8 text-white uppercase">
                                 {heading}
                             </Typography>
                             {imageSrc && (
@@ -61,9 +82,11 @@ export default function TextSplitLayout({
                                 </div>
                             )}
                         </div>
-                        {/* Text Right */}
-                        <div className="col-span-7 grid content-center">
-                            <div className="space-y-14 border-l border-white/5 pl-0 lg:pl-8">
+                        <div
+                            className="grid content-center"
+                            style={getGridColumnStyle(design.splitLeftTextBounds)}
+                        >
+                            <div className="border-l border-white/5 pl-0 lg:pl-8">
                                 {paragraphContent}
                             </div>
                         </div>
@@ -72,15 +95,22 @@ export default function TextSplitLayout({
 
                 {layoutVariant === 'split-right' && (
                     <>
-                        {/* Text Left */}
-                        <div className="col-span-5 col-start-1 order-2 mt-12 grid content-center lg:order-1 lg:mb-0 lg:mt-0">
-                            <div className="space-y-14 border-r border-white/5 pr-0 text-right lg:pr-8 lg:text-left">
+                        <div
+                            className="order-2 mt-[var(--text-split-heading-image-gap)] grid content-center lg:order-1 lg:mb-0 lg:mt-0"
+                            style={{
+                                ...splitHeadingGapStyle,
+                                ...getGridColumnStyle(design.splitRightTextBounds),
+                            }}
+                        >
+                            <div className="border-r border-white/5 pr-0 text-right lg:pr-8 lg:text-left">
                                 {paragraphContent}
                             </div>
                         </div>
-                        {/* Heading Right */}
-                        <div className="col-span-7 col-start-6 order-1 lg:order-2">
-                            <Typography as="h3" preset="sans-body" size="title" weight="light" wrapPolicy="heading" align="right" className="mb-8 text-white uppercase">
+                        <div
+                            className="order-1 lg:order-2"
+                            style={getGridColumnStyle(design.splitRightHeadingBounds)}
+                        >
+                            <Typography as="h3" preset="sans-body" size={design.splitHeadingSize} weight="light" wrapPolicy={design.headingAutoWrap ? "heading" : "nowrap"} align="right" className="mb-8 text-white uppercase">
                                 {heading}
                             </Typography>
                             {imageSrc && (
@@ -94,15 +124,33 @@ export default function TextSplitLayout({
                 )}
 
                 {layoutVariant === 'stack' && (
-                    <div className="col-start-3 col-span-8 grid justify-items-center text-center">
-                        <Typography as="h3" preset="sans-body" size="display" weight="strong" wrapPolicy="heading" align="center" className="mb-16 px-4 text-white uppercase">
+                    <div
+                        className="grid justify-items-center text-center"
+                        style={getGridColumnStyle(design.stackBounds)}
+                    >
+                        <Typography
+                            as="h3"
+                            preset="sans-body"
+                            size={design.stackHeadingSize}
+                            weight="strong"
+                            wrapPolicy={design.headingAutoWrap ? "heading" : "nowrap"}
+                            align="center"
+                            className="px-4 text-white uppercase"
+                            style={{ marginBottom: getSpacingRem(design.stackTextTopSpacing) }}
+                        >
                             {heading}
                         </Typography>
-                        <div className="max-w-3xl space-y-14 border-t border-white/5 pt-12">
+                        <div
+                            className="grid max-w-3xl border-t border-white/5"
+                            style={{
+                                paddingTop: getSpacingRem(design.stackTextTopSpacing),
+                                rowGap: getSpacingRem(design.paragraphGap),
+                            }}
+                        >
                             {paragraphContent}
                         </div>
                         {imageSrc && (
-                            <div className="relative mt-16 w-full opacity-90 transition-opacity duration-700 hover:opacity-100">
+                            <div className="relative w-full opacity-90 transition-opacity duration-700 hover:opacity-100" style={{ marginTop: getSpacingRem(design.stackImageTopSpacing) }}>
                                 <PresetImage src={imageSrc} alt={imageAlt} preset={imagePreset} fitMode={imageFitMode} />
                                 <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] pointer-events-none" />
                             </div>

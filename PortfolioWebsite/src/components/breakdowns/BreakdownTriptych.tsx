@@ -56,7 +56,7 @@ export default function BreakdownTriptych({
               </Typography>
             )}
             {col1Text && (
-              <Typography as="p" preset="sans-body" size="body-sm" weight="medium" wrapPolicy="prose" className="text-textPrimary">
+              <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="prose" className="text-textPrimary">
                 {col1Text}
               </Typography>
             )}
@@ -76,7 +76,7 @@ export default function BreakdownTriptych({
               </Typography>
             )}
             {col2Text && (
-              <Typography as="p" preset="sans-body" size="body-sm" weight="medium" wrapPolicy="prose" className="text-textPrimary">
+              <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="prose" className="text-textPrimary">
                 {col2Text}
               </Typography>
             )}
@@ -96,7 +96,7 @@ export default function BreakdownTriptych({
               </Typography>
             )}
             {col3Text && (
-              <Typography as="p" preset="sans-body" size="body-sm" weight="medium" wrapPolicy="prose" className="text-textPrimary">
+              <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="prose" className="text-textPrimary">
                 {col3Text}
               </Typography>
             )}

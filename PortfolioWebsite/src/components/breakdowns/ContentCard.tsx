@@ -1,10 +1,17 @@
 'use client';
 
-import React, { type ReactNode } from 'react';
+import React, { type CSSProperties, type ReactNode } from 'react';
+
 import { PresetImage } from '@/components/common/PresetImage';
 import Typography from "@/components/common/Typography";
-import { type ImageFitMode, type ImagePreset } from '@/lib/image-presentation';
+import { useComponentDesign } from '@/components/layout/ComponentDesignProvider';
 import { toParagraphNodes } from '@/lib/editable-text';
+import {
+  getGridColumnStyle,
+  getSectionSpacingClassName,
+  getSpacingRem,
+} from '@/lib/component-design-style';
+import { type ImageFitMode, type ImagePreset } from '@/lib/image-presentation';
 
 interface ContentCardProps {
   title: ReactNode;
@@ -12,9 +19,10 @@ interface ContentCardProps {
   imageSrc?: string;
   imagePreset?: ImagePreset;
   imageFitMode?: ImageFitMode;
-  tags?: ReactNode[];
   imagePosition?: 'left' | 'right';
 }
+
+type StyleWithVars = CSSProperties & Record<string, string>;
 
 export default function ContentCard({
   title,
@@ -22,53 +30,45 @@ export default function ContentCard({
   imageSrc,
   imagePreset = 'ratio-16-9',
   imageFitMode = 'x',
-  tags,
   imagePosition = 'right',
 }: ContentCardProps) {
+  const design = useComponentDesign('ContentCard');
   const paragraphs = toParagraphNodes(description);
   const imageAlt = typeof title === 'string' ? title : 'Content card image';
   const hasImage = Boolean(imageSrc);
+  const mobileMediaOffsetStyle: StyleWithVars = {
+    "--content-card-mobile-media-top-spacing": getSpacingRem(design.mobileMediaTopSpacing),
+  };
 
-  const TextContent = (
-    <div className="grid content-start">
-      {tags && tags.length > 0 && (
-        <div className="mb-6 grid grid-cols-[repeat(auto-fit,minmax(max-content,max-content))] gap-3">
-          {tags.map((tag, i) => (
-            <Typography
-              key={i}
-              as="span"
-              preset="sans-body"
-              size="caption"
-              weight="semantic"
-              wrapPolicy="label"
-              className="border border-white/10 px-2 py-1 text-textMuted"
-            >
-              {tag}
-            </Typography>
-          ))}
-        </div>
-      )}
-
+  const textContent = (
+    <div
+      className="grid content-start self-start"
+      style={{ rowGap: getSpacingRem(design.titleBodyGap) }}
+    >
       <Typography
         as="h3"
         preset="sans-body"
-        size="title"
+        size={design.titleSize}
         weight="display"
-        wrapPolicy="heading"
-        className="mb-8 text-white"
+        wrapPolicy={design.titleAutoWrap ? "heading" : "nowrap"}
+        className="text-white leading-none"
+        style={{ lineHeight: 1 }}
       >
         {title}
       </Typography>
 
-      <div className="max-w-none space-y-5 lg:max-w-[36ch]">
+      <div
+        className="grid max-w-none lg:max-w-[36ch]"
+        style={{ rowGap: getSpacingRem(design.paragraphGap) }}
+      >
         {paragraphs.map((paragraph, i) => (
           <Typography
             key={i}
             as="p"
             preset="sans-body"
-            size="body"
+            size={design.bodySize}
             weight="medium"
-            wrapPolicy="prose"
+            wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"}
             className="text-textMuted"
           >
             {paragraph}
@@ -78,7 +78,7 @@ export default function ContentCard({
     </div>
   );
 
-  const ImageContent = hasImage ? (
+  const imageContent = hasImage ? (
     <div className="relative group">
       <div className="relative w-full overflow-hidden rounded-none border border-white/10 bg-[#0a0a0a] transition-colors duration-500 group-hover:border-white/20">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
@@ -95,8 +95,8 @@ export default function ContentCard({
 
   if (!hasImage) {
     return (
-      <div className="w-full rhythm-block-compact grid-container">
-        <div className="col-start-3 col-span-8">{TextContent}</div>
+      <div className={`grid-container w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
+        <div style={getGridColumnStyle(design.textOnlyBounds)}>{textContent}</div>
       </div>
     );
   }
@@ -104,21 +104,41 @@ export default function ContentCard({
   const isImageLeft = imagePosition === 'left';
 
   return (
-    <div className="w-full rhythm-block-compact grid-container">
+    <div className={`grid-container w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
       {isImageLeft ? (
         <>
-          <div className="col-span-8 col-start-1 order-2 lg:order-1 mt-12 lg:mt-0">
-            {ImageContent}
+          <div
+            className="order-2 self-start mt-[var(--content-card-mobile-media-top-spacing)] lg:order-1 lg:mt-0"
+            style={{
+              ...mobileMediaOffsetStyle,
+              ...getGridColumnStyle(design.imageLeftMediaBounds),
+            }}
+          >
+            {imageContent}
           </div>
-          <div className="col-span-4 col-start-9 order-1 lg:order-2">
-            {TextContent}
+          <div
+            className="order-1 self-start lg:order-2"
+            style={getGridColumnStyle(design.imageLeftTextBounds)}
+          >
+            {textContent}
           </div>
         </>
       ) : (
         <>
-          <div className="col-span-4 col-start-1">{TextContent}</div>
-          <div className="col-span-8 col-start-5 mt-12 lg:mt-0">
-            {ImageContent}
+          <div
+            className="self-start"
+            style={getGridColumnStyle(design.imageRightTextBounds)}
+          >
+            {textContent}
+          </div>
+          <div
+            className="self-start mt-[var(--content-card-mobile-media-top-spacing)] lg:mt-0"
+            style={{
+              ...mobileMediaOffsetStyle,
+              ...getGridColumnStyle(design.imageRightMediaBounds),
+            }}
+          >
+            {imageContent}
           </div>
         </>
       )}

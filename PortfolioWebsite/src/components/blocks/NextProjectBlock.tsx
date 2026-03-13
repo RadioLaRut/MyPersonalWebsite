@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
@@ -12,6 +14,7 @@ interface NextProjectBlockProps {
     href?: string;
     imagePreset?: ImagePreset;
     imageFitMode?: ImageFitMode;
+    editMode?: boolean;
 }
 
 export default function NextProjectBlock({
@@ -21,6 +24,7 @@ export default function NextProjectBlock({
     href,
     imagePreset = "ratio-21-9",
     imageFitMode = "x",
+    editMode = false,
 }: NextProjectBlockProps) {
     const nextHref = href ?? `/works/${nextId}`;
     const backgroundImage = nextBg || CANONICAL_PLACEHOLDER_PATH;
@@ -29,7 +33,12 @@ export default function NextProjectBlock({
         <footer className="mt-0 border-t border-white/20 relative z-20">
             <a
                 href={nextHref}
-                className="group block relative h-[40vh] md:h-[60vh] overflow-hidden w-full interactive bg-black"
+                onClick={(event) => {
+                    if (editMode) {
+                        event.preventDefault();
+                    }
+                }}
+                className={`group block relative h-[40vh] md:h-[60vh] overflow-hidden w-full bg-black ${editMode ? "cursor-default" : "interactive"}`}
             >
                 <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 z-10 transition-colors duration-700 pointer-events-none"></div>
                 <div className="absolute inset-0 grid place-items-center">

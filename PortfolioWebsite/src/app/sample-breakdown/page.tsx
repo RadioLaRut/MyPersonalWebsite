@@ -116,7 +116,6 @@ export default function SampleBreakdownPage() {
                     <ContentCard
                         title="灯光绑定与自动曝光体验系统"
                         description="不仅是静态的美术调整，我还开发了一套蓝图工具，用于根据不同的镜头焦段和机位自动校准 Auto Exposure。\n这样可以确保在切换特写与远景时，高光不会溢出，暗部始终保持克制的细节。"
-                        tags={["蓝图", "TA", "灯光管线"]}
                         imageSrc="/images/train-station/2NoLight.webp"
                     />
                 </div>

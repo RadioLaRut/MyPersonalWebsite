@@ -65,7 +65,7 @@ export default function HomeEndcapSection({
             <Typography
               as="p"
               preset="sans-body"
-              size="body-sm"
+              size="body"
               weight="medium"
               wrapPolicy="prose"
               align="center"
@@ -78,6 +78,7 @@ export default function HomeEndcapSection({
           <div className={hasDescription ? "mt-12" : "mt-8"}>
             <Link
               href={buttonHref}
+              scroll
               onClick={(event) => {
                 if (editMode) {
                   event.preventDefault();

@@ -17,6 +17,7 @@ export interface ContactFlashlightBlockProps {
     creativeDirection?: { title: ReactNode; subtitle: ReactNode }[];
     experienceContent?: ReactNode;
     creativeContent?: ReactNode;
+    editMode?: boolean;
 }
 
 export default function ContactFlashlightBlock({
@@ -33,12 +34,18 @@ export default function ContactFlashlightBlock({
     creativeDirection = [],
     experienceContent,
     creativeContent,
+    editMode = false,
 }: ContactFlashlightBlockProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [mousePos, setMousePos] = useState({ x: "50%", y: "50%" });
     const [isTouchDevice, setIsTouchDevice] = useState(false);
 
     useEffect(() => {
+        if (editMode) {
+            setIsTouchDevice(true);
+            return;
+        }
+
         const checkTouchDevice = () => {
             const isCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
             const isSmallScreen = window.innerWidth < 1024;
@@ -48,9 +55,13 @@ export default function ContactFlashlightBlock({
         checkTouchDevice();
         window.addEventListener("resize", checkTouchDevice);
         return () => window.removeEventListener("resize", checkTouchDevice);
-    }, []);
+    }, [editMode]);
 
     useEffect(() => {
+        if (editMode) {
+            return;
+        }
+
         let lastClientX = window.innerWidth / 2;
         let lastClientY = window.innerHeight / 2;
 
@@ -87,15 +98,15 @@ export default function ContactFlashlightBlock({
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("scroll", handleScroll);
         };
-    }, [maskRadius]);
+    }, [editMode, maskRadius]);
 
     const renderContentData = () => (
         <div className="grid-container w-full rhythm-section-spacious">
             <section className="col-start-3 col-span-8 mb-24 grid rhythm-stack-3 lg:mb-32">
                 <motion.h1
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1 }}
+                    initial={editMode ? false : { opacity: 0, y: 20 }}
+                    animate={editMode ? undefined : { opacity: 1, y: 0 }}
+                    transition={editMode ? undefined : { duration: 1 }}
                     className="mix-blend-normal"
                 >
                     <Typography
@@ -110,15 +121,15 @@ export default function ContactFlashlightBlock({
                     </Typography>
                 </motion.h1>
                 <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3, duration: 1 }}
+                    initial={editMode ? false : { opacity: 0 }}
+                    animate={editMode ? undefined : { opacity: 1 }}
+                    transition={editMode ? undefined : { delay: 0.3, duration: 1 }}
                     className="max-w-2xl text-left mix-blend-normal"
                 >
                     <Typography
                         as="p"
                         preset="sans-body"
-                        size="body-lg"
+                        size="body"
                         weight="strong"
                         wrapPolicy="prose"
                         className="text-inherit"
@@ -140,9 +151,9 @@ export default function ContactFlashlightBlock({
             </section>
 
             <motion.section
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6, duration: 1 }}
+                initial={editMode ? false : { opacity: 0 }}
+                animate={editMode ? undefined : { opacity: 1 }}
+                transition={editMode ? undefined : { delay: 0.6, duration: 1 }}
                 className="col-start-4 col-span-8 grid grid-cols-1 gap-16 border-t border-current text-left rhythm-divider-top lg:grid-cols-2"
             >
                 <div className="rhythm-stack-4">
@@ -233,9 +244,9 @@ export default function ContactFlashlightBlock({
             </motion.section>
 
             <motion.section
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.9, duration: 1 }}
+                initial={editMode ? false : { opacity: 0 }}
+                animate={editMode ? undefined : { opacity: 1 }}
+                transition={editMode ? undefined : { delay: 0.9, duration: 1 }}
                 className="col-start-4 col-span-8 mt-24 grid grid-cols-1 items-start gap-12 border-t border-current text-left rhythm-divider-top lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-20"
             >
                 <div className="rhythm-stack-3">
@@ -290,6 +301,15 @@ export default function ContactFlashlightBlock({
     return (
         <div className="relative w-full overflow-hidden selection:bg-white selection:text-black">
             <div ref={containerRef} className="relative w-full mx-auto pb-16">
+                {editMode ? (
+                    <div
+                        className="z-10 transition-colors duration-300"
+                        style={{ color: lightTextColor }}
+                    >
+                        {renderContentData()}
+                    </div>
+                ) : (
+                    <>
                 {/* Base Layer (Dark Text) */}
                 <div
                     className="z-10 transition-colors duration-300"
@@ -316,6 +336,8 @@ export default function ContactFlashlightBlock({
                 >
                     {renderContentData()}
                 </div>
+                    </>
+                )}
             </div>
         </div>
     );

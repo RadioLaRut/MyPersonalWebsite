@@ -3,9 +3,12 @@
 import { type ComponentProps, type ReactNode, useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { Puck, type Data } from "@measured/puck";
 import "@measured/puck/puck.css";
-import { MotionConfig } from "framer-motion";
 import { useRouter } from "next/navigation";
 
+import ComponentDesignProvider, { useComponentDesignDocument } from "@/components/layout/ComponentDesignProvider";
+import { FONT_LAB_UPDATED_EVENT } from "@/components/layout/FontLabGlobalVars";
+import { buildFontLabDocumentCssVars, type FontLabCssVars } from "@/lib/font-lab-css-vars";
+import { parseFontLabDocument } from "@/lib/font-lab-config-schema";
 import config from "@/puck/config";
 import { toAdminPathFromSlugKey, toPublicPathFromSlugKey } from "@/lib/public-paths";
 import { ChineseTextInputField } from "@/puck/fields/ChineseTextField";
@@ -50,10 +53,6 @@ type PuckEditorClientProps = {
   initialSlug: string;
 };
 
-type HeaderActionsOverrideProps = {
-  children: ReactNode;
-};
-
 type HeaderOverrideProps = {
   children: ReactNode;
   actions?: ReactNode;
@@ -63,6 +62,140 @@ type SidebarTextFieldProps = {
   children?: ReactNode;
 } & ComponentProps<typeof ChineseTextInputField>;
 
+type FontLabApiPayload = {
+  config?: unknown;
+  error?: {
+    code?: string;
+    message?: string;
+  };
+};
+
+type FontLabSyncState = "idle" | "synced" | "error";
+
+const PREVIEW_FONT_VARIABLES = [
+  "--font-futura",
+  "--font-han-yi-qi-hei",
+  "--font-luna",
+  "--font-gothic",
+  "--font-dm-serif",
+  "--font-noto-serif",
+  "--font-latin-sans",
+  "--font-cjk-sans",
+  "--font-latin-editorial",
+  "--font-cjk-editorial",
+  "--font-latin-gothic",
+  "--font-latin-classical",
+  "--font-cjk-classical",
+] as const;
+
+const PREVIEW_CLONED_HEAD_ATTR = "data-puck-preview-font-clone";
+
+function isRelevantPreviewHeadNode(node: Element) {
+  if (node instanceof HTMLLinkElement) {
+    return (
+      node.rel === "stylesheet" &&
+      node.href.includes("/_next/static/css/")
+    );
+  }
+
+  if (!(node instanceof HTMLStyleElement)) {
+    return false;
+  }
+
+  const content = node.textContent ?? "";
+
+  return (
+    content.includes("@font-face") ||
+    content.includes("--font-") ||
+    content.includes(".__variable_")
+  );
+}
+
+function syncPreviewHeadNodes(frameDocument: Document) {
+  const parentHeadNodes = Array.from(document.head.children).filter(isRelevantPreviewHeadNode);
+  const frameHead = frameDocument.head;
+
+  frameHead.querySelectorAll(`[${PREVIEW_CLONED_HEAD_ATTR}]`).forEach((node) => node.remove());
+
+  parentHeadNodes.forEach((node) => {
+    const clone = node.cloneNode(true);
+
+    if (!(clone instanceof Element)) {
+      return;
+    }
+
+    clone.setAttribute(PREVIEW_CLONED_HEAD_ATTR, "true");
+    frameHead.appendChild(clone);
+  });
+}
+
+function applyPreviewCssVars(
+  target: HTMLElement,
+  nextVars: Record<string, string>,
+  previousKeys: Set<string>,
+) {
+  previousKeys.forEach((key) => {
+    if (!(key in nextVars)) {
+      target.style.removeProperty(key);
+    }
+  });
+
+  Object.entries(nextVars).forEach(([key, value]) => {
+    target.style.setProperty(key, value);
+  });
+
+  previousKeys.clear();
+  Object.keys(nextVars).forEach((key) => previousKeys.add(key));
+}
+
+function collectParentPreviewVars() {
+  const nextVars: FontLabCssVars = {};
+  const rootStyle = document.documentElement.style;
+  const bodyComputedStyle = window.getComputedStyle(document.body);
+
+  for (let index = 0; index < rootStyle.length; index += 1) {
+    const propertyName = rootStyle.item(index);
+
+    if (!propertyName.startsWith("--typography-")) {
+      continue;
+    }
+
+    const propertyValue = rootStyle.getPropertyValue(propertyName).trim();
+    if (propertyValue) {
+      nextVars[propertyName] = propertyValue;
+    }
+  }
+
+  PREVIEW_FONT_VARIABLES.forEach((propertyName) => {
+    const propertyValue = bodyComputedStyle.getPropertyValue(propertyName).trim();
+    if (propertyValue) {
+      nextVars[propertyName] = propertyValue;
+    }
+  });
+
+  return nextVars;
+}
+
+async function readLatestFontLabPreviewVars(signal?: AbortSignal) {
+  const response = await fetch("/api/font-lab", {
+    cache: "no-store",
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to load Font Lab config");
+  }
+
+  const payload = (await response.json()) as FontLabApiPayload;
+  const fontLabDocument = parseFontLabDocument(payload.config);
+
+  if (!fontLabDocument) {
+    return null;
+  }
+
+  return buildFontLabDocumentCssVars(fontLabDocument);
+}
+
 function IframePreviewChrome({
   children,
   document: frameDocument,
@@ -70,21 +203,93 @@ function IframePreviewChrome({
   children: ReactNode;
   document?: Document;
 }) {
+  const appliedVarKeysRef = useRef<Set<string>>(new Set());
+
   useEffect(() => {
     if (!frameDocument) {
       return;
     }
 
+    const appliedVarKeys = appliedVarKeysRef.current;
     const htmlElement = frameDocument.documentElement;
     const bodyElement = frameDocument.body;
+    const abortController = new AbortController();
     const previousHtmlOverflow = htmlElement.style.overflow;
     const previousHtmlHeight = htmlElement.style.height;
     const previousHtmlOverscrollBehavior = htmlElement.style.overscrollBehavior;
     const previousBodyOverflow = bodyElement.style.overflow;
     const previousBodyHeight = bodyElement.style.height;
     const previousBodyOverscrollBehavior = bodyElement.style.overscrollBehavior;
+    const previousBodyClassName = bodyElement.className;
+    const previousHtmlClassName = htmlElement.className;
     const previousAdminMode = htmlElement.getAttribute("data-admin-mode");
     const previousAdminRoot = htmlElement.getAttribute("data-admin-root");
+    const previousSiteMode = htmlElement.getAttribute("data-site-mode");
+    const previousLang = htmlElement.lang;
+
+    let effectActive = true;
+    let latestRefreshToken = 0;
+
+    const syncPreviewEnvironment = (overrideVars?: FontLabCssVars | null) => {
+      syncPreviewHeadNodes(frameDocument);
+
+      const nextVars = {
+        ...collectParentPreviewVars(),
+        ...(overrideVars ?? {}),
+      };
+      applyPreviewCssVars(htmlElement, nextVars, appliedVarKeys);
+      htmlElement.className = document.documentElement.className;
+      bodyElement.className = document.body.className;
+
+      const parentSiteMode = document.documentElement.getAttribute("data-site-mode");
+      if (parentSiteMode === null) {
+        htmlElement.removeAttribute("data-site-mode");
+      } else {
+        htmlElement.setAttribute("data-site-mode", parentSiteMode);
+      }
+
+      htmlElement.lang = document.documentElement.lang || "zh-CN";
+    };
+
+    const refreshPreviewEnvironment = async (overrideVars?: FontLabCssVars | null) => {
+      syncPreviewEnvironment(overrideVars);
+
+      const refreshToken = latestRefreshToken + 1;
+      latestRefreshToken = refreshToken;
+
+      try {
+        const latestVars = await readLatestFontLabPreviewVars(abortController.signal);
+
+        if (!effectActive || refreshToken !== latestRefreshToken || !latestVars) {
+          return;
+        }
+
+        syncPreviewEnvironment(latestVars);
+      } catch (error) {
+        if ((error as DOMException).name === "AbortError") {
+          return;
+        }
+      }
+    };
+
+    const handleFontLabUpdate = (event: Event) => {
+      const detail = (event as CustomEvent<FontLabCssVars | null>).detail;
+      void refreshPreviewEnvironment(
+        detail && typeof detail === "object" ? detail : null,
+      );
+    };
+
+    const handleWindowFocus = () => {
+      void refreshPreviewEnvironment();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState !== "visible") {
+        return;
+      }
+
+      void refreshPreviewEnvironment();
+    };
 
     htmlElement.setAttribute("data-admin-mode", "true");
     htmlElement.removeAttribute("data-admin-root");
@@ -94,8 +299,18 @@ function IframePreviewChrome({
     bodyElement.style.overflow = "";
     bodyElement.style.height = "";
     bodyElement.style.overscrollBehavior = "";
+    void refreshPreviewEnvironment();
+    window.addEventListener(FONT_LAB_UPDATED_EVENT, handleFontLabUpdate as EventListener);
+    window.addEventListener("focus", handleWindowFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
+      effectActive = false;
+      abortController.abort();
+      window.removeEventListener(FONT_LAB_UPDATED_EVENT, handleFontLabUpdate as EventListener);
+      window.removeEventListener("focus", handleWindowFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+
       if (previousAdminMode === null) {
         htmlElement.removeAttribute("data-admin-mode");
       } else {
@@ -108,12 +323,23 @@ function IframePreviewChrome({
         htmlElement.setAttribute("data-admin-root", previousAdminRoot);
       }
 
+      if (previousSiteMode === null) {
+        htmlElement.removeAttribute("data-site-mode");
+      } else {
+        htmlElement.setAttribute("data-site-mode", previousSiteMode);
+      }
+
+      htmlElement.lang = previousLang;
       htmlElement.style.overflow = previousHtmlOverflow;
       htmlElement.style.height = previousHtmlHeight;
       htmlElement.style.overscrollBehavior = previousHtmlOverscrollBehavior;
+      htmlElement.className = previousHtmlClassName;
       bodyElement.style.overflow = previousBodyOverflow;
       bodyElement.style.height = previousBodyHeight;
       bodyElement.style.overscrollBehavior = previousBodyOverscrollBehavior;
+      bodyElement.className = previousBodyClassName;
+      frameDocument.head.querySelectorAll(`[${PREVIEW_CLONED_HEAD_ATTR}]`).forEach((node) => node.remove());
+      applyPreviewCssVars(htmlElement, {}, appliedVarKeys);
     };
   }, [frameDocument]);
 
@@ -175,36 +401,13 @@ function toSlugKeyFromPathInput(rawValue: string) {
     .join("/");
 }
 
-function PreviewEffectsToggle({
-  enabled,
-  onToggle,
-}: {
-  enabled: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      className={`rounded-md border px-3 py-1.5 text-[10px] font-mono font-semibold tracking-[0.16em] transition-colors ${enabled
-        ? "border-white/20 bg-white/10 text-white hover:bg-white/20"
-        : "border-white/10 bg-transparent text-textMuted hover:text-textPrimary"
-        }`}
-      title="Toggle preview effects and custom cursor"
-    >
-      {enabled ? "EFFECTS ON" : "EFFECTS OFF"}
-    </button>
-  );
-}
-
-function HeaderActionsWithModeToggle({
+function HeaderActionsWithOpenPage({
   children,
-  previewEffectsEnabled,
-  onTogglePreviewEffects,
+  onOpenComponentLab,
   onOpenPublicPage,
-}: HeaderActionsOverrideProps & {
-  previewEffectsEnabled: boolean;
-  onTogglePreviewEffects: () => void;
+}: {
+  children: ReactNode;
+  onOpenComponentLab: () => void;
   onOpenPublicPage: () => void;
 }) {
   return (
@@ -212,12 +415,18 @@ function HeaderActionsWithModeToggle({
       {children}
       <button
         type="button"
+        onClick={onOpenComponentLab}
+        className="rounded-sm border border-slate-200 bg-white px-3 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-950"
+      >
+        COMPONENT LAB
+      </button>
+      <button
+        type="button"
         onClick={onOpenPublicPage}
         className="rounded-sm border border-slate-200 bg-white px-3 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-950"
       >
         OPEN PAGE
       </button>
-      <PreviewEffectsToggle enabled={previewEffectsEnabled} onToggle={onTogglePreviewEffects} />
     </div>
   );
 }
@@ -334,6 +543,7 @@ function EditorHeaderChrome({
   availablePublicPaths,
   newPageInputValue,
   isSwitchingPage,
+  fontLabSyncState,
   onSelectPagePath,
   onNewPageInputValueChange,
   onCreatePage,
@@ -342,6 +552,7 @@ function EditorHeaderChrome({
   availablePublicPaths: string[];
   newPageInputValue: string;
   isSwitchingPage: boolean;
+  fontLabSyncState: FontLabSyncState;
   onSelectPagePath: (nextPath: string) => void;
   onNewPageInputValueChange: (value: string) => void;
   onCreatePage: () => void;
@@ -386,8 +597,15 @@ function EditorHeaderChrome({
             </button>
           </div>
         </div>
-
-
+        <div className="flex items-center">
+          <span
+            className={`font-mono text-[10px] uppercase tracking-[0.2em] ${
+              fontLabSyncState === "error" ? "text-amber-600" : "text-slate-400"
+            }`}
+          >
+            {fontLabSyncState === "error" ? "FontLab Sync Failed" : "FontLab Synced"}
+          </span>
+        </div>
       </div>
 
       {children}
@@ -396,6 +614,7 @@ function EditorHeaderChrome({
 }
 
 export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps) {
+  const componentDesignDocument = useComponentDesignDocument();
   const router = useRouter();
   const [data, setData] = useState<Data>(initialData);
   const [pageSlugs, setPageSlugs] = useState<string[]>([]);
@@ -403,9 +622,9 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
   const [publishState, setPublishState] = useState<"idle" | "publishing" | "published" | "error">("idle");
   const [selectedPagePath, setSelectedPagePath] = useState("/");
   const [newPageInputValue, setNewPageInputValue] = useState("");
-  const [previewEffectsEnabled, setPreviewEffectsEnabled] = useState(true);
   const [isSwitchingPage, startPageSwitchTransition] = useTransition();
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [fontLabSyncState, setFontLabSyncState] = useState<FontLabSyncState>("idle");
   const currentDataRef = useRef<Data>(initialData);
   const slugValue = slugQueryValue(initialSlug);
   const headerPath = slugValue ? `/${slugValue}` : "/";
@@ -444,6 +663,10 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
     window.open(publicPath, "_blank");
   }, [publicPath]);
 
+  const openComponentLab = useCallback(() => {
+    window.open("/playground/component-lab", "_blank");
+  }, []);
+
   useEffect(() => {
     for (const slug of availablePages) {
       router.prefetch(toAdminPath(slug));
@@ -462,6 +685,59 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [hasUnsavedChanges]);
+
+  useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+
+    const syncFontLabToEditor = async () => {
+      try {
+        const latestVars = await readLatestFontLabPreviewVars(controller.signal);
+
+        if (!active || !latestVars) {
+          return;
+        }
+
+        window.dispatchEvent(
+          new CustomEvent(FONT_LAB_UPDATED_EVENT, {
+            detail: latestVars,
+          }),
+        );
+        setFontLabSyncState("synced");
+      } catch (error) {
+        if ((error as DOMException).name === "AbortError") {
+          return;
+        }
+
+        if (active) {
+          setFontLabSyncState("error");
+        }
+      }
+    };
+
+    const handleWindowFocus = () => {
+      void syncFontLabToEditor();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState !== "visible") {
+        return;
+      }
+
+      void syncFontLabToEditor();
+    };
+
+    void syncFontLabToEditor();
+    window.addEventListener("focus", handleWindowFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      active = false;
+      controller.abort();
+      window.removeEventListener("focus", handleWindowFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -563,6 +839,7 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
         availablePublicPaths={availablePublicPaths}
         newPageInputValue={newPageInputValue}
         isSwitchingPage={isSwitchingPage}
+        fontLabSyncState={fontLabSyncState}
         onSelectPagePath={(nextPath) => {
           setSelectedPagePath(nextPath);
           if (nextPath !== headerPath) {
@@ -573,16 +850,22 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
         onCreatePage={() => openAdminPath(newPageInputValue)}
       />
     ),
-    headerActions: (props: HeaderActionsOverrideProps) => (
-      <HeaderActionsWithModeToggle
+    headerActions: (props: { children: ReactNode }) => (
+      <HeaderActionsWithOpenPage
         {...props}
-        previewEffectsEnabled={previewEffectsEnabled}
+        onOpenComponentLab={openComponentLab}
         onOpenPublicPage={openPublicPage}
-        onTogglePreviewEffects={() => setPreviewEffectsEnabled((current) => !current)}
       />
     ),
     iframe: ({ children, document: frameDocument }: { children: ReactNode; document?: Document }) => (
-      <IframePreviewChrome document={frameDocument}>{children}</IframePreviewChrome>
+      <IframePreviewChrome document={frameDocument}>
+        <ComponentDesignProvider
+          initialDocument={componentDesignDocument}
+          listenToGlobalUpdates={false}
+        >
+          {children}
+        </ComponentDesignProvider>
+      </IframePreviewChrome>
     ),
     fieldTypes: {
       text: (props: SidebarTextFieldProps) => (
@@ -662,30 +945,28 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
             </div>
           </div>
         ) : (
-          <MotionConfig reducedMotion={previewEffectsEnabled ? "never" : "always"}>
-            <Puck
-              key={initialSlug}
-              config={config}
-              data={data}
-              headerTitle="Puck Local Editor"
-              headerPath={headerPath}
-              iframe={{ enabled: true, waitForStyles: true }}
-              viewports={[
-                { width: 390, height: 844, icon: "Smartphone", label: "Mobile" },
-                { width: 820, height: 1180, icon: "Tablet", label: "Tablet" },
-                { width: 1280, height: 720, icon: "Monitor", label: "Desktop" },
-              ]}
-              onChange={(nextData) => {
-                currentDataRef.current = nextData;
-                setHasUnsavedChanges(true);
-                if (publishState === "published") {
-                  setPublishState("idle");
-                }
-              }}
-              onPublish={handlePublish}
-              overrides={overrides}
-            />
-          </MotionConfig>
+          <Puck
+            key={initialSlug}
+            config={config}
+            data={data}
+            headerTitle="Puck Local Editor"
+            headerPath={headerPath}
+            iframe={{ enabled: true, waitForStyles: true }}
+            viewports={[
+              { width: 390, height: 844, icon: "Smartphone", label: "Mobile" },
+              { width: 820, height: 1180, icon: "Tablet", label: "Tablet" },
+              { width: 1280, height: 720, icon: "Monitor", label: "Desktop" },
+            ]}
+            onChange={(nextData) => {
+              currentDataRef.current = nextData;
+              setHasUnsavedChanges(true);
+              if (publishState === "published") {
+                setPublishState("idle");
+              }
+            }}
+            onPublish={handlePublish}
+            overrides={overrides}
+          />
         )}
       </div>
     </main>

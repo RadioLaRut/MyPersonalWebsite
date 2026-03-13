@@ -1,0 +1,101 @@
+{
+  "components": {
+    "ContentCard": {
+      "bodyAutoWrap": true,
+      "bodySize": "body",
+      "imageLeftMediaBounds": {
+        "leftCol": 1,
+        "rightCol": 8
+      },
+      "imageLeftTextBounds": {
+        "leftCol": 9,
+        "rightCol": 12
+      },
+      "imageRightMediaBounds": {
+        "leftCol": 5,
+        "rightCol": 12
+      },
+      "imageRightTextBounds": {
+        "leftCol": 1,
+        "rightCol": 4
+      },
+      "mobileMediaTopSpacing": "48",
+      "paragraphGap": "20",
+      "sectionSpacing": "block-compact",
+      "textOnlyBounds": {
+        "leftCol": 3,
+        "rightCol": 10
+      },
+      "titleAutoWrap": true,
+      "titleBodyGap": "32",
+      "titleSize": "title"
+    },
+    "HighDensityInfoBlock": {
+      "bodyAutoWrap": true,
+      "bodySize": "body",
+      "imageTopSpacing": "24",
+      "itemsTopSpacing": "32",
+      "leftBounds": {
+        "leftCol": 1,
+        "rightCol": 3
+      },
+      "middleBounds": {
+        "leftCol": 4,
+        "rightCol": 7
+      },
+      "phaseTitleGap": "16",
+      "rightBounds": {
+        "leftCol": 8,
+        "rightCol": 12
+      },
+      "sectionSpacing": "block",
+      "subtitleAutoWrap": true,
+      "subtitleGap": "24",
+      "titleAutoWrap": true,
+      "titleBodyGap": "32",
+      "titleSize": "title-sm"
+    },
+    "RichParagraph": {
+      "bodyAutoWrap": true,
+      "bodySize": "body",
+      "contentBounds": {
+        "leftCol": 3,
+        "rightCol": 10
+      },
+      "sectionSpacing": "section-spacious"
+    },
+    "TextSplitLayout": {
+      "bodyAutoWrap": true,
+      "bodySize": "body",
+      "headingAutoWrap": true,
+      "headingImageGap": "32",
+      "paragraphGap": "56",
+      "sectionSpacing": "block",
+      "splitHeadingSize": "title",
+      "splitLeftHeadingBounds": {
+        "leftCol": 1,
+        "rightCol": 5
+      },
+      "splitLeftTextBounds": {
+        "leftCol": 6,
+        "rightCol": 12
+      },
+      "splitRightHeadingBounds": {
+        "leftCol": 6,
+        "rightCol": 12
+      },
+      "splitRightTextBounds": {
+        "leftCol": 1,
+        "rightCol": 5
+      },
+      "stackBounds": {
+        "leftCol": 3,
+        "rightCol": 10
+      },
+      "stackHeadingSize": "display",
+      "stackImageTopSpacing": "64",
+      "stackTextTopSpacing": "48"
+    }
+  },
+  "version": 1
+}

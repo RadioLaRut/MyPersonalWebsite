@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   useEffect,
@@ -520,7 +519,7 @@ function ToggleField({
       <Typography
         as="span"
         preset="sans-body"
-        size="body-sm"
+        size="body"
         weight="regular"
         wrapPolicy="prose"
         className="text-textPrimary"
@@ -697,7 +696,7 @@ function ControlBlock({
         <Typography
           as="p"
           preset="sans-body"
-          size="body-sm"
+          size="body"
           weight="regular"
           wrapPolicy="prose"
           className="mb-4 text-textMuted"
@@ -705,6 +704,46 @@ function ControlBlock({
           {description}
         </Typography>
       ) : null}
+      <div className="space-y-3">{children}</div>
+    </section>
+  );
+}
+
+function ControlSubsection({
+  children,
+  title,
+  description,
+}: {
+  children: ReactNode;
+  title: string;
+  description?: string;
+}) {
+  return (
+    <section className="space-y-4 border border-white/8 bg-black/20 p-4">
+      <div className="space-y-2">
+        <Typography
+          as="h3"
+          preset="sans-body"
+          size="caption"
+          weight="medium"
+          wrapPolicy="label"
+          className="text-textMuted"
+        >
+          {title}
+        </Typography>
+        {description ? (
+          <Typography
+            as="p"
+            preset="sans-body"
+            size="body"
+            weight="regular"
+            wrapPolicy="prose"
+            className="text-textMuted"
+          >
+            {description}
+          </Typography>
+        ) : null}
+      </div>
       <div className="space-y-3">{children}</div>
     </section>
   );
@@ -802,7 +841,7 @@ function UnsupportedCase({ message }: { message: string }) {
       <Typography
         as="p"
         preset="sans-body"
-        size="body-sm"
+        size="body"
         weight="regular"
         wrapPolicy="prose"
         className="text-textMuted"
@@ -885,9 +924,15 @@ export default function FontLabClient() {
     [fontDocument, savedDocument],
   );
 
+  const navigateToPlayground = () => {
+    document.documentElement.removeAttribute("data-font-lab-mode");
+    window.location.assign("/playground");
+  };
+
   useEffect(() => {
     const htmlElement = document.documentElement;
     htmlElement.setAttribute("data-font-lab-mode", "true");
+    void router.prefetch("/playground");
 
     let active = true;
 
@@ -934,7 +979,7 @@ export default function FontLabClient() {
       active = false;
       htmlElement.removeAttribute("data-font-lab-mode");
     };
-  }, []);
+  }, [router]);
 
   const handleSave = async () => {
     setStatusMessage("正在保存当前字体模板...");
@@ -1057,14 +1102,18 @@ export default function FontLabClient() {
                   Font Lab
                 </Typography>
               </div>
-              <Link href="/playground" className="transition-colors hover:text-white">
+              <button
+                type="button"
+                onClick={navigateToPlayground}
+                className="transition-colors hover:text-white"
+              >
                 <ActionText>返回 Playground</ActionText>
-              </Link>
+              </button>
             </div>
             <Typography
               as="p"
               preset="sans-body"
-              size="body-sm"
+              size="body"
               weight="regular"
               wrapPolicy="prose"
               className="mt-4 text-textMuted"
@@ -1100,193 +1149,215 @@ export default function FontLabClient() {
             title="字体模板"
             description="这里保存模板级与字号级微调。中英字重偏差只在模板层生效；每个字号档位单独保存自己的语义字重、基线、字距与边缘对齐。"
           >
-            <label className="block">
-              <FieldLabel>字体模板</FieldLabel>
-              <select
-                value={activePreset}
-                onChange={(event) =>
-                  setFontDocument((current) =>
-                    updateFontLabSelection(
-                      current,
-                      event.target.value as TypographyPreset,
-                      current.activeSize,
-                    ),
-                  )
-                }
-                className="w-full border border-white/10 bg-black px-3 py-3"
+            <div className="space-y-4">
+              <ControlSubsection
+                title="当前编辑目标"
+                description="先锁定模板与字号，再决定当前字号映射到哪一档语义字重。"
               >
-                {TYPOGRAPHY_PRESETS.map((preset) => (
-                  <option key={preset} value={preset}>
-                    {formatPresetLabel(preset, fontDocument.presets[preset].labelZh)}
-                  </option>
-                ))}
-              </select>
-            </label>
+                <label className="block">
+                  <FieldLabel>字体模板</FieldLabel>
+                  <select
+                    value={activePreset}
+                    onChange={(event) =>
+                      setFontDocument((current) =>
+                        updateFontLabSelection(
+                          current,
+                          event.target.value as TypographyPreset,
+                          current.activeSize,
+                        ),
+                      )
+                    }
+                    className="w-full border border-white/10 bg-black px-3 py-3"
+                  >
+                    {TYPOGRAPHY_PRESETS.map((preset) => (
+                      <option key={preset} value={preset}>
+                        {formatPresetLabel(preset, fontDocument.presets[preset].labelZh)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
 
-            <label className="block">
-              <FieldLabel>字号档位</FieldLabel>
-              <select
-                value={activeSize}
-                onChange={(event) =>
-                  setFontDocument((current) =>
-                    updateFontLabSelection(
-                      current,
-                      current.activePreset,
-                      event.target.value as TypographySize,
-                    ),
-                  )
-                }
-                className="w-full border border-white/10 bg-black px-3 py-3"
+                <div className="grid gap-3 md:grid-cols-2">
+                  <label className="block">
+                    <FieldLabel>字号档位</FieldLabel>
+                    <select
+                      value={activeSize}
+                      onChange={(event) =>
+                        setFontDocument((current) =>
+                          updateFontLabSelection(
+                            current,
+                            current.activePreset,
+                            event.target.value as TypographySize,
+                          ),
+                        )
+                      }
+                      className="w-full border border-white/10 bg-black px-3 py-3"
+                    >
+                      {fontLabSizes.map((size) => (
+                        <option key={size} value={size}>
+                          {formatSizeLabel(size)}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label className="block">
+                    <FieldLabel>当前字号语义字重</FieldLabel>
+                    <select
+                      value={activeSemanticWeight}
+                      onChange={(event) =>
+                        updateCurrentSizeConfig({
+                          semanticWeight: event.target.value as TypographyWeight,
+                        })
+                      }
+                      className="w-full border border-white/10 bg-black px-3 py-3"
+                    >
+                      {TYPOGRAPHY_WEIGHTS.map((weight) => (
+                        <option key={weight} value={weight}>
+                          {formatWeightLabel(weight)}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+              </ControlSubsection>
+
+              <ControlSubsection
+                title="模板级变量"
+                description="这组值会作用到当前模板的全部字号，用来统一中英粗细关系和英文视觉体量。"
               >
-                {fontLabSizes.map((size) => (
-                  <option key={size} value={size}>
-                    {formatSizeLabel(size)}
-                  </option>
-                ))}
-              </select>
-            </label>
+                <label className="block">
+                  <FieldLabel>中英字重偏差</FieldLabel>
+                  <select
+                    value={activePresetConfig.latinWeightOffsetSteps}
+                    onChange={(event) =>
+                      setFontDocument((current) =>
+                        updateFontLabPresetWeightOffset(
+                          current,
+                          current.activePreset,
+                          clampTypographyLatinWeightOffsetSteps(
+                            current.activePreset,
+                            Number(event.target.value),
+                          ),
+                        ),
+                      )
+                    }
+                    className="w-full border border-white/10 bg-black px-3 py-3"
+                  >
+                    {latinWeightOffsetOptions.map((offset) => (
+                      <option key={offset} value={offset}>
+                        {formatLatinWeightOffsetLabel(offset)}
+                      </option>
+                    ))}
+                  </select>
+                  <Typography
+                    as="span"
+                    preset="sans-body"
+                    size="caption"
+                    weight="medium"
+                    wrapPolicy="prose"
+                    className="mt-2 block text-textMuted"
+                  >
+                    {`该模板当前提供 ${presetToken.availableWeights.latin.length} 档英文可用字重；偏差会统一作用到全部语义字重槽位。`}
+                  </Typography>
+                </label>
 
-            <label className="block">
-              <FieldLabel>当前字号语义字重</FieldLabel>
-              <select
-                value={activeSemanticWeight}
-                onChange={(event) =>
-                  updateCurrentSizeConfig({
-                    semanticWeight: event.target.value as TypographyWeight,
-                  })
-                }
-                className="w-full border border-white/10 bg-black px-3 py-3"
-              >
-                {TYPOGRAPHY_WEIGHTS.map((weight) => (
-                  <option key={weight} value={weight}>
-                    {formatWeightLabel(weight)}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="block">
-              <FieldLabel>中英字重偏差</FieldLabel>
-              <select
-                value={activePresetConfig.latinWeightOffsetSteps}
-                onChange={(event) =>
-                  setFontDocument((current) =>
-                    updateFontLabPresetWeightOffset(
-                      current,
-                      current.activePreset,
-                      clampTypographyLatinWeightOffsetSteps(
+                <NumberField
+                  label="英文字体缩放"
+                  step="0.01"
+                  value={activePresetConfig.latinFontScale}
+                  onCommit={(latinFontScale) =>
+                    setFontDocument((current) =>
+                      updateFontLabPresetLatinFontScale(
+                        current,
                         current.activePreset,
-                        Number(event.target.value),
+                        latinFontScale,
                       ),
-                    ),
-                  )
-                }
-                className="w-full border border-white/10 bg-black px-3 py-3"
+                    )
+                  }
+                  helperText="默认 1。小于 1 缩小英文，大于 1 放大英文；作用于当前模板的全部字号。"
+                />
+              </ControlSubsection>
+
+              <ControlSubsection
+                title="字号级节奏"
+                description="这组变量只影响当前字号，用来稳定段落密度、行高和中英同排时的基线关系。"
               >
-                {latinWeightOffsetOptions.map((offset) => (
-                  <option key={offset} value={offset}>
-                    {formatLatinWeightOffsetLabel(offset)}
-                  </option>
-                ))}
-              </select>
-              <Typography
-                as="span"
-                preset="sans-body"
-                size="caption"
-                weight="medium"
-                wrapPolicy="prose"
-                className="mt-2 block text-textMuted"
+                <div className="grid gap-3 md:grid-cols-2">
+                  <FontSizeField
+                    label="字号"
+                    value={activeSizeConfig.fontSize}
+                    onCommit={(fontSize) => updateCurrentSizeConfig({ fontSize })}
+                  />
+
+                  <NumberField
+                    label="行高"
+                    value={activeSizeConfig.lineHeight}
+                    onCommit={(lineHeight) => updateCurrentSizeConfig({ lineHeight })}
+                  />
+                </div>
+
+                <NumberField
+                  label="英文相对基线偏移"
+                  value={activeSizeConfig.latinRelativeOffset}
+                  onCommit={(latinRelativeOffset) =>
+                    updateCurrentSizeConfig({ latinRelativeOffset })
+                  }
+                />
+              </ControlSubsection>
+
+              <ControlSubsection
+                title="边缘与字距"
+                description="把中文锚点、左右锁边和中英字距放在同一组里，便于一轮调完整个版面边缘。"
               >
-                {`该模板当前提供 ${presetToken.availableWeights.latin.length} 档英文可用字重；偏差会统一作用到全部语义字重槽位。`}
-              </Typography>
-            </label>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <NumberField
+                    label="中文基准校正（高级）"
+                    value={activeSizeConfig.cjkVerticalOffset}
+                    onCommit={(cjkVerticalOffset) =>
+                      updateCurrentSizeConfig({ cjkVerticalOffset })
+                    }
+                    helperText="常规保持 0。改这个值会连同参考线一起移动整行中文锚点。"
+                  />
 
-            <div className="grid gap-3 md:grid-cols-2">
-              <NumberField
-                label="英文字体缩放"
-                step="0.01"
-                value={activePresetConfig.latinFontScale}
-                onCommit={(latinFontScale) =>
-                  setFontDocument((current) =>
-                    updateFontLabPresetLatinFontScale(
-                      current,
-                      current.activePreset,
-                      latinFontScale,
-                    ),
-                  )
-                }
-                helperText="默认 1。小于 1 缩小英文，大于 1 放大英文；作用于当前模板的全部字号。"
-              />
+                  <NumberField
+                    label="中文边缘对齐"
+                    value={activeSizeConfig.cjkEdgeOffset}
+                    onCommit={(cjkEdgeOffset) =>
+                      updateCurrentSizeConfig({ cjkEdgeOffset })
+                    }
+                    helperText="负值向左，正值向右。用于修正中文文本块锁边后的实际落点。"
+                  />
+                </div>
 
-              <NumberField
-                label="英文相对基线偏移"
-                value={activeSizeConfig.latinRelativeOffset}
-                onCommit={(latinRelativeOffset) =>
-                  updateCurrentSizeConfig({ latinRelativeOffset })
-                }
-              />
+                <div className="grid gap-3 md:grid-cols-2">
+                  <NumberField
+                    label="英文边缘对齐"
+                    value={activeSizeConfig.latinEdgeOffset}
+                    onCommit={(latinEdgeOffset) =>
+                      updateCurrentSizeConfig({ latinEdgeOffset })
+                    }
+                    helperText="负值向左，正值向右。用于修正英文文本块锁边后的实际落点。"
+                  />
+
+                  <NumberField
+                    label="中文字距"
+                    value={activeSizeConfig.cjkLetterSpacing}
+                    onCommit={(cjkLetterSpacing) =>
+                      updateCurrentSizeConfig({ cjkLetterSpacing })
+                    }
+                  />
+                </div>
+
+                <NumberField
+                  label="英文字距"
+                  value={activeSizeConfig.latinLetterSpacing}
+                  onCommit={(latinLetterSpacing) =>
+                    updateCurrentSizeConfig({ latinLetterSpacing })
+                  }
+                />
+              </ControlSubsection>
             </div>
-
-            <div className="grid gap-3 md:grid-cols-2">
-              <FontSizeField
-                label="字号"
-                value={activeSizeConfig.fontSize}
-                onCommit={(fontSize) => updateCurrentSizeConfig({ fontSize })}
-              />
-
-              <NumberField
-                label="行高"
-                value={activeSizeConfig.lineHeight}
-                onCommit={(lineHeight) => updateCurrentSizeConfig({ lineHeight })}
-              />
-            </div>
-
-            <div className="grid gap-3 md:grid-cols-2">
-              <NumberField
-                label="中文基准校正（高级）"
-                value={activeSizeConfig.cjkVerticalOffset}
-                onCommit={(cjkVerticalOffset) =>
-                  updateCurrentSizeConfig({ cjkVerticalOffset })
-                }
-                helperText="常规保持 0。改这个值会连同参考线一起移动整行中文锚点。"
-              />
-
-              <NumberField
-                label="中文边缘对齐"
-                value={activeSizeConfig.cjkEdgeOffset}
-                onCommit={(cjkEdgeOffset) =>
-                  updateCurrentSizeConfig({ cjkEdgeOffset })
-                }
-                helperText="负值向左，正值向右。用于修正中文文本块锁边后的实际落点。"
-              />
-            </div>
-
-            <div className="grid gap-3 md:grid-cols-2">
-              <NumberField
-                label="英文边缘对齐"
-                value={activeSizeConfig.latinEdgeOffset}
-                onCommit={(latinEdgeOffset) =>
-                  updateCurrentSizeConfig({ latinEdgeOffset })
-                }
-                helperText="负值向左，正值向右。用于修正英文文本块锁边后的实际落点。"
-              />
-
-              <NumberField
-                label="中文字距"
-                value={activeSizeConfig.cjkLetterSpacing}
-                onCommit={(cjkLetterSpacing) =>
-                  updateCurrentSizeConfig({ cjkLetterSpacing })
-                }
-              />
-            </div>
-
-            <NumberField
-              label="英文字距"
-              value={activeSizeConfig.latinLetterSpacing}
-              onCommit={(latinLetterSpacing) =>
-                updateCurrentSizeConfig({ latinLetterSpacing })
-              }
-            />
           </ControlBlock>
 
           <ControlBlock title="调试层">
@@ -1452,7 +1523,7 @@ export default function FontLabClient() {
                 <Typography
                   as="p"
                   preset="sans-body"
-                  size="body-sm"
+                  size="body"
                   weight="regular"
                   wrapPolicy="prose"
                   className="max-w-[44rem] text-textMuted"
@@ -1710,19 +1781,20 @@ export default function FontLabClient() {
               <Typography
                 as="p"
                 preset="sans-body"
-                size="body-sm"
+                size="body"
                 weight="regular"
                 wrapPolicy="prose"
                 className="text-textMuted"
               >
                 真实组件预览已移出本页。需要做最终组件验收时，请进入 Playground 统一检查页面模块，而不是在 Font Lab 内直接注入真实组件。
               </Typography>
-              <Link
-                href="/playground"
+              <button
+                type="button"
+                onClick={navigateToPlayground}
                 className="mt-6 inline-grid grid-flow-col auto-cols-max items-center border border-white/12 px-4 py-3 text-textPrimary transition-colors hover:border-white/25 hover:text-white"
               >
                 <ActionText>打开 Playground 做组件验收</ActionText>
-              </Link>
+              </button>
             </div>
           </div>
         </section>

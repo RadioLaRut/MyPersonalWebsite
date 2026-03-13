@@ -155,6 +155,7 @@
       "props": {
         "id": "next-1",
         "nextId": "slay-the-virus",
+        "href": "/works/slay-the-virus",
         "nextName": "SLAY THE VIRUS",
         "nextBg": "/images/slay-the-virus/STVTitle.webp"
       }

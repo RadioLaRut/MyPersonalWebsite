@@ -4,8 +4,10 @@ import localFont from "next/font/local";
 import { unstable_noStore as noStore } from "next/cache";
 import SmoothScroll from "@/components/layout/SmoothScroll";
 import CustomCursor from "@/components/layout/CustomCursor";
+import ComponentDesignProvider from "@/components/layout/ComponentDesignProvider";
 import FontLabGlobalVars from "@/components/layout/FontLabGlobalVars";
 import Navigation from "@/components/layout/Navigation";
+import { readComponentDesignConfig } from "@/lib/component-design-config";
 import { buildFontLabDocumentCssVars } from "@/lib/font-lab-css-vars";
 import { readFontLabConfig } from "@/lib/font-lab-config";
 import { isTestingMode } from "@/lib/site-mode";
@@ -167,6 +169,7 @@ export default async function RootLayout({
   noStore();
   const testingMode = isTestingMode();
   const fontLabDocument = await readFontLabConfig();
+  const componentDesignDocument = await readComponentDesignConfig();
   const fontLabCssVars = buildFontLabDocumentCssVars(fontLabDocument) as StyleWithVars;
 
   return (
@@ -179,23 +182,25 @@ export default async function RootLayout({
         className={`bg-black text-white antialiased ${sourceHanSerif.variable} ${hanYiQiHei.variable} ${futura.variable} ${luna.variable} ${gothic.variable} ${dmSerifDisplay.variable}`}
       >
         <FontLabGlobalVars initialVars={fontLabCssVars} />
-        {testingMode ? (
-          <div className="site-grid-debug" aria-hidden="true">
-            <div className="site-grid-debug__grid grid-container">
-              {Array.from({ length: 12 }, (_, index) => (
-                <span
-                  key={`site-grid-debug-${index + 1}`}
-                  className="site-grid-debug__column"
-                />
-              ))}
+        <ComponentDesignProvider initialDocument={componentDesignDocument}>
+          {testingMode ? (
+            <div className="site-grid-debug" aria-hidden="true">
+              <div className="site-grid-debug__grid grid-container">
+                {Array.from({ length: 12 }, (_, index) => (
+                  <span
+                    key={`site-grid-debug-${index + 1}`}
+                    className="site-grid-debug__column"
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        ) : null}
-        <SmoothScroll>
-          <CustomCursor />
-          <Navigation />
-          {children}
-        </SmoothScroll>
+          ) : null}
+          <SmoothScroll>
+            <CustomCursor />
+            <Navigation />
+            {children}
+          </SmoothScroll>
+        </ComponentDesignProvider>
       </body>
     </html>
   );

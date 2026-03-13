@@ -23,6 +23,7 @@ import PortfolioHeroHeader from "../components/works/PortfolioHeroHeader";
 import WorksList from "../components/works/WorksList";
 import WorksListEntry from "../components/works/WorksListEntry";
 import MetadataListItem from "../components/common/MetadataListItem";
+import RichParagraphBlock from "../components/common/RichParagraphBlock";
 import TextParagraphBlock from "../components/common/TextParagraphBlock";
 import { CANONICAL_PLACEHOLDER_PATH, toAdminPathFromPublicPath, normalizeLegacyPublicPath } from "@/lib/public-paths";
 import { resolveEditableText, toPlainText } from "@/lib/editable-text";
@@ -116,7 +117,7 @@ function renderHeroHeadlineBlock({
               <Typography
                 as="p"
                 preset="sans-body"
-                size="body-lg"
+                size="body"
                 weight="medium"
                 wrapPolicy="prose"
                 className="max-w-3xl text-textPrimary"
@@ -193,7 +194,7 @@ function renderHeroHeadlineBlock({
               <Typography
                 as="p"
                 preset="sans-body"
-                size="body-lg"
+                size="body"
                 weight="medium"
                 wrapPolicy="prose"
                 className="max-w-3xl text-textPrimary"
@@ -362,26 +363,7 @@ export const config: Config = {
       defaultProps: {
         content: "Enter your paragraph text here.",
       },
-      render: ({ content }) => {
-        return (
-          <article className="w-full py-24 md:py-32 relative z-20 bg-black">
-            <div className="grid-container w-full">
-              <div className="col-start-3 col-span-8">
-                <Typography
-                  as="p"
-                  preset="sans-body"
-                  size="body-lg"
-                  weight="medium"
-                  wrapPolicy="prose"
-                  className="text-justify text-textPrimary"
-                >
-                  {content}
-                </Typography>
-              </div>
-            </div>
-          </article>
-        );
-      },
+      render: ({ content }) => <RichParagraphBlock content={content} />,
     },
     ImagePanel: {
       fields: {
@@ -460,7 +442,7 @@ export const config: Config = {
         imagePreset: "ratio-16-9",
         imageFitMode: "x",
       },
-      render: ({ title, unlitSrc, litSrc, alt, imagePreset, imageFitMode, leftLabel, rightLabel }) => (
+      render: ({ title, unlitSrc, litSrc, alt, imagePreset, imageFitMode, leftLabel, rightLabel, editMode }) => (
         <ImageSlider
           title={title}
           unlitSrc={unlitSrc}
@@ -470,6 +452,7 @@ export const config: Config = {
           imageFitMode={imageFitMode as any}
           leftLabel={leftLabel}
           rightLabel={rightLabel}
+          editMode={editMode}
         />
       )
     },
@@ -483,13 +466,7 @@ export const config: Config = {
         imageSrc: { type: "text", label: "Image Source" },
         imagePreset: { ...imagePresetField, label: "Image Preset" },
         imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
-        _g_layout: createFieldGroup("标签与布局"),
-        tags: {
-          type: "array",
-          arrayFields: { tag: { type: "text", label: "Tag" } },
-          label: "Tags",
-          getItemSummary: (item) => item.tag || "Empty Tag",
-        },
+        _g_layout: createFieldGroup("布局"),
         imagePosition: {
           type: "select" as const,
           label: "Image Position",
@@ -505,17 +482,15 @@ export const config: Config = {
         imageSrc: "",
         imagePreset: "ratio-16-9",
         imageFitMode: "x",
-        tags: [] as any,
         imagePosition: "right",
       },
-      render: ({ title, description, imageSrc, imagePreset, imageFitMode, tags, imagePosition }) => (
+      render: ({ title, description, imageSrc, imagePreset, imageFitMode, imagePosition }) => (
         <ContentCard
           title={title}
           description={description}
           imageSrc={imageSrc}
           imagePreset={imagePreset as any}
           imageFitMode={imageFitMode as any}
-          tags={(tags as any)?.map((t: any) => t.tag)}
           imagePosition={imagePosition as any}
         />
       )
@@ -1050,6 +1025,7 @@ export const config: Config = {
         _g_info: createFieldGroup("项目信息"),
         nextId: { type: "text", label: "Next ID" },
         nextName: { type: "text", label: "Next Name" },
+        href: { type: "text", label: "Href" },
         _g_image: createFieldGroup("图片配置"),
         nextBg: { type: "text", label: "Next Background" },
         imagePreset: { ...imagePresetField, label: "Image Preset" },
@@ -1058,18 +1034,20 @@ export const config: Config = {
       defaultProps: {
         nextId: "penguin",
         nextName: "PENGUIN TRADING CO.",
+        href: "/works/penguin",
         nextBg: "/images/penguin/CyberRestaurant.webp",
         imagePreset: "ratio-21-9",
         imageFitMode: "x",
       },
-      render: ({ nextId, nextName, nextBg, imagePreset, imageFitMode, editMode }) => (
+      render: ({ nextId, nextName, href, nextBg, imagePreset, imageFitMode, editMode }) => (
         <NextProjectBlock
           nextId={nextId}
           nextName={nextName}
           nextBg={nextBg}
           imagePreset={imagePreset as any}
           imageFitMode={imageFitMode as any}
-          href={toEditorAwareHref(`/works/${nextId}`, editMode)}
+          href={toEditorAwareHref(href || `/works/${nextId}`, editMode)}
+          editMode={editMode}
         />
       )
     },
@@ -1092,6 +1070,7 @@ export const config: Config = {
           number={number}
           description={description}
           backHref={toEditorAwareHref(backHref, editMode)}
+          editMode={editMode}
         />
       ),
     },
@@ -1142,6 +1121,7 @@ export const config: Config = {
         wechat,
         experienceHistory,
         creativeDirection,
+        editMode,
       }) => {
         const ExperienceSlot = Array.isArray(experienceHistory) ? null : (experienceHistory as any);
         const CreativeSlot = Array.isArray(creativeDirection) ? null : (creativeDirection as any);
@@ -1157,6 +1137,7 @@ export const config: Config = {
             taglineSub={taglineSub}
             email={email}
             wechat={wechat}
+            editMode={editMode}
             experienceHistory={Array.isArray(experienceHistory)
               ? (experienceHistory as any[]).map((entry) => ({
                 company: entry?.props?.company ?? entry?.company ?? entry?.props?.label ?? entry?.label ?? "",

@@ -123,6 +123,7 @@
       "props": {
         "id": "next-1",
         "nextId": "prometheus",
+        "href": "/works/prometheus",
         "nextName": "PROMETHEUS PROJECT",
         "nextBg": "/images/prometheus/PrometheusTitle.webp"
       }

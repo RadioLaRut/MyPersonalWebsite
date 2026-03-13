@@ -76,6 +76,7 @@
       "props": {
         "id": "next-1",
         "nextId": "insight",
+        "href": "/works/insight",
         "nextName": "INSIGHT",
         "nextBg": "/images/insight/InsightOnlyCover.webp"
       }

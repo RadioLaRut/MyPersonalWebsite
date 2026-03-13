@@ -24,6 +24,7 @@ interface ImageSliderProps {
     imageFitMode?: ImageFitMode;
     leftLabel?: string;
     rightLabel?: string;
+    editMode?: boolean;
 }
 
 export default function ImageSlider({
@@ -36,6 +37,7 @@ export default function ImageSlider({
     imageFitMode = "x",
     leftLabel,
     rightLabel,
+    editMode = false,
 }: ImageSliderProps) {
     const [sliderPosition, setSliderPosition] = useState(50);
     const [isDragging, setIsDragging] = useState(false);
@@ -66,6 +68,11 @@ export default function ImageSlider({
     };
 
     useEffect(() => {
+        if (editMode) {
+            setIsDragging(false);
+            return;
+        }
+
         const handleMouseUp = () => setIsDragging(false);
         window.addEventListener("mouseup", handleMouseUp);
         window.addEventListener("touchend", handleMouseUp);
@@ -73,7 +80,7 @@ export default function ImageSlider({
             window.removeEventListener("mouseup", handleMouseUp);
             window.removeEventListener("touchend", handleMouseUp);
         };
-    }, []);
+    }, [editMode]);
 
     return (
         <div className={`w-full rhythm-block-compact ${className}`}>
@@ -81,11 +88,11 @@ export default function ImageSlider({
                 <div className="col-start-2 col-span-10">
                     <div
                         ref={containerRef}
-                        className={`${frameClassName} cursor-ew-resize select-none`}
-                        onMouseMove={handleMouseMove}
-                        onTouchMove={handleTouchMove}
-                        onMouseDown={() => setIsDragging(true)}
-                        onTouchStart={() => setIsDragging(true)}
+                        className={`${frameClassName} select-none ${editMode ? "cursor-default" : "cursor-ew-resize"}`}
+                        onMouseMove={editMode ? undefined : handleMouseMove}
+                        onTouchMove={editMode ? undefined : handleTouchMove}
+                        onMouseDown={editMode ? undefined : () => setIsDragging(true)}
+                        onTouchStart={editMode ? undefined : () => setIsDragging(true)}
                     >
                         {visibleTitle ? (
                             <div className="pointer-events-none absolute left-5 top-5 z-20 md:left-6 md:top-6">
@@ -97,7 +104,6 @@ export default function ImageSlider({
                                         weight="medium"
                                         wrapPolicy="label"
                                         className="text-white/88"
-                                        style={{ lineHeight: 1 }}
                                     >
                                         {visibleTitle}
                                     </Typography>

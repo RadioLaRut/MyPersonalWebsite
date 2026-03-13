@@ -212,7 +212,7 @@ export default function WorksListEntry({
             <Typography
               as="p"
               preset="sans-body"
-              size="body-sm"
+              size="body"
               weight="light"
               wrapPolicy="prose"
               className="mt-4 text-textMuted"

@@ -31,12 +31,8 @@ export default function ProjectSection({
   const containerRef = useRef<HTMLDivElement>(null);
   const imageAlt = typeof title === "string" ? title : "Project cover";
   const resolvedImagePreset = normalizeImagePreset(imagePreset);
-  const sectionClassName = editMode
-    ? "relative m-0 grid min-h-[420px] w-full place-items-center overflow-hidden p-0 mix-blend-normal group cursor-default lg:min-h-[500px]"
-    : "relative m-0 grid min-h-screen min-h-[100dvh] w-full place-items-center overflow-hidden p-0 mix-blend-normal group interactive cursor-pointer";
-  const mediaLayerClassName = editMode
-    ? "absolute inset-0 grid place-items-center px-0"
-    : "absolute inset-0 grid place-items-center px-0";
+  const sectionClassName = `relative m-0 grid min-h-screen min-h-[100dvh] w-full place-items-center overflow-hidden p-0 mix-blend-normal group ${editMode ? "cursor-default" : "interactive cursor-pointer"}`;
+  const mediaLayerClassName = "absolute inset-0 grid place-items-center px-0";
   const frameClassName = resolvedImagePreset === "native"
     ? "w-full h-full"
     : "w-full";
@@ -60,9 +56,8 @@ export default function ProjectSection({
     ? "justify-self-end justify-items-end"
     : "justify-self-start justify-items-start";
   const underlineTrackClassName = shouldAlignRight ? "justify-end" : "justify-start";
-  const underlineFillClassName = editMode
-    ? "w-full"
-    : "w-0 transition-[width] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:w-full";
+  const underlineFillClassName =
+    "w-0 transition-[width] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:w-full";
 
   const handleInteraction = () => {
     if (!editMode && link) {
@@ -81,7 +76,7 @@ export default function ProjectSection({
         style={editMode ? undefined : { y, scale }}
       >
         {/* Environment ambient gradient/shadow to improve contrast */}
-        <div className={`absolute inset-0 z-10 ${editMode ? "bg-black/55" : "bg-black/30 custom-blend transition-colors duration-1000 group-hover:bg-black/10"}`} />
+        <div className="absolute inset-0 z-10 bg-black/30 custom-blend transition-colors duration-1000 group-hover:bg-black/10" />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40 z-10" />
 
@@ -101,7 +96,7 @@ export default function ProjectSection({
         style={editMode ? undefined : { opacity }}
         className={`absolute inset-0 z-20 grid content-center rhythm-section-normal ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}
       >
-        <div className={`grid-container w-full relative ${editMode ? "" : "mix-blend-difference"}`}>
+        <div className="grid-container relative w-full mix-blend-difference">
           <div
             className={`col-span-4 lg:col-span-8 grid content-start ${textColumnClassName}`}
           >
@@ -114,7 +109,6 @@ export default function ProjectSection({
                   weight="semantic"
                   wrapPolicy="label"
                   align={shouldAlignRight ? "right" : "left"}
-                  style={{ lineHeight: 1 }}
                   className="text-textPrimary"
                 >
                   {subtitle}
@@ -128,7 +122,7 @@ export default function ProjectSection({
                   weight="strong"
                   wrapPolicy="heading"
                   align={shouldAlignRight ? "right" : "left"}
-                  className={`-mt-[0.42em] text-white antialiased tracking-wider [transform:translateZ(0)] ${editMode ? "max-w-full" : "max-w-full lg:whitespace-nowrap transition-[letter-spacing] duration-500 ease-out group-hover:tracking-[0.04em]"}`}
+                  className="-mt-[0.42em] max-w-full text-white antialiased [transform:translateZ(0)] lg:whitespace-nowrap"
                 >
                   {title}
                 </Typography>

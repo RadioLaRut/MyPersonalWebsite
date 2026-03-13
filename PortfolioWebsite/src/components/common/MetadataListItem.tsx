@@ -28,7 +28,7 @@ export default function MetadataListItem({ label, value, align = "start" }: Meta
       <Typography
         as="span"
         preset="sans-body"
-        size="body-sm"
+        size="body"
         weight="semantic"
         wrapPolicy="prose"
         align={align === "end" ? "right" : "left"}

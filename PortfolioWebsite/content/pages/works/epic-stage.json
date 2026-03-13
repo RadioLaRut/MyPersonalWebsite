@@ -62,6 +62,7 @@
       "props": {
         "id": "next-1",
         "nextId": "lighting-portfolio",
+        "href": "/works/lighting-portfolio",
         "nextName": "LIGHTING",
         "nextBg": "/images/train-station/2Day.webp",
         "imagePreset": "ratio-21-9"

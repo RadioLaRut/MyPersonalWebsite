@@ -109,7 +109,6 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     imageSrc: "/images/train-station/2Day.webp",
     imagePreset: "ratio-16-9",
     imageFitMode: "x",
-    tags: [{ tag: "Tag 1" }, { tag: "Tag 2" }, { tag: "Tag 3" }],
     imagePosition: "right",
   },
   TextSplitLayout: {
@@ -390,7 +389,7 @@ export default function PlaygroundClient() {
               <Typography
                 as="p"
                 preset="sans-body"
-                size="body-sm"
+                size="body"
                 weight="regular"
                 wrapPolicy="prose"
                 className="mt-4 text-textMuted"
@@ -410,6 +409,53 @@ export default function PlaygroundClient() {
                   className="text-current"
                 >
                   ENTER FONT LAB
+                </Typography>
+              </Link>
+            </div>
+            <div className="lg:col-span-4 border border-white/10 bg-white/[0.02] p-6">
+              <Typography
+                as="span"
+                preset="sans-body"
+                size="caption"
+                weight="medium"
+                wrapPolicy="label"
+                className="text-textMuted"
+              >
+                INTERNAL TOOL
+              </Typography>
+              <Typography
+                as="h2"
+                preset="luna-editorial"
+                size="title-sm"
+                weight="strong"
+                wrapPolicy="heading"
+                className="mt-4 text-white"
+              >
+                Component Lab
+              </Typography>
+              <Typography
+                as="p"
+                preset="sans-body"
+                size="body"
+                weight="regular"
+                wrapPolicy="prose"
+                className="mt-4 text-textMuted"
+              >
+                组件级排版与布局工作台。直接校准共享字号档位、文本组间距和左右网格边界，保存后会同步影响试点组件的全部实例。
+              </Typography>
+              <Link
+                href="/playground/component-lab"
+                className="mt-8 inline-grid grid-flow-col auto-cols-max items-center gap-3 border border-white/12 px-4 py-3 text-textPrimary transition-colors duration-300 hover:border-white/25 hover:text-white"
+              >
+                <Typography
+                  as="span"
+                  preset="sans-body"
+                  size="caption"
+                  weight="medium"
+                  wrapPolicy="label"
+                  className="text-current"
+                >
+                  ENTER COMPONENT LAB
                 </Typography>
               </Link>
             </div>
@@ -449,7 +495,7 @@ export default function PlaygroundClient() {
             <Typography
               as="p"
               preset="sans-body"
-              size="body-sm"
+              size="body"
               weight="regular"
               wrapPolicy="prose"
               className="ml-10 max-w-3xl text-textMuted"
@@ -483,7 +529,7 @@ export default function PlaygroundClient() {
                     <Typography
                       as="p"
                       preset="sans-body"
-                      size="body-sm"
+                      size="body"
                       weight="regular"
                       wrapPolicy="prose"
                       className="text-textPrimary"
@@ -564,7 +610,7 @@ export default function PlaygroundClient() {
                       <Typography
                         as="p"
                         preset="sans-body"
-                        size="body-sm"
+                        size="body"
                         weight="regular"
                         wrapPolicy="prose"
                         className="text-textPrimary"
@@ -613,7 +659,7 @@ export default function PlaygroundClient() {
             <Typography
               as="p"
               preset="sans-body"
-              size="body-sm"
+              size="body"
               weight="regular"
               wrapPolicy="prose"
               className="ml-10 text-textMuted"
@@ -669,7 +715,7 @@ export default function PlaygroundClient() {
                 <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="prose" className="text-textPrimary">
                   这是一个 Typography 组件示例，展示中英文混排效果。This is a demo showing Chinese and English mixed text rendering with proper weight and baseline alignment.
                 </Typography>
-                <Typography as="p" preset="sans-body" size="body-sm" weight="light" wrapPolicy="prose" className="text-textMuted">
+                <Typography as="p" preset="sans-body" size="body" weight="light" wrapPolicy="prose" className="text-textMuted">
                   组件会自动检测文本中的中英文内容，并分别应用不同的字体和字重。The component automatically detects Chinese and English text, applying appropriate fonts and weights.
                 </Typography>
               </div>
@@ -692,7 +738,7 @@ export default function PlaygroundClient() {
                 <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="url" className="text-textPrimary">
                   本项目的 GitHub 仓库地址是 github.com/example/project，欢迎提交 Issue 和 PR。The GitHub repository for this project is github.com/example/project, welcome to submit Issues and PRs.
                 </Typography>
-                <Typography as="p" preset="sans-body" size="body-sm" weight="light" wrapPolicy="prose" className="text-textMuted">
+                <Typography as="p" preset="sans-body" size="body" weight="light" wrapPolicy="prose" className="text-textMuted">
                   版本号 v2.1.0 已于 2024 年 1 月 15 日发布，包含 15 个新功能和 23 个 Bug 修复。Version v2.1.0 was released on January 15, 2024, including 15 new features and 23 bug fixes.
                 </Typography>
                 <Typography as="p" preset="sans-body" size="body-lg" weight="display" wrapPolicy="prose" className="text-textPrimary">
@@ -742,7 +788,7 @@ export default function PlaygroundClient() {
               <Typography
                 as="p"
                 preset="sans-body"
-                size="body-sm"
+                size="body"
                 weight="regular"
                 wrapPolicy="prose"
                 className="ml-10 text-textMuted"

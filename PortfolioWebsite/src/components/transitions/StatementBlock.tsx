@@ -54,7 +54,7 @@ export default function StatementBlock({
           <Typography
             as="p"
             preset="sans-body"
-            size="body-lg"
+            size="body"
             weight="light"
             wrapPolicy="prose"
             className="max-w-4xl text-textPrimary"

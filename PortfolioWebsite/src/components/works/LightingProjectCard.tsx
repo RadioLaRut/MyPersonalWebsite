@@ -77,7 +77,6 @@ export default function LightingProjectCard({
             weight="semantic"
             wrapPolicy="label"
             className="text-white/48"
-            style={{ lineHeight: 1 }}
           >
             Collection {number}
           </Typography>
@@ -89,7 +88,6 @@ export default function LightingProjectCard({
             weight="semantic"
             wrapPolicy="label"
             className="text-right text-white/40 transition-colors duration-300 group-hover:text-white/72"
-            style={{ lineHeight: 1 }}
           >
             Enter
           </Typography>
@@ -124,7 +122,7 @@ export default function LightingProjectCard({
                 event.preventDefault();
               }
             }}
-            className="interactive col-start-2 col-end-12 block w-full"
+            className={`col-start-2 col-end-12 block w-full ${editMode ? "cursor-default" : "interactive"}`}
           >
             {content}
           </Link>

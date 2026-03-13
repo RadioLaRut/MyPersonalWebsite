@@ -160,7 +160,7 @@ export default function HeroSection({
                     <Typography
                       as="p"
                       preset="sans-body"
-                      size="body-lg"
+                      size="body"
                       weight="regular"
                       wrapPolicy="prose"
                       className="text-textPrimary/90 whitespace-pre-line"

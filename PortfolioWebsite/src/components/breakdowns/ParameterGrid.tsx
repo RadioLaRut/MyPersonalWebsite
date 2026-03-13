@@ -92,7 +92,7 @@ export default function ParameterGrid({
                             <Typography
                                 as="p"
                                 preset="sans-body"
-                                size="body-sm"
+                                size="body"
                                 weight="light"
                                 wrapPolicy="prose"
                                 className="max-w-[32ch] text-textMuted"

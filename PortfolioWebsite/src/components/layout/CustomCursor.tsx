@@ -21,10 +21,11 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
       : pathname ?? "";
     const adminShell = !isWithinIframe && currentPathname.startsWith("/admin");
     const fontLabMode = !isWithinIframe && currentPathname.startsWith("/playground/font-lab");
-    setIsCursorBlockedByRoute(adminShell || fontLabMode);
+    const componentLabMode = !isWithinIframe && currentPathname.startsWith("/playground/component-lab");
+    setIsCursorBlockedByRoute(adminShell || fontLabMode || componentLabMode);
 
     // Disable outer custom cursor in the admin dashboard completely
-    if (adminShell || fontLabMode) {
+    if (adminShell || fontLabMode || componentLabMode) {
       if (adminShell) {
         htmlElement.setAttribute("data-admin-mode", "true");
       } else {
@@ -35,6 +36,10 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
         htmlElement.setAttribute("data-font-lab-mode", "true");
       } else {
         htmlElement.removeAttribute("data-font-lab-mode");
+      }
+
+      if (componentLabMode) {
+        htmlElement.setAttribute("data-font-lab-mode", "true");
       }
 
       setIsCursorEnabled(false);

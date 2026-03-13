@@ -60,6 +60,14 @@ function applyLegacyPropAliases(type: string, props: Record<string, unknown>, ra
     }
   }
 
+  if (type === "NextProjectBlock") {
+    if (typeof nextProps.href !== "string" || nextProps.href.trim().length === 0) {
+      if (typeof nextProps.nextId === "string" && nextProps.nextId.trim().length > 0) {
+        nextProps.href = `/works/${nextProps.nextId.trim()}`;
+      }
+    }
+  }
+
   return nextProps;
 }
 
