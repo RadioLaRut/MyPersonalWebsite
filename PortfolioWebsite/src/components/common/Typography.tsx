@@ -25,7 +25,7 @@ import {
   type TypographyWeight,
   type TypographyWrapPolicy,
 } from "@/lib/typography-tokens";
-import { segmentTypographyText } from "@/lib/typography";
+import { getTypographyEdgeScripts, segmentTypographyText } from "@/lib/typography";
 
 type TypographyWeightMode = TypographyWeight | "semantic";
 
@@ -48,6 +48,23 @@ export type TypographyProps<T extends ElementType = "span"> = BaseTypographyProp
 };
 
 type StyleWithVars = CSSProperties & Record<string, string | number | undefined>;
+
+function extractTypographyPlainText(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") {
+    return String(node);
+  }
+
+  if (Array.isArray(node)) {
+    return node.map((child) => extractTypographyPlainText(child)).join("");
+  }
+
+  if (!isValidElement(node)) {
+    return "";
+  }
+
+  const element = node as React.ReactElement<{ children?: ReactNode }>;
+  return extractTypographyPlainText(element.props.children);
+}
 
 function getRunLang(script: TypographyScript, containerLang: string) {
   if (script === "latin") {
@@ -95,9 +112,6 @@ function renderStringNode(
       letterSpacing: isLatin
         ? `var(--typography-${preset}-${size}-latin-letter-spacing, ${metricsToken.latinLetterSpacing})`
         : `var(--typography-${preset}-${size}-cjk-letter-spacing, ${metricsToken.cjkLetterSpacing})`,
-      left: isLatin
-        ? `var(--typography-${preset}-${size}-latin-horizontal-offset, 0em)`
-        : `var(--typography-${preset}-${size}-cjk-horizontal-offset, 0em)`,
       top: isLatin
         ? `var(--typography-${preset}-${size}-latin-baseline-offset, ${metricsToken.latinBaselineOffset})`
         : `var(--typography-${preset}-${size}-cjk-baseline-offset, ${metricsToken.cjkBaselineOffset})`,
@@ -189,6 +203,23 @@ export default function Typography<T extends ElementType = "span">({
     : "display";
   const sizeToken = getTypographySizeToken(resolvedSize);
   const wrapToken = getTypographyWrapToken(wrapPolicy);
+  const edgeScripts = getTypographyEdgeScripts(extractTypographyPlainText(children));
+  const leadingEdgeOffset = edgeScripts.leading
+    ? edgeScripts.leading === "latin"
+      ? `var(--typography-${preset}-${resolvedSize}-latin-edge-offset, 0em)`
+      : `var(--typography-${preset}-${resolvedSize}-cjk-edge-offset, 0em)`
+    : "0em";
+  const trailingEdgeOffset = edgeScripts.trailing
+    ? edgeScripts.trailing === "latin"
+      ? `var(--typography-${preset}-${resolvedSize}-latin-edge-offset, 0em)`
+      : `var(--typography-${preset}-${resolvedSize}-cjk-edge-offset, 0em)`
+    : "0em";
+  const translateX =
+    align === "right"
+      ? `calc(var(--typography-trailing-edge-offset, 0em) * -1)`
+      : align === "center"
+        ? "0em"
+        : `var(--typography-leading-edge-offset, 0em)`;
 
   const Component = (as ?? "span") as ElementType;
   const baseStyle: StyleWithVars = {
@@ -208,9 +239,12 @@ export default function Typography<T extends ElementType = "span">({
         : wrapPolicy === "prose"
           ? "pretty"
           : undefined,
+    transform: translateX === "0em" ? undefined : `translateX(${translateX})`,
     whiteSpace: wrapToken.whiteSpace,
     wordBreak: wrapToken.wordBreak,
     "--typography-autospace": autospace,
+    "--typography-leading-edge-offset": leadingEdgeOffset,
+    "--typography-trailing-edge-offset": trailingEdgeOffset,
   };
 
   return (
@@ -232,6 +266,8 @@ export default function Typography<T extends ElementType = "span">({
       data-typography-autospace={autospace}
       data-typography-numeric={numericStyle}
       data-typography-wrap={wrapPolicy}
+      data-typography-leading-script={edgeScripts.leading ?? "none"}
+      data-typography-trailing-script={edgeScripts.trailing ?? "none"}
     >
       {Children.map(children, (child, index) =>
         processTypographyChildren(

@@ -26,6 +26,42 @@ test("parseFontLabDocument rejects invalid payload", () => {
   assert.equal(invalid, null);
 });
 
+test("parseFontLabDocument migrates v4 horizontal offsets into v5 edge offsets", () => {
+  const parsed = parseFontLabDocument({
+    version: 4,
+    activePreset: "sans-body",
+    activeSize: "body",
+    presets: {
+      "sans-body": {
+        labelZh: "Futura + 姹変华鏃楅粦",
+        latinFontScale: 1,
+        latinWeightOffsetSteps: 0,
+        sizes: {
+          body: {
+            cjkHorizontalOffset: -0.08,
+            cjkLetterSpacing: 0.03,
+            cjkVerticalOffset: 0,
+            fontSize: "1rem",
+            latinHorizontalOffset: -0.02,
+            latinLetterSpacing: 0.03,
+            latinRelativeOffset: 0.03,
+            lineHeight: 1.6,
+            semanticWeight: "regular",
+          },
+        },
+      },
+      "luna-editorial": createDefaultFontLabDocument().presets["luna-editorial"],
+      "gothic-editorial": createDefaultFontLabDocument().presets["gothic-editorial"],
+      "classical-display": createDefaultFontLabDocument().presets["classical-display"],
+    },
+  });
+
+  assert.notEqual(parsed, null);
+  assert.equal(parsed?.version, 5);
+  assert.equal(parsed?.presets["sans-body"].sizes.body?.cjkEdgeOffset, -0.08);
+  assert.equal(parsed?.presets["sans-body"].sizes.body?.latinEdgeOffset, -0.02);
+});
+
 test("readFontLabConfig falls back to defaults when file is missing", async () => {
   const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "font-lab-config-"));
   const missingFile = path.join(tempDir, "missing.json");
@@ -58,11 +94,13 @@ test("readFontLabConfig migrates legacy single-config files into the new documen
 
   const config = await readFontLabConfig(configFile);
 
-  assert.equal(config.version, 4);
+  assert.equal(config.version, 5);
   assert.equal(config.activePreset, "gothic-editorial");
   assert.equal(config.activeSize, "body-lg");
   assert.equal(config.presets["gothic-editorial"].sizes["body-lg"]?.fontSize, "1.125rem");
   assert.equal(config.presets["gothic-editorial"].sizes["body-lg"]?.lineHeight, 1.82);
+  assert.equal(config.presets["gothic-editorial"].sizes["body-lg"]?.cjkEdgeOffset, 0);
+  assert.equal(config.presets["gothic-editorial"].sizes["body-lg"]?.latinEdgeOffset, 0);
   assert.equal(config.presets["gothic-editorial"].sizes["body-lg"]?.semanticWeight, "medium");
   assert.equal(config.presets["gothic-editorial"].latinFontScale, 1);
 
@@ -121,7 +159,7 @@ test("writeFontLabConfig preserves the existing file line endings", async () => 
   const configFile = path.join(tempDir, "font-presets.json");
   const expected = createDefaultFontLabDocument();
 
-  await fs.writeFile(configFile, "{\r\n  \"version\": 4\r\n}\r\n", "utf8");
+  await fs.writeFile(configFile, "{\r\n  \"version\": 5\r\n}\r\n", "utf8");
   await writeFontLabConfig(expected, configFile);
 
   const raw = await fs.readFile(configFile, "utf8");

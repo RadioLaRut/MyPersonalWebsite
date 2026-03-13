@@ -1098,7 +1098,7 @@ export default function FontLabClient() {
 
           <ControlBlock
             title="字体模板"
-            description="这里保存模板级与字号级微调。中英字重偏差只在模板层生效；每个字号档位单独保存自己的语义字重、基线、字距与水平对齐。"
+            description="这里保存模板级与字号级微调。中英字重偏差只在模板层生效；每个字号档位单独保存自己的语义字重、基线、字距与边缘对齐。"
           >
             <label className="block">
               <FieldLabel>字体模板</FieldLabel>
@@ -1252,23 +1252,23 @@ export default function FontLabClient() {
               />
 
               <NumberField
-                label="中文水平对齐"
-                value={activeSizeConfig.cjkHorizontalOffset}
-                onCommit={(cjkHorizontalOffset) =>
-                  updateCurrentSizeConfig({ cjkHorizontalOffset })
+                label="中文边缘对齐"
+                value={activeSizeConfig.cjkEdgeOffset}
+                onCommit={(cjkEdgeOffset) =>
+                  updateCurrentSizeConfig({ cjkEdgeOffset })
                 }
-                helperText="负值向左，正值向右。用于修正中文行首的实际落点。"
+                helperText="负值向左，正值向右。用于修正中文文本块锁边后的实际落点。"
               />
             </div>
 
             <div className="grid gap-3 md:grid-cols-2">
               <NumberField
-                label="英文水平对齐"
-                value={activeSizeConfig.latinHorizontalOffset}
-                onCommit={(latinHorizontalOffset) =>
-                  updateCurrentSizeConfig({ latinHorizontalOffset })
+                label="英文边缘对齐"
+                value={activeSizeConfig.latinEdgeOffset}
+                onCommit={(latinEdgeOffset) =>
+                  updateCurrentSizeConfig({ latinEdgeOffset })
                 }
-                helperText="负值向左，正值向右。用于修正英文在同一左边缘上的起笔位置。"
+                helperText="负值向左，正值向右。用于修正英文文本块锁边后的实际落点。"
               />
 
               <NumberField

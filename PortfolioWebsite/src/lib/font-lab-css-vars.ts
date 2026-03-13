@@ -115,14 +115,14 @@ export function buildFontLabDocumentCssVars(
         getTypographySizeToken(size).fontSize,
       );
       vars[`--typography-${preset}-${size}-line-height`] = String(sizeConfig.lineHeight);
-      vars[`--typography-${preset}-${size}-cjk-horizontal-offset`] =
-        `${sizeConfig.cjkHorizontalOffset}em`;
+      vars[`--typography-${preset}-${size}-cjk-edge-offset`] =
+        `${sizeConfig.cjkEdgeOffset}em`;
       vars[`--typography-${preset}-${size}-cjk-baseline-offset`] =
         `${sizeConfig.cjkVerticalOffset}em`;
       vars[`--typography-${preset}-${size}-cjk-letter-spacing`] =
         `${sizeConfig.cjkLetterSpacing}em`;
-      vars[`--typography-${preset}-${size}-latin-horizontal-offset`] =
-        `${sizeConfig.latinHorizontalOffset}em`;
+      vars[`--typography-${preset}-${size}-latin-edge-offset`] =
+        `${sizeConfig.latinEdgeOffset}em`;
       vars[`--typography-${preset}-${size}-latin-baseline-offset`] =
         `${sizeConfig.cjkVerticalOffset + sizeConfig.latinRelativeOffset}em`;
       vars[`--typography-${preset}-${size}-letter-spacing`] =

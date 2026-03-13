@@ -8,103 +8,103 @@
       "latinWeightOffsetSteps": -1,
       "sizes": {
         "caption": {
-          "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0.03,
           "cjkVerticalOffset": 0,
           "fontSize": "0.7rem",
-          "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0.03,
           "latinRelativeOffset": 0.08,
           "lineHeight": 1.65,
-          "semanticWeight": "regular"
+          "semanticWeight": "regular",
+          "cjkEdgeOffset": 0,
+          "latinEdgeOffset": 0
         },
         "label": {
-          "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0.03,
           "cjkVerticalOffset": 0,
           "fontSize": "0.79rem",
-          "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0.03,
           "latinRelativeOffset": 0.1,
           "lineHeight": 1.65,
-          "semanticWeight": "regular"
+          "semanticWeight": "regular",
+          "cjkEdgeOffset": 0,
+          "latinEdgeOffset": 0
         },
         "body-sm": {
-          "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0.03,
           "cjkVerticalOffset": 0,
           "fontSize": "0.89rem",
-          "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0.03,
           "latinRelativeOffset": 0.03,
           "lineHeight": 1.65,
-          "semanticWeight": "regular"
+          "semanticWeight": "regular",
+          "cjkEdgeOffset": 0,
+          "latinEdgeOffset": 0
         },
         "body": {
-          "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0.03,
           "cjkVerticalOffset": 0,
           "fontSize": "1rem",
-          "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0.03,
           "latinRelativeOffset": 0.03,
           "lineHeight": 1.6,
-          "semanticWeight": "regular"
+          "semanticWeight": "regular",
+          "cjkEdgeOffset": 0,
+          "latinEdgeOffset": 0
         },
         "body-lg": {
-          "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0.03,
           "cjkVerticalOffset": 0,
           "fontSize": "1.13rem",
-          "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0.03,
           "latinRelativeOffset": 0.07,
           "lineHeight": 1.6,
-          "semanticWeight": "regular"
+          "semanticWeight": "regular",
+          "cjkEdgeOffset": 0,
+          "latinEdgeOffset": 0
         },
         "title-sm": {
-          "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0.025,
           "cjkVerticalOffset": 0,
           "fontSize": "1.27rem",
-          "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0.025,
           "latinRelativeOffset": 0.05,
           "lineHeight": 1.6,
-          "semanticWeight": "medium"
+          "semanticWeight": "medium",
+          "cjkEdgeOffset": 0,
+          "latinEdgeOffset": 0
         },
         "title": {
-          "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0.02,
           "cjkVerticalOffset": 0,
           "fontSize": "1.62rem",
-          "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0.02,
           "latinRelativeOffset": -0.045,
           "lineHeight": 1.55,
-          "semanticWeight": "medium"
+          "semanticWeight": "medium",
+          "cjkEdgeOffset": 0,
+          "latinEdgeOffset": 0
         },
         "display": {
-          "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0.015,
           "cjkVerticalOffset": 0,
           "fontSize": "2.62rem",
-          "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0.015,
           "latinRelativeOffset": 0.07,
           "lineHeight": 1.55,
-          "semanticWeight": "strong"
+          "semanticWeight": "strong",
+          "cjkEdgeOffset": 0,
+          "latinEdgeOffset": 0
         },
         "hero": {
-          "cjkHorizontalOffset": -0.1,
           "cjkLetterSpacing": 0.008,
           "cjkVerticalOffset": 0,
           "fontSize": "5.39rem",
-          "latinHorizontalOffset": -0.03,
           "latinLetterSpacing": 0.008,
           "latinRelativeOffset": 0.06,
           "lineHeight": 1.5,
-          "semanticWeight": "display"
+          "semanticWeight": "display",
+          "cjkEdgeOffset": -0.1,
+          "latinEdgeOffset": -0.03
         }
       }
     },
@@ -114,48 +114,48 @@
       "latinWeightOffsetSteps": 0,
       "sizes": {
         "title-sm": {
-          "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0.025,
           "cjkVerticalOffset": 0,
           "fontSize": "1.27rem",
-          "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0.025,
           "latinRelativeOffset": 0.05,
           "lineHeight": 1.6,
-          "semanticWeight": "medium"
+          "semanticWeight": "medium",
+          "cjkEdgeOffset": 0,
+          "latinEdgeOffset": 0
         },
         "title": {
-          "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0.02,
           "cjkVerticalOffset": 0,
           "fontSize": "1.62rem",
-          "latinHorizontalOffset": -0.03,
           "latinLetterSpacing": 0.02,
           "latinRelativeOffset": 0.07,
           "lineHeight": 1.55,
-          "semanticWeight": "medium"
+          "semanticWeight": "medium",
+          "cjkEdgeOffset": 0,
+          "latinEdgeOffset": -0.03
         },
         "display": {
-          "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0.015,
           "cjkVerticalOffset": 0,
           "fontSize": "2.62rem",
-          "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0.015,
           "latinRelativeOffset": 0.07,
           "lineHeight": 1.55,
-          "semanticWeight": "strong"
+          "semanticWeight": "strong",
+          "cjkEdgeOffset": 0,
+          "latinEdgeOffset": 0
         },
         "hero": {
-          "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0.008,
           "cjkVerticalOffset": 0,
           "fontSize": "5.39rem",
-          "latinHorizontalOffset": -0.02,
           "latinLetterSpacing": 0.008,
           "latinRelativeOffset": 0.05,
           "lineHeight": 1.5,
-          "semanticWeight": "display"
+          "semanticWeight": "display",
+          "cjkEdgeOffset": 0,
+          "latinEdgeOffset": -0.02
         }
       }
     },
@@ -165,37 +165,37 @@
       "latinWeightOffsetSteps": -1,
       "sizes": {
         "label": {
-          "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0.03,
           "cjkVerticalOffset": 0,
           "fontSize": "0.79rem",
-          "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0.03,
           "latinRelativeOffset": 0.07,
           "lineHeight": 1.65,
-          "semanticWeight": "regular"
+          "semanticWeight": "regular",
+          "cjkEdgeOffset": 0,
+          "latinEdgeOffset": 0
         },
         "body-lg": {
-          "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0.03,
           "cjkVerticalOffset": 0,
           "fontSize": "1.13rem",
-          "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0.03,
           "latinRelativeOffset": -0.02,
           "lineHeight": 1.6,
-          "semanticWeight": "regular"
+          "semanticWeight": "regular",
+          "cjkEdgeOffset": 0,
+          "latinEdgeOffset": 0
         },
         "title-sm": {
-          "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0.025,
           "cjkVerticalOffset": 0,
           "fontSize": "1.27rem",
-          "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0.025,
           "latinRelativeOffset": 0.05,
           "lineHeight": 1.6,
-          "semanticWeight": "medium"
+          "semanticWeight": "medium",
+          "cjkEdgeOffset": 0,
+          "latinEdgeOffset": 0
         }
       }
     },
@@ -205,18 +205,18 @@
       "latinWeightOffsetSteps": 0,
       "sizes": {
         "menu": {
-          "cjkHorizontalOffset": 0,
           "cjkLetterSpacing": 0,
           "cjkVerticalOffset": 0,
           "fontSize": "2.5rem",
-          "latinHorizontalOffset": 0,
           "latinLetterSpacing": 0.018,
           "latinRelativeOffset": 0.05,
           "lineHeight": 1.5,
-          "semanticWeight": "display"
+          "semanticWeight": "display",
+          "cjkEdgeOffset": 0,
+          "latinEdgeOffset": 0
         }
       }
     }
   },
-  "version": 4
+  "version": 5
 }

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  getTypographyEdgeScripts,
   isTypographyAutospace,
   isTypographyNumericStyle,
   isTypographyPreset,
@@ -101,4 +102,14 @@ test("nowrap wrap policy stays on a single line", () => {
   assert.equal(wrapToken.whiteSpace, "nowrap");
   assert.equal(wrapToken.overflowWrap, "normal");
   assert.equal(wrapToken.wordBreak, "normal");
+});
+
+test("getTypographyEdgeScripts resolves leading and trailing scripts from mixed text", () => {
+  const mixed = getTypographyEdgeScripts("UE5 光照叙事\n电影化镜头");
+  const cjkOnly = getTypographyEdgeScripts("电影化镜头叙事");
+
+  assert.equal(mixed.leading, "latin");
+  assert.equal(mixed.trailing, "cjk");
+  assert.equal(cjkOnly.leading, "cjk");
+  assert.equal(cjkOnly.trailing, "cjk");
 });
