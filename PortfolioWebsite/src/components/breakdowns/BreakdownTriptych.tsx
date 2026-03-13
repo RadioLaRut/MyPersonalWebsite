@@ -1,6 +1,6 @@
 "use client";
 
-import React, { type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
@@ -22,6 +22,46 @@ interface BreakdownTriptychProps {
   col3Img: string;
   col3Preset?: ImagePreset;
   col3FitMode?: ImageFitMode;
+}
+
+function TriptychColumn({
+  title,
+  text,
+  img,
+  alt,
+  preset = "ratio-16-9",
+  fitMode = "x",
+  className = "",
+}: {
+  title: ReactNode;
+  text: ReactNode;
+  img: string;
+  alt: string;
+  preset?: ImagePreset;
+  fitMode?: ImageFitMode;
+  className?: string;
+}) {
+  if (!title && !text && !img) return null;
+
+  return (
+    <div className={`col-span-4 space-y-4 ${className}`}>
+      {title && (
+        <Typography as="h4" preset="sans-body" size="label" weight="strong" wrapPolicy="label" className="border-l-2 pl-3 border-white/80 text-white">
+          {title}
+        </Typography>
+      )}
+      {text && (
+        <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="prose" className="text-textPrimary">
+          {text}
+        </Typography>
+      )}
+      {img && (
+        <div className="w-full relative overflow-hidden mt-6 border border-white/10">
+          <PresetImage src={img} alt={alt} preset={preset} fitMode={fitMode} />
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function BreakdownTriptych({
@@ -48,65 +88,32 @@ export default function BreakdownTriptych({
   return (
     <section className="relative z-20 w-full bg-black pb-32">
       <div className="grid-container w-full border-t border-white/10 rhythm-divider-top">
-        {(col1Title || col1Text || col1Img) && (
-          <div className="col-span-4 space-y-4">
-            {col1Title && (
-              <Typography as="h4" preset="sans-body" size="label" weight="strong" wrapPolicy="label" className="border-l-2 pl-3 border-white/80 text-white">
-                {col1Title}
-              </Typography>
-            )}
-            {col1Text && (
-              <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="prose" className="text-textPrimary">
-                {col1Text}
-              </Typography>
-            )}
-            {col1Img && (
-              <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-                <PresetImage src={col1Img} alt={col1Alt} preset={col1Preset} fitMode={col1FitMode} />
-              </div>
-            )}
-          </div>
-        )}
-
-        {(col2Title || col2Text || col2Img) && (
-          <div className="col-span-4 space-y-4 mt-16 lg:mt-0">
-            {col2Title && (
-              <Typography as="h4" preset="sans-body" size="label" weight="strong" wrapPolicy="label" className="border-l-2 pl-3 border-white/80 text-white">
-                {col2Title}
-              </Typography>
-            )}
-            {col2Text && (
-              <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="prose" className="text-textPrimary">
-                {col2Text}
-              </Typography>
-            )}
-            {col2Img && (
-              <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-                <PresetImage src={col2Img} alt={col2Alt} preset={col2Preset} fitMode={col2FitMode} />
-              </div>
-            )}
-          </div>
-        )}
-
-        {(col3Title || col3Text || col3Img) && (
-          <div className="col-span-4 space-y-4 mt-16 lg:mt-0">
-            {col3Title && (
-              <Typography as="h4" preset="sans-body" size="label" weight="strong" wrapPolicy="label" className="border-l-2 pl-3 border-white/80 text-white">
-                {col3Title}
-              </Typography>
-            )}
-            {col3Text && (
-              <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="prose" className="text-textPrimary">
-                {col3Text}
-              </Typography>
-            )}
-            {col3Img && (
-              <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-                <PresetImage src={col3Img} alt={col3Alt} preset={col3Preset} fitMode={col3FitMode} />
-              </div>
-            )}
-          </div>
-        )}
+        <TriptychColumn
+          title={col1Title}
+          text={col1Text}
+          img={col1Img}
+          alt={col1Alt}
+          preset={col1Preset}
+          fitMode={col1FitMode}
+        />
+        <TriptychColumn
+          title={col2Title}
+          text={col2Text}
+          img={col2Img}
+          alt={col2Alt}
+          preset={col2Preset}
+          fitMode={col2FitMode}
+          className="mt-16 lg:mt-0"
+        />
+        <TriptychColumn
+          title={col3Title}
+          text={col3Text}
+          img={col3Img}
+          alt={col3Alt}
+          preset={col3Preset}
+          fitMode={col3FitMode}
+          className="mt-16 lg:mt-0"
+        />
       </div>
     </section>
   );

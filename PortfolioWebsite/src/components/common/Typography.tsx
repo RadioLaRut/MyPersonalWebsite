@@ -96,13 +96,12 @@ function renderStringNode(
     }
 
     const isLatin = run.script === "latin";
+    const scriptType = isLatin ? "latin" : "cjk";
+    const baseWeight = isLatin ? weightPair.latin : weightPair.cjk;
+
     const configuredFontWeight = weight === "semantic"
-      ? isLatin
-        ? `var(--typography-${preset}-${size}-semantic-latin-weight, var(--typography-${preset}-${resolvedWeight}-latin-weight, ${weightPair.latin}))`
-        : `var(--typography-${preset}-${size}-semantic-cjk-weight, var(--typography-${preset}-${resolvedWeight}-cjk-weight, ${weightPair.cjk}))`
-      : isLatin
-        ? `var(--typography-${preset}-${resolvedWeight}-latin-weight, ${weightPair.latin})`
-        : `var(--typography-${preset}-${resolvedWeight}-cjk-weight, ${weightPair.cjk})`;
+      ? `var(--typography-${preset}-${size}-semantic-${scriptType}-weight, var(--typography-${preset}-${resolvedWeight}-${scriptType}-weight, ${baseWeight}))`
+      : `var(--typography-${preset}-${resolvedWeight}-${scriptType}-weight, ${baseWeight})`;
     const runStyle: StyleWithVars = {
       fontFamily: isLatin ? presetToken.latinFontFamily : presetToken.cjkFontFamily,
       fontSize: isLatin
@@ -204,41 +203,39 @@ export default function Typography<T extends ElementType = "span">({
   const sizeToken = getTypographySizeToken(resolvedSize);
   const wrapToken = getTypographyWrapToken(wrapPolicy);
   const edgeScripts = getTypographyEdgeScripts(extractTypographyPlainText(children));
-  const leadingEdgeOffset = edgeScripts.leading
-    ? edgeScripts.leading === "latin"
-      ? `var(--typography-${preset}-${resolvedSize}-latin-edge-offset, 0em)`
-      : `var(--typography-${preset}-${resolvedSize}-cjk-edge-offset, 0em)`
-    : "0em";
-  const trailingEdgeOffset = edgeScripts.trailing
-    ? edgeScripts.trailing === "latin"
-      ? `var(--typography-${preset}-${resolvedSize}-latin-edge-offset, 0em)`
-      : `var(--typography-${preset}-${resolvedSize}-cjk-edge-offset, 0em)`
-    : "0em";
-  const translateX =
-    align === "right"
-      ? `calc(var(--typography-trailing-edge-offset, 0em) * -1)`
-      : align === "center"
-        ? "0em"
-        : `var(--typography-leading-edge-offset, 0em)`;
+  function getEdgeOffset(script: TypographyScript | null): string {
+    if (!script) return "0em";
+    const scriptType = script === "latin" ? "latin" : "cjk";
+    return `var(--typography-${preset}-${resolvedSize}-${scriptType}-edge-offset, 0em)`;
+  }
+
+  const leadingEdgeOffset = getEdgeOffset(edgeScripts.leading);
+  const trailingEdgeOffset = getEdgeOffset(edgeScripts.trailing);
+
+  function getTranslateX(): string {
+    if (align === "right") return `calc(var(--typography-trailing-edge-offset, 0em) * -1)`;
+    if (align === "center") return "0em";
+    return `var(--typography-leading-edge-offset, 0em)`;
+  }
+
+  const translateX = getTranslateX();
+
+  function getTextWrap(): "balance" | "pretty" | undefined {
+    if (wrapPolicy === "heading") return "balance";
+    if (wrapPolicy === "prose") return "pretty";
+    return undefined;
+  }
 
   const Component = (as ?? "span") as ElementType;
   const baseStyle: StyleWithVars = {
     fontSize: `var(--typography-${preset}-${resolvedSize}-font-size, var(--typography-size-${resolvedSize}-font-size, ${sizeToken.fontSize}))`,
-    fontVariantNumeric:
-      numericStyle === "tabular"
-        ? "tabular-nums"
-        : "normal",
+    fontVariantNumeric: numericStyle === "tabular" ? "tabular-nums" : "normal",
     hyphens: wrapToken.hyphens,
     letterSpacing: `var(--typography-${preset}-${resolvedSize}-letter-spacing, var(--typography-size-${resolvedSize}-letter-spacing, ${sizeToken.letterSpacing}))`,
     lineHeight: `var(--typography-${preset}-${resolvedSize}-line-height, var(--typography-size-${resolvedSize}-line-height, ${sizeToken.lineHeight}))`,
     overflowWrap: wrapToken.overflowWrap,
     textAlign: align,
-    textWrap:
-      wrapPolicy === "heading"
-        ? "balance"
-        : wrapPolicy === "prose"
-          ? "pretty"
-          : undefined,
+    textWrap: getTextWrap(),
     transform: translateX === "0em" ? undefined : `translateX(${translateX})`,
     whiteSpace: wrapToken.whiteSpace,
     wordBreak: wrapToken.wordBreak,

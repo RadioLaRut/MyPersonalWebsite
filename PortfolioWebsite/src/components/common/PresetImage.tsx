@@ -46,14 +46,12 @@ export function PresetImage({
   const resolvedPreset = normalizeImagePreset(preset);
   const resolvedFitMode = normalizeImageFitMode(fitMode);
   const normalizedSrc = normalizeImageSrc(src);
+  const frameClasses = lockFrame
+    ? getImagePresetFrameClassName(resolvedPreset)
+    : "relative h-full w-full overflow-hidden bg-black";
 
   return (
-    <div
-      className={clsx(
-        lockFrame ? getImagePresetFrameClassName(resolvedPreset) : "relative h-full w-full overflow-hidden bg-black",
-        frameClassName,
-      )}
-    >
+    <div className={clsx(frameClasses, frameClassName)}>
       <div
         className={clsx(
           getImageCanvasClassName(resolvedPreset, lockFrame),

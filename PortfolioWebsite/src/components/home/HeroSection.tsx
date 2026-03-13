@@ -59,13 +59,14 @@ export default function HeroSection({
 }: HeroSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const heroStageSizingClassName = getHeroStageSizingClassName(imagePreset, imageFitMode);
-  const outerSectionClassName = editMode
-    ? "relative min-h-[100dvh] w-full overflow-hidden bg-black px-0 lg:min-h-[720px]"
-    : "relative min-h-[100dvh] w-full overflow-hidden bg-black px-0";
 
+  const baseOuterClasses = "relative min-h-[100dvh] w-full overflow-hidden bg-black px-0";
+  const outerSectionClassName = editMode ? `${baseOuterClasses} lg:min-h-[720px]` : baseOuterClasses;
+
+  const baseViewportClasses = "relative min-h-[100dvh] w-full overflow-hidden bg-black";
   const viewportWrapperClassName = editMode
-    ? "relative min-h-[100dvh] w-full overflow-hidden border-y border-white/5 bg-black lg:min-h-[720px]"
-    : "relative min-h-[100dvh] w-full overflow-hidden bg-black lg:border-y lg:border-white/5";
+    ? `${baseViewportClasses} border-y border-white/5 lg:min-h-[720px]`
+    : `${baseViewportClasses} lg:border-y lg:border-white/5`;
 
   const { scrollYProgress } = useScroll({
     target: containerRef,

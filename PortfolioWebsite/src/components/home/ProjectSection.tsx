@@ -31,11 +31,10 @@ export default function ProjectSection({
   const containerRef = useRef<HTMLDivElement>(null);
   const imageAlt = typeof title === "string" ? title : "Project cover";
   const resolvedImagePreset = normalizeImagePreset(imagePreset);
-  const sectionClassName = `relative m-0 grid min-h-screen min-h-[100dvh] w-full place-items-center overflow-hidden p-0 mix-blend-normal group ${editMode ? "cursor-default" : "interactive cursor-pointer"}`;
+  const cursorClass = editMode ? "cursor-default" : "interactive cursor-pointer";
+  const sectionClassName = `relative m-0 grid min-h-screen min-h-[100dvh] w-full place-items-center overflow-hidden p-0 mix-blend-normal group ${cursorClass}`;
   const mediaLayerClassName = "absolute inset-0 grid place-items-center px-0";
-  const frameClassName = resolvedImagePreset === "native"
-    ? "w-full h-full"
-    : "w-full";
+  const frameClassName = resolvedImagePreset === "native" ? "w-full h-full" : "w-full";
 
   const { scrollYProgress } = useScroll({
     target: containerRef,

@@ -7,6 +7,13 @@ const NO_STORE_HEADER = {
   "Cache-Control": "no-store",
 } as const;
 
+const BAD_REQUEST_RESPONSE = {
+  error: {
+    code: "BAD_REQUEST",
+    message: "Invalid slug path",
+  },
+};
+
 function isInvalidLegacyPath(pathname: string) {
   const rawUrl = pathname.toLowerCase();
   return rawUrl.includes("%2e%2e") || rawUrl.includes("\\");
@@ -37,9 +44,7 @@ function decodeSlugSegment(segment: string) {
 function normalizeLegacySegments(pathname: string) {
   const rawPath = pathname.replace(/^\/p/i, "");
   const merged = rawPath.replace(/\/+/g, "/").replace(/^\/+|\/+$/g, "");
-  if (!merged) {
-    return [];
-  }
+  if (!merged) return [];
 
   const segments = merged.split("/");
   const normalizedSegments = segments.map(decodeSlugSegment);
@@ -48,13 +53,8 @@ function normalizeLegacySegments(pathname: string) {
 
 function toLegacyRedirectPath(pathname: string) {
   const segments = normalizeLegacySegments(pathname);
-  if (segments === null) {
-    return null;
-  }
-
-  if (segments.length === 0) {
-    return "/";
-  }
+  if (segments === null) return null;
+  if (segments.length === 0) return "/";
 
   if (segments[0] === "works" && segments.length === 2) {
     segments[1] = toCanonicalWorkSlug(segments[1]);
@@ -65,17 +65,20 @@ function toLegacyRedirectPath(pathname: string) {
 
 function toCanonicalWorkRedirectPath(pathname: string) {
   const match = pathname.match(/^\/works\/([^/]+)$/);
-  if (!match) {
-    return null;
-  }
+  if (!match) return null;
 
   const currentSlug = match[1];
   const canonicalSlug = toCanonicalWorkSlug(currentSlug);
-  if (canonicalSlug === currentSlug) {
-    return null;
-  }
+  if (canonicalSlug === currentSlug) return null;
 
   return `/works/${canonicalSlug}`;
+}
+
+function createBadRequestResponse() {
+  return NextResponse.json(BAD_REQUEST_RESPONSE, {
+    headers: NO_STORE_HEADER,
+    status: 400,
+  });
 }
 
 export function middleware(request: NextRequest) {
@@ -83,34 +86,12 @@ export function middleware(request: NextRequest) {
 
   if (pathname === "/p" || pathname === "/p/" || pathname.startsWith("/p/")) {
     if (isInvalidLegacyPath(pathname)) {
-      return NextResponse.json(
-        {
-          error: {
-            code: "BAD_REQUEST",
-            message: "Invalid slug path",
-          },
-        },
-        {
-          headers: NO_STORE_HEADER,
-          status: 400,
-        },
-      );
+      return createBadRequestResponse();
     }
 
     const redirectPath = toLegacyRedirectPath(pathname);
     if (!redirectPath) {
-      return NextResponse.json(
-        {
-          error: {
-            code: "BAD_REQUEST",
-            message: "Invalid slug path",
-          },
-        },
-        {
-          headers: NO_STORE_HEADER,
-          status: 400,
-        },
-      );
+      return createBadRequestResponse();
     }
 
     const redirectUrl = request.nextUrl.clone();

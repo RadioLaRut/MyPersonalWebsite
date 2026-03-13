@@ -13,24 +13,14 @@ const LEGACY_WORK_SLUG_ALIASES = {
 
 export function normalizeLegacyPublicPath(pathname: string): string {
   const trimmed = pathname.trim();
-  if (!trimmed) {
-    return "/";
-  }
+  if (!trimmed) return "/";
 
   let normalized = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
   normalized = normalized.replace(/\/+/g, "/");
 
-  if (normalized === "/p" || normalized === "/p/") {
-    return "/";
-  }
-
-  if (normalized.startsWith("/p/")) {
-    normalized = normalized.slice(2);
-  }
-
-  if (normalized.length > 1 && normalized.endsWith("/")) {
-    normalized = normalized.slice(0, -1);
-  }
+  if (normalized === "/p" || normalized === "/p/") return "/";
+  if (normalized.startsWith("/p/")) normalized = normalized.slice(2);
+  if (normalized.length > 1 && normalized.endsWith("/")) normalized = normalized.slice(0, -1);
 
   return normalized || "/";
 }
@@ -62,21 +52,13 @@ export function toAdminPathFromPublicPath(pathname: string): string {
 
 export function normalizeImageSrc(src: string | null | undefined): string {
   const trimmed = src?.trim();
-  if (!trimmed) {
-    return CANONICAL_PLACEHOLDER_PATH;
-  }
-
+  if (!trimmed) return CANONICAL_PLACEHOLDER_PATH;
   if (/placeholder\.png$/i.test(trimmed) || LEGACY_PLACEHOLDER_PATHS.has(trimmed)) {
     return CANONICAL_PLACEHOLDER_PATH;
   }
 
-  // 验证路径格式：必须以 "/" 开头或者是绝对 URL (http:// 或 https://)
   const isValidPath = trimmed.startsWith("/") || /^https?:\/\//i.test(trimmed);
-  if (!isValidPath) {
-    return CANONICAL_PLACEHOLDER_PATH;
-  }
-
-  return trimmed;
+  return isValidPath ? trimmed : CANONICAL_PLACEHOLDER_PATH;
 }
 
 export function isPlaceholderImageSrc(src: string | null | undefined): boolean {

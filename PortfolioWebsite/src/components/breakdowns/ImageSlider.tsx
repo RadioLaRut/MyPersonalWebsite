@@ -1,99 +1,99 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { OptimizedImage } from "@/components/common/OptimizedImage";
 import Typography from "@/components/common/Typography";
 import {
-    type ImageFitMode,
-    type ImagePreset,
-    getImageCanvasClassName,
-    getImageElementClassName,
-    getImagePresetFrameClassName,
-    normalizeImageFitMode,
-    normalizeImagePreset,
+  type ImageFitMode,
+  type ImagePreset,
+  getImageCanvasClassName,
+  getImageElementClassName,
+  getImagePresetFrameClassName,
+  normalizeImageFitMode,
+  normalizeImagePreset,
 } from "@/lib/image-presentation";
 
 interface ImageSliderProps {
-    title?: string;
-    unlitSrc: string;
-    litSrc: string;
-    alt?: string;
-    className?: string;
-    imagePreset?: ImagePreset;
-    imageFitMode?: ImageFitMode;
-    leftLabel?: string;
-    rightLabel?: string;
-    editMode?: boolean;
+  title?: string;
+  unlitSrc: string;
+  litSrc: string;
+  alt?: string;
+  className?: string;
+  imagePreset?: ImagePreset;
+  imageFitMode?: ImageFitMode;
+  leftLabel?: string;
+  rightLabel?: string;
+  editMode?: boolean;
 }
 
 export default function ImageSlider({
-    title,
-    unlitSrc,
-    litSrc,
-    alt = "Image Comparison",
-    className = "",
-    imagePreset = "ratio-16-9",
-    imageFitMode = "x",
-    leftLabel,
-    rightLabel,
-    editMode = false,
+  title,
+  unlitSrc,
+  litSrc,
+  alt = "Image Comparison",
+  className = "",
+  imagePreset = "ratio-16-9",
+  imageFitMode = "x",
+  leftLabel,
+  rightLabel,
+  editMode = false,
 }: ImageSliderProps) {
-    const [sliderPosition, setSliderPosition] = useState(50);
-    const [isDragging, setIsDragging] = useState(false);
-    const containerRef = useRef<HTMLDivElement>(null);
-    const resolvedPreset = normalizeImagePreset(imagePreset);
-    const resolvedFitMode = normalizeImageFitMode(imageFitMode);
-    const frameClassName = getImagePresetFrameClassName(resolvedPreset);
-    const canvasClassName = getImageCanvasClassName(resolvedPreset);
-    const imageClassName = getImageElementClassName(resolvedPreset, resolvedFitMode);
-    const visibleTitle = typeof title === "string" && title.trim().length > 0 ? title : alt;
+  const [sliderPosition, setSliderPosition] = useState(50);
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const resolvedPreset = normalizeImagePreset(imagePreset);
+  const resolvedFitMode = normalizeImageFitMode(imageFitMode);
+  const frameClassName = getImagePresetFrameClassName(resolvedPreset);
+  const canvasClassName = getImageCanvasClassName(resolvedPreset);
+  const imageClassName = getImageElementClassName(resolvedPreset, resolvedFitMode);
+  const visibleTitle = typeof title === "string" && title.trim().length > 0 ? title : alt;
 
-    const handleMove = (clientX: number) => {
-        if (!containerRef.current) return;
-        const rect = containerRef.current.getBoundingClientRect();
-        const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-        const percentage = (x / rect.width) * 100;
-        setSliderPosition(percentage);
+  const handleMove = (clientX: number) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+    const percentage = (x / rect.width) * 100;
+    setSliderPosition(percentage);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging) handleMove(e.clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (isDragging) handleMove(e.touches[0].clientX);
+  };
+
+  useEffect(() => {
+    if (editMode) {
+      setIsDragging(false);
+      return;
+    }
+
+    const handleMouseUp = () => setIsDragging(false);
+    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("touchend", handleMouseUp);
+    return () => {
+      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchend", handleMouseUp);
     };
+  }, [editMode]);
 
-    const handleMouseMove = (e: React.MouseEvent) => {
-        if (!isDragging) return;
-        handleMove(e.clientX);
-    };
+  const cursorClass = editMode ? "cursor-default" : "cursor-ew-resize";
 
-    const handleTouchMove = (e: React.TouchEvent) => {
-        if (!isDragging) return;
-        handleMove(e.touches[0].clientX);
-    };
-
-    useEffect(() => {
-        if (editMode) {
-            setIsDragging(false);
-            return;
-        }
-
-        const handleMouseUp = () => setIsDragging(false);
-        window.addEventListener("mouseup", handleMouseUp);
-        window.addEventListener("touchend", handleMouseUp);
-        return () => {
-            window.removeEventListener("mouseup", handleMouseUp);
-            window.removeEventListener("touchend", handleMouseUp);
-        };
-    }, [editMode]);
-
-    return (
-        <div className={`w-full rhythm-block-compact ${className}`}>
-            <div className="grid-container">
-                <div className="col-start-2 col-span-10">
-                    <div
-                        ref={containerRef}
-                        className={`${frameClassName} select-none ${editMode ? "cursor-default" : "cursor-ew-resize"}`}
-                        onMouseMove={editMode ? undefined : handleMouseMove}
-                        onTouchMove={editMode ? undefined : handleTouchMove}
-                        onMouseDown={editMode ? undefined : () => setIsDragging(true)}
-                        onTouchStart={editMode ? undefined : () => setIsDragging(true)}
-                    >
+  return (
+    <div className={`w-full rhythm-block-compact ${className}`}>
+      <div className="grid-container">
+        <div className="col-start-2 col-span-10">
+          <div
+            ref={containerRef}
+            className={`${frameClassName} select-none ${cursorClass}`}
+            onMouseMove={editMode ? undefined : handleMouseMove}
+            onTouchMove={editMode ? undefined : handleTouchMove}
+            onMouseDown={editMode ? undefined : () => setIsDragging(true)}
+            onTouchStart={editMode ? undefined : () => setIsDragging(true)}
+          >
                         {visibleTitle ? (
                             <div className="pointer-events-none absolute left-5 top-5 z-20 md:left-6 md:top-6">
                                 <div className="border border-white/12 bg-black/58 px-3 py-2 backdrop-blur-sm">

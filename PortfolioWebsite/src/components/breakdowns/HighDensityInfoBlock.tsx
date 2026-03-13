@@ -1,33 +1,33 @@
-'use client';
+"use client";
 
-import React, { type ReactNode } from 'react';
+import type { ReactNode } from "react";
 
-import { PresetImage } from '@/components/common/PresetImage';
+import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from '@/components/layout/ComponentDesignProvider';
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
 import {
   getGridColumnStyle,
   getSectionSpacingClassName,
   getSpacingRem,
-} from '@/lib/component-design-style';
-import { type ImageFitMode, type ImagePreset } from '@/lib/image-presentation';
+} from "@/lib/component-design-style";
+import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 interface InfoItem {
-    label: ReactNode;
-    value: ReactNode;
+  label: ReactNode;
+  value: ReactNode;
 }
 
 interface HighDensityInfoBlockProps {
-    phase1: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; items?: InfoItem[]; label?: ReactNode };
-    phase2: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; items?: InfoItem[]; label?: ReactNode };
-    phase3: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; imageSrc?: string; imagePreset?: ImagePreset; imageFitMode?: ImageFitMode; label?: ReactNode };
-    phase1ItemsContent?: ReactNode;
-    phase2ItemsContent?: ReactNode;
+  phase1: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; items?: InfoItem[]; label?: ReactNode };
+  phase2: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; items?: InfoItem[]; label?: ReactNode };
+  phase3: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; imageSrc?: string; imagePreset?: ImagePreset; imageFitMode?: ImageFitMode; label?: ReactNode };
+  phase1ItemsContent?: ReactNode;
+  phase2ItemsContent?: ReactNode;
 }
 
 export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1ItemsContent, phase2ItemsContent }: HighDensityInfoBlockProps) {
-    const design = useComponentDesign('HighDensityInfoBlock');
-    const phase3ImageAlt = typeof phase3.title === "string" ? phase3.title : "Phase image";
+  const design = useComponentDesign("HighDensityInfoBlock");
+  const phase3ImageAlt = typeof phase3.title === "string" ? phase3.title : "Phase image";
 
     return (
         <div className={`w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>

@@ -36,22 +36,10 @@ function isWhitespace(char: string) {
 }
 
 function getRawScript(char: string): TypographyScript | "space" | "neutral" | "break" {
-  if (isNewline(char)) {
-    return "break";
-  }
-
-  if (isWhitespace(char)) {
-    return "space";
-  }
-
-  if (HAN_REGEX.test(char) || CJK_PUNCTUATION_REGEX.test(char)) {
-    return "cjk";
-  }
-
-  if (LATIN_REGEX.test(char)) {
-    return "latin";
-  }
-
+  if (isNewline(char)) return "break";
+  if (isWhitespace(char)) return "space";
+  if (HAN_REGEX.test(char) || CJK_PUNCTUATION_REGEX.test(char)) return "cjk";
+  if (LATIN_REGEX.test(char)) return "latin";
   return "neutral";
 }
 

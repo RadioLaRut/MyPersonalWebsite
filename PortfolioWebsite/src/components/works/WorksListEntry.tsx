@@ -109,25 +109,18 @@ export default function WorksListEntry({
   }, [isMobile, editMode]);
 
   const handleInteraction = () => {
-    if (editMode || !href) {
-      return;
-    }
-
-    // 移动端直接跳转，无需二次确认
-    if (isMobile) {
+    if (!editMode && href) {
       window.location.href = href;
-      return;
     }
-
-    window.location.href = href;
   };
 
-  const active = editMode ? true : isExpanded;
+  const active = editMode || isExpanded;
+  const cursorClass = editMode ? "cursor-default" : "interactive cursor-pointer";
 
   return (
     <div
       ref={entryRef}
-      className={`group relative grid min-h-[34vh] w-full content-center border-b border-white/10 ${editMode ? "cursor-default" : "interactive cursor-pointer"} sm:min-h-[42vh]`}
+      className={`group relative grid min-h-[34vh] w-full content-center border-b border-white/10 ${cursorClass} sm:min-h-[42vh]`}
       onClick={handleInteraction}
       onMouseEnter={() => !isMobile && !editMode && setIsExpanded(true)}
       onMouseLeave={() => !isMobile && !editMode && setIsExpanded(false)}

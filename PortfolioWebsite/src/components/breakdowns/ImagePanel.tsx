@@ -22,9 +22,7 @@ export default function ImagePanel({
   fitMode,
   variant = "content",
 }: ImagePanelProps) {
-  if (!src) {
-    return null;
-  }
+  if (!src) return null;
 
   const imageAlt = alt || caption || "Image";
 

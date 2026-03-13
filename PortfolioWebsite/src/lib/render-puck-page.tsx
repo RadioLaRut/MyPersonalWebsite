@@ -17,19 +17,13 @@ export async function renderPuckPage(rawSlug: string | string[] | undefined) {
       </main>
     );
   } catch (error) {
-    if (error instanceof SlugValidationError) {
+    if (
+      error instanceof SlugValidationError ||
+      error instanceof SyntaxError ||
+      (error as NodeJS.ErrnoException).code === "ENOENT"
+    ) {
       notFound();
     }
-
-    const errno = error as NodeJS.ErrnoException;
-    if (errno.code === "ENOENT") {
-      notFound();
-    }
-
-    if (error instanceof SyntaxError) {
-      notFound();
-    }
-
     throw error;
   }
 }

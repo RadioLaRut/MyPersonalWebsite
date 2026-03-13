@@ -1,63 +1,63 @@
-'use client';
+"use client";
 
-import React, { type CSSProperties, type ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from "react";
 
-import { PresetImage } from '@/components/common/PresetImage';
+import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from '@/components/layout/ComponentDesignProvider';
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
 import {
   getGridColumnStyle,
   getSectionSpacingClassName,
   getSpacingRem,
-} from '@/lib/component-design-style';
-import { type ImageFitMode, type ImagePreset } from '@/lib/image-presentation';
+} from "@/lib/component-design-style";
+import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 interface TextSplitLayoutProps {
-    heading: ReactNode;
-    paragraphs: ReactNode[];
-    imageSrc?: string;
-    imagePreset?: ImagePreset;
-    imageFitMode?: ImageFitMode;
-    layoutVariant?: 'split-left' | 'split-right' | 'stack';
-    paragraphsContent?: ReactNode;
+  heading: ReactNode;
+  paragraphs: ReactNode[];
+  imageSrc?: string;
+  imagePreset?: ImagePreset;
+  imageFitMode?: ImageFitMode;
+  layoutVariant?: "split-left" | "split-right" | "stack";
+  paragraphsContent?: ReactNode;
 }
 
 type StyleWithVars = CSSProperties & Record<string, string>;
 
 export default function TextSplitLayout({
-    heading,
-    paragraphs,
-    imageSrc,
-    imagePreset = "ratio-16-9",
-    imageFitMode = "x",
-    layoutVariant = 'split-left',
-    paragraphsContent,
+  heading,
+  paragraphs,
+  imageSrc,
+  imagePreset = "ratio-16-9",
+  imageFitMode = "x",
+  layoutVariant = "split-left",
+  paragraphsContent,
 }: TextSplitLayoutProps) {
-    const design = useComponentDesign('TextSplitLayout');
-    const imageAlt = typeof heading === 'string' ? heading : 'TextSplitLayout image';
-    const splitHeadingGapStyle: StyleWithVars = {
-        "--text-split-heading-image-gap": getSpacingRem(design.headingImageGap),
-    };
-    const paragraphContent = paragraphsContent ?? (
-        <div
-            className="grid"
-            style={{ rowGap: getSpacingRem(design.paragraphGap) }}
+  const design = useComponentDesign("TextSplitLayout");
+  const imageAlt = typeof heading === "string" ? heading : "TextSplitLayout image";
+  const splitHeadingGapStyle: StyleWithVars = {
+    "--text-split-heading-image-gap": getSpacingRem(design.headingImageGap),
+  };
+  const paragraphContent = paragraphsContent ?? (
+    <div
+      className="grid"
+      style={{ rowGap: getSpacingRem(design.paragraphGap) }}
+    >
+      {paragraphs.map((p, i) => (
+        <Typography
+          key={i}
+          as="p"
+          preset="sans-body"
+          size={design.bodySize}
+          weight="semantic"
+          wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"}
+          className="text-textMuted"
         >
-            {paragraphs.map((p, i) => (
-                <Typography
-                    key={i}
-                    as="p"
-                    preset="sans-body"
-                    size={design.bodySize}
-                    weight="semantic"
-                    wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"}
-                    className="text-textMuted"
-                >
-                    {p}
-                </Typography>
-                ))}
-        </div>
-    );
+          {p}
+        </Typography>
+      ))}
+    </div>
+  );
 
     return (
         <div className={`w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>

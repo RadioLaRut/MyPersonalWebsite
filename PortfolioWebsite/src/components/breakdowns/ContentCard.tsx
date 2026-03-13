@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import React, { type CSSProperties, type ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from "react";
 
-import { PresetImage } from '@/components/common/PresetImage';
+import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from '@/components/layout/ComponentDesignProvider';
-import { toParagraphNodes } from '@/lib/editable-text';
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { toParagraphNodes } from "@/lib/editable-text";
 import {
   getGridColumnStyle,
   getSectionSpacingClassName,
   getSpacingRem,
-} from '@/lib/component-design-style';
-import { type ImageFitMode, type ImagePreset } from '@/lib/image-presentation';
+} from "@/lib/component-design-style";
+import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 interface ContentCardProps {
   title: ReactNode;
@@ -19,7 +19,7 @@ interface ContentCardProps {
   imageSrc?: string;
   imagePreset?: ImagePreset;
   imageFitMode?: ImageFitMode;
-  imagePosition?: 'left' | 'right';
+  imagePosition?: "left" | "right";
 }
 
 type StyleWithVars = CSSProperties & Record<string, string>;
@@ -28,13 +28,13 @@ export default function ContentCard({
   title,
   description,
   imageSrc,
-  imagePreset = 'ratio-16-9',
-  imageFitMode = 'x',
-  imagePosition = 'right',
+  imagePreset = "ratio-16-9",
+  imageFitMode = "x",
+  imagePosition = "right",
 }: ContentCardProps) {
-  const design = useComponentDesign('ContentCard');
+  const design = useComponentDesign("ContentCard");
   const paragraphs = toParagraphNodes(description);
-  const imageAlt = typeof title === 'string' ? title : 'Content card image';
+  const imageAlt = typeof title === "string" ? title : "Content card image";
   const hasImage = Boolean(imageSrc);
   const mobileMediaOffsetStyle: StyleWithVars = {
     "--content-card-mobile-media-top-spacing": getSpacingRem(design.mobileMediaTopSpacing),
@@ -78,12 +78,12 @@ export default function ContentCard({
     </div>
   );
 
-  const imageContent = hasImage ? (
+  const imageContent = hasImage && imageSrc ? (
     <div className="relative group">
       <div className="relative w-full overflow-hidden rounded-none border border-white/10 bg-[#0a0a0a] transition-colors duration-500 group-hover:border-white/20">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
         <PresetImage
-          src={imageSrc!}
+          src={imageSrc}
           alt={imageAlt}
           preset={imagePreset}
           fitMode={imageFitMode}
@@ -101,47 +101,29 @@ export default function ContentCard({
     );
   }
 
-  const isImageLeft = imagePosition === 'left';
+  const isImageLeft = imagePosition === "left";
+  const textOrder = isImageLeft ? "order-1 lg:order-2" : "";
+  const imageOrder = isImageLeft ? "order-2 lg:order-1" : "";
+  const textBounds = isImageLeft ? design.imageLeftTextBounds : design.imageRightTextBounds;
+  const imageBounds = isImageLeft ? design.imageLeftMediaBounds : design.imageRightMediaBounds;
 
   return (
     <div className={`grid-container w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
-      {isImageLeft ? (
-        <>
-          <div
-            className="order-2 self-start mt-[var(--content-card-mobile-media-top-spacing)] lg:order-1 lg:mt-0"
-            style={{
-              ...mobileMediaOffsetStyle,
-              ...getGridColumnStyle(design.imageLeftMediaBounds),
-            }}
-          >
-            {imageContent}
-          </div>
-          <div
-            className="order-1 self-start lg:order-2"
-            style={getGridColumnStyle(design.imageLeftTextBounds)}
-          >
-            {textContent}
-          </div>
-        </>
-      ) : (
-        <>
-          <div
-            className="self-start"
-            style={getGridColumnStyle(design.imageRightTextBounds)}
-          >
-            {textContent}
-          </div>
-          <div
-            className="self-start mt-[var(--content-card-mobile-media-top-spacing)] lg:mt-0"
-            style={{
-              ...mobileMediaOffsetStyle,
-              ...getGridColumnStyle(design.imageRightMediaBounds),
-            }}
-          >
-            {imageContent}
-          </div>
-        </>
-      )}
+      <div
+        className={`self-start ${textOrder}`}
+        style={getGridColumnStyle(textBounds)}
+      >
+        {textContent}
+      </div>
+      <div
+        className={`self-start mt-[var(--content-card-mobile-media-top-spacing)] lg:mt-0 ${imageOrder}`}
+        style={{
+          ...mobileMediaOffsetStyle,
+          ...getGridColumnStyle(imageBounds),
+        }}
+      >
+        {imageContent}
+      </div>
     </div>
   );
 }
