@@ -53,6 +53,8 @@ logs/
 
 # Local development
 *.local
+commitmsg.txt
+PortfolioWebsite/.next-dev-*/
 
 # TypeScript
 *.tsbuildinfo

@@ -441,6 +441,7 @@ export const config: Config = {
     ImageSlider: {
       fields: {
         _g_images: createFieldGroup("对比图片"),
+        title: { type: "text", label: "Title" },
         unlitSrc: { type: "text", label: "Unlit Source" },
         litSrc: { type: "text", label: "Lit Source" },
         alt: { type: "text", label: "Alt Text" },
@@ -452,14 +453,16 @@ export const config: Config = {
         rightLabel: { type: "text", label: "Right Label" },
       },
       defaultProps: {
+        title: "LIGHTING COMPARISON",
         unlitSrc: "/images/train-station/2Day.webp",
         litSrc: "/images/train-station/2Night.webp",
         alt: "Lighting Comparison",
         imagePreset: "ratio-16-9",
         imageFitMode: "x",
       },
-      render: ({ unlitSrc, litSrc, alt, imagePreset, imageFitMode, leftLabel, rightLabel }) => (
+      render: ({ title, unlitSrc, litSrc, alt, imagePreset, imageFitMode, leftLabel, rightLabel }) => (
         <ImageSlider
+          title={title}
           unlitSrc={unlitSrc}
           litSrc={litSrc}
           alt={alt}

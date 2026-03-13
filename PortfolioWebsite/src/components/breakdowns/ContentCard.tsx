@@ -39,7 +39,7 @@ export default function ContentCard({
               as="span"
               preset="sans-body"
               size="caption"
-              weight="medium"
+              weight="semantic"
               wrapPolicy="label"
               className="border border-white/10 px-2 py-1 text-textMuted"
             >
@@ -80,7 +80,7 @@ export default function ContentCard({
 
   const ImageContent = hasImage ? (
     <div className="relative group">
-      <div className="relative w-full overflow-hidden rounded-sm border border-white/10 bg-[#0a0a0a] transition-colors duration-500 group-hover:border-white/20">
+      <div className="relative w-full overflow-hidden rounded-none border border-white/10 bg-[#0a0a0a] transition-colors duration-500 group-hover:border-white/20">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
         <PresetImage
           src={imageSrc!}
@@ -95,7 +95,7 @@ export default function ContentCard({
 
   if (!hasImage) {
     return (
-      <div className="w-full my-24 grid-container">
+      <div className="w-full rhythm-block-compact grid-container">
         <div className="col-start-3 col-span-8">{TextContent}</div>
       </div>
     );
@@ -104,7 +104,7 @@ export default function ContentCard({
   const isImageLeft = imagePosition === 'left';
 
   return (
-    <div className="w-full my-24 grid-container">
+    <div className="w-full rhythm-block-compact grid-container">
       {isImageLeft ? (
         <>
           <div className="col-span-8 col-start-1 order-2 lg:order-1 mt-12 lg:mt-0">

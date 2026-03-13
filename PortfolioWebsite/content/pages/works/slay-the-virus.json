@@ -78,6 +78,7 @@
       "type": "ImageSlider",
       "props": {
         "id": "stv-slider-1",
+        "title": "海报优化对比",
         "unlitSrc": "/images/slay-the-virus/PosterLandscapeOrigineClean.webp",
         "litSrc": "/images/slay-the-virus/STVTitle.webp",
         "alt": "海报优化对比",
@@ -89,6 +90,7 @@
       "type": "ImageSlider",
       "props": {
         "id": "ImageSlider-3ed604bd-97bb-4bea-b135-33432e93140d",
+        "title": "海报优化对比",
         "unlitSrc": "/images/slay-the-virus/PosterPortraitOrigine.webp",
         "litSrc": "/images/slay-the-virus/STVTitlePortrait.webp",
         "alt": "海报优化对比",

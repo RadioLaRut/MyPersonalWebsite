@@ -9,7 +9,7 @@ interface SectionHeadlineProps {
 
 export default function BreakdownSectionHeadline({ title }: SectionHeadlineProps) {
     return (
-        <div className="w-full my-16 grid-container">
+        <div className="w-full rhythm-block-compact grid-container">
             <div className="col-span-12">
                 <Typography
                     as="h2"

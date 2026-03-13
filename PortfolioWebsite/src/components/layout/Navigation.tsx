@@ -176,7 +176,7 @@ export default function Navigation() {
               as="span"
               preset="sans-body"
               size="body-sm"
-              weight="medium"
+              weight="semantic"
               wrapPolicy="label"
               className="relative z-10 text-white/80 transition-colors duration-300 group-hover:text-white"
             >
@@ -244,7 +244,7 @@ export default function Navigation() {
                       as="span"
                       preset="sans-body"
                       size="body-sm"
-                      weight="medium"
+                      weight="semantic"
                       wrapPolicy="label"
                       className="text-white/50 transition-colors duration-300 group-hover:text-white"
                     >
@@ -323,7 +323,7 @@ export default function Navigation() {
                                   as="span"
                                   preset="classical-display"
                                   size="menu"
-                                  weight="regular"
+                                  weight="semantic"
                                   wrapPolicy="heading"
                                   className={`inline-block text-inherit transition-all duration-500 ease-[0.22,1,0.36,1] ${isActive ? "tracking-widest" : "tracking-normal"}`}
                                 >
@@ -347,7 +347,7 @@ export default function Navigation() {
                   <Typography
                     preset="sans-body"
                     size="caption"
-                    weight="medium"
+                    weight="semantic"
                     wrapPolicy="label"
                     className="text-white/34"
                   >

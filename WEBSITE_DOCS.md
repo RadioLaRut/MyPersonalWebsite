@@ -30,7 +30,8 @@
 | `/` 或 `/p` | `content/pages/index.json` | 首页，展示项目列表 |
 | `/works` 或 `/p/works` | `content/pages/works.json` | 作品列表页 |
 | `/works/[id]` 或 `/p/works/[id]` | `content/pages/works/[id].json` | 单个作品详情页 |
-| `/contact` 或 `/p/contact` | `content/pages/contact.json` | 联系方式页 |
+| `/contact` | 重定向到 `/about` | 对外公开入口，当前不再独立渲染联系页 |
+| `/p/contact` | `content/pages/contact.json` | CMS / 预览路径，保留历史联系页内容 |
 | `/works/lighting-portfolio` | `content/pages/works/lighting-portfolio.json` | 灯光作品集合页 |
 
 ### 路径说明
@@ -73,6 +74,38 @@
 
 ---
 
+## 布局与节奏规范
+
+当前站点不是只有 12 列横向栅格，还同时使用一套纵向节奏系统来控制 section 的上下留白和模块交接。
+
+### 全局规则
+
+- 全站统一使用 12 列 `.grid-container`。
+- 当前实现采用“12 列栅格 + 纵向节奏系统”的双轨规则。
+- `8px` 是最小节奏单位，用于按钮、标签、局部文本组等微调。
+- `32px` 是主节奏单位，用于 section 级 `pt/pb/mt/mb`、分隔线后的进入留白和页面收束。
+- 组件外轮廓应尽量回到 `32px` 主节奏线，不要在 JSON 编排层面靠额外空白块去“补间距”。
+- 测试模式下会显示极淡的 `32px` 横向调试线，用于校对区块节奏和栅格落点。
+
+### 当前常用 rhythm 工具类
+
+- `rhythm-section-compact`：`64px / 64px`
+- `rhythm-section-normal`：`96px / 96px`
+- `rhythm-section-spacious`：移动端 `96px / 96px`，桌面端 `128px / 128px`
+- `rhythm-section-hero`：移动端 `128px / 96px`，桌面端 `160px / 128px`
+- `rhythm-block`：区块间距 `128px`
+- `rhythm-block-compact`：区块间距 `96px`
+- `rhythm-divider-top`：带上边线区块的进入留白 `64px`
+- `rhythm-stack-2 / 3 / 4 / 6 / 8`：内部垂直堆叠工具类，对应 `16 / 24 / 32 / 48 / 64px`
+
+### JSON 编排约束
+
+- 这里列出的标准组件都自带自己的默认节奏，不要再人为插入“空白占位组件”拉开页面。
+- 首页、作品页头、列表页和页尾跳转区都已经内建对应的 section spacing。
+- `/playground` 现在除了组件预览，也承担 rhythm 验收入口。
+
+---
+
 ## 组件详解
 
 ### 首页组件
@@ -82,6 +115,8 @@
 全屏英雄区域，展示网站主标题和背景图。
 
 **用途**：仅用于首页顶部，作为网站入口视觉。
+
+**默认节奏**：`rhythm-section-hero`
 
 **配置项**：无（使用固定配置）
 
@@ -102,6 +137,8 @@
 单个项目展示区块，包含背景图、标题和链接。
 
 **用途**：首页滚动展示各个项目，每个项目占一屏高度。
+
+**默认节奏**：`rhythm-section-normal`
 
 **配置项**：
 
@@ -138,6 +175,8 @@
 作品列表组件，以列表形式展示所有作品。
 
 **用途**：作品列表页，展示所有项目的概览。
+
+**默认节奏**：`rhythm-section-normal`
 
 **配置项**：
 
@@ -337,6 +376,8 @@
 下一个项目导航块。
 
 **用途**：作品详情页底部，引导用户查看下一个项目。
+
+**默认节奏**：上半部分为沉浸式大图跳转区，下半部分为紧凑型 footer strip
 
 **配置项**：
 
@@ -619,6 +660,8 @@
 
 **用途**：联系页面，展示个人信息、经历和联系方式。
 
+**默认节奏**：外层使用 `rhythm-section-spacious`，内部按 intro / history / contact 三段结构组织
+
 **配置项**：
 
 | 字段名 | 类型 | 必填 | 说明 |
@@ -691,6 +734,8 @@
 
 **用途**：作品集合页（如 Lighting Portfolio）的顶部标题区域。
 
+**默认节奏**：`rhythm-section-hero`
+
 **配置项**：
 
 | 字段名 | 类型 | 必填 | 说明 |
@@ -757,6 +802,11 @@
 
 **用途**：展示单张图片，带有可选说明。
 
+**默认节奏**：
+
+- `content` / `large`：`rhythm-block-compact`
+- `fullscreen`：占满视口高度，不走常规 section profile
+
 **配置项**：
 
 | 字段名 | 类型 | 必填 | 说明 |
@@ -790,6 +840,12 @@
 ```
 /images/文件夹名/文件名.扩展名
 ```
+
+重要约束：
+
+- 网站运行时直接读取 `PortfolioWebsite/public/**` 下的真实图片文件，所有网页图片必须以普通 Git 文件提交，不能通过 Git LFS 管理。
+- 一旦网页图片进入 LFS，仓库中保存的是 pointer 文件而不是真实图片字节，Next.js 页面与静态资源访问会读取失败。
+- 当前仓库通过 `PortfolioWebsite/.gitattributes` 强制将 `public/images/**`、`public/assets/images/**` 以及 `public/**/*.png|jpg|jpeg|webp|gif` 排除在 LFS 之外，后续不要移除或覆盖这组规则。
 
 ### 现有图片目录结构
 

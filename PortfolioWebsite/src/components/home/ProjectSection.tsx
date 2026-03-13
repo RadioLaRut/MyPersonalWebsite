@@ -53,8 +53,16 @@ export default function ProjectSection({
   const textColumnClassName = shouldAlignRight
     ? "lg:col-start-5 justify-items-end text-right"
     : "lg:col-start-2 justify-items-start";
-  const subtitleClassName = shouldAlignRight ? "text-right" : "";
-  const underlineClassName = shouldAlignRight ? "origin-right self-end" : "origin-left";
+  const lockupClassName = shouldAlignRight
+    ? "ml-auto justify-items-end text-right"
+    : "mr-auto justify-items-start text-left";
+  const titleLockupClassName = shouldAlignRight
+    ? "justify-self-end justify-items-end"
+    : "justify-self-start justify-items-start";
+  const underlineTrackClassName = shouldAlignRight ? "justify-end" : "justify-start";
+  const underlineFillClassName = editMode
+    ? "w-full"
+    : "w-0 transition-[width] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:w-full";
 
   const handleInteraction = () => {
     if (!editMode && link) {
@@ -91,36 +99,44 @@ export default function ProjectSection({
 
       <motion.div
         style={editMode ? undefined : { opacity }}
-        className={`absolute inset-0 z-20 grid content-center py-20 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}
+        className={`absolute inset-0 z-20 grid content-center rhythm-section-normal ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}
       >
         <div className={`grid-container w-full relative ${editMode ? "" : "mix-blend-difference"}`}>
           <div
             className={`col-span-4 lg:col-span-8 grid content-start ${textColumnClassName}`}
           >
-            {subtitle && (
-              <Typography
-                as="p"
-                preset="gothic-editorial"
-                size="label"
-                weight="display"
-                wrapPolicy="label"
-                className={`mb-3 text-textPrimary ${subtitleClassName}`}
-              >
-                {subtitle}
-              </Typography>
-            )}
-            <Typography
-              as="h2"
-              preset="sans-body"
-              size="hero"
-              weight="strong"
-              wrapPolicy="heading"
-              align={shouldAlignRight ? "right" : "left"}
-              className={`text-white antialiased tracking-wider [transform:translateZ(0)] ${editMode ? "max-w-full" : "origin-left lg:whitespace-nowrap transition-all duration-500 group-hover:tracking-[0.06em] group-hover:scale-[1.02]"}`}
-            >
-              {title}
-            </Typography>
-            <div className={`h-[1.5px] bg-white mt-3 ${editMode ? "w-1/3 max-w-40" : `w-0 transition-all duration-1000 ease-out group-hover:w-[45%] ${underlineClassName}`}`}></div>
+            <div className={`grid max-w-full auto-rows-max gap-y-0 ${lockupClassName}`}>
+              {subtitle && (
+                <Typography
+                  as="p"
+                  preset="gothic-editorial"
+                  size="label"
+                  weight="semantic"
+                  wrapPolicy="label"
+                  align={shouldAlignRight ? "right" : "left"}
+                  style={{ lineHeight: 1 }}
+                  className="text-textPrimary"
+                >
+                  {subtitle}
+                </Typography>
+              )}
+              <div className={`grid w-fit max-w-full auto-rows-max gap-y-0 ${titleLockupClassName}`}>
+                <Typography
+                  as="h2"
+                  preset="sans-body"
+                  size="hero"
+                  weight="strong"
+                  wrapPolicy="heading"
+                  align={shouldAlignRight ? "right" : "left"}
+                  className={`-mt-[0.42em] text-white antialiased tracking-wider [transform:translateZ(0)] ${editMode ? "max-w-full" : "max-w-full lg:whitespace-nowrap transition-[letter-spacing] duration-500 ease-out group-hover:tracking-[0.04em]"}`}
+                >
+                  {title}
+                </Typography>
+                <div className={`-mt-[0.08em] flex w-full ${underlineTrackClassName}`}>
+                  <div className={`h-px bg-white ${underlineFillClassName}`} />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </motion.div>

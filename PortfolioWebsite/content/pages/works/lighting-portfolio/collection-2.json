@@ -62,10 +62,11 @@
     {
       "type": "ImageSlider",
       "props": {
+        "title": "灯光对比",
         "unlitSrc": "/images/train-station/2NoLight.webp",
         "litSrc": "/images/train-station/2Day.webp",
         "alt": "Lighting Comparison",
-        "imagePreset": "ratio-16-9",
+        "imagePreset": "ratio-21-9",
         "imageFitMode": "x",
         "id": "ImageSlider-fc7ebed5-5622-4dbf-abb3-43df8d11cd40",
         "leftLabel": "无光照",
@@ -108,10 +109,11 @@
     {
       "type": "ImageSlider",
       "props": {
+        "title": "灯光对比",
         "unlitSrc": "/images/train-station/NoLight.webp",
         "litSrc": "/images/train-station/Day.webp",
         "alt": "Lighting Comparison",
-        "imagePreset": "ratio-16-9",
+        "imagePreset": "ratio-21-9",
         "imageFitMode": "x",
         "id": "ImageSlider-c5403abb-5cd2-4c52-bef8-ff7da34ce1e2",
         "leftLabel": "无光照",

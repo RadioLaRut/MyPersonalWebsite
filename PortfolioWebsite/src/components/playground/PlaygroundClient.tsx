@@ -46,6 +46,39 @@ const PLAYGROUND_GROUPS = [
     keys: ["HeroSection", "ProjectSection", "HomeEndcapSection", "WorksList", "NextProjectBlock"],
   },
 ] as const;
+const RHYTHM_PROFILES = [
+  {
+    label: "Compact",
+    utility: "rhythm-section-compact",
+    spacing: "64 / 64",
+    description: "用于紧凑型信息块、元数据区和较短的收束段。",
+  },
+  {
+    label: "Normal",
+    utility: "rhythm-section-normal",
+    spacing: "96 / 96",
+    description: "用于常规正文区块、列表页和大多数标准 section。",
+  },
+  {
+    label: "Spacious",
+    utility: "rhythm-section-spacious",
+    spacing: "96 / 96 -> 128 / 128",
+    description: "用于首页收束、关于页大区块和需要更强呼吸感的内容段。",
+  },
+  {
+    label: "Hero",
+    utility: "rhythm-section-hero",
+    spacing: "128 / 96 -> 160 / 128",
+    description: "用于首页 Hero 和作品页头图这类首屏落版区块。",
+  },
+] as const;
+const RHYTHM_STACKS = [
+  { utility: "rhythm-stack-2", spacing: "16px", usage: "紧贴的标签与元信息" },
+  { utility: "rhythm-stack-3", spacing: "24px", usage: "标题与副标题、小型 lockup" },
+  { utility: "rhythm-stack-4", spacing: "32px", usage: "常规段落组和区块内主次层级" },
+  { utility: "rhythm-stack-6", spacing: "48px", usage: "CTA 前后的呼吸感和分组切换" },
+  { utility: "rhythm-stack-8", spacing: "64px", usage: "大图区块内部的强切换" },
+] as const;
 
 const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
   HeroHeadline: {
@@ -96,6 +129,7 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     variant: "large",
   },
   ImageSlider: {
+    title: "LIGHTING COMPARISON",
     unlitSrc: "/images/train-station/2Day.webp",
     litSrc: "/images/train-station/2Night.webp",
     alt: "Lighting Comparison",
@@ -158,7 +192,7 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
   HeroSection: {
     eyebrow: "LIGHTING / TECH ART / GAME DESIGN",
     title: "JIANG CHENGYAN",
-    subtitle: "Lighting-first portfolio",
+    subtitle: "MY 2026 PORTFOLIO",
     description: "以灯光建立氛围与引导，再把技术美术、游戏设计和叙事系统组织成完整体验。",
     primaryCtaLabel: "ENTER LIGHTING",
     primaryCtaHref: "/works/lighting-portfolio",
@@ -252,70 +286,69 @@ const groupedPlaygroundComponents = PLAYGROUND_GROUPS.map((group) => ({
 
 export default function PlaygroundClient() {
   return (
-    <main className="min-h-screen bg-black text-white pt-24 md:pt-32 pb-24 md:pb-32">
+    <main className="min-h-screen bg-black text-white rhythm-section-spacious">
       <div className="grid-container">
         {/* Header Section */}
-        <div className="col-start-2 col-span-10 mb-16 lg:mb-24">
+        <div className="col-start-2 col-span-10 mb-24 lg:mb-32">
           {/* Back Button */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Link
-              href="/"
-              className="group mb-10 inline-grid grid-flow-col auto-cols-max items-center gap-4 lg:mb-12"
+          <div className="rhythm-stack-4">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Link
+                href="/"
+                className="group inline-grid grid-flow-col auto-cols-max items-center gap-4"
+              >
+                <Typography
+                  as="span"
+                  preset="sans-body"
+                  size="label"
+                  weight="medium"
+                  wrapPolicy="label"
+                  className="text-textMuted transition-colors duration-300 group-hover:text-white"
+                >
+                  ← 返回首页
+                </Typography>
+              </Link>
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
             >
               <Typography
                 as="span"
-                preset="sans-body"
-                size="label"
-                weight="medium"
-                wrapPolicy="label"
-                className="text-textMuted transition-colors duration-300 group-hover:text-white"
+                preset="luna-editorial"
+                size="display"
+                weight="display"
+                wrapPolicy="heading"
+                className="text-white"
               >
-                ← 返回首页
+                PLAYGROUND
               </Typography>
-            </Link>
-          </motion.div>
+            </motion.h1>
 
-          {/* Title */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="mb-6 lg:mb-8"
-          >
-            <Typography
-              as="span"
-              preset="luna-editorial"
-              size="display"
-              weight="display"
-              wrapPolicy="heading"
-              className="text-white"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="grid gap-6"
             >
-              PLAYGROUND
-            </Typography>
-          </motion.h1>
-
-          {/* Subtitle */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="grid gap-6"
-          >
-            <Typography
-              as="p"
-              preset="sans-body"
-              size="body"
-              weight="regular"
-              wrapPolicy="prose"
-              className="max-w-2xl text-textMuted"
-            >
-              组件预览与交互测试空间。展示 Puck 中全部常规组件，用于统一预览布局与交互效果。
-            </Typography>
-          </motion.div>
+              <Typography
+                as="p"
+                preset="sans-body"
+                size="body"
+                weight="regular"
+                wrapPolicy="prose"
+                className="max-w-2xl text-textMuted"
+              >
+                组件预览与交互测试空间。展示 Puck 中全部常规组件，用于统一预览布局与交互效果。
+              </Typography>
+            </motion.div>
+          </div>
         </div>
 
         {/* Divider */}
@@ -323,10 +356,10 @@ export default function PlaygroundClient() {
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="col-span-12 border-b border-white/15 mb-16 lg:mb-20 origin-left"
+          className="col-span-12 mb-24 origin-left border-b border-white/15 lg:mb-32"
         />
 
-        <div className="col-span-12 mb-16 lg:mb-20">
+        <div className="col-span-12 mb-24 lg:mb-32">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -383,16 +416,179 @@ export default function PlaygroundClient() {
           </motion.div>
         </div>
 
-        {/* Typography Mixed Script Showcase */}
-        <div className="col-span-12 mb-16 lg:mb-24">
+        <div className="col-span-12 mb-24 lg:mb-32">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6 }}
-            className="mb-10 lg:mb-12 border-b border-white/10 pb-6"
+            className="mb-12 border-b border-white/10 pb-8"
           >
-            <div className="mb-3 grid grid-cols-[auto_1fr] items-baseline gap-4">
+            <div className="mb-4 grid grid-cols-[auto_1fr] items-baseline gap-4">
+              <Typography
+                as="span"
+                preset="sans-body"
+                size="label"
+                weight="medium"
+                wrapPolicy="label"
+                className="text-textMuted"
+              >
+                00A
+              </Typography>
+              <Typography
+                as="h2"
+                preset="sans-body"
+                size="title-sm"
+                weight="strong"
+                wrapPolicy="label"
+                className="text-white"
+              >
+                Vertical Rhythm System
+              </Typography>
+            </div>
+            <Typography
+              as="p"
+              preset="sans-body"
+              size="body-sm"
+              weight="regular"
+              wrapPolicy="prose"
+              className="ml-10 max-w-3xl text-textMuted"
+            >
+              当前站点采用 12 列栅格加纵向节奏的双轨系统。区块外轮廓回到 32px 主节奏线，组件内部再用 stack token 做更细的堆叠控制。
+            </Typography>
+          </motion.div>
+
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+            <div className="grid gap-6 lg:col-span-7">
+              {RHYTHM_PROFILES.map((profile, index) => (
+                <motion.div
+                  key={profile.utility}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.6, delay: index * 0.06 }}
+                  className={`border border-white/10 bg-white/[0.02] px-6 ${profile.utility}`}
+                >
+                  <div className="grid gap-4 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-baseline">
+                    <Typography
+                      as="span"
+                      preset="sans-body"
+                      size="caption"
+                      weight="medium"
+                      wrapPolicy="label"
+                      className="text-textMuted"
+                    >
+                      {profile.utility}
+                    </Typography>
+                    <Typography
+                      as="p"
+                      preset="sans-body"
+                      size="body-sm"
+                      weight="regular"
+                      wrapPolicy="prose"
+                      className="text-textPrimary"
+                    >
+                      {profile.label}。{profile.description}
+                    </Typography>
+                    <Typography
+                      as="span"
+                      preset="sans-body"
+                      size="caption"
+                      weight="medium"
+                      wrapPolicy="label"
+                      className="text-textMuted"
+                    >
+                      {profile.spacing}
+                    </Typography>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6, delay: 0.18 }}
+              className="border border-white/10 bg-white/[0.02] p-6 lg:col-span-5"
+            >
+              <div className="rhythm-stack-4">
+                <div className="rhythm-stack-2">
+                  <Typography
+                    as="span"
+                    preset="sans-body"
+                    size="caption"
+                    weight="medium"
+                    wrapPolicy="label"
+                    className="text-textMuted"
+                  >
+                    STACK TOKENS
+                  </Typography>
+                  <Typography
+                    as="h3"
+                    preset="sans-body"
+                    size="body-lg"
+                    weight="strong"
+                    wrapPolicy="heading"
+                    className="text-textPrimary"
+                  >
+                    组件内部不再临时拍间距
+                  </Typography>
+                </div>
+
+                <div className="rhythm-stack-3">
+                  {RHYTHM_STACKS.map((stack) => (
+                    <div key={stack.utility} className="grid gap-2 border-t border-white/8 pt-4">
+                      <div className="grid grid-cols-[auto_auto] items-center gap-4">
+                        <Typography
+                          as="span"
+                          preset="sans-body"
+                          size="caption"
+                          weight="medium"
+                          wrapPolicy="label"
+                          className="text-textMuted"
+                        >
+                          {stack.utility}
+                        </Typography>
+                        <Typography
+                          as="span"
+                          preset="sans-body"
+                          size="caption"
+                          weight="medium"
+                          wrapPolicy="label"
+                          className="text-textMuted"
+                        >
+                          {stack.spacing}
+                        </Typography>
+                      </div>
+                      <Typography
+                        as="p"
+                        preset="sans-body"
+                        size="body-sm"
+                        weight="regular"
+                        wrapPolicy="prose"
+                        className="text-textPrimary"
+                      >
+                        {stack.usage}
+                      </Typography>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Typography Mixed Script Showcase */}
+        <div className="col-span-12 mb-24 lg:mb-32">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6 }}
+            className="mb-12 border-b border-white/10 pb-8"
+          >
+            <div className="mb-4 grid grid-cols-[auto_1fr] items-baseline gap-4">
               <Typography
                 as="span"
                 preset="sans-body"
@@ -512,16 +708,16 @@ export default function PlaygroundClient() {
 
         {/* Component Groups */}
         {groupedPlaygroundComponents.map((group, groupIndex) => (
-          <div key={group.label} className="col-span-12 mb-16 lg:mb-24">
+          <div key={group.label} className="col-span-12 mb-24 lg:mb-32">
             {/* Group Header */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6 }}
-            className="mb-10 lg:mb-12 border-b border-white/10 pb-6"
-          >
-            <div className="mb-3 grid grid-cols-[auto_1fr] items-baseline gap-4">
+              className="mb-12 border-b border-white/10 pb-8"
+            >
+              <div className="mb-4 grid grid-cols-[auto_1fr] items-baseline gap-4">
                 <Typography
                   as="span"
                   preset="sans-body"
@@ -619,7 +815,7 @@ export default function PlaygroundClient() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="col-span-12 mt-16 lg:mt-24 pt-12 border-t border-white/10 text-center"
+          className="col-span-12 mt-24 border-t border-white/10 pt-16 text-center lg:mt-32"
         >
           <Typography
             as="p"

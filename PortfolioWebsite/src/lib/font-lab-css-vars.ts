@@ -104,25 +104,35 @@ export function buildFontLabDocumentCssVars(
         continue;
       }
 
+      const semanticWeightPair = resolveTypographyPresetWeightPair(
+        preset,
+        sizeConfig.semanticWeight,
+        presetConfig.latinWeightOffsetSteps,
+      );
+
       vars[`--typography-${preset}-${size}-font-size`] = resolveResponsiveFontSize(
         sizeConfig.fontSize,
         getTypographySizeToken(size).fontSize,
       );
       vars[`--typography-${preset}-${size}-line-height`] = String(sizeConfig.lineHeight);
-      vars[`--typography-${preset}-${size}-cjk-horizontal-offset`] =
-        `${sizeConfig.cjkHorizontalOffset}em`;
+      vars[`--typography-${preset}-${size}-cjk-edge-offset`] =
+        `${sizeConfig.cjkEdgeOffset}em`;
       vars[`--typography-${preset}-${size}-cjk-baseline-offset`] =
         `${sizeConfig.cjkVerticalOffset}em`;
       vars[`--typography-${preset}-${size}-cjk-letter-spacing`] =
         `${sizeConfig.cjkLetterSpacing}em`;
-      vars[`--typography-${preset}-${size}-latin-horizontal-offset`] =
-        `${sizeConfig.latinHorizontalOffset}em`;
+      vars[`--typography-${preset}-${size}-latin-edge-offset`] =
+        `${sizeConfig.latinEdgeOffset}em`;
       vars[`--typography-${preset}-${size}-latin-baseline-offset`] =
         `${sizeConfig.cjkVerticalOffset + sizeConfig.latinRelativeOffset}em`;
       vars[`--typography-${preset}-${size}-letter-spacing`] =
         `${sizeConfig.cjkLetterSpacing}em`;
       vars[`--typography-${preset}-${size}-latin-letter-spacing`] =
         `${sizeConfig.latinLetterSpacing}em`;
+      vars[`--typography-${preset}-${size}-semantic-cjk-weight`] =
+        String(semanticWeightPair.cjk);
+      vars[`--typography-${preset}-${size}-semantic-latin-weight`] =
+        String(semanticWeightPair.latin);
     }
 
     for (const weight of TYPOGRAPHY_WEIGHTS) {

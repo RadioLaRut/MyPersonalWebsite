@@ -46,8 +46,8 @@ export default function BreakdownTriptych({
   const col3Alt = toPlainText(col3Title) ?? "Breakdown image 3";
 
   return (
-    <section className="w-full relative z-20 bg-black pb-32">
-      <div className="grid-container w-full pt-16 border-t border-white/10">
+    <section className="relative z-20 w-full bg-black pb-32">
+      <div className="grid-container w-full border-t border-white/10 rhythm-divider-top">
         {(col1Title || col1Text || col1Img) && (
           <div className="col-span-4 space-y-4">
             {col1Title && (

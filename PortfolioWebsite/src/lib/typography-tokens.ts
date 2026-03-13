@@ -80,6 +80,31 @@ export type TypographyPresetToken = {
   weights: Record<TypographyWeight, TypographyWeightPair>;
 };
 
+export function getDefaultTypographySemanticWeight(
+  size: TypographySize,
+): TypographyWeight {
+  switch (size) {
+    case "caption":
+    case "label":
+      return "medium";
+    case "body-sm":
+    case "body":
+      return "regular";
+    case "body-lg":
+      return "medium";
+    case "title-sm":
+    case "title":
+      return "strong";
+    case "menu":
+      return "regular";
+    case "display":
+    case "hero":
+      return "display";
+    default:
+      return "regular";
+  }
+}
+
 export const TYPOGRAPHY_SIZE_TOKENS: Record<TypographySize, TypographySizeToken> = {
   caption: {
     fontSize: "0.625rem",
@@ -153,6 +178,7 @@ const SANS_BODY_FONT_LAB_SIZES: readonly TypographySize[] = [
   "body",
   "body-lg",
   "title-sm",
+  "title",
   "display",
   "hero",
 ] as const;
@@ -161,10 +187,12 @@ const LUNA_EDITORIAL_FONT_LAB_SIZES: readonly TypographySize[] = [
   "title-sm",
   "title",
   "display",
+  "hero",
 ] as const;
 
 const GOTHIC_EDITORIAL_FONT_LAB_SIZES: readonly TypographySize[] = [
   "label",
+  "body-lg",
   "title-sm",
 ] as const;
 

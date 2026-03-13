@@ -726,7 +726,11 @@ function GuideRow({
   const { containerRef, metrics } = useMeasuredGuideMetrics();
 
   return (
-    <div ref={containerRef} className={["relative", className].filter(Boolean).join(" ")}>
+    <div
+      ref={containerRef}
+      data-guide-left-edge={showTick ? "on" : "off"}
+      className={["relative", className].filter(Boolean).join(" ")}
+    >
       {showOpticalAlignment &&
       isFiniteGuideMetrics(metrics) &&
       Number.isFinite(metrics.opticalAlignmentPx) ? (
@@ -749,14 +753,7 @@ function GuideRow({
           }}
         />
       ) : null}
-      {showTick && isFiniteGuideMetrics(metrics) ? (
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute left-0 w-4 border-t border-cyan-300/60"
-          style={{ top: metrics.baselinePx }}
-        />
-      ) : null}
-      <div className="relative pl-6 md:pl-8">{children}</div>
+      <div className="relative">{children}</div>
     </div>
   );
 }
@@ -882,6 +879,10 @@ export default function FontLabClient() {
   const cssVars = useMemo(
     () => buildFontLabDocumentCssVars(fontDocument) as StyleWithVars,
     [fontDocument],
+  );
+  const savedCssVars = useMemo(
+    () => buildFontLabDocumentCssVars(savedDocument ?? fontDocument) as StyleWithVars,
+    [fontDocument, savedDocument],
   );
 
   useEffect(() => {
@@ -1024,7 +1025,7 @@ export default function FontLabClient() {
 
   return (
     <main
-      className="min-h-screen bg-black pb-20 pt-24 text-white md:pb-24 md:pt-32 lg:h-screen lg:overflow-hidden lg:py-0"
+      className="min-h-screen bg-black text-white rhythm-section-spacious lg:h-screen lg:overflow-hidden lg:py-0"
       style={cssVars}
     >
       <div className="grid-container items-start gap-y-10 lg:h-full lg:items-stretch">
@@ -1097,7 +1098,7 @@ export default function FontLabClient() {
 
           <ControlBlock
             title="字体模板"
-            description="这里保存模板级与字号级微调。中英字重偏差只在模板层生效；每个字号档位单独保存自己的语义字重、基线、字距与水平对齐。"
+            description="这里保存模板级与字号级微调。中英字重偏差只在模板层生效；每个字号档位单独保存自己的语义字重、基线、字距与边缘对齐。"
           >
             <label className="block">
               <FieldLabel>字体模板</FieldLabel>
@@ -1251,23 +1252,23 @@ export default function FontLabClient() {
               />
 
               <NumberField
-                label="中文水平对齐"
-                value={activeSizeConfig.cjkHorizontalOffset}
-                onCommit={(cjkHorizontalOffset) =>
-                  updateCurrentSizeConfig({ cjkHorizontalOffset })
+                label="中文边缘对齐"
+                value={activeSizeConfig.cjkEdgeOffset}
+                onCommit={(cjkEdgeOffset) =>
+                  updateCurrentSizeConfig({ cjkEdgeOffset })
                 }
-                helperText="负值向左，正值向右。用于修正中文行首的实际落点。"
+                helperText="负值向左，正值向右。用于修正中文文本块锁边后的实际落点。"
               />
             </div>
 
             <div className="grid gap-3 md:grid-cols-2">
               <NumberField
-                label="英文水平对齐"
-                value={activeSizeConfig.latinHorizontalOffset}
-                onCommit={(latinHorizontalOffset) =>
-                  updateCurrentSizeConfig({ latinHorizontalOffset })
+                label="英文边缘对齐"
+                value={activeSizeConfig.latinEdgeOffset}
+                onCommit={(latinEdgeOffset) =>
+                  updateCurrentSizeConfig({ latinEdgeOffset })
                 }
-                helperText="负值向左，正值向右。用于修正英文在同一左边缘上的起笔位置。"
+                helperText="负值向左，正值向右。用于修正英文文本块锁边后的实际落点。"
               />
 
               <NumberField
@@ -1441,6 +1442,7 @@ export default function FontLabClient() {
               </div>
             </CalibrationCard>
 
+            <div style={savedCssVars}>
             <CalibrationCard
               title="全局混排校验"
               showGrid={layoutState.showGrid}
@@ -1702,6 +1704,7 @@ export default function FontLabClient() {
                 )}
               </div>
             </CalibrationCard>
+            </div>
 
             <div className="border border-white/10 bg-white/[0.02] px-5 py-5">
               <Typography

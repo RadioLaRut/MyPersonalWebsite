@@ -11,6 +11,7 @@ import React, {
 import { twMerge } from "tailwind-merge";
 
 import {
+  getDefaultTypographySemanticWeight,
   getTypographyMetricsToken,
   getTypographyPresetToken,
   getTypographySizeToken,
@@ -24,7 +25,9 @@ import {
   type TypographyWeight,
   type TypographyWrapPolicy,
 } from "@/lib/typography-tokens";
-import { segmentTypographyText } from "@/lib/typography";
+import { getTypographyEdgeScripts, segmentTypographyText } from "@/lib/typography";
+
+type TypographyWeightMode = TypographyWeight | "semantic";
 
 type BaseTypographyProps = {
   align?: "left" | "center" | "right";
@@ -36,7 +39,7 @@ type BaseTypographyProps = {
   preset: TypographyPreset;
   size: TypographySize;
   style?: CSSProperties;
-  weight?: TypographyWeight;
+  weight?: TypographyWeightMode;
   wrapPolicy?: TypographyWrapPolicy;
 };
 
@@ -45,6 +48,23 @@ export type TypographyProps<T extends ElementType = "span"> = BaseTypographyProp
 };
 
 type StyleWithVars = CSSProperties & Record<string, string | number | undefined>;
+
+function extractTypographyPlainText(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") {
+    return String(node);
+  }
+
+  if (Array.isArray(node)) {
+    return node.map((child) => extractTypographyPlainText(child)).join("");
+  }
+
+  if (!isValidElement(node)) {
+    return "";
+  }
+
+  const element = node as React.ReactElement<{ children?: ReactNode }>;
+  return extractTypographyPlainText(element.props.children);
+}
 
 function getRunLang(script: TypographyScript, containerLang: string) {
   if (script === "latin") {
@@ -60,11 +80,15 @@ function renderStringNode(
   containerLang: string,
   preset: TypographyPreset,
   size: TypographySize,
-  weight: TypographyWeight,
+  weight: TypographyWeightMode,
 ) {
   const presetToken = getTypographyPresetToken(preset);
   const metricsToken = getTypographyMetricsToken(preset, size);
-  const weightPair = presetToken.weights[weight];
+  const resolvedWeight =
+    weight === "semantic"
+      ? getDefaultTypographySemanticWeight(size)
+      : weight;
+  const weightPair = presetToken.weights[resolvedWeight];
 
   return segmentTypographyText(text).map((run, index) => {
     if (run.type === "break") {
@@ -72,20 +96,22 @@ function renderStringNode(
     }
 
     const isLatin = run.script === "latin";
+    const configuredFontWeight = weight === "semantic"
+      ? isLatin
+        ? `var(--typography-${preset}-${size}-semantic-latin-weight, var(--typography-${preset}-${resolvedWeight}-latin-weight, ${weightPair.latin}))`
+        : `var(--typography-${preset}-${size}-semantic-cjk-weight, var(--typography-${preset}-${resolvedWeight}-cjk-weight, ${weightPair.cjk}))`
+      : isLatin
+        ? `var(--typography-${preset}-${resolvedWeight}-latin-weight, ${weightPair.latin})`
+        : `var(--typography-${preset}-${resolvedWeight}-cjk-weight, ${weightPair.cjk})`;
     const runStyle: StyleWithVars = {
       fontFamily: isLatin ? presetToken.latinFontFamily : presetToken.cjkFontFamily,
       fontSize: isLatin
         ? `calc(1em * var(--typography-${preset}-latin-scale, 1))`
         : undefined,
-      fontWeight: isLatin
-        ? `var(--typography-${preset}-${weight}-latin-weight, ${weightPair.latin})`
-        : `var(--typography-${preset}-${weight}-cjk-weight, ${weightPair.cjk})`,
+      fontWeight: configuredFontWeight,
       letterSpacing: isLatin
         ? `var(--typography-${preset}-${size}-latin-letter-spacing, ${metricsToken.latinLetterSpacing})`
         : `var(--typography-${preset}-${size}-cjk-letter-spacing, ${metricsToken.cjkLetterSpacing})`,
-      left: isLatin
-        ? `var(--typography-${preset}-${size}-latin-horizontal-offset, 0em)`
-        : `var(--typography-${preset}-${size}-cjk-horizontal-offset, 0em)`,
       top: isLatin
         ? `var(--typography-${preset}-${size}-latin-baseline-offset, ${metricsToken.latinBaselineOffset})`
         : `var(--typography-${preset}-${size}-cjk-baseline-offset, ${metricsToken.cjkBaselineOffset})`,
@@ -113,7 +139,7 @@ function processTypographyChildren(
   containerLang: string,
   preset: TypographyPreset,
   size: TypographySize,
-  weight: TypographyWeight,
+  weight: TypographyWeightMode,
 ): ReactNode {
   if (typeof node === "string") {
     return renderStringNode(node, keyPrefix, containerLang, preset, size, weight);
@@ -177,6 +203,23 @@ export default function Typography<T extends ElementType = "span">({
     : "display";
   const sizeToken = getTypographySizeToken(resolvedSize);
   const wrapToken = getTypographyWrapToken(wrapPolicy);
+  const edgeScripts = getTypographyEdgeScripts(extractTypographyPlainText(children));
+  const leadingEdgeOffset = edgeScripts.leading
+    ? edgeScripts.leading === "latin"
+      ? `var(--typography-${preset}-${resolvedSize}-latin-edge-offset, 0em)`
+      : `var(--typography-${preset}-${resolvedSize}-cjk-edge-offset, 0em)`
+    : "0em";
+  const trailingEdgeOffset = edgeScripts.trailing
+    ? edgeScripts.trailing === "latin"
+      ? `var(--typography-${preset}-${resolvedSize}-latin-edge-offset, 0em)`
+      : `var(--typography-${preset}-${resolvedSize}-cjk-edge-offset, 0em)`
+    : "0em";
+  const translateX =
+    align === "right"
+      ? `calc(var(--typography-trailing-edge-offset, 0em) * -1)`
+      : align === "center"
+        ? "0em"
+        : `var(--typography-leading-edge-offset, 0em)`;
 
   const Component = (as ?? "span") as ElementType;
   const baseStyle: StyleWithVars = {
@@ -196,9 +239,12 @@ export default function Typography<T extends ElementType = "span">({
         : wrapPolicy === "prose"
           ? "pretty"
           : undefined,
+    transform: translateX === "0em" ? undefined : `translateX(${translateX})`,
     whiteSpace: wrapToken.whiteSpace,
     wordBreak: wrapToken.wordBreak,
     "--typography-autospace": autospace,
+    "--typography-leading-edge-offset": leadingEdgeOffset,
+    "--typography-trailing-edge-offset": trailingEdgeOffset,
   };
 
   return (
@@ -220,6 +266,8 @@ export default function Typography<T extends ElementType = "span">({
       data-typography-autospace={autospace}
       data-typography-numeric={numericStyle}
       data-typography-wrap={wrapPolicy}
+      data-typography-leading-script={edgeScripts.leading ?? "none"}
+      data-typography-trailing-script={edgeScripts.trailing ?? "none"}
     >
       {Children.map(children, (child, index) =>
         processTypographyChildren(

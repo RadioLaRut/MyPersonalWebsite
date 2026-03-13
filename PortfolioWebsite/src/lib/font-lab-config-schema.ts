@@ -1,5 +1,6 @@
 import {
   clampTypographyLatinWeightOffsetSteps,
+  getDefaultTypographySemanticWeight,
   getTypographyFontLabSizes,
   getTypographyMetricsToken,
   getTypographyPresetToken,
@@ -16,14 +17,14 @@ import {
   isTypographyWeight,
 } from "./typography.ts";
 
-export const FONT_LAB_SCHEMA_VERSION = 4 as const;
+export const FONT_LAB_SCHEMA_VERSION = 5 as const;
 
 export type FontLabSizeConfig = {
-  cjkHorizontalOffset: number;
+  cjkEdgeOffset: number;
   cjkLetterSpacing: number;
   cjkVerticalOffset: number;
   fontSize: string;
-  latinHorizontalOffset: number;
+  latinEdgeOffset: number;
   latinLetterSpacing: number;
   latinRelativeOffset: number;
   lineHeight: number;
@@ -115,29 +116,6 @@ function normalizeLatinFontScale(value: unknown) {
   return Number.parseFloat(value.toFixed(4));
 }
 
-function getDefaultFontLabSemanticWeight(size: TypographySize): TypographyWeight {
-  switch (size) {
-    case "caption":
-    case "label":
-      return "medium";
-    case "body-sm":
-    case "body":
-      return "regular";
-    case "body-lg":
-      return "medium";
-    case "title-sm":
-    case "title":
-      return "strong";
-    case "menu":
-      return "regular";
-    case "display":
-    case "hero":
-      return "display";
-    default:
-      return "regular";
-  }
-}
-
 function createDefaultFontLabSizeConfig(
   preset: TypographyPreset,
   size: TypographySize,
@@ -147,15 +125,15 @@ function createDefaultFontLabSizeConfig(
   const latinAbsoluteOffset = Number.parseFloat(metrics.latinBaselineOffset);
 
   return {
-    cjkHorizontalOffset: 0,
+    cjkEdgeOffset: 0,
     cjkLetterSpacing: Number.parseFloat(metrics.cjkLetterSpacing),
     cjkVerticalOffset: 0,
     fontSize: normalizeFixedFontSizeValue(sizeToken.fontSize, "1rem"),
-    latinHorizontalOffset: 0,
+    latinEdgeOffset: 0,
     latinLetterSpacing: Number.parseFloat(metrics.latinLetterSpacing),
     latinRelativeOffset: latinAbsoluteOffset,
     lineHeight: Number.parseFloat(sizeToken.lineHeight),
-    semanticWeight: getDefaultFontLabSemanticWeight(size),
+    semanticWeight: getDefaultTypographySemanticWeight(size),
   };
 }
 
@@ -280,9 +258,11 @@ function normalizeSizeConfig(
   }
 
   return {
-    cjkHorizontalOffset: isFiniteNumber(config.cjkHorizontalOffset)
-      ? config.cjkHorizontalOffset
-      : defaults.cjkHorizontalOffset,
+    cjkEdgeOffset: isFiniteNumber(config.cjkEdgeOffset)
+      ? config.cjkEdgeOffset
+      : isFiniteNumber(config.cjkHorizontalOffset)
+        ? config.cjkHorizontalOffset
+        : defaults.cjkEdgeOffset,
     cjkLetterSpacing: isFiniteNumber(config.cjkLetterSpacing)
       ? config.cjkLetterSpacing
       : defaults.cjkLetterSpacing,
@@ -293,9 +273,11 @@ function normalizeSizeConfig(
       typeof config.fontSize === "string"
         ? normalizeFixedFontSizeValue(config.fontSize, defaults.fontSize)
         : defaults.fontSize,
-    latinHorizontalOffset: isFiniteNumber(config.latinHorizontalOffset)
-      ? config.latinHorizontalOffset
-      : defaults.latinHorizontalOffset,
+    latinEdgeOffset: isFiniteNumber(config.latinEdgeOffset)
+      ? config.latinEdgeOffset
+      : isFiniteNumber(config.latinHorizontalOffset)
+        ? config.latinHorizontalOffset
+        : defaults.latinEdgeOffset,
     latinLetterSpacing: isFiniteNumber(config.latinLetterSpacing)
       ? config.latinLetterSpacing
       : defaults.latinLetterSpacing,
@@ -422,22 +404,22 @@ function migrateLegacyFontLabConfig(
   document.activePreset = activePreset;
   document.activeSize = activeSize;
   document.presets[activePreset].sizes[activeSize] = {
-    cjkHorizontalOffset: 0,
+    cjkEdgeOffset: 0,
     cjkLetterSpacing: legacy.cjkLetterSpacing,
     cjkVerticalOffset: legacy.cjkBaselineOffset,
     fontSize: normalizeFixedFontSizeValue(legacy.fontSize, "1rem"),
-    latinHorizontalOffset: 0,
+    latinEdgeOffset: 0,
     latinLetterSpacing: legacy.latinLetterSpacing,
     latinRelativeOffset: legacy.latinBaselineOffset - legacy.cjkBaselineOffset,
     lineHeight: legacy.lineHeight,
-    semanticWeight: getDefaultFontLabSemanticWeight(activeSize),
+    semanticWeight: getDefaultTypographySemanticWeight(activeSize),
   };
 
   return document;
 }
 
 function isSupportedFontLabDocumentVersion(value: unknown) {
-  return value === FONT_LAB_SCHEMA_VERSION || value === 3 || value === 2;
+  return value === FONT_LAB_SCHEMA_VERSION || value === 4 || value === 3 || value === 2;
 }
 
 export function parseFontLabDocument(value: unknown): FontLabDocument | null {

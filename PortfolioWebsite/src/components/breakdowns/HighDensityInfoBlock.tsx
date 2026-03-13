@@ -22,15 +22,15 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
     const phase3ImageAlt = typeof phase3.title === "string" ? phase3.title : "Phase image";
 
     return (
-        <div className="w-full my-32">
-            <div className="grid-container border-t border-white/20 pt-16">
+        <div className="w-full rhythm-block">
+            <div className="grid-container border-t border-white/20 rhythm-divider-top">
 
                 {/* Phase 1 Column (Dense text + metadata) */}
                 <div className="col-span-3 pr-0 lg:pr-5 mb-12 lg:mb-0 border-r border-white/5">
-                    <Typography as="div" preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="mb-4 text-textMuted">
+                    <Typography as="div" preset="sans-body" size="caption" weight="semantic" wrapPolicy="label" className="mb-4 text-textMuted">
                         {phase1.label || "PHASE 01 / CONTEXT"}
                     </Typography>
-                    <Typography as="h3" preset="sans-body" size="title-sm" weight="strong" wrapPolicy="heading" className="mb-2 text-textPrimary">{phase1.title}</Typography>
+                    <Typography as="h3" preset="sans-body" size="title-sm" weight="semantic" wrapPolicy="heading" className="mb-2 text-textPrimary">{phase1.title}</Typography>
                     {phase1.subtitle && <Typography as="h4" preset="sans-body" size="body-sm" weight="light" wrapPolicy="prose" className="mb-6 text-textMuted italic">{phase1.subtitle}</Typography>}
                     <Typography as="p" preset="sans-body" size="body-sm" weight="medium" wrapPolicy="prose" className="mb-8 pr-0 text-textMuted lg:pr-4">
                         {phase1.content}
@@ -40,10 +40,10 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
                         <div className="space-y-3 mt-8 pt-6 border-t border-white/10">
                             {phase1.items.map((item, i) => (
                                 <div key={i} className="grid gap-1">
-                                    <Typography as="span" preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="text-textMuted">
+                                    <Typography as="span" preset="sans-body" size="caption" weight="semantic" wrapPolicy="label" className="text-textMuted">
                                         {item.label}
                                     </Typography>
-                                    <Typography as="div" preset="sans-body" size="body-sm" weight="regular" wrapPolicy="prose" align="right" className="text-textPrimary text-left lg:text-right max-w-full lg:max-w-[75%] self-start lg:self-end">{item.value}</Typography>
+                                    <Typography as="div" preset="sans-body" size="body-sm" weight="semantic" wrapPolicy="prose" align="right" className="text-textPrimary text-left lg:text-right max-w-full lg:max-w-[75%] self-start lg:self-end">{item.value}</Typography>
                                 </div>
                             ))}
                         </div>
@@ -58,10 +58,10 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
 
                 {/* Phase 2 Column (Dense text + architecture abstract) */}
                 <div className="col-span-4 px-0 lg:px-8 mb-12 lg:mb-0 border-r border-transparent lg:border-white/5">
-                    <Typography as="div" preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="mb-4 text-textMuted">
+                    <Typography as="div" preset="sans-body" size="caption" weight="semantic" wrapPolicy="label" className="mb-4 text-textMuted">
                         {phase2.label || "PHASE 02 / SYSTEM ARCHITECTURE"}
                     </Typography>
-                    <Typography as="h3" preset="sans-body" size="title-sm" weight="strong" wrapPolicy="heading" className="mb-2 text-textPrimary">{phase2.title}</Typography>
+                    <Typography as="h3" preset="sans-body" size="title-sm" weight="semantic" wrapPolicy="heading" className="mb-2 text-textPrimary">{phase2.title}</Typography>
                     {phase2.subtitle && <Typography as="h4" preset="sans-body" size="body-sm" weight="light" wrapPolicy="prose" className="mb-6 text-textMuted italic">{phase2.subtitle}</Typography>}
                     <Typography as="p" preset="sans-body" size="body-sm" weight="medium" wrapPolicy="prose" className="mb-8 text-textMuted">
                         {phase2.content}
@@ -71,10 +71,10 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
                         <div className="space-y-3 mt-8 pt-6 border-t border-white/10">
                             {phase2.items.map((item, i) => (
                                 <div key={i} className="grid gap-1">
-                                    <Typography as="span" preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="text-textMuted">
+                                    <Typography as="span" preset="sans-body" size="caption" weight="semantic" wrapPolicy="label" className="text-textMuted">
                                         {item.label}
                                     </Typography>
-                                    <Typography as="span" preset="sans-body" size="body-sm" weight="regular" wrapPolicy="prose" className="text-textPrimary">{item.value}</Typography>
+                                    <Typography as="span" preset="sans-body" size="body-sm" weight="semantic" wrapPolicy="prose" className="text-textPrimary">{item.value}</Typography>
                                 </div>
                             ))}
                         </div>
@@ -89,10 +89,10 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
 
                 {/* Phase 3 Column (Execution & Visual Result) */}
                 <div className="col-span-5 pl-0 lg:pl-8">
-                    <Typography as="div" preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="mb-4 text-textMuted">
+                    <Typography as="div" preset="sans-body" size="caption" weight="semantic" wrapPolicy="label" className="mb-4 text-textMuted">
                         {phase3.label || "PHASE 03 / EXECUTION & RESULTS"}
                     </Typography>
-                    <Typography as="h3" preset="sans-body" size="title-sm" weight="strong" wrapPolicy="heading" className="mb-2 text-textPrimary">{phase3.title}</Typography>
+                    <Typography as="h3" preset="sans-body" size="title-sm" weight="semantic" wrapPolicy="heading" className="mb-2 text-textPrimary">{phase3.title}</Typography>
                     {phase3.subtitle && <Typography as="h4" preset="sans-body" size="body-sm" weight="light" wrapPolicy="prose" className="mb-6 text-textMuted italic">{phase3.subtitle}</Typography>}
                     <Typography as="p" preset="sans-body" size="body-sm" weight="medium" wrapPolicy="prose" className="mb-8 text-textMuted">
                         {phase3.content}

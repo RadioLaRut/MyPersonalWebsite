@@ -14,71 +14,72 @@ import Typography from '@/components/common/Typography';
 
 export default function SampleBreakdownPage() {
     return (
-        <main className="min-h-screen bg-black text-white pt-32 pb-32">
+        <main className="min-h-screen bg-black text-white rhythm-section-spacious">
             <div className="grid-container">
 
                 {/* Header Section */}
-                <div className="col-start-2 col-span-10 mb-24">
-                    <Link href="/" className="mb-8 inline-block transition-colors hover:text-white">
-                        <Typography
-                            as="span"
-                            preset="sans-body"
-                            size="caption"
-                            weight="medium"
-                            wrapPolicy="label"
-                            className="text-textMuted"
+                <div className="col-start-2 col-span-10 mb-32">
+                    <div className="rhythm-stack-4">
+                        <Link href="/" className="inline-block transition-colors hover:text-white">
+                            <Typography
+                                as="span"
+                                preset="sans-body"
+                                size="caption"
+                                weight="semantic"
+                                wrapPolicy="label"
+                                className="text-textMuted"
+                            >
+                                ← 返回主页
+                            </Typography>
+                        </Link>
+                        <motion.h1
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
                         >
-                            ← 返回主页
-                        </Typography>
-                    </Link>
-                    <motion.h1
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="mb-6"
-                    >
-                        <Typography
-                            as="span"
-                            preset="luna-editorial"
-                            size="display"
-                            weight="display"
-                            wrapPolicy="heading"
-                            className="text-white uppercase"
+                            <Typography
+                                as="span"
+                                preset="luna-editorial"
+                                size="display"
+                                weight="semantic"
+                                wrapPolicy="heading"
+                                className="text-white uppercase"
+                            >
+                                Project:
+                            </Typography>
+                            <br />
+                            <Typography
+                                as="span"
+                                preset="luna-editorial"
+                                size="display"
+                                weight="semantic"
+                                wrapPolicy="heading"
+                                className="text-textMuted uppercase"
+                            >
+                                Abandoned World
+                            </Typography>
+                        </motion.h1>
+                        <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 }}
+                            className="max-w-2xl"
                         >
-                            Project:
-                        </Typography>
-                        <br />
-                        <Typography
-                            as="span"
-                            preset="luna-editorial"
-                            size="display"
-                            weight="display"
-                            wrapPolicy="heading"
-                            className="text-textMuted uppercase"
-                        >
-                            Abandoned World
-                        </Typography>
-                    </motion.h1>
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                        className="max-w-2xl"
-                    >
-                        <Typography
-                            as="span"
-                            preset="sans-body"
-                            size="body-lg"
-                            weight="regular"
-                            wrapPolicy="prose"
-                            className="text-textPrimary"
-                        >
-                            这是一个向您展示如何使用预制组件拼接出一个完整项目 Breakdown 的样板页面。这里展示了能够适应从宏观灯光氛围、到具体工具开发流的排版组合逻辑。
-                        </Typography>
-                    </motion.p>
+                            <Typography
+                                as="span"
+                                preset="sans-body"
+                                size="body-lg"
+                                weight="regular"
+                                wrapPolicy="prose"
+                                className="text-textPrimary"
+                            >
+                                这是一个向您展示如何使用预制组件拼接出一个完整项目 Breakdown 的样板页面。这里展示了能够适应从宏观灯光氛围、到具体工具开发流的排版组合逻辑。
+                            </Typography>
+                        </motion.p>
+                    </div>
                 </div>
 
                 {/* Divider */}
-                <div className="col-span-12 border-b border-white/20 mb-24"></div>
+                <div className="col-span-12 mb-32 border-b border-white/20"></div>
 
                 <div className="col-span-12">
                     <MetaDataBlock
@@ -91,7 +92,7 @@ export default function SampleBreakdownPage() {
                     />
                 </div>
 
-                <div className="col-span-12 mt-16">
+                <div className="col-span-12">
                     <TextSplitLayout
                         heading="01. 确立视觉锚点"
                         layoutVariant="split-left"
@@ -104,13 +105,14 @@ export default function SampleBreakdownPage() {
 
                 <div className="col-span-12">
                     <ImageSlider
+                        title="BLOCKOUT VS FINAL LIGHTING"
                         unlitSrc="/images/train-station/2NoLight.webp"
                         litSrc="/images/train-station/2Day.webp"
                         alt="Blockout vs Final Lighting"
                     />
                 </div>
 
-                <div className="col-span-12 mt-16">
+                <div className="col-span-12">
                     <ContentCard
                         title="灯光绑定与自动曝光体验系统"
                         description="不仅是静态的美术调整，我还开发了一套蓝图工具，用于根据不同的镜头焦段和机位自动校准 Auto Exposure。\n这样可以确保在切换特写与远景时，高光不会溢出，暗部始终保持克制的细节。"
@@ -119,7 +121,7 @@ export default function SampleBreakdownPage() {
                     />
                 </div>
 
-                <div className="col-span-12 mt-16">
+                <div className="col-span-12">
                     <ParameterGrid
                         mediaSrc="/images/train-station/2Day.webp"
                         parameters={[
@@ -130,7 +132,7 @@ export default function SampleBreakdownPage() {
                     />
                 </div>
 
-                <div className="col-span-12 mt-16">
+                <div className="col-span-12">
                     <TextSplitLayout
                         heading="02. 迭代与推演"
                         layoutVariant="stack"
@@ -142,13 +144,13 @@ export default function SampleBreakdownPage() {
 
 
 
-                <div className="col-span-12 mt-24 mb-32 border-t border-white/20 pt-24">
-                    <div className="mb-24">
+                <div className="col-start-2 col-span-10 mt-32 border-t border-white/20 pt-24">
+                    <div className="rhythm-stack-2">
                         <Typography
                             as="span"
                             preset="sans-body"
                             size="label"
-                            weight="medium"
+                            weight="semantic"
                             wrapPolicy="label"
                             className="text-textMuted"
                         >
@@ -158,14 +160,16 @@ export default function SampleBreakdownPage() {
                             as="h2"
                             preset="luna-editorial"
                             size="title"
-                            weight="strong"
+                            weight="semantic"
                             wrapPolicy="heading"
-                            className="mt-2 text-white"
+                            className="text-white"
                         >
                             工作流痛点解决
                         </Typography>
                     </div>
+                </div>
 
+                <div className="col-span-12">
                     <HighDensityInfoBlock
                         phase1={{
                             title: "灯光数据资产庞杂",

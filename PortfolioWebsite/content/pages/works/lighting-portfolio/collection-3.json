@@ -48,6 +48,7 @@
     {
       "type": "ImageSlider",
       "props": {
+        "title": "灯光对比",
         "unlitSrc": "/images/west/CNoLight.webp",
         "litSrc": "/images/west/CDay.webp",
         "alt": "Lighting Comparison",
@@ -91,6 +92,7 @@
     {
       "type": "ImageSlider",
       "props": {
+        "title": "灯光对比",
         "unlitSrc": "/images/west/NoLight.webp",
         "litSrc": "/images/west/Day.webp",
         "alt": "Lighting Comparison",

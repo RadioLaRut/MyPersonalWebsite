@@ -18,6 +18,11 @@ export type TypographyTextRun =
   | { type: "break"; value: "\n" }
   | { script: TypographyScript; type: "text"; value: string };
 
+export type TypographyEdgeScripts = {
+  leading: TypographyScript | null;
+  trailing: TypographyScript | null;
+};
+
 const HAN_REGEX = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u;
 const LATIN_REGEX = /[\p{Script=Latin}\p{Nd}]/u;
 const CJK_PUNCTUATION_REGEX = /[\u3000-\u303F\uFF00-\uFFEF]/u;
@@ -126,6 +131,18 @@ export function segmentTypographyText(text: string): TypographyTextRun[] {
 
   pushBufferedRun();
   return runs;
+}
+
+export function getTypographyEdgeScripts(text: string): TypographyEdgeScripts {
+  const textRuns = segmentTypographyText(text).filter(
+    (run): run is Extract<TypographyTextRun, { type: "text" }> =>
+      run.type === "text" && run.value.trim().length > 0,
+  );
+
+  return {
+    leading: textRuns[0]?.script ?? null,
+    trailing: textRuns[textRuns.length - 1]?.script ?? null,
+  };
 }
 
 export function isTypographyPreset(value: string): value is TypographyPreset {

@@ -35,9 +35,14 @@ export default function StatementBlock({
     medium: "min-h-[35vh]",
     large: "min-h-[50vh]",
   }[minHeight];
+  const rhythmClass = {
+    small: "rhythm-section-compact",
+    medium: "rhythm-section-normal",
+    large: "rhythm-section-spacious",
+  }[minHeight];
 
   return (
-    <section className={`relative z-20 grid w-full ${heightClass} ${bgClass} content-center`}>
+    <section className={`relative z-20 grid w-full ${heightClass} ${bgClass} ${rhythmClass} content-center`}>
       <div className="grid-container w-full">
         <motion.div
           className={`col-start-3 col-span-8 grid ${alignClass} ${editMode ? "pointer-events-auto" : ""}`}

@@ -90,8 +90,8 @@ export default function ContactFlashlightBlock({
     }, [maskRadius]);
 
     const renderContentData = () => (
-        <div className="grid-container w-full py-16 sm:py-32">
-            <section className="col-start-3 col-span-8 mb-16 grid gap-6 sm:mb-24">
+        <div className="grid-container w-full rhythm-section-spacious">
+            <section className="col-start-3 col-span-8 mb-24 grid rhythm-stack-3 lg:mb-32">
                 <motion.h1
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -102,7 +102,7 @@ export default function ContactFlashlightBlock({
                         as="span"
                         preset="luna-editorial"
                         size="hero"
-                        weight="display"
+                        weight="semantic"
                         wrapPolicy="heading"
                         className="text-inherit"
                     >
@@ -113,7 +113,7 @@ export default function ContactFlashlightBlock({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3, duration: 1 }}
-                    className="text-left max-w-2xl mix-blend-normal mt-8"
+                    className="max-w-2xl text-left mix-blend-normal"
                 >
                     <Typography
                         as="p"
@@ -130,7 +130,7 @@ export default function ContactFlashlightBlock({
                         as="span"
                         preset="sans-body"
                         size="label"
-                        weight="medium"
+                        weight="semantic"
                         wrapPolicy="label"
                         className="opacity-50"
                     >
@@ -143,20 +143,20 @@ export default function ContactFlashlightBlock({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6, duration: 1 }}
-                className="col-start-4 col-span-8 grid grid-cols-1 lg:grid-cols-2 gap-16 text-left border-t border-current pt-16"
+                className="col-start-4 col-span-8 grid grid-cols-1 gap-16 border-t border-current text-left rhythm-divider-top lg:grid-cols-2"
             >
-                <div className="space-y-8">
+                <div className="rhythm-stack-4">
                     <Typography
                         as="span"
                         preset="sans-body"
                         size="label"
-                        weight="medium"
+                        weight="semantic"
                         wrapPolicy="label"
                         className="opacity-40 mix-blend-normal"
                     >
                         Experience History
                     </Typography>
-                    <div className="space-y-6 mix-blend-normal">
+                    <div className="mix-blend-normal rhythm-stack-3">
                         {experienceContent ? (
                             experienceContent
                         ) : (
@@ -176,9 +176,9 @@ export default function ContactFlashlightBlock({
                                         as="span"
                                         preset="sans-body"
                                         size="label"
-                                        weight="medium"
+                                        weight="semantic"
                                         wrapPolicy="label"
-                                        className="mt-1 opacity-50"
+                                        className="mt-2 opacity-50"
                                     >
                                         {item.role}
                                     </Typography>
@@ -188,18 +188,18 @@ export default function ContactFlashlightBlock({
                     </div>
                 </div>
 
-                <div className="space-y-8">
+                <div className="rhythm-stack-4">
                     <Typography
                         as="span"
                         preset="sans-body"
                         size="label"
-                        weight="medium"
+                        weight="semantic"
                         wrapPolicy="label"
                         className="opacity-40 mix-blend-normal"
                     >
                         Creative Direction
                     </Typography>
-                    <div className="space-y-6 mix-blend-normal">
+                    <div className="mix-blend-normal rhythm-stack-3">
                         {creativeContent ? (
                             creativeContent
                         ) : (
@@ -219,9 +219,9 @@ export default function ContactFlashlightBlock({
                                         as="span"
                                         preset="sans-body"
                                         size="label"
-                                        weight="medium"
+                                        weight="semantic"
                                         wrapPolicy="label"
-                                        className="mt-1 opacity-50"
+                                        className="mt-2 opacity-50"
                                     >
                                         {item.subtitle}
                                     </Typography>
@@ -236,14 +236,14 @@ export default function ContactFlashlightBlock({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.9, duration: 1 }}
-                className="col-start-4 col-span-8 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-12 lg:gap-20 text-left border-t border-current pt-16 mt-24 items-start"
+                className="col-start-4 col-span-8 mt-24 grid grid-cols-1 items-start gap-12 border-t border-current text-left rhythm-divider-top lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-20"
             >
-                <div className="space-y-6">
+                <div className="rhythm-stack-3">
                     <Typography
                         as="span"
                         preset="sans-body"
                         size="label"
-                        weight="medium"
+                        weight="semantic"
                         wrapPolicy="label"
                         className="opacity-40 mix-blend-normal"
                     >
@@ -253,7 +253,7 @@ export default function ContactFlashlightBlock({
                         as="span"
                         preset="gothic-editorial"
                         size="body-lg"
-                        weight="medium"
+                        weight="semantic"
                         wrapPolicy="url"
                         className="copyable-contact block whitespace-nowrap text-left mix-blend-normal"
                     >
@@ -261,12 +261,12 @@ export default function ContactFlashlightBlock({
                     </Typography>
                 </div>
 
-                <div className="space-y-6">
+                <div className="rhythm-stack-3">
                     <Typography
                         as="span"
                         preset="sans-body"
                         size="label"
-                        weight="medium"
+                        weight="semantic"
                         wrapPolicy="label"
                         className="opacity-40 mix-blend-normal"
                     >
@@ -276,7 +276,7 @@ export default function ContactFlashlightBlock({
                         as="span"
                         preset="gothic-editorial"
                         size="body-lg"
-                        weight="medium"
+                        weight="semantic"
                         wrapPolicy="url"
                         className="copyable-contact block whitespace-nowrap mix-blend-normal"
                     >
@@ -289,7 +289,7 @@ export default function ContactFlashlightBlock({
 
     return (
         <div className="relative w-full overflow-hidden selection:bg-white selection:text-black">
-            <div ref={containerRef} className="relative w-full mx-auto pb-12">
+            <div ref={containerRef} className="relative w-full mx-auto pb-16">
                 {/* Base Layer (Dark Text) */}
                 <div
                     className="z-10 transition-colors duration-300"

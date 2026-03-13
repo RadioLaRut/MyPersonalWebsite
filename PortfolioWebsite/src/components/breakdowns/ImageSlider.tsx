@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { OptimizedImage } from "@/components/common/OptimizedImage";
 import Typography from "@/components/common/Typography";
@@ -15,6 +15,7 @@ import {
 } from "@/lib/image-presentation";
 
 interface ImageSliderProps {
+    title?: string;
     unlitSrc: string;
     litSrc: string;
     alt?: string;
@@ -26,6 +27,7 @@ interface ImageSliderProps {
 }
 
 export default function ImageSlider({
+    title,
     unlitSrc,
     litSrc,
     alt = "Image Comparison",
@@ -43,6 +45,7 @@ export default function ImageSlider({
     const frameClassName = getImagePresetFrameClassName(resolvedPreset);
     const canvasClassName = getImageCanvasClassName(resolvedPreset);
     const imageClassName = getImageElementClassName(resolvedPreset, resolvedFitMode);
+    const visibleTitle = typeof title === "string" && title.trim().length > 0 ? title : alt;
 
     const handleMove = (clientX: number) => {
         if (!containerRef.current) return;
@@ -73,7 +76,7 @@ export default function ImageSlider({
     }, []);
 
     return (
-        <div className={`w-full my-16 ${className}`}>
+        <div className={`w-full rhythm-block-compact ${className}`}>
             <div className="grid-container">
                 <div className="col-start-2 col-span-10">
                     <div
@@ -84,7 +87,24 @@ export default function ImageSlider({
                         onMouseDown={() => setIsDragging(true)}
                         onTouchStart={() => setIsDragging(true)}
                     >
-                        {/* Lit Image (Background) */}
+                        {visibleTitle ? (
+                            <div className="pointer-events-none absolute left-5 top-5 z-20 md:left-6 md:top-6">
+                                <div className="border border-white/12 bg-black/58 px-3 py-2 backdrop-blur-sm">
+                                    <Typography
+                                        as="span"
+                                        preset="sans-body"
+                                        size="label"
+                                        weight="medium"
+                                        wrapPolicy="label"
+                                        className="text-white/88"
+                                        style={{ lineHeight: 1 }}
+                                    >
+                                        {visibleTitle}
+                                    </Typography>
+                                </div>
+                            </div>
+                        ) : null}
+
                         <div className="absolute inset-0">
                             <div className="absolute inset-0 bg-neutral-900" />
                             {litSrc ? (
@@ -101,7 +121,6 @@ export default function ImageSlider({
                             ) : null}
                         </div>
 
-                        {/* Unlit Image (Foreground, clipped) */}
                         <div
                             className="absolute inset-0"
                             style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
@@ -121,7 +140,6 @@ export default function ImageSlider({
                             ) : null}
                         </div>
 
-                        {/* Slider line and button */}
                         <div
                             className="absolute top-0 bottom-0 w-0.5 bg-white pointer-events-none"
                             style={{ left: `${sliderPosition}%`, transform: "translateX(-50%)" }}
@@ -141,17 +159,16 @@ export default function ImageSlider({
                         </div>
                     </div>
 
-                    {/* Labels - 遵循网格对齐 */}
                     {(leftLabel || rightLabel) ? (
-                        <div className="mt-4 grid grid-cols-2 items-center px-2">
+                        <div className="mt-5 flex items-start justify-between gap-6">
                             {leftLabel ? (
                                 <Typography
                                     as="span"
                                     preset="sans-body"
-                                    size="caption"
+                                    size="body-sm"
                                     weight="medium"
                                     wrapPolicy="label"
-                                    className="text-textPrimary"
+                                    className="text-white/82"
                                 >
                                     {leftLabel}
                                 </Typography>
@@ -160,10 +177,10 @@ export default function ImageSlider({
                                 <Typography
                                     as="span"
                                     preset="sans-body"
-                                    size="caption"
+                                    size="body-sm"
                                     weight="medium"
                                     wrapPolicy="label"
-                                    className="text-textPrimary"
+                                    className="text-right text-white/82"
                                 >
                                     {rightLabel}
                                 </Typography>

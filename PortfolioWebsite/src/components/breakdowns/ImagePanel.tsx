@@ -44,7 +44,7 @@ export default function ImagePanel({
         </div>
         {caption ? (
           <div className="absolute bottom-8 right-8 bg-black/65 border border-white/15 px-4 py-2">
-            <Typography preset="sans-body" size="label" weight="medium" wrapPolicy="label" className="text-textPrimary">
+            <Typography preset="sans-body" size="label" weight="semantic" wrapPolicy="label" className="text-textPrimary">
               {caption}
             </Typography>
           </div>
@@ -55,9 +55,9 @@ export default function ImagePanel({
 
   if (variant === "large") {
     return (
-      <section className="w-full py-6 md:py-8">
+      <section className="w-full rhythm-block-compact">
         <div className="grid-container">
-          <figure className="col-start-2 col-span-10 overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.02]">
+          <figure className="col-start-2 col-span-10 overflow-hidden rounded-none border border-white/10 bg-white/[0.02]">
             <PresetImage
               alt={imageAlt}
               src={src}
@@ -70,7 +70,7 @@ export default function ImagePanel({
             />
             {caption ? (
               <figcaption className="border-t border-white/10 px-5 py-4 md:px-6">
-                <Typography preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="text-textPrimary">
+                <Typography preset="sans-body" size="caption" weight="semantic" wrapPolicy="label" className="text-textPrimary">
                   {caption}
                 </Typography>
               </figcaption>
@@ -82,17 +82,19 @@ export default function ImagePanel({
   }
 
   return (
-    <section className="mx-auto w-full max-w-5xl px-6 py-10 md:px-8">
-      <figure className="overflow-hidden border border-white/15 bg-white/[0.03]">
-        <PresetImage alt={imageAlt} src={src} preset={preset} fitMode={fitMode} />
-        {caption ? (
-          <figcaption className="border-t border-white/15 px-4 py-3">
-            <Typography preset="sans-body" size="label" weight="medium" wrapPolicy="label" className="text-textPrimary">
-              {caption}
-            </Typography>
-          </figcaption>
-        ) : null}
-      </figure>
+    <section className="w-full rhythm-block-compact">
+      <div className="grid-container">
+        <figure className="grid-content mx-auto w-full max-w-5xl overflow-hidden border border-white/15 bg-white/[0.03]">
+          <PresetImage alt={imageAlt} src={src} preset={preset} fitMode={fitMode} />
+          {caption ? (
+            <figcaption className="border-t border-white/15 px-4 py-3">
+              <Typography preset="sans-body" size="label" weight="semantic" wrapPolicy="label" className="text-textPrimary">
+                {caption}
+              </Typography>
+            </figcaption>
+          ) : null}
+        </figure>
+      </div>
     </section>
   );
 }
