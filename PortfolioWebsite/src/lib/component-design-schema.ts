@@ -3,10 +3,27 @@ import type { TypographySize } from "@/lib/typography-tokens";
 export const COMPONENT_DESIGN_SCHEMA_VERSION = 1 as const;
 
 export const COMPONENT_DESIGN_COMPONENT_KEYS = [
+  "HeroSection",
+  "HeroHeadline",
+  "PortfolioHeroHeader",
+  "LightingCollectionHeader",
+  "LightingProjectCard",
+  "StatementBlock",
   "RichParagraph",
   "ContentCard",
   "TextSplitLayout",
   "HighDensityInfoBlock",
+  "ImagePanel",
+  "ImageSlider",
+  "BreakdownHeadline",
+  "BreakdownTriptych",
+  "ParameterGrid",
+  "ProjectSection",
+  "WorksList",
+  "WorksListEntry",
+  "HomeEndcapSection",
+  "NextProjectBlock",
+  "ContactFlashlight",
 ] as const;
 
 export const COMPONENT_DESIGN_SPACING_TOKENS = [
@@ -27,6 +44,15 @@ export const COMPONENT_DESIGN_SECTION_SPACING_TOKENS = [
   "block-compact",
 ] as const;
 
+export const COMPONENT_DESIGN_PARAMETER_ITEM_SPANS = [
+  1,
+  2,
+  3,
+  4,
+  6,
+  12,
+] as const;
+
 export type ComponentDesignComponentKey =
   (typeof COMPONENT_DESIGN_COMPONENT_KEYS)[number];
 
@@ -36,9 +62,17 @@ export type ComponentDesignSpacingToken =
 export type ComponentDesignSectionSpacingToken =
   (typeof COMPONENT_DESIGN_SECTION_SPACING_TOKENS)[number];
 
+export type ComponentDesignParameterItemSpan =
+  (typeof COMPONENT_DESIGN_PARAMETER_ITEM_SPANS)[number];
+
 export type ComponentGridBounds = {
   leftCol: number;
   rightCol: number;
+};
+
+export type ComponentResponsiveGridBounds = {
+  base: ComponentGridBounds;
+  lg: ComponentGridBounds;
 };
 
 export type RichParagraphDesign = {
@@ -87,6 +121,7 @@ export type HighDensityInfoBlockDesign = {
   bodySize: TypographySize;
   imageTopSpacing: ComponentDesignSpacingToken;
   itemsTopSpacing: ComponentDesignSpacingToken;
+  leftBounds: ComponentGridBounds;
   middleBounds: ComponentGridBounds;
   phaseTitleGap: ComponentDesignSpacingToken;
   rightBounds: ComponentGridBounds;
@@ -96,15 +131,135 @@ export type HighDensityInfoBlockDesign = {
   titleAutoWrap: boolean;
   titleBodyGap: ComponentDesignSpacingToken;
   titleSize: TypographySize;
-  leftBounds: ComponentGridBounds;
+};
+
+export type StatementBlockDesign = {
+  bodyAutoWrap: boolean;
+  bodySize: TypographySize;
+  contentBounds: ComponentGridBounds;
+};
+
+export type HeroHeadlineDesign = {
+  contentBounds: ComponentGridBounds;
+};
+
+export type ImagePanelDesign = {
+  contentBounds: ComponentGridBounds;
+  largeBounds: ComponentGridBounds;
+  sectionSpacing: ComponentDesignSectionSpacingToken;
+};
+
+export type BreakdownHeadlineDesign = {
+  contentBounds: ComponentGridBounds;
+  sectionSpacing: ComponentDesignSectionSpacingToken;
+  titleSize: TypographySize;
+};
+
+export type ImageSliderDesign = {
+  contentBounds: ComponentGridBounds;
+  labelsTopSpacing: ComponentDesignSpacingToken;
+  sectionSpacing: ComponentDesignSectionSpacingToken;
+};
+
+export type BreakdownTriptychDesign = {
+  col1Bounds: ComponentGridBounds;
+  col2Bounds: ComponentGridBounds;
+  col2TopSpacing: ComponentDesignSpacingToken;
+  col3Bounds: ComponentGridBounds;
+  col3TopSpacing: ComponentDesignSpacingToken;
+  sectionSpacing: ComponentDesignSectionSpacingToken;
+};
+
+export type ParameterGridDesign = {
+  itemSpan: ComponentDesignParameterItemSpan;
+  mediaBottomSpacing: ComponentDesignSpacingToken;
+  parametersBounds: ComponentGridBounds;
+  sectionSpacing: ComponentDesignSectionSpacingToken;
+};
+
+export type ProjectSectionDesign = {
+  textLeftBounds: ComponentResponsiveGridBounds;
+  textRightBounds: ComponentResponsiveGridBounds;
+};
+
+export type HeroSectionDesign = {
+  ctaTopSpacing: ComponentDesignSpacingToken;
+  descriptionBounds: ComponentResponsiveGridBounds;
+  titleBounds: ComponentResponsiveGridBounds;
+};
+
+export type HomeEndcapSectionDesign = {
+  buttonTopSpacing: ComponentDesignSpacingToken;
+  contentBounds: ComponentGridBounds;
+  descriptionTopSpacing: ComponentDesignSpacingToken;
+};
+
+export type PortfolioHeroHeaderDesign = {
+  ctaTopSpacing: ComponentDesignSpacingToken;
+  descriptionTopSpacing: ComponentDesignSpacingToken;
+  sideBounds: ComponentResponsiveGridBounds;
+  singleColumnBounds: ComponentGridBounds;
+  titleBounds: ComponentResponsiveGridBounds;
+};
+
+export type LightingCollectionHeaderDesign = {
+  descriptionBounds: ComponentResponsiveGridBounds;
+  titleBounds: ComponentResponsiveGridBounds;
+  titleTopSpacing: ComponentDesignSpacingToken;
+};
+
+export type LightingProjectCardDesign = {
+  contentBounds: ComponentGridBounds;
+};
+
+export type WorksListDesign = {
+  headingBounds: ComponentGridBounds;
+  headingBottomSpacing: ComponentDesignSpacingToken;
+  sectionSpacing: ComponentDesignSectionSpacingToken;
+};
+
+export type WorksListEntryDesign = {
+  numberBounds: ComponentResponsiveGridBounds;
+  sidebarBounds: ComponentResponsiveGridBounds;
+  titleBounds: ComponentResponsiveGridBounds;
+};
+
+export type NextProjectBlockDesign = {
+  footerLeftBounds: ComponentResponsiveGridBounds;
+  footerRightBounds: ComponentResponsiveGridBounds;
+  footerTopSpacing: ComponentDesignSpacingToken;
+  overlayBounds: ComponentGridBounds;
+};
+
+export type ContactFlashlightDesign = {
+  contactBounds: ComponentGridBounds;
+  detailBounds: ComponentGridBounds;
+  heroBounds: ComponentGridBounds;
 };
 
 export type ComponentDesignDocument = {
   components: {
+    BreakdownHeadline: BreakdownHeadlineDesign;
+    BreakdownTriptych: BreakdownTriptychDesign;
+    ContactFlashlight: ContactFlashlightDesign;
     ContentCard: ContentCardDesign;
+    HeroHeadline: HeroHeadlineDesign;
+    HeroSection: HeroSectionDesign;
     HighDensityInfoBlock: HighDensityInfoBlockDesign;
+    HomeEndcapSection: HomeEndcapSectionDesign;
+    ImagePanel: ImagePanelDesign;
+    ImageSlider: ImageSliderDesign;
+    LightingCollectionHeader: LightingCollectionHeaderDesign;
+    LightingProjectCard: LightingProjectCardDesign;
+    NextProjectBlock: NextProjectBlockDesign;
+    ParameterGrid: ParameterGridDesign;
+    PortfolioHeroHeader: PortfolioHeroHeaderDesign;
+    ProjectSection: ProjectSectionDesign;
     RichParagraph: RichParagraphDesign;
+    StatementBlock: StatementBlockDesign;
     TextSplitLayout: TextSplitLayoutDesign;
+    WorksList: WorksListDesign;
+    WorksListEntry: WorksListEntryDesign;
   };
   version: typeof COMPONENT_DESIGN_SCHEMA_VERSION;
 };
@@ -150,6 +305,15 @@ function isSectionSpacingToken(
     );
 }
 
+function isParameterItemSpan(
+  value: unknown,
+): value is ComponentDesignParameterItemSpan {
+  return typeof value === "number" &&
+    COMPONENT_DESIGN_PARAMETER_ITEM_SPANS.includes(
+      value as ComponentDesignParameterItemSpan,
+    );
+}
+
 function createDefaultBounds(
   leftCol: number,
   rightCol: number,
@@ -157,6 +321,18 @@ function createDefaultBounds(
   return {
     leftCol,
     rightCol,
+  };
+}
+
+function createDefaultResponsiveBounds(
+  baseLeftCol: number,
+  baseRightCol: number,
+  lgLeftCol = baseLeftCol,
+  lgRightCol = baseRightCol,
+): ComponentResponsiveGridBounds {
+  return {
+    base: createDefaultBounds(baseLeftCol, baseRightCol),
+    lg: createDefaultBounds(lgLeftCol, lgRightCol),
   };
 }
 
@@ -187,6 +363,56 @@ function normalizeBounds(
   };
 }
 
+function normalizeResponsiveBounds(
+  value: unknown,
+  fallback: ComponentResponsiveGridBounds,
+): ComponentResponsiveGridBounds {
+  if (!isPlainRecord(value)) {
+    return fallback;
+  }
+
+  if ("leftCol" in value || "rightCol" in value) {
+    const normalized = normalizeBounds(value, fallback.base);
+    return {
+      base: normalized,
+      lg: normalized,
+    };
+  }
+
+  return {
+    base: normalizeBounds(value.base, fallback.base),
+    lg: normalizeBounds(value.lg, fallback.lg),
+  };
+}
+
+function normalizeTypographySize(
+  value: unknown,
+  fallback: TypographySize,
+) {
+  return isTypographySize(value) ? value : fallback;
+}
+
+function normalizeSpacingToken(
+  value: unknown,
+  fallback: ComponentDesignSpacingToken,
+) {
+  return isSpacingToken(value) ? value : fallback;
+}
+
+function normalizeSectionSpacingToken(
+  value: unknown,
+  fallback: ComponentDesignSectionSpacingToken,
+) {
+  return isSectionSpacingToken(value) ? value : fallback;
+}
+
+function normalizeParameterItemSpan(
+  value: unknown,
+  fallback: ComponentDesignParameterItemSpan,
+) {
+  return isParameterItemSpan(value) ? value : fallback;
+}
+
 function normalizeRichParagraphDesign(value: unknown): RichParagraphDesign {
   const defaults = createDefaultComponentDesignDocument().components.RichParagraph;
 
@@ -198,11 +424,12 @@ function normalizeRichParagraphDesign(value: unknown): RichParagraphDesign {
     bodyAutoWrap: isBoolean(value.bodyAutoWrap)
       ? value.bodyAutoWrap
       : defaults.bodyAutoWrap,
-    bodySize: isTypographySize(value.bodySize) ? value.bodySize : defaults.bodySize,
+    bodySize: normalizeTypographySize(value.bodySize, defaults.bodySize),
     contentBounds: normalizeBounds(value.contentBounds, defaults.contentBounds),
-    sectionSpacing: isSectionSpacingToken(value.sectionSpacing)
-      ? value.sectionSpacing
-      : defaults.sectionSpacing,
+    sectionSpacing: normalizeSectionSpacingToken(
+      value.sectionSpacing,
+      defaults.sectionSpacing,
+    ),
   };
 }
 
@@ -217,7 +444,7 @@ function normalizeContentCardDesign(value: unknown): ContentCardDesign {
     bodyAutoWrap: isBoolean(value.bodyAutoWrap)
       ? value.bodyAutoWrap
       : defaults.bodyAutoWrap,
-    bodySize: isTypographySize(value.bodySize) ? value.bodySize : defaults.bodySize,
+    bodySize: normalizeTypographySize(value.bodySize, defaults.bodySize),
     imageLeftMediaBounds: normalizeBounds(
       value.imageLeftMediaBounds,
       defaults.imageLeftMediaBounds,
@@ -234,23 +461,24 @@ function normalizeContentCardDesign(value: unknown): ContentCardDesign {
       value.imageRightTextBounds,
       defaults.imageRightTextBounds,
     ),
-    mobileMediaTopSpacing: isSpacingToken(value.mobileMediaTopSpacing)
-      ? value.mobileMediaTopSpacing
-      : defaults.mobileMediaTopSpacing,
-    paragraphGap: isSpacingToken(value.paragraphGap)
-      ? value.paragraphGap
-      : defaults.paragraphGap,
-    sectionSpacing: isSectionSpacingToken(value.sectionSpacing)
-      ? value.sectionSpacing
-      : defaults.sectionSpacing,
+    mobileMediaTopSpacing: normalizeSpacingToken(
+      value.mobileMediaTopSpacing,
+      defaults.mobileMediaTopSpacing,
+    ),
+    paragraphGap: normalizeSpacingToken(value.paragraphGap, defaults.paragraphGap),
+    sectionSpacing: normalizeSectionSpacingToken(
+      value.sectionSpacing,
+      defaults.sectionSpacing,
+    ),
     textOnlyBounds: normalizeBounds(value.textOnlyBounds, defaults.textOnlyBounds),
     titleAutoWrap: isBoolean(value.titleAutoWrap)
       ? value.titleAutoWrap
       : defaults.titleAutoWrap,
-    titleBodyGap: isSpacingToken(value.titleBodyGap)
-      ? value.titleBodyGap
-      : defaults.titleBodyGap,
-    titleSize: isTypographySize(value.titleSize) ? value.titleSize : defaults.titleSize,
+    titleBodyGap: normalizeSpacingToken(
+      value.titleBodyGap,
+      defaults.titleBodyGap,
+    ),
+    titleSize: normalizeTypographySize(value.titleSize, defaults.titleSize),
   };
 }
 
@@ -265,22 +493,23 @@ function normalizeTextSplitLayoutDesign(value: unknown): TextSplitLayoutDesign {
     bodyAutoWrap: isBoolean(value.bodyAutoWrap)
       ? value.bodyAutoWrap
       : defaults.bodyAutoWrap,
-    bodySize: isTypographySize(value.bodySize) ? value.bodySize : defaults.bodySize,
+    bodySize: normalizeTypographySize(value.bodySize, defaults.bodySize),
     headingAutoWrap: isBoolean(value.headingAutoWrap)
       ? value.headingAutoWrap
       : defaults.headingAutoWrap,
-    headingImageGap: isSpacingToken(value.headingImageGap)
-      ? value.headingImageGap
-      : defaults.headingImageGap,
-    paragraphGap: isSpacingToken(value.paragraphGap)
-      ? value.paragraphGap
-      : defaults.paragraphGap,
-    sectionSpacing: isSectionSpacingToken(value.sectionSpacing)
-      ? value.sectionSpacing
-      : defaults.sectionSpacing,
-    splitHeadingSize: isTypographySize(value.splitHeadingSize)
-      ? value.splitHeadingSize
-      : defaults.splitHeadingSize,
+    headingImageGap: normalizeSpacingToken(
+      value.headingImageGap,
+      defaults.headingImageGap,
+    ),
+    paragraphGap: normalizeSpacingToken(value.paragraphGap, defaults.paragraphGap),
+    sectionSpacing: normalizeSectionSpacingToken(
+      value.sectionSpacing,
+      defaults.sectionSpacing,
+    ),
+    splitHeadingSize: normalizeTypographySize(
+      value.splitHeadingSize,
+      defaults.splitHeadingSize,
+    ),
     splitLeftHeadingBounds: normalizeBounds(
       value.splitLeftHeadingBounds,
       defaults.splitLeftHeadingBounds,
@@ -298,15 +527,18 @@ function normalizeTextSplitLayoutDesign(value: unknown): TextSplitLayoutDesign {
       defaults.splitRightTextBounds,
     ),
     stackBounds: normalizeBounds(value.stackBounds, defaults.stackBounds),
-    stackHeadingSize: isTypographySize(value.stackHeadingSize)
-      ? value.stackHeadingSize
-      : defaults.stackHeadingSize,
-    stackImageTopSpacing: isSpacingToken(value.stackImageTopSpacing)
-      ? value.stackImageTopSpacing
-      : defaults.stackImageTopSpacing,
-    stackTextTopSpacing: isSpacingToken(value.stackTextTopSpacing)
-      ? value.stackTextTopSpacing
-      : defaults.stackTextTopSpacing,
+    stackHeadingSize: normalizeTypographySize(
+      value.stackHeadingSize,
+      defaults.stackHeadingSize,
+    ),
+    stackImageTopSpacing: normalizeSpacingToken(
+      value.stackImageTopSpacing,
+      defaults.stackImageTopSpacing,
+    ),
+    stackTextTopSpacing: normalizeSpacingToken(
+      value.stackTextTopSpacing,
+      defaults.stackTextTopSpacing,
+    ),
   };
 }
 
@@ -323,41 +555,416 @@ function normalizeHighDensityInfoBlockDesign(
     bodyAutoWrap: isBoolean(value.bodyAutoWrap)
       ? value.bodyAutoWrap
       : defaults.bodyAutoWrap,
-    bodySize: isTypographySize(value.bodySize) ? value.bodySize : defaults.bodySize,
-    imageTopSpacing: isSpacingToken(value.imageTopSpacing)
-      ? value.imageTopSpacing
-      : defaults.imageTopSpacing,
-    itemsTopSpacing: isSpacingToken(value.itemsTopSpacing)
-      ? value.itemsTopSpacing
-      : defaults.itemsTopSpacing,
+    bodySize: normalizeTypographySize(value.bodySize, defaults.bodySize),
+    imageTopSpacing: normalizeSpacingToken(
+      value.imageTopSpacing,
+      defaults.imageTopSpacing,
+    ),
+    itemsTopSpacing: normalizeSpacingToken(
+      value.itemsTopSpacing,
+      defaults.itemsTopSpacing,
+    ),
     leftBounds: normalizeBounds(value.leftBounds, defaults.leftBounds),
     middleBounds: normalizeBounds(value.middleBounds, defaults.middleBounds),
-    phaseTitleGap: isSpacingToken(value.phaseTitleGap)
-      ? value.phaseTitleGap
-      : defaults.phaseTitleGap,
+    phaseTitleGap: normalizeSpacingToken(
+      value.phaseTitleGap,
+      defaults.phaseTitleGap,
+    ),
     rightBounds: normalizeBounds(value.rightBounds, defaults.rightBounds),
-    sectionSpacing: isSectionSpacingToken(value.sectionSpacing)
-      ? value.sectionSpacing
-      : defaults.sectionSpacing,
+    sectionSpacing: normalizeSectionSpacingToken(
+      value.sectionSpacing,
+      defaults.sectionSpacing,
+    ),
     subtitleAutoWrap: isBoolean(value.subtitleAutoWrap)
       ? value.subtitleAutoWrap
       : defaults.subtitleAutoWrap,
-    subtitleGap: isSpacingToken(value.subtitleGap)
-      ? value.subtitleGap
-      : defaults.subtitleGap,
+    subtitleGap: normalizeSpacingToken(value.subtitleGap, defaults.subtitleGap),
     titleAutoWrap: isBoolean(value.titleAutoWrap)
       ? value.titleAutoWrap
       : defaults.titleAutoWrap,
-    titleBodyGap: isSpacingToken(value.titleBodyGap)
-      ? value.titleBodyGap
-      : defaults.titleBodyGap,
-    titleSize: isTypographySize(value.titleSize) ? value.titleSize : defaults.titleSize,
+    titleBodyGap: normalizeSpacingToken(
+      value.titleBodyGap,
+      defaults.titleBodyGap,
+    ),
+    titleSize: normalizeTypographySize(value.titleSize, defaults.titleSize),
+  };
+}
+
+function normalizeStatementBlockDesign(value: unknown): StatementBlockDesign {
+  const defaults = createDefaultComponentDesignDocument().components.StatementBlock;
+
+  if (!isPlainRecord(value)) {
+    return defaults;
+  }
+
+  return {
+    bodyAutoWrap: isBoolean(value.bodyAutoWrap)
+      ? value.bodyAutoWrap
+      : defaults.bodyAutoWrap,
+    bodySize: normalizeTypographySize(value.bodySize, defaults.bodySize),
+    contentBounds: normalizeBounds(value.contentBounds, defaults.contentBounds),
+  };
+}
+
+function normalizeHeroHeadlineDesign(value: unknown): HeroHeadlineDesign {
+  const defaults = createDefaultComponentDesignDocument().components.HeroHeadline;
+
+  if (!isPlainRecord(value)) {
+    return defaults;
+  }
+
+  return {
+    contentBounds: normalizeBounds(value.contentBounds, defaults.contentBounds),
+  };
+}
+
+function normalizeImagePanelDesign(value: unknown): ImagePanelDesign {
+  const defaults = createDefaultComponentDesignDocument().components.ImagePanel;
+
+  if (!isPlainRecord(value)) {
+    return defaults;
+  }
+
+  return {
+    contentBounds: normalizeBounds(value.contentBounds, defaults.contentBounds),
+    largeBounds: normalizeBounds(value.largeBounds, defaults.largeBounds),
+    sectionSpacing: normalizeSectionSpacingToken(
+      value.sectionSpacing,
+      defaults.sectionSpacing,
+    ),
+  };
+}
+
+function normalizeBreakdownHeadlineDesign(
+  value: unknown,
+): BreakdownHeadlineDesign {
+  const defaults = createDefaultComponentDesignDocument().components.BreakdownHeadline;
+
+  if (!isPlainRecord(value)) {
+    return defaults;
+  }
+
+  return {
+    contentBounds: normalizeBounds(value.contentBounds, defaults.contentBounds),
+    sectionSpacing: normalizeSectionSpacingToken(
+      value.sectionSpacing,
+      defaults.sectionSpacing,
+    ),
+    titleSize: normalizeTypographySize(value.titleSize, defaults.titleSize),
+  };
+}
+
+function normalizeImageSliderDesign(value: unknown): ImageSliderDesign {
+  const defaults = createDefaultComponentDesignDocument().components.ImageSlider;
+
+  if (!isPlainRecord(value)) {
+    return defaults;
+  }
+
+  return {
+    contentBounds: normalizeBounds(value.contentBounds, defaults.contentBounds),
+    labelsTopSpacing: normalizeSpacingToken(
+      value.labelsTopSpacing,
+      defaults.labelsTopSpacing,
+    ),
+    sectionSpacing: normalizeSectionSpacingToken(
+      value.sectionSpacing,
+      defaults.sectionSpacing,
+    ),
+  };
+}
+
+function normalizeBreakdownTriptychDesign(
+  value: unknown,
+): BreakdownTriptychDesign {
+  const defaults = createDefaultComponentDesignDocument().components.BreakdownTriptych;
+
+  if (!isPlainRecord(value)) {
+    return defaults;
+  }
+
+  return {
+    col1Bounds: normalizeBounds(value.col1Bounds, defaults.col1Bounds),
+    col2Bounds: normalizeBounds(value.col2Bounds, defaults.col2Bounds),
+    col2TopSpacing: normalizeSpacingToken(
+      value.col2TopSpacing,
+      defaults.col2TopSpacing,
+    ),
+    col3Bounds: normalizeBounds(value.col3Bounds, defaults.col3Bounds),
+    col3TopSpacing: normalizeSpacingToken(
+      value.col3TopSpacing,
+      defaults.col3TopSpacing,
+    ),
+    sectionSpacing: normalizeSectionSpacingToken(
+      value.sectionSpacing,
+      defaults.sectionSpacing,
+    ),
+  };
+}
+
+function normalizeParameterGridDesign(value: unknown): ParameterGridDesign {
+  const defaults = createDefaultComponentDesignDocument().components.ParameterGrid;
+
+  if (!isPlainRecord(value)) {
+    return defaults;
+  }
+
+  return {
+    itemSpan: normalizeParameterItemSpan(value.itemSpan, defaults.itemSpan),
+    mediaBottomSpacing: normalizeSpacingToken(
+      value.mediaBottomSpacing,
+      defaults.mediaBottomSpacing,
+    ),
+    parametersBounds: normalizeBounds(
+      value.parametersBounds,
+      defaults.parametersBounds,
+    ),
+    sectionSpacing: normalizeSectionSpacingToken(
+      value.sectionSpacing,
+      defaults.sectionSpacing,
+    ),
+  };
+}
+
+function normalizeProjectSectionDesign(value: unknown): ProjectSectionDesign {
+  const defaults = createDefaultComponentDesignDocument().components.ProjectSection;
+
+  if (!isPlainRecord(value)) {
+    return defaults;
+  }
+
+  return {
+    textLeftBounds: normalizeResponsiveBounds(
+      value.textLeftBounds,
+      defaults.textLeftBounds,
+    ),
+    textRightBounds: normalizeResponsiveBounds(
+      value.textRightBounds,
+      defaults.textRightBounds,
+    ),
+  };
+}
+
+function normalizeHeroSectionDesign(value: unknown): HeroSectionDesign {
+  const defaults = createDefaultComponentDesignDocument().components.HeroSection;
+
+  if (!isPlainRecord(value)) {
+    return defaults;
+  }
+
+  return {
+    ctaTopSpacing: normalizeSpacingToken(
+      value.ctaTopSpacing,
+      defaults.ctaTopSpacing,
+    ),
+    descriptionBounds: normalizeResponsiveBounds(
+      value.descriptionBounds,
+      defaults.descriptionBounds,
+    ),
+    titleBounds: normalizeResponsiveBounds(
+      value.titleBounds,
+      defaults.titleBounds,
+    ),
+  };
+}
+
+function normalizeHomeEndcapSectionDesign(
+  value: unknown,
+): HomeEndcapSectionDesign {
+  const defaults = createDefaultComponentDesignDocument().components.HomeEndcapSection;
+
+  if (!isPlainRecord(value)) {
+    return defaults;
+  }
+
+  return {
+    buttonTopSpacing: normalizeSpacingToken(
+      value.buttonTopSpacing,
+      defaults.buttonTopSpacing,
+    ),
+    contentBounds: normalizeBounds(value.contentBounds, defaults.contentBounds),
+    descriptionTopSpacing: normalizeSpacingToken(
+      value.descriptionTopSpacing,
+      defaults.descriptionTopSpacing,
+    ),
+  };
+}
+
+function normalizePortfolioHeroHeaderDesign(
+  value: unknown,
+): PortfolioHeroHeaderDesign {
+  const defaults = createDefaultComponentDesignDocument().components.PortfolioHeroHeader;
+
+  if (!isPlainRecord(value)) {
+    return defaults;
+  }
+
+  return {
+    ctaTopSpacing: normalizeSpacingToken(
+      value.ctaTopSpacing,
+      defaults.ctaTopSpacing,
+    ),
+    descriptionTopSpacing: normalizeSpacingToken(
+      value.descriptionTopSpacing,
+      defaults.descriptionTopSpacing,
+    ),
+    sideBounds: normalizeResponsiveBounds(value.sideBounds, defaults.sideBounds),
+    singleColumnBounds: normalizeBounds(
+      value.singleColumnBounds,
+      defaults.singleColumnBounds,
+    ),
+    titleBounds: normalizeResponsiveBounds(
+      value.titleBounds,
+      defaults.titleBounds,
+    ),
+  };
+}
+
+function normalizeLightingCollectionHeaderDesign(
+  value: unknown,
+): LightingCollectionHeaderDesign {
+  const defaults = createDefaultComponentDesignDocument().components.LightingCollectionHeader;
+
+  if (!isPlainRecord(value)) {
+    return defaults;
+  }
+
+  return {
+    descriptionBounds: normalizeResponsiveBounds(
+      value.descriptionBounds,
+      defaults.descriptionBounds,
+    ),
+    titleBounds: normalizeResponsiveBounds(
+      value.titleBounds,
+      defaults.titleBounds,
+    ),
+    titleTopSpacing: normalizeSpacingToken(
+      value.titleTopSpacing,
+      defaults.titleTopSpacing,
+    ),
+  };
+}
+
+function normalizeLightingProjectCardDesign(
+  value: unknown,
+): LightingProjectCardDesign {
+  const defaults = createDefaultComponentDesignDocument().components.LightingProjectCard;
+
+  if (!isPlainRecord(value)) {
+    return defaults;
+  }
+
+  return {
+    contentBounds: normalizeBounds(value.contentBounds, defaults.contentBounds),
+  };
+}
+
+function normalizeWorksListDesign(value: unknown): WorksListDesign {
+  const defaults = createDefaultComponentDesignDocument().components.WorksList;
+
+  if (!isPlainRecord(value)) {
+    return defaults;
+  }
+
+  return {
+    headingBounds: normalizeBounds(value.headingBounds, defaults.headingBounds),
+    headingBottomSpacing: normalizeSpacingToken(
+      value.headingBottomSpacing,
+      defaults.headingBottomSpacing,
+    ),
+    sectionSpacing: normalizeSectionSpacingToken(
+      value.sectionSpacing,
+      defaults.sectionSpacing,
+    ),
+  };
+}
+
+function normalizeWorksListEntryDesign(value: unknown): WorksListEntryDesign {
+  const defaults = createDefaultComponentDesignDocument().components.WorksListEntry;
+
+  if (!isPlainRecord(value)) {
+    return defaults;
+  }
+
+  return {
+    numberBounds: normalizeResponsiveBounds(
+      value.numberBounds,
+      defaults.numberBounds,
+    ),
+    sidebarBounds: normalizeResponsiveBounds(
+      value.sidebarBounds,
+      defaults.sidebarBounds,
+    ),
+    titleBounds: normalizeResponsiveBounds(
+      value.titleBounds,
+      defaults.titleBounds,
+    ),
+  };
+}
+
+function normalizeNextProjectBlockDesign(
+  value: unknown,
+): NextProjectBlockDesign {
+  const defaults = createDefaultComponentDesignDocument().components.NextProjectBlock;
+
+  if (!isPlainRecord(value)) {
+    return defaults;
+  }
+
+  return {
+    footerLeftBounds: normalizeResponsiveBounds(
+      value.footerLeftBounds,
+      defaults.footerLeftBounds,
+    ),
+    footerRightBounds: normalizeResponsiveBounds(
+      value.footerRightBounds,
+      defaults.footerRightBounds,
+    ),
+    footerTopSpacing: normalizeSpacingToken(
+      value.footerTopSpacing,
+      defaults.footerTopSpacing,
+    ),
+    overlayBounds: normalizeBounds(value.overlayBounds, defaults.overlayBounds),
+  };
+}
+
+function normalizeContactFlashlightDesign(
+  value: unknown,
+): ContactFlashlightDesign {
+  const defaults = createDefaultComponentDesignDocument().components.ContactFlashlight;
+
+  if (!isPlainRecord(value)) {
+    return defaults;
+  }
+
+  return {
+    contactBounds: normalizeBounds(value.contactBounds, defaults.contactBounds),
+    detailBounds: normalizeBounds(value.detailBounds, defaults.detailBounds),
+    heroBounds: normalizeBounds(value.heroBounds, defaults.heroBounds),
   };
 }
 
 export function createDefaultComponentDesignDocument(): ComponentDesignDocument {
   return {
     components: {
+      BreakdownHeadline: {
+        contentBounds: createDefaultBounds(1, 12),
+        sectionSpacing: "block-compact",
+        titleSize: "title",
+      },
+      BreakdownTriptych: {
+        col1Bounds: createDefaultBounds(1, 4),
+        col2Bounds: createDefaultBounds(5, 8),
+        col2TopSpacing: "64",
+        col3Bounds: createDefaultBounds(9, 12),
+        col3TopSpacing: "64",
+        sectionSpacing: "block-compact",
+      },
+      ContactFlashlight: {
+        contactBounds: createDefaultBounds(4, 11),
+        detailBounds: createDefaultBounds(4, 11),
+        heroBounds: createDefaultBounds(3, 10),
+      },
       ContentCard: {
         bodyAutoWrap: true,
         bodySize: "body",
@@ -372,6 +979,14 @@ export function createDefaultComponentDesignDocument(): ComponentDesignDocument 
         titleAutoWrap: true,
         titleBodyGap: "32",
         titleSize: "title",
+      },
+      HeroHeadline: {
+        contentBounds: createDefaultBounds(2, 11),
+      },
+      HeroSection: {
+        ctaTopSpacing: "48",
+        descriptionBounds: createDefaultResponsiveBounds(1, 12, 10, 12),
+        titleBounds: createDefaultResponsiveBounds(1, 12, 2, 8),
       },
       HighDensityInfoBlock: {
         bodyAutoWrap: true,
@@ -389,11 +1004,62 @@ export function createDefaultComponentDesignDocument(): ComponentDesignDocument 
         titleBodyGap: "32",
         titleSize: "title-sm",
       },
+      HomeEndcapSection: {
+        buttonTopSpacing: "48",
+        contentBounds: createDefaultBounds(3, 10),
+        descriptionTopSpacing: "32",
+      },
+      ImagePanel: {
+        contentBounds: createDefaultBounds(2, 11),
+        largeBounds: createDefaultBounds(2, 11),
+        sectionSpacing: "block-compact",
+      },
+      ImageSlider: {
+        contentBounds: createDefaultBounds(2, 11),
+        labelsTopSpacing: "20",
+        sectionSpacing: "block-compact",
+      },
+      LightingCollectionHeader: {
+        descriptionBounds: createDefaultResponsiveBounds(1, 12, 10, 12),
+        titleBounds: createDefaultResponsiveBounds(1, 12, 2, 9),
+        titleTopSpacing: "20",
+      },
+      LightingProjectCard: {
+        contentBounds: createDefaultBounds(2, 11),
+      },
+      NextProjectBlock: {
+        footerLeftBounds: createDefaultResponsiveBounds(1, 12, 2, 6),
+        footerRightBounds: createDefaultResponsiveBounds(1, 12, 8, 11),
+        footerTopSpacing: "32",
+        overlayBounds: createDefaultBounds(3, 10),
+      },
+      ParameterGrid: {
+        itemSpan: 3,
+        mediaBottomSpacing: "48",
+        parametersBounds: createDefaultBounds(1, 12),
+        sectionSpacing: "block",
+      },
+      PortfolioHeroHeader: {
+        ctaTopSpacing: "48",
+        descriptionTopSpacing: "24",
+        sideBounds: createDefaultResponsiveBounds(1, 12, 10, 12),
+        singleColumnBounds: createDefaultBounds(2, 11),
+        titleBounds: createDefaultResponsiveBounds(1, 12, 2, 8),
+      },
+      ProjectSection: {
+        textLeftBounds: createDefaultResponsiveBounds(1, 4, 2, 9),
+        textRightBounds: createDefaultResponsiveBounds(1, 4, 5, 12),
+      },
       RichParagraph: {
         bodyAutoWrap: true,
         bodySize: "body",
         contentBounds: createDefaultBounds(3, 10),
         sectionSpacing: "section-spacious",
+      },
+      StatementBlock: {
+        bodyAutoWrap: true,
+        bodySize: "body",
+        contentBounds: createDefaultBounds(3, 10),
       },
       TextSplitLayout: {
         bodyAutoWrap: true,
@@ -411,6 +1077,16 @@ export function createDefaultComponentDesignDocument(): ComponentDesignDocument 
         stackHeadingSize: "display",
         stackImageTopSpacing: "64",
         stackTextTopSpacing: "48",
+      },
+      WorksList: {
+        headingBounds: createDefaultBounds(2, 11),
+        headingBottomSpacing: "64",
+        sectionSpacing: "section-normal",
+      },
+      WorksListEntry: {
+        numberBounds: createDefaultResponsiveBounds(1, 1, 1, 1),
+        sidebarBounds: createDefaultResponsiveBounds(9, 12, 9, 12),
+        titleBounds: createDefaultResponsiveBounds(2, 11, 2, 8),
       },
     },
     version: COMPONENT_DESIGN_SCHEMA_VERSION,
@@ -430,12 +1106,47 @@ export function normalizeComponentDesignDocument(
 
   return {
     components: {
+      BreakdownHeadline: normalizeBreakdownHeadlineDesign(
+        components.BreakdownHeadline,
+      ),
+      BreakdownTriptych: normalizeBreakdownTriptychDesign(
+        components.BreakdownTriptych,
+      ),
+      ContactFlashlight: normalizeContactFlashlightDesign(
+        components.ContactFlashlight,
+      ),
       ContentCard: normalizeContentCardDesign(components.ContentCard),
+      HeroHeadline: normalizeHeroHeadlineDesign(components.HeroHeadline),
+      HeroSection: normalizeHeroSectionDesign(components.HeroSection),
       HighDensityInfoBlock: normalizeHighDensityInfoBlockDesign(
         components.HighDensityInfoBlock,
       ),
+      HomeEndcapSection: normalizeHomeEndcapSectionDesign(
+        components.HomeEndcapSection,
+      ),
+      ImagePanel: normalizeImagePanelDesign(components.ImagePanel),
+      ImageSlider: normalizeImageSliderDesign(components.ImageSlider),
+      LightingCollectionHeader: normalizeLightingCollectionHeaderDesign(
+        components.LightingCollectionHeader,
+      ),
+      LightingProjectCard: normalizeLightingProjectCardDesign(
+        components.LightingProjectCard,
+      ),
+      NextProjectBlock: normalizeNextProjectBlockDesign(
+        components.NextProjectBlock,
+      ),
+      ParameterGrid: normalizeParameterGridDesign(components.ParameterGrid),
+      PortfolioHeroHeader: normalizePortfolioHeroHeaderDesign(
+        components.PortfolioHeroHeader,
+      ),
+      ProjectSection: normalizeProjectSectionDesign(components.ProjectSection),
       RichParagraph: normalizeRichParagraphDesign(components.RichParagraph),
-      TextSplitLayout: normalizeTextSplitLayoutDesign(components.TextSplitLayout),
+      StatementBlock: normalizeStatementBlockDesign(components.StatementBlock),
+      TextSplitLayout: normalizeTextSplitLayoutDesign(
+        components.TextSplitLayout,
+      ),
+      WorksList: normalizeWorksListDesign(components.WorksList),
+      WorksListEntry: normalizeWorksListEntryDesign(components.WorksListEntry),
     },
     version: COMPONENT_DESIGN_SCHEMA_VERSION,
   };
@@ -478,4 +1189,16 @@ export const COMPONENT_DESIGN_SECTION_SPACING_LABELS: Record<
   "block-compact": "区块紧凑 / 96px",
   "section-normal": "Section 常规",
   "section-spacious": "Section 宽松",
+};
+
+export const COMPONENT_DESIGN_PARAMETER_ITEM_SPAN_LABELS: Record<
+  ComponentDesignParameterItemSpan,
+  string
+> = {
+  1: "1 列",
+  2: "2 列",
+  3: "3 列",
+  4: "4 列",
+  6: "6 列",
+  12: "12 列",
 };

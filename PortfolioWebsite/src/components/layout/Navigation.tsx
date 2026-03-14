@@ -14,6 +14,9 @@ export default function Navigation() {
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const pathname = usePathname();
   const testingMode = isTestingMode();
+  const isInternalLabRoute =
+    pathname?.startsWith("/playground/font-lab") ||
+    pathname?.startsWith("/playground/component-lab");
   const keepsSpotlightVisible = pathname === "/about";
   const headerDuration = 0.4;
   const overlayDuration = 0.65;
@@ -26,9 +29,9 @@ export default function Navigation() {
   const panelTransition = { duration: panelDuration, ease: [0.22, 1, 0.36, 1] as const };
 
   useEffect(() => {
-    if (pathname?.startsWith("/admin")) return;
+    if (pathname?.startsWith("/admin") || isInternalLabRoute) return;
     setIsOpen(false);
-  }, [pathname]);
+  }, [isInternalLabRoute, pathname]);
 
   useEffect(() => {
     if (isOpen || !isOverlayActive) {
@@ -43,7 +46,7 @@ export default function Navigation() {
   }, [isOpen, isOverlayActive, panelDuration]);
 
   useLayoutEffect(() => {
-    if (pathname?.startsWith("/admin") || !isOpen) {
+    if (pathname?.startsWith("/admin") || isInternalLabRoute || !isOpen) {
       return;
     }
 
@@ -60,10 +63,10 @@ export default function Navigation() {
       document.body.style.overflow = previousOverflow;
       document.body.style.paddingRight = previousPaddingRight;
     };
-  }, [isOpen, pathname]);
+  }, [isInternalLabRoute, isOpen, pathname]);
 
   useEffect(() => {
-    if (pathname?.startsWith("/admin") || !isOpen) {
+    if (pathname?.startsWith("/admin") || isInternalLabRoute || !isOpen) {
       return;
     }
 
@@ -133,9 +136,9 @@ export default function Navigation() {
         menuButtonElement.focus();
       }
     };
-  }, [isOpen, pathname]);
+  }, [isInternalLabRoute, isOpen, pathname]);
 
-  if (pathname?.startsWith("/admin")) return null;
+  if (pathname?.startsWith("/admin") || isInternalLabRoute) return null;
 
   const openMenu = () => {
     setIsOverlayActive(true);
@@ -158,9 +161,9 @@ export default function Navigation() {
     <>
       <motion.header
         initial={false}
-        animate={{ opacity: isOpen ? 0 : 1, pointerEvents: isOpen ? "none" : "auto" }}
+        animate={{ opacity: isOpen ? 0 : 1 }}
         transition={{ duration: headerDuration, ease: "easeOut" }}
-        className="fixed left-0 top-0 z-40 w-full px-5 py-6 md:px-8 md:py-8"
+        className="pointer-events-none fixed left-0 top-0 z-40 w-full px-5 py-6 md:px-8 md:py-8"
       >
         <div className="grid items-center justify-items-end">
           <button

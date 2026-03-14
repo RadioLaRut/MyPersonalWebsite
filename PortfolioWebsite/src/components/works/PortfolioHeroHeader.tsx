@@ -3,6 +3,12 @@
 import React, { type ReactNode } from "react";
 import Link from "next/link";
 import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+    getGridColumnClassName,
+    getResponsiveGridColumnClassName,
+    getSpacingRem,
+} from "@/lib/component-design-style";
 
 interface LightingCollectionHeroHeaderProps {
     title: ReactNode;
@@ -35,6 +41,7 @@ export default function LightingCollectionHeroHeader({
     ctaHref,
     editMode = false,
 }: LightingCollectionHeroHeaderProps) {
+    const design = useComponentDesign("PortfolioHeroHeader");
     const hasSubtitle = hasNodeContent(subtitle);
     const hasDescriptionLine1 = hasNodeContent(descriptionLine1);
     const hasDescriptionLine2 = hasNodeContent(descriptionLine2);
@@ -74,12 +81,12 @@ export default function LightingCollectionHeroHeader({
         <section className="border-b border-white/10 rhythm-section-hero">
             <div className="grid-container">
                 {hasSideRail ? (
-                    <div className="col-span-12 grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-end">
-                        <div className="lg:col-span-7 lg:col-start-2">
+                    <div className="col-span-12 grid grid-cols-12 gap-10 lg:items-end">
+                        <div className={getResponsiveGridColumnClassName(design.titleBounds)}>
                             {titleLockup}
                         </div>
 
-                        <div className="lg:col-span-3 lg:col-start-10">
+                        <div className={getResponsiveGridColumnClassName(design.sideBounds)}>
                             <div className="grid content-start justify-items-start lg:pl-4">
                                 {hasDescriptionLine1 ? (
                                     <Typography
@@ -100,7 +107,8 @@ export default function LightingCollectionHeroHeader({
                                         size="body"
                                         weight="semantic"
                                         wrapPolicy="prose"
-                                        className="mt-6 text-textPrimary/90"
+                                        className="text-textPrimary/90"
+                                        style={{ marginTop: getSpacingRem(design.descriptionTopSpacing) }}
                                     >
                                         {descriptionLine2}
                                     </Typography>
@@ -113,7 +121,8 @@ export default function LightingCollectionHeroHeader({
                                                 event.preventDefault();
                                             }
                                         }}
-                                        className="group interactive mt-12 inline-grid grid-flow-col auto-cols-max items-center gap-3 text-textMuted transition-colors duration-300 hover:text-white"
+                                        className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 text-textMuted transition-colors duration-300 hover:text-white"
+                                        style={{ marginTop: getSpacingRem(design.ctaTopSpacing) }}
                                     >
                                         <span className="h-px w-6 bg-white/30 transition-all duration-300 group-hover:w-10 group-hover:bg-white"></span>
                                         <Typography
@@ -131,7 +140,7 @@ export default function LightingCollectionHeroHeader({
                         </div>
                     </div>
                 ) : (
-                    <div className="grid-content">
+                    <div className={getGridColumnClassName(design.singleColumnBounds)}>
                         {titleLockup}
                     </div>
                 )}

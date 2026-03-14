@@ -2,6 +2,11 @@
 
 import Link from "next/link";
 import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+  getResponsiveGridColumnClassName,
+  getSpacingRem,
+} from "@/lib/component-design-style";
 
 export interface LightingCollectionHeaderProps {
   title: string;
@@ -16,17 +21,24 @@ export default function LightingCollectionHeader({
   number,
   description,
   backHref = "/works/lighting-portfolio",
+  editMode = false,
 }: LightingCollectionHeaderProps) {
+  const design = useComponentDesign("LightingCollectionHeader");
   const hasDescription = typeof description === "string" && description.trim().length > 0;
 
   return (
     <section className="border-b border-white/10 rhythm-section-hero">
       <div className="grid-container">
-        <div className="col-span-12 grid grid-cols-1 gap-10 lg:grid-cols-12 lg:[align-items:last_baseline]">
-          <div className="lg:col-span-8 lg:col-start-2">
+        <div className="col-span-12 grid grid-cols-12 gap-10 lg:[align-items:last_baseline]">
+          <div className={getResponsiveGridColumnClassName(design.titleBounds)}>
             <div className="mb-10">
               <Link
                 href={backHref}
+                onClick={(event) => {
+                  if (editMode) {
+                    event.preventDefault();
+                  }
+                }}
                 className="group interactive inline-grid grid-cols-[0.32rem_auto] items-center gap-1.5 text-textMuted transition-colors duration-300 hover:text-white"
               >
                 <svg
@@ -66,14 +78,15 @@ export default function LightingCollectionHeader({
               size="title"
               weight="display"
               wrapPolicy="heading"
-              className="mt-5 text-white"
+              className="text-white"
+              style={{ marginTop: getSpacingRem(design.titleTopSpacing) }}
             >
               {title}
             </Typography>
           </div>
 
           {hasDescription ? (
-            <div className="lg:col-span-3 lg:col-start-10 lg:pb-[0.12rem]">
+            <div className={`${getResponsiveGridColumnClassName(design.descriptionBounds)} lg:pb-[0.12rem]`}>
               <Typography
                 as="p"
                 preset="sans-body"

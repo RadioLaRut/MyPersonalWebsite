@@ -2,6 +2,8 @@
 import React, { type ReactNode, useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { getGridColumnClassName } from "@/lib/component-design-style";
 
 export interface ContactFlashlightBlockProps {
     maskRadius?: number;
@@ -36,6 +38,7 @@ export default function ContactFlashlightBlock({
     creativeContent,
     editMode = false,
 }: ContactFlashlightBlockProps) {
+    const design = useComponentDesign("ContactFlashlight");
     const containerRef = useRef<HTMLDivElement>(null);
     const [mousePos, setMousePos] = useState({ x: "50%", y: "50%" });
     const [isTouchDevice, setIsTouchDevice] = useState(false);
@@ -102,7 +105,7 @@ export default function ContactFlashlightBlock({
 
     const renderContentData = () => (
         <div className="grid-container w-full rhythm-section-spacious">
-            <section className="col-start-3 col-span-8 mb-24 grid rhythm-stack-3 lg:mb-32">
+            <section className={`${getGridColumnClassName(design.heroBounds)} mb-24 grid rhythm-stack-3 lg:mb-32`}>
                 <motion.h1
                     initial={editMode ? false : { opacity: 0, y: 20 }}
                     animate={editMode ? undefined : { opacity: 1, y: 0 }}
@@ -154,7 +157,7 @@ export default function ContactFlashlightBlock({
                 initial={editMode ? false : { opacity: 0 }}
                 animate={editMode ? undefined : { opacity: 1 }}
                 transition={editMode ? undefined : { delay: 0.6, duration: 1 }}
-                className="col-start-4 col-span-8 grid grid-cols-1 gap-16 border-t border-current text-left rhythm-divider-top lg:grid-cols-2"
+                className={`${getGridColumnClassName(design.detailBounds)} grid grid-cols-1 gap-16 border-t border-current text-left rhythm-divider-top lg:grid-cols-2`}
             >
                 <div className="rhythm-stack-4">
                     <Typography
@@ -247,7 +250,7 @@ export default function ContactFlashlightBlock({
                 initial={editMode ? false : { opacity: 0 }}
                 animate={editMode ? undefined : { opacity: 1 }}
                 transition={editMode ? undefined : { delay: 0.9, duration: 1 }}
-                className="col-start-4 col-span-8 mt-24 grid grid-cols-1 items-start gap-12 border-t border-current text-left rhythm-divider-top lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-20"
+                className={`${getGridColumnClassName(design.contactBounds)} mt-24 grid grid-cols-1 items-start gap-12 border-t border-current text-left rhythm-divider-top lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-20`}
             >
                 <div className="rhythm-stack-3">
                     <Typography

@@ -26,11 +26,13 @@ test("writeComponentDesignConfig persists normalized JSON", async () => {
   const document = createDefaultComponentDesignDocument();
   document.components.RichParagraph.bodySize = "body";
   document.components.ContentCard.textOnlyBounds.leftCol = 2;
+  document.components.HeroSection.titleBounds.lg.leftCol = 3;
 
   await writeComponentDesignConfig(document, filePath);
   const readBack = await readComponentDesignConfig(filePath);
 
   assert.equal(readBack.components.RichParagraph.bodySize, "body");
   assert.equal(readBack.components.ContentCard.textOnlyBounds.leftCol, 2);
+  assert.equal(readBack.components.HeroSection.titleBounds.lg.leftCol, 3);
   await fs.rm(tempRoot, { force: true, recursive: true });
 });

@@ -4,6 +4,12 @@ import { useEffect, useRef, useState } from "react";
 
 import { OptimizedImage } from "@/components/common/OptimizedImage";
 import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+  getGridColumnClassName,
+  getSectionSpacingClassName,
+  getSpacingRem,
+} from "@/lib/component-design-style";
 import {
   type ImageFitMode,
   type ImagePreset,
@@ -39,6 +45,7 @@ export default function ImageSlider({
   rightLabel,
   editMode = false,
 }: ImageSliderProps) {
+  const design = useComponentDesign("ImageSlider");
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -83,9 +90,9 @@ export default function ImageSlider({
   const cursorClass = editMode ? "cursor-default" : "cursor-ew-resize";
 
   return (
-    <div className={`w-full rhythm-block-compact ${className}`}>
+    <div className={`w-full ${getSectionSpacingClassName(design.sectionSpacing)} ${className}`}>
       <div className="grid-container">
-        <div className="col-start-2 col-span-10">
+        <div className={getGridColumnClassName(design.contentBounds)}>
           <div
             ref={containerRef}
             className={`${frameClassName} select-none ${cursorClass}`}
@@ -166,7 +173,10 @@ export default function ImageSlider({
                     </div>
 
                     {(leftLabel || rightLabel) ? (
-                        <div className="mt-5 flex items-start justify-between gap-6">
+                        <div
+                            className="flex items-start justify-between gap-6"
+                            style={{ marginTop: getSpacingRem(design.labelsTopSpacing) }}
+                        >
                             {leftLabel ? (
                                 <Typography
                                     as="span"

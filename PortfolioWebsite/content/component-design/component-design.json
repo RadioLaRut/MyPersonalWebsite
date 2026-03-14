@@ -1,5 +1,44 @@
 {
   "components": {
+    "BreakdownHeadline": {
+      "contentBounds": {
+        "leftCol": 1,
+        "rightCol": 12
+      },
+      "sectionSpacing": "block-compact",
+      "titleSize": "title"
+    },
+    "BreakdownTriptych": {
+      "col1Bounds": {
+        "leftCol": 1,
+        "rightCol": 4
+      },
+      "col2Bounds": {
+        "leftCol": 5,
+        "rightCol": 8
+      },
+      "col2TopSpacing": "64",
+      "col3Bounds": {
+        "leftCol": 9,
+        "rightCol": 12
+      },
+      "col3TopSpacing": "64",
+      "sectionSpacing": "block-compact"
+    },
+    "ContactFlashlight": {
+      "contactBounds": {
+        "leftCol": 4,
+        "rightCol": 11
+      },
+      "detailBounds": {
+        "leftCol": 4,
+        "rightCol": 11
+      },
+      "heroBounds": {
+        "leftCol": 3,
+        "rightCol": 10
+      }
+    },
     "ContentCard": {
       "bodyAutoWrap": true,
       "bodySize": "body",
@@ -30,6 +69,35 @@
       "titleBodyGap": "32",
       "titleSize": "title"
     },
+    "HeroHeadline": {
+      "contentBounds": {
+        "leftCol": 2,
+        "rightCol": 11
+      }
+    },
+    "HeroSection": {
+      "ctaTopSpacing": "48",
+      "descriptionBounds": {
+        "base": {
+          "leftCol": 1,
+          "rightCol": 12
+        },
+        "lg": {
+          "leftCol": 10,
+          "rightCol": 12
+        }
+      },
+      "titleBounds": {
+        "base": {
+          "leftCol": 1,
+          "rightCol": 12
+        },
+        "lg": {
+          "leftCol": 2,
+          "rightCol": 8
+        }
+      }
+    },
     "HighDensityInfoBlock": {
       "bodyAutoWrap": true,
       "bodySize": "body",
@@ -55,6 +123,148 @@
       "titleBodyGap": "32",
       "titleSize": "title-sm"
     },
+    "HomeEndcapSection": {
+      "buttonTopSpacing": "48",
+      "contentBounds": {
+        "leftCol": 3,
+        "rightCol": 10
+      },
+      "descriptionTopSpacing": "32"
+    },
+    "ImagePanel": {
+      "contentBounds": {
+        "leftCol": 2,
+        "rightCol": 11
+      },
+      "largeBounds": {
+        "leftCol": 2,
+        "rightCol": 11
+      },
+      "sectionSpacing": "block-compact"
+    },
+    "ImageSlider": {
+      "contentBounds": {
+        "leftCol": 2,
+        "rightCol": 11
+      },
+      "labelsTopSpacing": "20",
+      "sectionSpacing": "block-compact"
+    },
+    "LightingCollectionHeader": {
+      "descriptionBounds": {
+        "base": {
+          "leftCol": 1,
+          "rightCol": 12
+        },
+        "lg": {
+          "leftCol": 10,
+          "rightCol": 12
+        }
+      },
+      "titleBounds": {
+        "base": {
+          "leftCol": 1,
+          "rightCol": 12
+        },
+        "lg": {
+          "leftCol": 2,
+          "rightCol": 9
+        }
+      },
+      "titleTopSpacing": "20"
+    },
+    "LightingProjectCard": {
+      "contentBounds": {
+        "leftCol": 2,
+        "rightCol": 11
+      }
+    },
+    "NextProjectBlock": {
+      "footerLeftBounds": {
+        "base": {
+          "leftCol": 1,
+          "rightCol": 12
+        },
+        "lg": {
+          "leftCol": 2,
+          "rightCol": 6
+        }
+      },
+      "footerRightBounds": {
+        "base": {
+          "leftCol": 1,
+          "rightCol": 12
+        },
+        "lg": {
+          "leftCol": 8,
+          "rightCol": 11
+        }
+      },
+      "footerTopSpacing": "32",
+      "overlayBounds": {
+        "leftCol": 3,
+        "rightCol": 10
+      }
+    },
+    "ParameterGrid": {
+      "itemSpan": 3,
+      "mediaBottomSpacing": "48",
+      "parametersBounds": {
+        "leftCol": 1,
+        "rightCol": 12
+      },
+      "sectionSpacing": "block"
+    },
+    "PortfolioHeroHeader": {
+      "ctaTopSpacing": "48",
+      "descriptionTopSpacing": "24",
+      "sideBounds": {
+        "base": {
+          "leftCol": 1,
+          "rightCol": 12
+        },
+        "lg": {
+          "leftCol": 10,
+          "rightCol": 12
+        }
+      },
+      "singleColumnBounds": {
+        "leftCol": 2,
+        "rightCol": 11
+      },
+      "titleBounds": {
+        "base": {
+          "leftCol": 1,
+          "rightCol": 12
+        },
+        "lg": {
+          "leftCol": 2,
+          "rightCol": 8
+        }
+      }
+    },
+    "ProjectSection": {
+      "textLeftBounds": {
+        "base": {
+          "leftCol": 1,
+          "rightCol": 4
+        },
+        "lg": {
+          "leftCol": 2,
+          "rightCol": 9
+        }
+      },
+      "textRightBounds": {
+        "base": {
+          "leftCol": 1,
+          "rightCol": 4
+        },
+        "lg": {
+          "leftCol": 5,
+          "rightCol": 12
+        }
+      }
+    },
     "RichParagraph": {
       "bodyAutoWrap": true,
       "bodySize": "body",
@@ -63,6 +273,14 @@
         "rightCol": 10
       },
       "sectionSpacing": "section-spacious"
+    },
+    "StatementBlock": {
+      "bodyAutoWrap": true,
+      "bodySize": "body",
+      "contentBounds": {
+        "leftCol": 3,
+        "rightCol": 10
+      }
     },
     "TextSplitLayout": {
       "bodyAutoWrap": true,
@@ -95,6 +313,46 @@
       "stackHeadingSize": "display",
       "stackImageTopSpacing": "64",
       "stackTextTopSpacing": "48"
+    },
+    "WorksList": {
+      "headingBounds": {
+        "leftCol": 2,
+        "rightCol": 11
+      },
+      "headingBottomSpacing": "64",
+      "sectionSpacing": "section-normal"
+    },
+    "WorksListEntry": {
+      "numberBounds": {
+        "base": {
+          "leftCol": 1,
+          "rightCol": 1
+        },
+        "lg": {
+          "leftCol": 1,
+          "rightCol": 1
+        }
+      },
+      "sidebarBounds": {
+        "base": {
+          "leftCol": 9,
+          "rightCol": 12
+        },
+        "lg": {
+          "leftCol": 9,
+          "rightCol": 12
+        }
+      },
+      "titleBounds": {
+        "base": {
+          "leftCol": 2,
+          "rightCol": 11
+        },
+        "lg": {
+          "leftCol": 2,
+          "rightCol": 8
+        }
+      }
     }
   },
   "version": 1

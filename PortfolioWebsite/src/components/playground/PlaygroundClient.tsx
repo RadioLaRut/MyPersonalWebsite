@@ -441,7 +441,7 @@ export default function PlaygroundClient() {
                 wrapPolicy="prose"
                 className="mt-4 text-textMuted"
               >
-                组件级排版与布局工作台。直接校准共享字号档位、文本组间距和左右网格边界，保存后会同步影响试点组件的全部实例。
+                组件级排版与布局工作台。直接校准全部可视组件的共享字号档位、文本组间距和左右网格边界，保存后会同步影响对应实例。
               </Typography>
               <Link
                 href="/playground/component-lab"

@@ -3,6 +3,11 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+  getGridColumnClassName,
+  getSpacingRem,
+} from "@/lib/component-design-style";
 
 interface HomeEndcapSectionProps {
   eyebrow?: ReactNode;
@@ -29,14 +34,18 @@ export default function HomeEndcapSection({
   buttonHref,
   editMode = false,
 }: HomeEndcapSectionProps) {
+  const design = useComponentDesign("HomeEndcapSection");
   const hasDescription = !isContentEmpty(description);
+  const buttonTopSpacing = getSpacingRem(
+    hasDescription ? design.buttonTopSpacing : "32",
+  );
 
   return (
     <section className="relative isolate grid min-h-[68vh] w-full items-center overflow-hidden border-t border-white/10 bg-black rhythm-section-spacious">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_45%)]" />
 
       <div className="grid-container relative z-10">
-        <div className="col-start-3 col-span-8 text-center">
+        <div className={`${getGridColumnClassName(design.contentBounds)} text-center`}>
           {eyebrow ? (
             <Typography
               as="p"
@@ -69,13 +78,14 @@ export default function HomeEndcapSection({
               weight="medium"
               wrapPolicy="prose"
               align="center"
-              className="mx-auto mt-8 max-w-3xl text-white/55 uppercase"
+              className="mx-auto max-w-3xl text-white/55 uppercase"
+              style={{ marginTop: getSpacingRem(design.descriptionTopSpacing) }}
             >
               {description}
             </Typography>
           ) : null}
 
-          <div className={hasDescription ? "mt-12" : "mt-8"}>
+          <div style={{ marginTop: buttonTopSpacing }}>
             <Link
               href={buttonHref}
               scroll

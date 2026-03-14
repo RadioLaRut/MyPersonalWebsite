@@ -16,8 +16,11 @@ import {
   isTypographySize,
   isTypographyWeight,
 } from "./typography.ts";
+import { PREVIEW_REFERENCE_VIEWPORT_PX } from "./preview-viewports.ts";
 
-export const FONT_LAB_SCHEMA_VERSION = 5 as const;
+export const FONT_LAB_SCHEMA_VERSION = 6 as const;
+
+type FontLabFontSizeMode = "reference" | "legacy-max";
 
 export type FontLabSizeConfig = {
   cjkEdgeOffset: number;
@@ -85,7 +88,7 @@ function parseRemFontSize(value: string) {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-function parseClampFontSize(value: string) {
+function parseClampFontSizeParts(value: string) {
   const match = value.trim().match(
     /^clamp\(\s*(-?\d*\.?\d+)rem\s*,\s*(-?\d*\.?\d+)vw\s*,\s*(-?\d*\.?\d+)rem\s*\)$/i,
   );
@@ -94,18 +97,95 @@ function parseClampFontSize(value: string) {
     return null;
   }
 
-  const parsed = Number(match[3]);
-  return Number.isFinite(parsed) ? parsed : null;
+  const minRem = Number(match[1]);
+  const viewportVw = Number(match[2]);
+  const maxRem = Number(match[3]);
+
+  if (
+    !Number.isFinite(minRem) ||
+    !Number.isFinite(viewportVw) ||
+    !Number.isFinite(maxRem)
+  ) {
+    return null;
+  }
+
+  return {
+    maxRem,
+    minRem,
+    viewportVw,
+  };
 }
 
-function normalizeFixedFontSizeValue(value: string, fallback: string) {
+function getClampReferenceRem(clamp: {
+  maxRem: number;
+  minRem: number;
+  viewportVw: number;
+}) {
+  const preferredRem = (clamp.viewportVw * PREVIEW_REFERENCE_VIEWPORT_PX) / 100 / 16;
+  return Math.min(Math.max(preferredRem, clamp.minRem), clamp.maxRem);
+}
+
+function parseClampFontSize(value: string) {
+  const parsed = parseClampFontSizeParts(value);
+
+  if (!parsed) {
+    return null;
+  }
+
+  return getClampReferenceRem(parsed);
+}
+
+function formatFixedFontSizeRem(value: number) {
+  return `${Number.parseFloat(value.toFixed(4))}rem`;
+}
+
+function normalizeReferenceFontSizeValue(value: string, fallback: string) {
   const fixedRem = parseRemFontSize(value) ?? parseClampFontSize(value);
 
   if (fixedRem === null) {
     return fallback;
   }
 
-  return `${Number.parseFloat(fixedRem.toFixed(4))}rem`;
+  return formatFixedFontSizeRem(fixedRem);
+}
+
+function normalizeLegacyMaxFontSizeValue(
+  size: TypographySize,
+  value: string,
+  fallback: string,
+) {
+  const fixedRem = parseRemFontSize(value) ?? parseClampFontSize(value);
+
+  if (fixedRem === null) {
+    return fallback;
+  }
+
+  const tokenClamp = parseClampFontSizeParts(getTypographySizeToken(size).fontSize);
+
+  if (!tokenClamp || tokenClamp.maxRem <= 0) {
+    return formatFixedFontSizeRem(fixedRem);
+  }
+
+  const tokenReferenceRem = getClampReferenceRem(tokenClamp);
+
+  if (!Number.isFinite(tokenReferenceRem) || tokenReferenceRem <= 0) {
+    return fallback;
+  }
+
+  return formatFixedFontSizeRem((fixedRem / tokenClamp.maxRem) * tokenReferenceRem);
+}
+
+function normalizeFixedFontSizeValue(
+  size: TypographySize,
+  value: string,
+  fallback: string,
+  mode: FontLabFontSizeMode,
+) {
+  if (mode === "legacy-max") {
+    return normalizeLegacyMaxFontSizeValue(size, value, fallback);
+  }
+
+  return normalizeReferenceFontSizeValue(value, fallback);
 }
 
 function normalizeLatinFontScale(value: unknown) {
@@ -128,7 +208,7 @@ function createDefaultFontLabSizeConfig(
     cjkEdgeOffset: 0,
     cjkLetterSpacing: Number.parseFloat(metrics.cjkLetterSpacing),
     cjkVerticalOffset: 0,
-    fontSize: normalizeFixedFontSizeValue(sizeToken.fontSize, "1rem"),
+    fontSize: normalizeReferenceFontSizeValue(sizeToken.fontSize, "1rem"),
     latinEdgeOffset: 0,
     latinLetterSpacing: Number.parseFloat(metrics.latinLetterSpacing),
     latinRelativeOffset: latinAbsoluteOffset,
@@ -250,6 +330,7 @@ function normalizeSizeConfig(
   preset: TypographyPreset,
   size: TypographySize,
   config: unknown,
+  fontSizeMode: FontLabFontSizeMode = "reference",
 ): FontLabSizeConfig {
   const defaults = createDefaultFontLabSizeConfig(preset, size);
 
@@ -271,7 +352,12 @@ function normalizeSizeConfig(
       : defaults.cjkVerticalOffset,
     fontSize:
       typeof config.fontSize === "string"
-        ? normalizeFixedFontSizeValue(config.fontSize, defaults.fontSize)
+        ? normalizeFixedFontSizeValue(
+          size,
+          config.fontSize,
+          defaults.fontSize,
+          fontSizeMode,
+        )
         : defaults.fontSize,
     latinEdgeOffset: isFiniteNumber(config.latinEdgeOffset)
       ? config.latinEdgeOffset
@@ -298,10 +384,14 @@ function normalizeSizeConfig(
 export function normalizeFontLabPresetConfig(
   preset: TypographyPreset,
   config: unknown,
+  options: {
+    fontSizeMode?: FontLabFontSizeMode;
+  } = {},
 ): FontLabPresetConfig {
   const defaults = createDefaultFontLabPresetConfig(preset);
   const source = isPlainRecord(config) ? config : {};
   const sizesSource = isPlainRecord(source.sizes) ? source.sizes : {};
+  const fontSizeMode = options.fontSizeMode ?? "reference";
 
   return {
     labelZh: typeof source.labelZh === "string" && source.labelZh.trim()
@@ -316,7 +406,7 @@ export function normalizeFontLabPresetConfig(
     sizes: Object.fromEntries(
       getTypographyFontLabSizes(preset).map((size) => [
         size,
-        normalizeSizeConfig(preset, size, sizesSource[size]),
+        normalizeSizeConfig(preset, size, sizesSource[size], fontSizeMode),
       ]),
     ) as Partial<Record<TypographySize, FontLabSizeConfig>>,
   };
@@ -407,7 +497,7 @@ function migrateLegacyFontLabConfig(
     cjkEdgeOffset: 0,
     cjkLetterSpacing: legacy.cjkLetterSpacing,
     cjkVerticalOffset: legacy.cjkBaselineOffset,
-    fontSize: normalizeFixedFontSizeValue(legacy.fontSize, "1rem"),
+    fontSize: normalizeReferenceFontSizeValue(legacy.fontSize, "1rem"),
     latinEdgeOffset: 0,
     latinLetterSpacing: legacy.latinLetterSpacing,
     latinRelativeOffset: legacy.latinBaselineOffset - legacy.cjkBaselineOffset,
@@ -419,7 +509,12 @@ function migrateLegacyFontLabConfig(
 }
 
 function isSupportedFontLabDocumentVersion(value: unknown) {
-  return value === FONT_LAB_SCHEMA_VERSION || value === 4 || value === 3 || value === 2;
+  return value === FONT_LAB_SCHEMA_VERSION || value === 5 || value === 4 ||
+    value === 3 || value === 2;
+}
+
+function getDocumentFontSizeMode(version: unknown): FontLabFontSizeMode {
+  return version === FONT_LAB_SCHEMA_VERSION ? "reference" : "legacy-max";
 }
 
 export function parseFontLabDocument(value: unknown): FontLabDocument | null {
@@ -433,6 +528,8 @@ export function parseFontLabDocument(value: unknown): FontLabDocument | null {
     isTypographySize(String(value.activeSize)) &&
     isPlainRecord(value.presets)
   ) {
+    const fontSizeMode = getDocumentFontSizeMode(value.version);
+
     return normalizeFontLabDocument({
       activePreset: value.activePreset as TypographyPreset,
       activeSize: value.activeSize as TypographySize,
@@ -440,18 +537,22 @@ export function parseFontLabDocument(value: unknown): FontLabDocument | null {
         "sans-body": normalizeFontLabPresetConfig(
           "sans-body",
           value.presets["sans-body"],
+          { fontSizeMode },
         ),
         "luna-editorial": normalizeFontLabPresetConfig(
           "luna-editorial",
           value.presets["luna-editorial"],
+          { fontSizeMode },
         ),
         "gothic-editorial": normalizeFontLabPresetConfig(
           "gothic-editorial",
           value.presets["gothic-editorial"],
+          { fontSizeMode },
         ),
         "classical-display": normalizeFontLabPresetConfig(
           "classical-display",
           value.presets["classical-display"],
+          { fontSizeMode },
         ),
       },
       version: FONT_LAB_SCHEMA_VERSION,

@@ -3,6 +3,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { getGridColumnClassName } from "@/lib/component-design-style";
 
 interface StatementBlockProps {
   content: string;
@@ -19,6 +21,7 @@ export default function StatementBlock({
   minHeight = "medium",
   editMode = false,
 }: StatementBlockProps) {
+  const design = useComponentDesign("StatementBlock");
   const alignClass = {
     left: "justify-items-start text-left",
     center: "justify-items-center text-center",
@@ -45,7 +48,7 @@ export default function StatementBlock({
     <section className={`relative z-20 grid w-full ${heightClass} ${bgClass} ${rhythmClass} content-center`}>
       <div className="grid-container w-full">
         <motion.div
-          className={`col-start-3 col-span-8 grid ${alignClass} ${editMode ? "pointer-events-auto" : ""}`}
+          className={`${getGridColumnClassName(design.contentBounds)} grid ${alignClass} ${editMode ? "pointer-events-auto" : ""}`}
           initial={editMode ? false : { opacity: 0, y: 20 }}
           whileInView={editMode ? undefined : { opacity: 1, y: 0 }}
           viewport={editMode ? undefined : { once: true, margin: "-100px" }}
@@ -54,9 +57,9 @@ export default function StatementBlock({
           <Typography
             as="p"
             preset="sans-body"
-            size="body"
+            size={design.bodySize}
             weight="light"
-            wrapPolicy="prose"
+            wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"}
             className="max-w-4xl text-textPrimary"
             align={align}
           >

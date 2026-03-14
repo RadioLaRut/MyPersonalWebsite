@@ -2,7 +2,14 @@
 
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+  getGridColumnStyle,
+  getSectionSpacingClassName,
+  getSpacingRem,
+} from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
+import { getParameterGridItemBounds } from "@/lib/parameter-grid-layout";
 
 interface Parameter {
   name: string;
@@ -25,9 +32,14 @@ export default function ParameterGrid({
   imageFitMode = "x",
   parameters
 }: ParameterGridProps) {
+  const design = useComponentDesign("ParameterGrid");
+
   return (
-    <div className="w-full rhythm-block">
-      <div className="w-full relative bg-[#050505] overflow-hidden mb-12">
+    <div className={`w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
+      <div
+        className="relative w-full overflow-hidden bg-[#050505]"
+        style={{ marginBottom: getSpacingRem(design.mediaBottomSpacing) }}
+      >
         {isVideo ? (
           <video
             src={mediaSrc}
@@ -63,7 +75,13 @@ export default function ParameterGrid({
       {parameters && parameters.length > 0 && (
         <div className="grid-container">
           {parameters.map((param, i) => (
-            <div key={i} className="col-span-3 border-t border-white/20 pt-6 group">
+            <div
+              key={i}
+              className="group w-full border-t border-white/20 pt-6"
+              style={getGridColumnStyle(
+                getParameterGridItemBounds(design.parametersBounds, design.itemSpan, i),
+              )}
+            >
               <Typography
                 as="h4"
                 preset="sans-body"

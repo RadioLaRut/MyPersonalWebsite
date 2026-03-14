@@ -5,6 +5,11 @@ import { motion, useScroll, useTransform } from "framer-motion";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+  getResponsiveGridColumnClassName,
+  getSpacingRem,
+} from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 function getHeroStageSizingClassName(
@@ -57,6 +62,7 @@ export default function HeroSection({
   imageFitMode = "x",
   editMode = false,
 }: HeroSectionProps) {
+  const design = useComponentDesign("HeroSection");
   const containerRef = useRef<HTMLDivElement>(null);
   const heroStageSizingClassName = getHeroStageSizingClassName(imagePreset, imageFitMode);
 
@@ -108,12 +114,12 @@ export default function HeroSection({
           <div className={`${heroStageSizingClassName} grid content-end rhythm-section-hero`}>
             <div className="grid-container relative w-full">
               <motion.div
-                className="col-span-12 grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-end"
+                className="col-span-12 grid grid-cols-12 gap-12 lg:items-end"
                 initial={editMode ? false : { opacity: 0 }}
                 animate={editMode ? undefined : { opacity: 1 }}
                 transition={editMode ? undefined : { duration: 1.2, delay: 0.25, ease: "easeOut" }}
               >
-                <div className="lg:col-span-7 lg:col-start-2">
+                <div className={getResponsiveGridColumnClassName(design.titleBounds)}>
                   {eyebrow ? (
                     <Typography
                       as="p"
@@ -152,7 +158,7 @@ export default function HeroSection({
                 </div>
 
                 <motion.div
-                  className="lg:col-span-3 lg:col-start-10"
+                  className={getResponsiveGridColumnClassName(design.descriptionBounds)}
                   initial={editMode ? false : { opacity: 0, x: 24 }}
                   animate={editMode ? undefined : { opacity: 1, x: 0 }}
                   transition={editMode ? undefined : { duration: 1.1, delay: 0.45, ease: "easeOut" }}
@@ -169,7 +175,10 @@ export default function HeroSection({
                       {description}
                     </Typography>
                     {(primaryCtaLabel || secondaryCtaLabel) ? (
-                      <div className="mt-12 grid gap-6 sm:grid-cols-2 pointer-events-auto">
+                      <div
+                        className="grid gap-6 pointer-events-auto sm:grid-cols-2"
+                        style={{ marginTop: getSpacingRem(design.ctaTopSpacing) }}
+                      >
                         {primaryCtaLabel && primaryCtaHref ? (
                           <Link
                             href={primaryCtaHref}

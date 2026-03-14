@@ -5,6 +5,8 @@ import Link from "next/link";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { getGridColumnClassName } from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 export interface LightingProjectCardProps {
@@ -51,6 +53,7 @@ export default function LightingProjectCard({
   imageFitMode = "cover",
   editMode = false,
 }: LightingProjectCardProps) {
+  const design = useComponentDesign("LightingProjectCard");
   const hasTitle = hasNodeContent(title);
   const imageAlt = getNodeAltText(title) ?? `Lighting collection ${number}`;
 
@@ -122,12 +125,12 @@ export default function LightingProjectCard({
                 event.preventDefault();
               }
             }}
-            className={`col-start-2 col-end-12 block w-full ${editMode ? "cursor-default" : "interactive"}`}
+            className={`${getGridColumnClassName(design.contentBounds)} block w-full ${editMode ? "cursor-default" : "interactive"}`}
           >
             {content}
           </Link>
         ) : (
-          <div className="col-start-2 col-end-12 w-full">
+          <div className={`${getGridColumnClassName(design.contentBounds)} w-full`}>
             {content}
           </div>
         )}

@@ -2,6 +2,12 @@
 import React, { type ReactNode } from "react";
 
 import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+    getGridColumnClassName,
+    getSectionSpacingClassName,
+    getSpacingRem,
+} from "@/lib/component-design-style";
 import WorksListEntry from "@/components/works/WorksListEntry";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
@@ -25,6 +31,7 @@ export interface WorksListProps {
 }
 
 export default function WorksList({ heading = "All Selected Works", works = [], entriesContent, editMode = false }: WorksListProps) {
+    const design = useComponentDesign("WorksList");
     const hasLegacyWorks = works && works.length > 0;
     const hasEntriesContent = Boolean(entriesContent);
 
@@ -46,9 +53,12 @@ export default function WorksList({ heading = "All Selected Works", works = [], 
     }
 
     return (
-        <div className="grid w-full content-center text-white rhythm-section-normal">
-            <div className={`grid-container relative z-20 mb-16 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
-                <div className="col-start-2 col-span-10 border-b border-white/10 pb-8">
+        <div className={`grid w-full content-center text-white ${getSectionSpacingClassName(design.sectionSpacing)}`}>
+            <div
+                className={`grid-container relative z-20 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}
+                style={{ marginBottom: getSpacingRem(design.headingBottomSpacing) }}
+            >
+                <div className={`${getGridColumnClassName(design.headingBounds)} border-b border-white/10 pb-8`}>
                     <Typography
                         as="h1"
                         preset="sans-body"

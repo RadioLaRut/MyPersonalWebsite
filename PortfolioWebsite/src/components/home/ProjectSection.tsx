@@ -3,6 +3,8 @@ import React, { type ReactNode, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { getResponsiveGridColumnClassName } from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset, normalizeImagePreset } from "@/lib/image-presentation";
 
 interface ProjectSectionProps {
@@ -28,6 +30,7 @@ export default function ProjectSection({
   imageFitMode = "x",
   editMode = false,
 }: ProjectSectionProps) {
+  const design = useComponentDesign("ProjectSection");
   const containerRef = useRef<HTMLDivElement>(null);
   const imageAlt = typeof title === "string" ? title : "Project cover";
   const resolvedImagePreset = normalizeImagePreset(imagePreset);
@@ -46,8 +49,8 @@ export default function ProjectSection({
   const opacity = useTransform(scrollYProgress, [0, 0.4, 0.6, 1], [0, 1, 1, 0]);
   const shouldAlignRight = align === "right" || (align === "auto" && index % 2 !== 0);
   const textColumnClassName = shouldAlignRight
-    ? "lg:col-start-5 justify-items-end text-right"
-    : "lg:col-start-2 justify-items-start";
+    ? "justify-items-end text-right"
+    : "justify-items-start";
   const lockupClassName = shouldAlignRight
     ? "ml-auto justify-items-end text-right"
     : "mr-auto justify-items-start text-left";
@@ -57,6 +60,9 @@ export default function ProjectSection({
   const underlineTrackClassName = shouldAlignRight ? "justify-end" : "justify-start";
   const underlineFillClassName =
     "w-0 transition-[width] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:w-full";
+  const textBoundsClassName = getResponsiveGridColumnClassName(
+    shouldAlignRight ? design.textRightBounds : design.textLeftBounds,
+  );
 
   const handleInteraction = () => {
     if (!editMode && link) {
@@ -97,7 +103,7 @@ export default function ProjectSection({
       >
         <div className="grid-container relative w-full mix-blend-difference">
           <div
-            className={`col-span-4 lg:col-span-8 grid content-start ${textColumnClassName}`}
+            className={`${textBoundsClassName} grid content-start ${textColumnClassName}`}
           >
             <div className={`grid max-w-full auto-rows-max gap-y-0 ${lockupClassName}`}>
               {subtitle && (

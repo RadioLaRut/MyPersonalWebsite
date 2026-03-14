@@ -6,6 +6,7 @@ import {
   TYPOGRAPHY_PRESETS,
   TYPOGRAPHY_WEIGHTS,
 } from "./typography-tokens.ts";
+import { PREVIEW_REFERENCE_VIEWPORT_PX } from "./preview-viewports.ts";
 
 export type FontLabCssVars = Record<string, string>;
 
@@ -62,7 +63,10 @@ function getFixedFontSizeRem(value: string) {
   const parsedClamp = parseClampFontSize(value);
 
   if (parsedClamp) {
-    return parsedClamp.maxRem;
+    const preferredRem =
+      (parsedClamp.viewportVw * PREVIEW_REFERENCE_VIEWPORT_PX) / 100 / 16;
+
+    return Math.min(Math.max(preferredRem, parsedClamp.minRem), parsedClamp.maxRem);
   }
 
   return null;
@@ -81,11 +85,18 @@ function resolveResponsiveFontSize(configuredFixedSize: string, tokenFontSize: s
     return `${formatFontSizeNumber(configuredRem)}rem`;
   }
 
-  const scale = configuredRem / tokenClamp.maxRem;
+  const tokenReferenceRem = getFixedFontSizeRem(tokenFontSize);
+
+  if (tokenReferenceRem === null || tokenReferenceRem <= 0) {
+    return tokenFontSize;
+  }
+
+  const scale = configuredRem / tokenReferenceRem;
   const minRem = tokenClamp.minRem * scale;
   const viewportVw = tokenClamp.viewportVw * scale;
+  const maxRem = tokenClamp.maxRem * scale;
 
-  return `clamp(${formatFontSizeNumber(minRem)}rem,${formatFontSizeNumber(viewportVw)}vw,${formatFontSizeNumber(configuredRem)}rem)`;
+  return `clamp(${formatFontSizeNumber(minRem)}rem,${formatFontSizeNumber(viewportVw)}vw,${formatFontSizeNumber(maxRem)}rem)`;
 }
 
 export function buildFontLabDocumentCssVars(

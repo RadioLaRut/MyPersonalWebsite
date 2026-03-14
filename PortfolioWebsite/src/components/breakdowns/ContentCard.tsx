@@ -42,7 +42,7 @@ export default function ContentCard({
 
   const textContent = (
     <div
-      className="grid content-start self-start"
+      className="grid w-full content-start self-start"
       style={{ rowGap: getSpacingRem(design.titleBodyGap) }}
     >
       <Typography
@@ -58,7 +58,7 @@ export default function ContentCard({
       </Typography>
 
       <div
-        className="grid max-w-none lg:max-w-[36ch]"
+        className="grid w-full max-w-none"
         style={{ rowGap: getSpacingRem(design.paragraphGap) }}
       >
         {paragraphs.map((paragraph, i) => (
@@ -96,7 +96,9 @@ export default function ContentCard({
   if (!hasImage) {
     return (
       <div className={`grid-container w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
-        <div style={getGridColumnStyle(design.textOnlyBounds)}>{textContent}</div>
+        <div className="w-full" style={getGridColumnStyle(design.textOnlyBounds)}>
+          {textContent}
+        </div>
       </div>
     );
   }
@@ -110,13 +112,13 @@ export default function ContentCard({
   return (
     <div className={`grid-container w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
       <div
-        className={`self-start ${textOrder}`}
+        className={`w-full self-start ${textOrder}`}
         style={getGridColumnStyle(textBounds)}
       >
         {textContent}
       </div>
       <div
-        className={`self-start mt-[var(--content-card-mobile-media-top-spacing)] lg:mt-0 ${imageOrder}`}
+        className={`w-full self-start mt-[var(--content-card-mobile-media-top-spacing)] lg:mt-0 ${imageOrder}`}
         style={{
           ...mobileMediaOffsetStyle,
           ...getGridColumnStyle(imageBounds),

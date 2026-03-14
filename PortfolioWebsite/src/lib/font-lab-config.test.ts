@@ -9,6 +9,7 @@ import {
   readFontLabConfig,
   writeFontLabConfig,
 } from "./font-lab-config.ts";
+import { buildFontLabDocumentCssVars } from "./font-lab-css-vars.ts";
 import {
   createDefaultFontLabDocument,
   parseFontLabDocument,
@@ -26,22 +27,22 @@ test("parseFontLabDocument rejects invalid payload", () => {
   assert.equal(invalid, null);
 });
 
-test("parseFontLabDocument migrates v4 horizontal offsets into v5 edge offsets", () => {
+test("parseFontLabDocument migrates legacy v4 font data into the v6 schema", () => {
   const parsed = parseFontLabDocument({
     version: 4,
     activePreset: "sans-body",
-    activeSize: "body",
+    activeSize: "body-lg",
     presets: {
       "sans-body": {
         labelZh: "Futura + 姹変华鏃楅粦",
         latinFontScale: 1,
         latinWeightOffsetSteps: 0,
         sizes: {
-          body: {
+          "body-lg": {
             cjkHorizontalOffset: -0.08,
             cjkLetterSpacing: 0.03,
             cjkVerticalOffset: 0,
-            fontSize: "1rem",
+            fontSize: "1.375rem",
             latinHorizontalOffset: -0.02,
             latinLetterSpacing: 0.03,
             latinRelativeOffset: 0.03,
@@ -57,9 +58,44 @@ test("parseFontLabDocument migrates v4 horizontal offsets into v5 edge offsets",
   });
 
   assert.notEqual(parsed, null);
-  assert.equal(parsed?.version, 5);
-  assert.equal(parsed?.presets["sans-body"].sizes.body?.cjkEdgeOffset, -0.08);
-  assert.equal(parsed?.presets["sans-body"].sizes.body?.latinEdgeOffset, -0.02);
+  assert.equal(parsed?.version, 6);
+  assert.equal(parsed?.presets["sans-body"].sizes["body-lg"]?.cjkEdgeOffset, -0.08);
+  assert.equal(parsed?.presets["sans-body"].sizes["body-lg"]?.latinEdgeOffset, -0.02);
+  assert.equal(parsed?.presets["sans-body"].sizes["body-lg"]?.fontSize, "1.125rem");
+});
+
+test("parseFontLabDocument migrates legacy v5 clamp maxima into reference font sizes", () => {
+  const defaults = createDefaultFontLabDocument();
+  const parsed = parseFontLabDocument({
+    version: 5,
+    activePreset: "sans-body",
+    activeSize: "body-lg",
+    presets: {
+      "sans-body": {
+        ...defaults.presets["sans-body"],
+        sizes: {
+          ...defaults.presets["sans-body"].sizes,
+          "body-lg": {
+            ...defaults.presets["sans-body"].sizes["body-lg"],
+            fontSize: "1.375rem",
+          },
+        },
+      },
+      "luna-editorial": defaults.presets["luna-editorial"],
+      "gothic-editorial": defaults.presets["gothic-editorial"],
+      "classical-display": defaults.presets["classical-display"],
+    },
+  });
+
+  assert.notEqual(parsed, null);
+  assert.equal(parsed?.version, 6);
+  assert.equal(parsed?.presets["sans-body"].sizes["body-lg"]?.fontSize, "1.125rem");
+
+  const vars = buildFontLabDocumentCssVars(parsed!);
+  assert.equal(
+    vars["--typography-sans-body-body-lg-font-size"],
+    "clamp(1.125rem,1.15vw,1.375rem)",
+  );
 });
 
 test("readFontLabConfig falls back to defaults when file is missing", async () => {
@@ -70,6 +106,13 @@ test("readFontLabConfig falls back to defaults when file is missing", async () =
   assert.deepEqual(config, createDefaultFontLabDocument());
 
   await fs.rm(tempDir, { force: true, recursive: true });
+});
+
+test("createDefaultFontLabDocument stores clamp-based sizes as editable base rem values", () => {
+  const document = createDefaultFontLabDocument();
+
+  assert.equal(document.presets["sans-body"].sizes["body-lg"]?.fontSize, "1.125rem");
+  assert.equal(document.presets["sans-body"].sizes.title?.fontSize, "5.4rem");
 });
 
 test("readFontLabConfig migrates legacy single-config files into the new document shape", async () => {
@@ -94,7 +137,7 @@ test("readFontLabConfig migrates legacy single-config files into the new documen
 
   const config = await readFontLabConfig(configFile);
 
-  assert.equal(config.version, 5);
+  assert.equal(config.version, 6);
   assert.equal(config.activePreset, "gothic-editorial");
   assert.equal(config.activeSize, "body-lg");
   assert.equal(config.presets["gothic-editorial"].sizes["body-lg"]?.fontSize, "1.125rem");
@@ -159,7 +202,7 @@ test("writeFontLabConfig preserves the existing file line endings", async () => 
   const configFile = path.join(tempDir, "font-presets.json");
   const expected = createDefaultFontLabDocument();
 
-  await fs.writeFile(configFile, "{\r\n  \"version\": 5\r\n}\r\n", "utf8");
+  await fs.writeFile(configFile, "{\r\n  \"version\": 6\r\n}\r\n", "utf8");
   await writeFontLabConfig(expected, configFile);
 
   const raw = await fs.readFile(configFile, "utf8");

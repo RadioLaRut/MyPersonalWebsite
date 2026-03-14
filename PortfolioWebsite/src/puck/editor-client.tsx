@@ -9,6 +9,10 @@ import ComponentDesignProvider, { useComponentDesignDocument } from "@/component
 import { FONT_LAB_UPDATED_EVENT } from "@/components/layout/FontLabGlobalVars";
 import { buildFontLabDocumentCssVars, type FontLabCssVars } from "@/lib/font-lab-css-vars";
 import { parseFontLabDocument } from "@/lib/font-lab-config-schema";
+import {
+  DEFAULT_PREVIEW_VIEWPORT,
+  PUCK_PREVIEW_VIEWPORTS,
+} from "@/lib/preview-viewports";
 import config from "@/puck/config";
 import { toAdminPathFromSlugKey, toPublicPathFromSlugKey } from "@/lib/public-paths";
 import { ChineseTextInputField } from "@/puck/fields/ChineseTextField";
@@ -403,23 +407,14 @@ function toSlugKeyFromPathInput(rawValue: string) {
 
 function HeaderActionsWithOpenPage({
   children,
-  onOpenComponentLab,
   onOpenPublicPage,
 }: {
   children: ReactNode;
-  onOpenComponentLab: () => void;
   onOpenPublicPage: () => void;
 }) {
   return (
     <div className="flex flex-wrap items-center justify-end gap-3">
       {children}
-      <button
-        type="button"
-        onClick={onOpenComponentLab}
-        className="rounded-sm border border-slate-200 bg-white px-3 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-950"
-      >
-        COMPONENT LAB
-      </button>
       <button
         type="button"
         onClick={onOpenPublicPage}
@@ -663,10 +658,6 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
     window.open(publicPath, "_blank");
   }, [publicPath]);
 
-  const openComponentLab = useCallback(() => {
-    window.open("/playground/component-lab", "_blank");
-  }, []);
-
   useEffect(() => {
     for (const slug of availablePages) {
       router.prefetch(toAdminPath(slug));
@@ -853,7 +844,6 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
     headerActions: (props: { children: ReactNode }) => (
       <HeaderActionsWithOpenPage
         {...props}
-        onOpenComponentLab={openComponentLab}
         onOpenPublicPage={openPublicPage}
       />
     ),
@@ -952,11 +942,17 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
             headerTitle="Puck Local Editor"
             headerPath={headerPath}
             iframe={{ enabled: true, waitForStyles: true }}
-            viewports={[
-              { width: 390, height: 844, icon: "Smartphone", label: "Mobile" },
-              { width: 820, height: 1180, icon: "Tablet", label: "Tablet" },
-              { width: 1280, height: 720, icon: "Monitor", label: "Desktop" },
-            ]}
+            ui={{
+              viewports: {
+                current: {
+                  height: DEFAULT_PREVIEW_VIEWPORT.height,
+                  width: DEFAULT_PREVIEW_VIEWPORT.width,
+                },
+                controlsVisible: true,
+                options: PUCK_PREVIEW_VIEWPORTS,
+              },
+            }}
+            viewports={PUCK_PREVIEW_VIEWPORTS}
             onChange={(nextData) => {
               currentDataRef.current = nextData;
               setHasUnsavedChanges(true);

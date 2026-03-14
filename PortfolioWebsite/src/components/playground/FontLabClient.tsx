@@ -41,12 +41,14 @@ import {
   type TypographySize,
   type TypographyWeight,
 } from "@/lib/typography-tokens";
+import { PREVIEW_REFERENCE_VIEWPORT_PX } from "@/lib/preview-viewports";
 
 const FALLBACK_CONFIG_PATH = "content/font-lab/font-presets.json";
 const FIELD_STEP = "0.001";
 const BASELINE_TOLERANCE = 2.5;
 const BASELINE_PROBE_ATTRIBUTE = "data-font-lab-baseline-probe";
 const DESCENDER_LATIN_CHARS = new Set(["g", "j", "p", "q", "y"]);
+const PREVIEW_SCALE_PRESETS = [0.75, 1, 1.25, 1.5, 2] as const;
 
 const SIZE_LABELS_ZH: Record<TypographySize, string> = {
   caption: "说明",
@@ -136,6 +138,10 @@ function formatFontSizeNumber(value: number) {
   return `${Number.parseFloat(value.toFixed(4))}`;
 }
 
+function formatPreviewScaleLabel(value: number) {
+  return `${Math.round(value * 100)}%`;
+}
+
 function parseRemFontSize(value: string) {
   const match = value.trim().match(/^(-?\d*\.?\d+)rem$/i);
 
@@ -185,7 +191,10 @@ function getFixedFontSizeRem(value: string) {
   const parsedClamp = parseClampFontSize(value);
 
   if (parsedClamp) {
-    return parsedClamp.maxRem;
+    const preferredRem =
+      (parsedClamp.viewportVw * PREVIEW_REFERENCE_VIEWPORT_PX) / 100 / 16;
+
+    return Math.min(Math.max(preferredRem, parsedClamp.minRem), parsedClamp.maxRem);
   }
 
   return null;
@@ -665,7 +674,7 @@ function FontSizeField({
         wrapPolicy="prose"
         className="mt-2 block text-textMuted"
       >
-        固定字号只输入 `rem` 数值，响应式 `clamp(...)` 由代码按该档位默认比例自动生成。
+        {`输入的是该档位在 ${PREVIEW_REFERENCE_VIEWPORT_PX}px 参考视口下的目标字号；若该档位默认使用响应式 clamp(...)，代码会按默认比例自动生成对应范围。`}
       </Typography>
     </label>
   );
@@ -885,6 +894,7 @@ function MixedCaseSection({
 
 export default function FontLabClient() {
   const router = useRouter();
+  const previewContentRef = useRef<HTMLDivElement>(null);
   const [fontDocument, setFontDocument] = useState<FontLabDocument>(createDefaultFontLabDocument);
   const [layoutState, setLayoutState] = useState<FontLabSampleLayoutState>(
     createDefaultFontLabSampleLayoutState,
@@ -892,10 +902,13 @@ export default function FontLabClient() {
   const [savedDocument, setSavedDocument] = useState<FontLabDocument | null>(null);
   const [hasSavedConfig, setHasSavedConfig] = useState(false);
   const [configPath, setConfigPath] = useState(FALLBACK_CONFIG_PATH);
+  const [previewContentHeight, setPreviewContentHeight] = useState(0);
+  const [previewScale, setPreviewScale] = useState(1);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   const activePreset = fontDocument.activePreset;
   const activeSize = fontDocument.activeSize;
+  const isScaledPreview = Math.abs(previewScale - 1) > 0.001;
   const presetToken = getTypographyPresetToken(activePreset);
   const fontLabSizes = getTypographyFontLabSizes(activePreset);
   const activePresetConfig = fontDocument.presets[activePreset];
@@ -923,6 +936,9 @@ export default function FontLabClient() {
     () => buildFontLabDocumentCssVars(savedDocument ?? fontDocument) as StyleWithVars,
     [fontDocument, savedDocument],
   );
+  const scaledPreviewContentHeight = previewContentHeight > 0
+    ? previewContentHeight * previewScale
+    : 0;
 
   const navigateToPlayground = () => {
     document.documentElement.removeAttribute("data-font-lab-mode");
@@ -980,6 +996,39 @@ export default function FontLabClient() {
       htmlElement.removeAttribute("data-font-lab-mode");
     };
   }, [router]);
+
+  useLayoutEffect(() => {
+    const node = previewContentRef.current;
+
+    if (!node) {
+      return;
+    }
+
+    let frameId = 0;
+    const updateHeight = () => {
+      cancelAnimationFrame(frameId);
+      frameId = requestAnimationFrame(() => {
+        const nextHeight = node.offsetHeight;
+        setPreviewContentHeight((current) =>
+          Math.abs(current - nextHeight) < 0.5 ? current : nextHeight
+        );
+      });
+    };
+
+    updateHeight();
+
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(node);
+
+    window.addEventListener("resize", updateHeight);
+    void document.fonts.ready.then(updateHeight).catch(() => {});
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      observer.disconnect();
+      window.removeEventListener("resize", updateHeight);
+    };
+  }, []);
 
   const handleSave = async () => {
     setStatusMessage("正在保存当前字体模板...");
@@ -1308,7 +1357,7 @@ export default function FontLabClient() {
 
               <ControlSubsection
                 title="边缘与字距"
-                description="把中文锚点、左右锁边和中英字距放在同一组里，便于一轮调完整个版面边缘。"
+                description="分别校准中文开头段落、英文开头段落的锁边落点，并在同一组里观察中英字距。"
               >
                 <div className="grid gap-3 md:grid-cols-2">
                   <NumberField
@@ -1321,23 +1370,23 @@ export default function FontLabClient() {
                   />
 
                   <NumberField
-                    label="中文边缘对齐"
+                    label="中文段落开头偏移"
                     value={activeSizeConfig.cjkEdgeOffset}
                     onCommit={(cjkEdgeOffset) =>
                       updateCurrentSizeConfig({ cjkEdgeOffset })
                     }
-                    helperText="负值向左，正值向右。用于修正中文文本块锁边后的实际落点。"
+                    helperText="当前段落第一个有效脚本是中文时生效。负值向左，正值向右。"
                   />
                 </div>
 
                 <div className="grid gap-3 md:grid-cols-2">
                   <NumberField
-                    label="英文边缘对齐"
+                    label="英文段落开头偏移"
                     value={activeSizeConfig.latinEdgeOffset}
                     onCommit={(latinEdgeOffset) =>
                       updateCurrentSizeConfig({ latinEdgeOffset })
                     }
-                    helperText="负值向左，正值向右。用于修正英文文本块锁边后的实际落点。"
+                    helperText="当前段落第一个有效脚本是英文时生效。负值向左，正值向右。"
                   />
 
                   <NumberField
@@ -1357,6 +1406,34 @@ export default function FontLabClient() {
                   }
                 />
               </ControlSubsection>
+            </div>
+          </ControlBlock>
+
+          <ControlBlock
+            title="预览缩放"
+            description="只放大右侧校准样本，便于观察边缘与基线；不会写入模板文件。"
+          >
+            <FieldLabel>{`缩放比例 / ${formatPreviewScaleLabel(previewScale)}`}</FieldLabel>
+            <div className="grid grid-cols-5 gap-2">
+              {PREVIEW_SCALE_PRESETS.map((scale) => {
+                const active = Math.abs(previewScale - scale) < 0.001;
+
+                return (
+                  <button
+                    key={scale}
+                    type="button"
+                    onClick={() => setPreviewScale(scale)}
+                    className={[
+                      "grid min-h-[3.25rem] place-items-center border px-3 py-2 transition-colors",
+                      active
+                        ? "border-white/30 bg-white/10 text-white"
+                        : "border-white/12 text-textPrimary hover:border-white/25 hover:text-white",
+                    ].join(" ")}
+                  >
+                    <ActionText>{formatPreviewScaleLabel(scale)}</ActionText>
+                  </button>
+                );
+              })}
             </div>
           </ControlBlock>
 
@@ -1401,135 +1478,163 @@ export default function FontLabClient() {
 
         <section
           data-lenis-prevent="true"
-          className="col-span-12 lg:col-span-8 lg:min-h-0 lg:h-full lg:overflow-y-auto lg:overscroll-contain lg:pr-2"
+          className="col-span-12 lg:col-span-8 lg:min-h-0 lg:h-full lg:overflow-hidden lg:pr-2"
         >
-          <div className="relative w-full space-y-8">
-            {layoutState.showLeftEdge ? (
+          <div
+            className="relative overflow-auto lg:h-full lg:overscroll-contain"
+            style={{
+              minHeight: isScaledPreview && scaledPreviewContentHeight
+                ? `${scaledPreviewContentHeight}px`
+                : undefined,
+            }}
+          >
+            <div
+              className="relative w-full"
+              style={{
+                height: isScaledPreview && scaledPreviewContentHeight
+                  ? `${scaledPreviewContentHeight}px`
+                  : undefined,
+                minHeight: isScaledPreview && scaledPreviewContentHeight
+                  ? `${scaledPreviewContentHeight}px`
+                  : undefined,
+              }}
+            >
               <div
-                aria-hidden="true"
-                className="pointer-events-none absolute bottom-0 top-0 left-6 border-l border-dashed border-cyan-300/55 md:left-8"
-              />
-            ) : null}
+                ref={previewContentRef}
+                className={isScaledPreview
+                  ? "absolute inset-x-0 top-0 origin-top-left"
+                  : "origin-top-left"}
+                style={{
+                  transform: isScaledPreview ? `scale(${previewScale})` : undefined,
+                }}
+              >
+                <div className="relative w-full space-y-8">
+                {layoutState.showLeftEdge ? (
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute bottom-0 top-0 left-6 border-l border-dashed border-cyan-300/55 md:left-8"
+                  />
+                ) : null}
 
-            <CalibrationCard
-              title="当前字号样本"
-              showGrid={layoutState.showGrid}
-              showRunHighlight={layoutState.showRunHighlight}
-            >
-              {isHeadingPreviewSize(activeSize) ? (
-                <GuideRow
-                  showBaseline={layoutState.showBaseline}
-                  showOpticalAlignment={layoutState.showOpticalAlignment}
-                  showTick={layoutState.showLeftEdge}
+                <CalibrationCard
+                  title="当前字号样本"
+                  showGrid={layoutState.showGrid}
+                  showRunHighlight={layoutState.showRunHighlight}
                 >
-                  <Typography
-                    as="p"
-                    preset={activePreset}
-                    size={activeSize}
-                    weight={activeSemanticWeight}
-                    wrapPolicy="heading"
-                    className="max-w-full text-white"
-                  >
-                    {CURRENT_HEADING_SAMPLE_TEXT}
-                  </Typography>
-                </GuideRow>
-              ) : (
-                <GuideRow
-                  showBaseline={layoutState.showBaseline}
-                  showOpticalAlignment={layoutState.showOpticalAlignment}
-                  showTick={layoutState.showLeftEdge}
-                >
-                  <Typography
-                    as="p"
-                    preset={activePreset}
-                    size={activeSize}
-                    weight={activeSemanticWeight}
-                    wrapPolicy="prose"
-                    className="max-w-[56ch] text-textPrimary"
-                  >
-                    {LONG_READING_SAMPLE_TEXT}
-                  </Typography>
-                </GuideRow>
-              )}
-            </CalibrationCard>
+                  {isHeadingPreviewSize(activeSize) ? (
+                    <GuideRow
+                      showBaseline={layoutState.showBaseline}
+                      showOpticalAlignment={layoutState.showOpticalAlignment}
+                      showTick={layoutState.showLeftEdge}
+                    >
+                      <Typography
+                        as="p"
+                        preset={activePreset}
+                        size={activeSize}
+                        weight={activeSemanticWeight}
+                        wrapPolicy="heading"
+                        className="max-w-full text-white"
+                      >
+                        {CURRENT_HEADING_SAMPLE_TEXT}
+                      </Typography>
+                    </GuideRow>
+                  ) : (
+                    <GuideRow
+                      showBaseline={layoutState.showBaseline}
+                      showOpticalAlignment={layoutState.showOpticalAlignment}
+                      showTick={layoutState.showLeftEdge}
+                    >
+                      <Typography
+                        as="p"
+                        preset={activePreset}
+                        size={activeSize}
+                        weight={activeSemanticWeight}
+                        wrapPolicy="prose"
+                        className="max-w-[56ch] text-textPrimary"
+                      >
+                        {LONG_READING_SAMPLE_TEXT}
+                      </Typography>
+                    </GuideRow>
+                  )}
+                </CalibrationCard>
 
-            <CalibrationCard
-              title="极端情况"
-              showGrid={layoutState.showGrid}
-              showRunHighlight={layoutState.showRunHighlight}
-            >
-              <div className="space-y-6">
-                <GuideRow
-                  showBaseline={layoutState.showBaseline}
-                  showOpticalAlignment={layoutState.showOpticalAlignment}
-                  showTick={layoutState.showLeftEdge}
+                <CalibrationCard
+                  title="极端情况"
+                  showGrid={layoutState.showGrid}
+                  showRunHighlight={layoutState.showRunHighlight}
                 >
-                  <Typography
-                    as="p"
-                    preset={activePreset}
-                    size={activeSize}
-                    weight={activeSemanticWeight}
-                    wrapPolicy="prose"
-                    className="text-textPrimary"
-                  >
-                    {EXTREME_MIXED_TEXT}
-                  </Typography>
-                </GuideRow>
+                  <div className="space-y-6">
+                    <GuideRow
+                      showBaseline={layoutState.showBaseline}
+                      showOpticalAlignment={layoutState.showOpticalAlignment}
+                      showTick={layoutState.showLeftEdge}
+                    >
+                      <Typography
+                        as="p"
+                        preset={activePreset}
+                        size={activeSize}
+                        weight={activeSemanticWeight}
+                        wrapPolicy="prose"
+                        className="text-textPrimary"
+                      >
+                        {EXTREME_MIXED_TEXT}
+                      </Typography>
+                    </GuideRow>
 
-                <GuideRow
-                  showBaseline={layoutState.showBaseline}
-                  showOpticalAlignment={layoutState.showOpticalAlignment}
-                  showTick={layoutState.showLeftEdge}
-                >
-                  <Typography
-                    as="p"
-                    preset={activePreset}
-                    size={activeSize}
-                    weight={activeSemanticWeight}
-                    wrapPolicy="heading"
-                    className="max-w-[18ch] text-textPrimary"
-                  >
-                    {EXTREME_NARROW_TEXT}
-                  </Typography>
-                </GuideRow>
+                    <GuideRow
+                      showBaseline={layoutState.showBaseline}
+                      showOpticalAlignment={layoutState.showOpticalAlignment}
+                      showTick={layoutState.showLeftEdge}
+                    >
+                      <Typography
+                        as="p"
+                        preset={activePreset}
+                        size={activeSize}
+                        weight={activeSemanticWeight}
+                        wrapPolicy="heading"
+                        className="max-w-[18ch] text-textPrimary"
+                      >
+                        {EXTREME_NARROW_TEXT}
+                      </Typography>
+                    </GuideRow>
 
-                <GuideRow
-                  showBaseline={layoutState.showBaseline}
-                  showOpticalAlignment={layoutState.showOpticalAlignment}
-                  showTick={layoutState.showLeftEdge}
-                >
-                  <Typography
-                    as="p"
-                    preset={activePreset}
-                    size={activeSize}
-                    weight={activeSemanticWeight}
-                    wrapPolicy="url"
-                    numericStyle="tabular"
-                    className="text-textPrimary"
-                  >
-                    {EXTREME_URL_TEXT}
-                  </Typography>
-                </GuideRow>
-              </div>
-            </CalibrationCard>
+                    <GuideRow
+                      showBaseline={layoutState.showBaseline}
+                      showOpticalAlignment={layoutState.showOpticalAlignment}
+                      showTick={layoutState.showLeftEdge}
+                    >
+                      <Typography
+                        as="p"
+                        preset={activePreset}
+                        size={activeSize}
+                        weight={activeSemanticWeight}
+                        wrapPolicy="url"
+                        numericStyle="tabular"
+                        className="text-textPrimary"
+                      >
+                        {EXTREME_URL_TEXT}
+                      </Typography>
+                    </GuideRow>
+                  </div>
+                </CalibrationCard>
 
-            <div style={savedCssVars}>
-            <CalibrationCard
-              title="全局混排校验"
-              showGrid={layoutState.showGrid}
-              showRunHighlight={layoutState.showRunHighlight}
-            >
-              <div className="space-y-8">
-                <Typography
-                  as="p"
-                  preset="sans-body"
-                  size="body"
-                  weight="regular"
-                  wrapPolicy="prose"
-                  className="max-w-[44rem] text-textMuted"
+                <div style={savedCssVars}>
+                <CalibrationCard
+                  title="全局混排校验"
+                  showGrid={layoutState.showGrid}
+                  showRunHighlight={layoutState.showRunHighlight}
                 >
-                  这里保留真实系统角色的固定组合，用来验证跨模板共存时的结果。它会继续读取当前已保存的模板细节，但不会整块改成你当前正在编辑的字号档位。
-                </Typography>
+                  <div className="space-y-8">
+                    <Typography
+                      as="p"
+                      preset="sans-body"
+                      size="body"
+                      weight="regular"
+                      wrapPolicy="prose"
+                      className="max-w-[44rem] text-textMuted"
+                    >
+                      这里保留真实系统角色的固定组合，用来验证跨模板共存时的结果。它会继续读取当前已保存的模板细节，但不会整块改成你当前正在编辑的字号档位。
+                    </Typography>
                 {titleSubtitleSupportMessage ? (
                   <UnsupportedCase message={titleSubtitleSupportMessage} />
                 ) : (
@@ -1795,6 +1900,9 @@ export default function FontLabClient() {
               >
                 <ActionText>打开 Playground 做组件验收</ActionText>
               </button>
+            </div>
+            </div>
+            </div>
             </div>
           </div>
         </section>

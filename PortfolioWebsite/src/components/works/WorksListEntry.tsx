@@ -5,6 +5,8 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { getResponsiveGridColumnClassName } from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 interface WorksListEntryProps {
@@ -46,6 +48,7 @@ export default function WorksListEntry({
   desc,
   editMode = false,
 }: WorksListEntryProps) {
+  const design = useComponentDesign("WorksListEntry");
   const [isMobile, setIsMobile] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const entryRef = useRef<HTMLDivElement>(null);
@@ -116,6 +119,9 @@ export default function WorksListEntry({
 
   const active = editMode || isExpanded;
   const cursorClass = editMode ? "cursor-default" : "interactive cursor-pointer";
+  const numberBoundsClassName = getResponsiveGridColumnClassName(design.numberBounds);
+  const titleBoundsClassName = getResponsiveGridColumnClassName(design.titleBounds);
+  const sidebarBoundsClassName = getResponsiveGridColumnClassName(design.sidebarBounds);
 
   return (
     <div
@@ -155,7 +161,7 @@ export default function WorksListEntry({
       </AnimatePresence>
 
       <div className={`grid-container relative z-10 items-center py-16 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
-        <div className="hidden lg:block col-span-1 text-textMuted">
+        <div className={`hidden text-textMuted lg:block ${numberBoundsClassName}`}>
           <Typography
             preset="sans-body"
             size="title-sm"
@@ -167,7 +173,7 @@ export default function WorksListEntry({
           </Typography>
         </div>
 
-        <div className="grid-content grid content-center py-4 lg:col-span-7">
+        <div className={`${titleBoundsClassName} grid content-center py-4`}>
           <Typography
             as="h2"
             preset="luna-editorial"
@@ -189,7 +195,7 @@ export default function WorksListEntry({
             x: active ? 0 : -20,
           }}
           transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
-          className="grid-sidebar mt-6 grid content-center lg:mt-0 lg:pl-8"
+          className={`${sidebarBoundsClassName} mt-6 grid content-center lg:mt-0 lg:pl-8`}
         >
           <div className="grid gap-1">
               <Typography
