@@ -9,7 +9,7 @@
       "type": "HeroHeadline",
       "props": {
         "id": "prometheus-hero-1",
-        "eyebrow": "Project 04",
+        "eyebrow": "PROJECT 05",
         "title": "THE PROMETHEUS PROJECT",
         "subtitle": "潜行拍摄游戏",
         "heroImage": "/images/prometheus/PrometheusTitle.webp",

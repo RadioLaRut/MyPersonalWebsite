@@ -4,7 +4,10 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
-import { getResponsiveGridColumnClassName } from "@/lib/component-design-style";
+import {
+  getResponsiveGridColumnClassName,
+  getSpacingRem,
+} from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset, normalizeImagePreset } from "@/lib/image-presentation";
 
 interface ProjectSectionProps {
@@ -63,6 +66,9 @@ export default function ProjectSection({
   const textBoundsClassName = getResponsiveGridColumnClassName(
     shouldAlignRight ? design.textRightBounds : design.textLeftBounds,
   );
+  const lockupGap = getSpacingRem(design.lockupGap);
+  const titleUnderlineOpticalPull = getSpacingRem(design.titleUnderlineOpticalPull);
+  const adjustedGap = `max(0px, calc(${lockupGap} - ${titleUnderlineOpticalPull}))`;
 
   const handleInteraction = () => {
     if (!editMode && link) {
@@ -109,12 +115,13 @@ export default function ProjectSection({
               {subtitle && (
                 <Typography
                   as="p"
-                  preset="gothic-editorial"
+                  preset="sans-body"
                   size="label"
-                  weight="semantic"
+                  weight="medium"
                   wrapPolicy="label"
                   align={shouldAlignRight ? "right" : "left"}
                   className="text-textPrimary"
+                  style={{ marginBottom: adjustedGap }}
                 >
                   {subtitle}
                 </Typography>
@@ -127,11 +134,15 @@ export default function ProjectSection({
                   weight="strong"
                   wrapPolicy="heading"
                   align={shouldAlignRight ? "right" : "left"}
-                  className="-mt-[0.42em] max-w-full text-white antialiased [transform:translateZ(0)] lg:whitespace-nowrap"
+                  className="max-w-full text-white antialiased [transform:translateZ(0)] lg:whitespace-nowrap"
+                  style={{ marginTop: "-0.15em" }}
                 >
                   {title}
                 </Typography>
-                <div className={`-mt-[0.08em] flex w-full ${underlineTrackClassName}`}>
+                <div
+                  className={`flex w-full ${underlineTrackClassName}`}
+                  style={{ marginTop: adjustedGap }}
+                >
                   <div className={`h-px bg-white ${underlineFillClassName}`} />
                 </div>
               </div>

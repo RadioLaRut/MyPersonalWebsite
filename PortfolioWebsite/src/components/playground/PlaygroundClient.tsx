@@ -190,13 +190,13 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
   },
   HeroSection: {
     eyebrow: "LIGHTING / TECH ART / GAME DESIGN",
-    title: "JIANG CHENGYAN",
-    subtitle: "MY 2026 PORTFOLIO",
-    description: "以灯光建立氛围与引导，再把技术美术、游戏设计和叙事系统组织成完整体验。",
-    primaryCtaLabel: "ENTER LIGHTING",
-    primaryCtaHref: "/works/lighting-portfolio",
-    secondaryCtaLabel: "ABOUT",
-    secondaryCtaHref: "/about",
+    title: "JIANG\nCHENGYAN",
+    subtitle: "",
+    description: "",
+    primaryCtaLabel: "",
+    primaryCtaHref: "",
+    secondaryCtaLabel: "",
+    secondaryCtaHref: "",
     imageSrc: "/images/covers/2026/ShotForCrewWithoutWord.0004.webp",
     imageAlt: "Hero Background",
     imagePreset: "ratio-21-9",
@@ -204,8 +204,8 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
   },
   ProjectSection: {
     title: "PENGUIN TRADING CO.",
-    subtitle: "Lead Designer / PM / Tech Art",
-    imageSrc: CANONICAL_PLACEHOLDER_PATH,
+    subtitle: "黑色幽默经营 / 遗传繁育 / 资源压榨",
+    imageSrc: "/images/penguin/CyberRestaurant.webp",
     imagePreset: "ratio-16-9",
     imageFitMode: "x",
     link: "/works/penguin",
@@ -220,7 +220,7 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     buttonHref: "/works",
   },
   WorksList: {
-    heading: "All Selected Works",
+    heading: "WORKS / CASES / EXPERIMENTS",
     entries: [
       {
         type: "WorksListEntry",
@@ -233,7 +233,7 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
           imageSrc: "/images/train-station/2Day.webp",
           imagePreset: "ratio-21-9",
           imageFitMode: "x",
-          desc: "A curated collection of lighting and mood practices",
+          desc: "从城市夜景到站台晨昏，用光线、天气与镜头节奏搭建情绪场。",
         },
       },
       {
@@ -247,7 +247,7 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
           imageSrc: CANONICAL_PLACEHOLDER_PATH,
           imagePreset: "ratio-21-9",
           imageFitMode: "x",
-          desc: "Simulation management game with asset lock systems",
+          desc: "在外星冰川经营一座企鹅血汗工厂，把繁育、压榨与消耗做成黑色幽默系统。",
         },
       },
     ],

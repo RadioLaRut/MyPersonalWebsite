@@ -26,13 +26,19 @@ test("writeComponentDesignConfig persists normalized JSON", async () => {
   const document = createDefaultComponentDesignDocument();
   document.components.RichParagraph.bodySize = "body";
   document.components.ContentCard.textOnlyBounds.leftCol = 2;
-  document.components.HeroSection.titleBounds.lg.leftCol = 3;
+  document.components.HeroSection.contentBounds.lg.leftCol = 3;
+  document.components.HeroSection.eyebrowTopSpacing = "20";
+  document.components.ProjectSection.lockupGap = "16";
+  document.components.ProjectSection.titleUnderlineOpticalPull = "24";
 
   await writeComponentDesignConfig(document, filePath);
   const readBack = await readComponentDesignConfig(filePath);
 
   assert.equal(readBack.components.RichParagraph.bodySize, "body");
   assert.equal(readBack.components.ContentCard.textOnlyBounds.leftCol, 2);
-  assert.equal(readBack.components.HeroSection.titleBounds.lg.leftCol, 3);
+  assert.equal(readBack.components.HeroSection.contentBounds.lg.leftCol, 3);
+  assert.equal(readBack.components.HeroSection.eyebrowTopSpacing, "20");
+  assert.equal(readBack.components.ProjectSection.lockupGap, "16");
+  assert.equal(readBack.components.ProjectSection.titleUnderlineOpticalPull, "24");
   await fs.rm(tempRoot, { force: true, recursive: true });
 });

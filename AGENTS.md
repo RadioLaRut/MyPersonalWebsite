@@ -15,6 +15,7 @@
 ## 项目事实速查
 - 主应用位于 `PortfolioWebsite/`，技术栈为 Next.js 14 + TypeScript + Tailwind CSS + Framer Motion + Puck。
 - 页面内容以 `PortfolioWebsite/content/pages/**/*.json` 为单一来源；页面主体内容不要直接绕过这套内容链路硬编码。
+- `FontLab` 与 `ComponentLab` 的预设内容同样属于配置数据；字体样本、组件样本、默认文案、默认图片与默认参数不得散落在 `src/**` 实现中长期硬编码。
 - 当前联系信息并入 `/about` 页面；`PortfolioWebsite/src/app/contact/page.tsx` 只负责重定向到 `/about`。
 - 网站运行依赖的 `PortfolioWebsite/public/**` 图片资源必须以普通 Git 文件提交，严禁通过 Git LFS 管理。
 - `PortfolioData.md` 仅作历史资料参考，不是当前页面渲染的权威数据结构。
@@ -35,6 +36,9 @@
 - 所有新增组件或明显扩展后的组件，都应同步更新到 `/playground` 或对应演示入口。
 - 涉及页面排版、组件布局、视觉系统、Typography、FontLab 链路或图片呈现规范的修改，必须先遵循 `PortfolioWebsite/网页风格和规范.md`；不要在本文件重复维护展开版规则。
 - 文本渲染优先走现有 `Typography` 体系；图片渲染优先走现有 `PresetImage` 与统一图片预设。
+- 任何字体相关内容调整，不得直接在组件或页面里硬编码字符串、字号样本或默认展示；必须修改 `FontLab` 预设链路，优先落到 `PortfolioWebsite/content/font-lab/font-presets.json` 或其统一配置入口。
+- 任何组件相关样本内容、默认文案、默认图片、默认参数的调整，不得直接在业务组件或页面 JSX 中硬编码；必须修改 `ComponentLab` 预设链路，优先落到 `PortfolioWebsite/src/components/playground/component-lab-registry.tsx`、`PortfolioWebsite/content/component-design/component-design.json` 或其统一配置入口。
+- 如果现有 `FontLab` 或 `ComponentLab` 预设结构无法承载需求，先扩展预设结构与消费链路，再接入变更；不允许跳过预设层直接把内容写死在实现里。
 - 页面和组件布局必须落在统一 12 列 `.grid-container` 或既有 grid helper 上，不允许脱离网格自由摆放。
 - 样式优先复用现有 token、全局样式和已有组件，不要为单页局部需求发明新的视觉常量。
 

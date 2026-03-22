@@ -198,14 +198,14 @@ export default function WorksListEntry({
           className={`${sidebarBoundsClassName} mt-6 grid content-center lg:mt-0 lg:pl-8`}
         >
           <div className="grid gap-1">
-              <Typography
-                as="p"
-                preset="gothic-editorial"
-                size="label"
-                weight="semantic"
-                wrapPolicy="label"
-                className="text-textPrimary"
-              >
+            <Typography
+              as="p"
+              preset="gothic-editorial"
+              size="label"
+              weight="semantic"
+              wrapPolicy="label"
+              className="text-textPrimary"
+            >
               {category}
             </Typography>
             <Typography

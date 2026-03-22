@@ -32,7 +32,7 @@ test("normalizeComponentDesignDocument falls back for invalid responsive grid bo
   const normalized = normalizeComponentDesignDocument({
     components: {
       HeroSection: {
-        titleBounds: {
+        contentBounds: {
           base: {
             leftCol: 12,
             rightCol: 3,
@@ -48,9 +48,32 @@ test("normalizeComponentDesignDocument falls back for invalid responsive grid bo
   });
 
   assert.deepEqual(
-    normalized.components.HeroSection.titleBounds,
-    createDefaultComponentDesignDocument().components.HeroSection.titleBounds,
+    normalized.components.HeroSection.contentBounds,
+    createDefaultComponentDesignDocument().components.HeroSection.contentBounds,
   );
+});
+
+test("normalizeComponentDesignDocument migrates legacy HeroSection title bounds", () => {
+  const normalized = normalizeComponentDesignDocument({
+    components: {
+      HeroSection: {
+        titleBounds: {
+          base: {
+            leftCol: 1,
+            rightCol: 12,
+          },
+          lg: {
+            leftCol: 3,
+            rightCol: 8,
+          },
+        },
+      },
+    },
+    version: 1,
+  });
+
+  assert.equal(normalized.components.HeroSection.contentBounds.lg.leftCol, 3);
+  assert.equal(normalized.components.HeroSection.contentBounds.lg.rightCol, 8);
 });
 
 test("normalizeComponentDesignDocument hydrates newly added component defaults", () => {
@@ -96,5 +119,8 @@ test("parseComponentDesignDocument accepts valid component config", () => {
   assert.ok(parsed);
   assert.equal(parsed.components.ContentCard.titleSize, "title");
   assert.equal(parsed.components.TextSplitLayout.stackBounds.rightCol, 10);
-  assert.equal(parsed.components.HeroSection.titleBounds.lg.leftCol, 2);
+  assert.equal(parsed.components.HeroSection.contentBounds.lg.leftCol, 8);
+  assert.equal(parsed.components.HeroSection.eyebrowTopSpacing, "12");
+  assert.equal(parsed.components.ProjectSection.lockupGap, "12");
+  assert.equal(parsed.components.ProjectSection.titleUnderlineOpticalPull, "56");
 });

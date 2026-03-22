@@ -9,7 +9,7 @@
       "type": "HeroHeadline",
       "props": {
         "id": "stv-hero-1",
-        "eyebrow": "Project 03",
+        "eyebrow": "PROJECT 04",
         "title": "SLAY THE VIRUS",
         "subtitle": "Roguelike 卡牌游戏",
         "heroImage": "/images/slay-the-virus/STVTitle.webp",
