@@ -118,10 +118,10 @@ export default function ImageSlider({
                             </div>
                         ) : null}
 
-                        <div className="absolute inset-0">
+                        <div className={resolvedPreset === "native" ? "relative w-full" : "absolute inset-0"}>
                             <div className="absolute inset-0 bg-neutral-900" />
                             {litSrc ? (
-                                <div className={canvasClassName}>
+                                <div className={`${canvasClassName} relative z-10`}>
                                     <OptimizedImage
                                         src={litSrc}
                                         alt={rightLabel ? `${alt} ${rightLabel}` : alt}
@@ -140,7 +140,7 @@ export default function ImageSlider({
                         >
                             <div className="absolute inset-0 bg-neutral-800" />
                             {unlitSrc ? (
-                                <div className={canvasClassName}>
+                                <div className={`${canvasClassName} relative z-10`}>
                                     <OptimizedImage
                                         src={unlitSrc}
                                         alt={leftLabel ? `${alt} ${leftLabel}` : alt}
@@ -154,7 +154,7 @@ export default function ImageSlider({
                         </div>
 
                         <div
-                            className="absolute top-0 bottom-0 w-0.5 bg-white pointer-events-none"
+                            className="absolute top-0 bottom-0 w-0.5 bg-white pointer-events-none z-20"
                             style={{ left: `${sliderPosition}%`, transform: "translateX(-50%)" }}
                         >
                             <div

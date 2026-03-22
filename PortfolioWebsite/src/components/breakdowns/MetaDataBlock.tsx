@@ -14,7 +14,7 @@ export default function MetaDataBlock({ items }: MetaDataBlockProps) {
 
   return (
     <div className="w-full rhythm-block-compact border-t border-white/20 bg-black py-8">
-      <div className="grid-container text-center lg:text-left">
+      <div className="grid-container">
         {items.map((item, i) => (
           <div key={i} className="col-span-3 mb-8 lg:mb-0">
             <Typography

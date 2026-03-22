@@ -20,6 +20,7 @@ interface HeroHeadlineBlockProps {
   heroImagePreset?: ImagePreset;
   heroImageFitMode?: ImageFitMode;
   navLink?: string;
+  navLinkLabel?: string;
   editMode?: boolean;
 }
 
@@ -31,6 +32,7 @@ export default function HeroHeadlineBlock({
   heroImagePreset,
   heroImageFitMode,
   navLink,
+  navLinkLabel = "观看视频",
   editMode = false,
 }: HeroHeadlineBlockProps) {
   const design = useComponentDesign("HeroHeadline");
@@ -43,6 +45,23 @@ export default function HeroHeadlineBlock({
   const resolvedHeroImage = typeof heroImage === "string" ? heroImage.trim() : "";
   const heroImageAlt = toPlainText(title) ?? "PROJECT TITLE";
   const contentBoundsClassName = getGridColumnClassName(design.contentBounds);
+
+  const plainTitle = toPlainText(title) ?? "";
+  const upperPlainTitle = plainTitle.trim().toUpperCase();
+  const hasGeometricOverhang =
+    upperPlainTitle.startsWith("T") ||
+    upperPlainTitle.startsWith("V") ||
+    upperPlainTitle.startsWith("W") ||
+    upperPlainTitle.startsWith("Y") ||
+    upperPlainTitle.startsWith("A");
+
+  const hasRoundOverhang =
+    upperPlainTitle.startsWith("O") ||
+    upperPlainTitle.startsWith("C") ||
+    upperPlainTitle.startsWith("G") ||
+    upperPlainTitle.startsWith("Q");
+
+  const opticalIndent = hasGeometricOverhang ? "-0.06em" : hasRoundOverhang ? "-0.03em" : "0em";
 
   if (editMode) {
     return (
@@ -65,49 +84,53 @@ export default function HeroHeadlineBlock({
         <div className="relative z-10 flex min-h-[560px] items-end py-16 md:py-20">
           <div className="grid-container w-full">
             <div
-              className={`${contentBoundsClassName} flex flex-col items-start gap-4 lg:gap-6`}
+              className={`${contentBoundsClassName} flex flex-col items-start`}
             >
               <Typography
                 as="p"
                 preset="sans-body"
-                size="caption"
+                size="label"
                 weight="medium"
                 wrapPolicy="label"
-                className="text-textMuted"
+                className="mb-4 text-white/50 tracking-[0.1em] uppercase"
               >
                 {resolvedEyebrow}
               </Typography>
               <Typography
                 as="h1"
-                preset="sans-body"
+                preset="luna-editorial"
                 size="hero"
-                weight="display"
+                weight="semantic"
                 wrapPolicy="heading"
-                className="text-white"
+                className="text-white uppercase leading-[0.9]"
+                style={opticalIndent !== "0em" ? { textIndent: opticalIndent } : undefined}
               >
                 {resolvedTitle}
               </Typography>
-              <Typography
-                as="p"
-                preset="sans-body"
-                size="body"
-                weight="medium"
-                wrapPolicy="prose"
-                className="max-w-3xl text-textPrimary"
-              >
-                {resolvedSubtitle}
-              </Typography>
+              <div className="mt-6 md:mt-8">
+                <Typography
+                  as="p"
+                  preset="sans-body"
+                  size="title-sm"
+                  weight="medium"
+                  wrapPolicy="prose"
+                  className="max-w-3xl text-white/90"
+                >
+                  {resolvedSubtitle}
+                </Typography>
+              </div>
               {navLink ? (
-                <div className="mt-4 border border-white/20 px-6 py-3">
+                <div className="mt-10 md:mt-12 inline-grid place-items-center border border-white/20 bg-white/5 px-8 py-3.5 backdrop-blur-sm">
                   <Typography
                     as="span"
                     preset="sans-body"
-                    size="caption"
+                    size="label"
                     weight="medium"
                     wrapPolicy="label"
-                    className="text-textPrimary"
+                    align="center"
+                    className="text-white tracking-widest uppercase"
                   >
-                    播放演示视频 (Bilibili)
+                    {navLinkLabel}
                   </Typography>
                 </div>
               ) : null}
@@ -139,16 +162,16 @@ export default function HeroHeadlineBlock({
       <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end pb-24 md:pb-32">
         <div className="grid-container w-full mix-blend-difference pointer-events-auto">
           <div
-            className={`${contentBoundsClassName} flex flex-col items-start gap-4`}
+            className={`${contentBoundsClassName} flex flex-col items-start`}
           >
             {resolvedEyebrow ? (
               <Typography
                 as="p"
                 preset="sans-body"
-                size="caption"
+                size="label"
                 weight="medium"
                 wrapPolicy="label"
-                className="text-textMuted sm:text-xs"
+                className="mb-4 text-white/50 tracking-[0.1em] uppercase"
               >
                 {resolvedEyebrow}
               </Typography>
@@ -156,43 +179,47 @@ export default function HeroHeadlineBlock({
             {resolvedTitle ? (
               <Typography
                 as="h1"
-                preset="sans-body"
+                preset="luna-editorial"
                 size="hero"
-                weight="display"
+                weight="semantic"
                 wrapPolicy="heading"
-                className="text-white"
+                className="text-white uppercase leading-[0.9]"
+                style={opticalIndent !== "0em" ? { textIndent: opticalIndent } : undefined}
               >
                 {resolvedTitle}
               </Typography>
             ) : null}
             {resolvedSubtitle ? (
-              <Typography
-                as="p"
-                preset="sans-body"
-                size="body"
-                weight="medium"
-                wrapPolicy="prose"
-                className="max-w-3xl text-textPrimary"
-              >
-                {resolvedSubtitle}
-              </Typography>
+              <div className="mt-6 md:mt-8">
+                <Typography
+                  as="p"
+                  preset="sans-body"
+                  size="title-sm"
+                  weight="medium"
+                  wrapPolicy="prose"
+                  className="max-w-3xl text-white/90"
+                >
+                  {resolvedSubtitle}
+                </Typography>
+              </div>
             ) : null}
             {navLink ? (
               <a
                 href={navLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="interactive mt-8 border border-white/30 px-6 py-3 transition-colors hover:bg-white hover:text-black mix-blend-normal"
+                className="interactive mt-10 md:mt-12 inline-grid place-items-center border border-white/20 bg-white/5 px-8 py-3.5 transition-colors hover:bg-white hover:text-black mix-blend-normal backdrop-blur-sm"
               >
                 <Typography
                   as="span"
                   preset="sans-body"
-                  size="caption"
+                  size="label"
                   weight="medium"
                   wrapPolicy="label"
-                  className="text-current"
+                  align="center"
+                  className="text-current tracking-widest uppercase"
                 >
-                  播放演示视频 (Bilibili)
+                  {navLinkLabel}
                 </Typography>
               </a>
             ) : null}

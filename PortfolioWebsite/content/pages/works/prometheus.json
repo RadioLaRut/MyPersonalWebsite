@@ -1,7 +1,7 @@
 {
   "root": {
     "props": {
-      "title": "THE PROMETHEUS PROJECT"
+      "title": "PROMETHEUS"
     }
   },
   "content": [
@@ -10,7 +10,7 @@
       "props": {
         "id": "prometheus-hero-1",
         "eyebrow": "PROJECT 05",
-        "title": "THE PROMETHEUS PROJECT",
+        "title": "PROMETHEUS",
         "subtitle": "潜行拍摄游戏",
         "heroImage": "/images/prometheus/PrometheusTitle.webp",
         "navLink": "https://www.bilibili.com/video/BV1GSGmzBEx8",

@@ -25,9 +25,30 @@ interface HighDensityInfoBlockProps {
   phase2ItemsContent?: ReactNode;
 }
 
+const DEFAULT_PHASE_LABELS = {
+  phase1: "PHASE 01 / CONTEXT",
+  phase2: "PHASE 02 / SYSTEM ARCHITECTURE",
+  phase3: "PHASE 03 / EXECUTION & RESULTS",
+} as const;
+
+function hasLabelContent(value: ReactNode) {
+  if (value === null || value === undefined || value === false) {
+    return false;
+  }
+
+  if (typeof value === "string") {
+    return value.trim().length > 0;
+  }
+
+  return true;
+}
+
 export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1ItemsContent, phase2ItemsContent }: HighDensityInfoBlockProps) {
   const design = useComponentDesign("HighDensityInfoBlock");
   const phase3ImageAlt = typeof phase3.title === "string" ? phase3.title : "Phase image";
+  const phase1Label = hasLabelContent(phase1.label) ? phase1.label : DEFAULT_PHASE_LABELS.phase1;
+  const phase2Label = hasLabelContent(phase2.label) ? phase2.label : DEFAULT_PHASE_LABELS.phase2;
+  const phase3Label = hasLabelContent(phase3.label) ? phase3.label : DEFAULT_PHASE_LABELS.phase3;
 
     return (
         <div className={`w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
@@ -35,7 +56,7 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
 
                 <div className="pr-0 lg:pr-5 mb-12 lg:mb-0 border-r border-white/5" style={getGridColumnStyle(design.leftBounds)}>
                     <Typography as="div" preset="sans-body" size="caption" weight="semantic" wrapPolicy="label" className="mb-4 text-textMuted">
-                        {phase1.label || "PHASE 01 / CONTEXT"}
+                        {phase1Label}
                     </Typography>
                     <Typography as="h3" preset="sans-body" size={design.titleSize} weight="semantic" wrapPolicy={design.titleAutoWrap ? "heading" : "nowrap"} className="text-textPrimary" style={{ marginBottom: getSpacingRem(design.phaseTitleGap) }}>{phase1.title}</Typography>
                     {phase1.subtitle && <Typography as="h4" preset="sans-body" size={design.bodySize} weight="light" wrapPolicy={design.subtitleAutoWrap ? "prose" : "nowrap"} className="text-textMuted italic" style={{ marginBottom: getSpacingRem(design.subtitleGap) }}>{phase1.subtitle}</Typography>}
@@ -65,7 +86,7 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
 
                 <div className="px-0 lg:px-8 mb-12 lg:mb-0 border-r border-transparent lg:border-white/5" style={getGridColumnStyle(design.middleBounds)}>
                     <Typography as="div" preset="sans-body" size="caption" weight="semantic" wrapPolicy="label" className="mb-4 text-textMuted">
-                        {phase2.label || "PHASE 02 / SYSTEM ARCHITECTURE"}
+                        {phase2Label}
                     </Typography>
                     <Typography as="h3" preset="sans-body" size={design.titleSize} weight="semantic" wrapPolicy={design.titleAutoWrap ? "heading" : "nowrap"} className="text-textPrimary" style={{ marginBottom: getSpacingRem(design.phaseTitleGap) }}>{phase2.title}</Typography>
                     {phase2.subtitle && <Typography as="h4" preset="sans-body" size={design.bodySize} weight="light" wrapPolicy={design.subtitleAutoWrap ? "prose" : "nowrap"} className="text-textMuted italic" style={{ marginBottom: getSpacingRem(design.subtitleGap) }}>{phase2.subtitle}</Typography>}
@@ -95,7 +116,7 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
 
                 <div className="pl-0 lg:pl-8" style={getGridColumnStyle(design.rightBounds)}>
                     <Typography as="div" preset="sans-body" size="caption" weight="semantic" wrapPolicy="label" className="mb-4 text-textMuted">
-                        {phase3.label || "PHASE 03 / EXECUTION & RESULTS"}
+                        {phase3Label}
                     </Typography>
                     <Typography as="h3" preset="sans-body" size={design.titleSize} weight="semantic" wrapPolicy={design.titleAutoWrap ? "heading" : "nowrap"} className="text-textPrimary" style={{ marginBottom: getSpacingRem(design.phaseTitleGap) }}>{phase3.title}</Typography>
                     {phase3.subtitle && <Typography as="h4" preset="sans-body" size={design.bodySize} weight="light" wrapPolicy={design.subtitleAutoWrap ? "prose" : "nowrap"} className="text-textMuted italic" style={{ marginBottom: getSpacingRem(design.subtitleGap) }}>{phase3.subtitle}</Typography>}

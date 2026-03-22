@@ -69,6 +69,7 @@ export default function NextProjectBlock({
                                     size="label"
                                     weight="semantic"
                                     wrapPolicy="label"
+                                    align="center"
                                     className="text-textMuted opacity-70 transition-all duration-700 group-hover:opacity-100"
                                 >
                                     NEXT PROJECT

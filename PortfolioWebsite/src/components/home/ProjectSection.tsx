@@ -8,6 +8,7 @@ import {
   getResponsiveGridColumnClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
+import { toPlainText } from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset, normalizeImagePreset } from "@/lib/image-presentation";
 
 interface ProjectSectionProps {
@@ -60,6 +61,24 @@ export default function ProjectSection({
   const titleLockupClassName = shouldAlignRight
     ? "justify-self-end justify-items-end"
     : "justify-self-start justify-items-start";
+
+  const plainTitle = toPlainText(title) ?? "";
+  const upperPlainTitle = plainTitle.trim().toUpperCase();
+  const hasGeometricOverhang =
+    upperPlainTitle.startsWith("T") ||
+    upperPlainTitle.startsWith("V") ||
+    upperPlainTitle.startsWith("W") ||
+    upperPlainTitle.startsWith("Y") ||
+    upperPlainTitle.startsWith("A");
+
+  const hasRoundOverhang =
+    upperPlainTitle.startsWith("O") ||
+    upperPlainTitle.startsWith("C") ||
+    upperPlainTitle.startsWith("G") ||
+    upperPlainTitle.startsWith("Q");
+
+  const opticalIndent = hasGeometricOverhang ? "-0.06em" : hasRoundOverhang ? "-0.03em" : "0em";
+
   const underlineTrackClassName = shouldAlignRight ? "justify-end" : "justify-start";
   const underlineFillClassName =
     "w-0 transition-[width] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:w-full";
@@ -129,13 +148,16 @@ export default function ProjectSection({
               <div className={`grid w-fit max-w-full auto-rows-max gap-y-0 ${titleLockupClassName}`}>
                 <Typography
                   as="h2"
-                  preset="sans-body"
+                  preset="luna-editorial"
                   size="hero"
-                  weight="strong"
+                  weight="semantic"
                   wrapPolicy="heading"
                   align={shouldAlignRight ? "right" : "left"}
-                  className="max-w-full text-white antialiased [transform:translateZ(0)] lg:whitespace-nowrap"
-                  style={{ marginTop: "-0.15em" }}
+                  className="max-w-full text-white antialiased uppercase [transform:translateZ(0)] lg:whitespace-nowrap"
+                  style={{
+                    marginTop: "-0.15em",
+                    ...(opticalIndent !== "0em" && !shouldAlignRight ? { textIndent: opticalIndent } : {})
+                  }}
                 >
                   {title}
                 </Typography>
@@ -143,7 +165,7 @@ export default function ProjectSection({
                   className={`flex w-full ${underlineTrackClassName}`}
                   style={{ marginTop: adjustedGap }}
                 >
-                  <div className={`h-px bg-white ${underlineFillClassName}`} />
+                  <div className={`h-[2px] bg-white ${underlineFillClassName}`} />
                 </div>
               </div>
             </div>
