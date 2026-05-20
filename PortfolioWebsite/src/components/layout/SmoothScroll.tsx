@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import Lenis from "@studio-freight/lenis"; // or import Lenis from "lenis"
+import Lenis from "lenis";
 
 import { usePathname } from "next/navigation";
 

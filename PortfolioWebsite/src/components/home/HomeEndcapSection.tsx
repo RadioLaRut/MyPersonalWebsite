@@ -53,6 +53,7 @@ export default function HomeEndcapSection({
               size="caption"
               weight="semantic"
               wrapPolicy="label"
+              align="center"
               className="text-white/35"
             >
               {eyebrow}
@@ -65,6 +66,7 @@ export default function HomeEndcapSection({
             size="hero"
             weight="semantic"
             wrapPolicy="heading"
+            align="center"
             className="mt-6 text-white uppercase"
           >
             {title}

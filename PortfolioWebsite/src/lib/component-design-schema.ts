@@ -178,14 +178,16 @@ export type ParameterGridDesign = {
 };
 
 export type ProjectSectionDesign = {
+  lockupGap: ComponentDesignSpacingToken;
+  titleUnderlineOpticalPull: ComponentDesignSpacingToken;
   textLeftBounds: ComponentResponsiveGridBounds;
   textRightBounds: ComponentResponsiveGridBounds;
 };
 
 export type HeroSectionDesign = {
   ctaTopSpacing: ComponentDesignSpacingToken;
-  descriptionBounds: ComponentResponsiveGridBounds;
-  titleBounds: ComponentResponsiveGridBounds;
+  contentBounds: ComponentResponsiveGridBounds;
+  eyebrowTopSpacing: ComponentDesignSpacingToken;
 };
 
 export type HomeEndcapSectionDesign = {
@@ -734,6 +736,14 @@ function normalizeProjectSectionDesign(value: unknown): ProjectSectionDesign {
   }
 
   return {
+    lockupGap: normalizeSpacingToken(
+      value.lockupGap,
+      defaults.lockupGap,
+    ),
+    titleUnderlineOpticalPull: normalizeSpacingToken(
+      value.titleUnderlineOpticalPull,
+      defaults.titleUnderlineOpticalPull,
+    ),
     textLeftBounds: normalizeResponsiveBounds(
       value.textLeftBounds,
       defaults.textLeftBounds,
@@ -757,13 +767,13 @@ function normalizeHeroSectionDesign(value: unknown): HeroSectionDesign {
       value.ctaTopSpacing,
       defaults.ctaTopSpacing,
     ),
-    descriptionBounds: normalizeResponsiveBounds(
-      value.descriptionBounds,
-      defaults.descriptionBounds,
+    contentBounds: normalizeResponsiveBounds(
+      value.contentBounds ?? value.titleBounds,
+      defaults.contentBounds,
     ),
-    titleBounds: normalizeResponsiveBounds(
-      value.titleBounds,
-      defaults.titleBounds,
+    eyebrowTopSpacing: normalizeSpacingToken(
+      value.eyebrowTopSpacing,
+      defaults.eyebrowTopSpacing,
     ),
   };
 }
@@ -985,8 +995,8 @@ export function createDefaultComponentDesignDocument(): ComponentDesignDocument 
       },
       HeroSection: {
         ctaTopSpacing: "48",
-        descriptionBounds: createDefaultResponsiveBounds(1, 12, 10, 12),
-        titleBounds: createDefaultResponsiveBounds(1, 12, 2, 8),
+        contentBounds: createDefaultResponsiveBounds(1, 12, 8, 12),
+        eyebrowTopSpacing: "12",
       },
       HighDensityInfoBlock: {
         bodyAutoWrap: true,
@@ -1047,6 +1057,8 @@ export function createDefaultComponentDesignDocument(): ComponentDesignDocument 
         titleBounds: createDefaultResponsiveBounds(1, 12, 2, 8),
       },
       ProjectSection: {
+        lockupGap: "12",
+        titleUnderlineOpticalPull: "56",
         textLeftBounds: createDefaultResponsiveBounds(1, 4, 2, 9),
         textRightBounds: createDefaultResponsiveBounds(1, 4, 5, 12),
       },

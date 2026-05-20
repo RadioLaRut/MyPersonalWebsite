@@ -92,7 +92,11 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
       return;
     }
 
+    const activeDocument = targetDocument ?? document;
     const win = targetDocument?.defaultView || window;
+    const magnetElements = Array.from(
+      activeDocument.querySelectorAll<HTMLElement>("[data-cursor-magnet]"),
+    );
     let rafId: number;
     let mouseX = win.innerWidth / 2;
     let mouseY = win.innerHeight / 2;
@@ -123,22 +127,23 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
         "a, button, input, [role='button'], .interactive",
       );
       const isText = target?.closest?.(".hover-text");
-      const magnetElements = Array.from(
-        (targetDocument ?? document).querySelectorAll<HTMLElement>("[data-cursor-magnet]"),
-      );
       let nearestMagnet: HTMLElement | null = null;
       let nearestDistance = Number.POSITIVE_INFINITY;
 
-      for (const magnetElement of magnetElements) {
-        const rect = magnetElement.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const distance = Math.hypot(centerX - e.clientX, centerY - e.clientY);
+      if (magnetElements.length > 0) {
+        for (const magnetElement of magnetElements) {
+          const rect = magnetElement.getBoundingClientRect();
+          const centerX = rect.left + rect.width / 2;
+          const centerY = rect.top + rect.height / 2;
+          const distance = Math.hypot(centerX - e.clientX, centerY - e.clientY);
 
-        if (distance < nearestDistance) {
-          nearestDistance = distance;
-          nearestMagnet = magnetElement;
+          if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearestMagnet = magnetElement;
+          }
         }
+      } else {
+        clearMagnet();
       }
 
       if (nearestMagnet && nearestDistance < 34) {
@@ -209,7 +214,7 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
       win.removeEventListener("mouseup", onMouseUp);
       cancelAnimationFrame(rafId);
     };
-  }, [isCursorEnabled, targetDocument]);
+  }, [isCursorEnabled, pathname, targetDocument]);
 
   if (isCursorBlockedByRoute) {
     return null;

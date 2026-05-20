@@ -1,5 +1,5 @@
 "use client";
-import React, { type ReactNode, useEffect, useState, useRef } from "react";
+import React, { type CSSProperties, type ReactNode, useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
@@ -40,7 +40,7 @@ export default function ContactFlashlightBlock({
 }: ContactFlashlightBlockProps) {
     const design = useComponentDesign("ContactFlashlight");
     const containerRef = useRef<HTMLDivElement>(null);
-    const [mousePos, setMousePos] = useState({ x: "50%", y: "50%" });
+    const revealLayerRef = useRef<HTMLDivElement>(null);
     const [isTouchDevice, setIsTouchDevice] = useState(false);
 
     useEffect(() => {
@@ -61,15 +61,22 @@ export default function ContactFlashlightBlock({
     }, [editMode]);
 
     useEffect(() => {
-        if (editMode) {
+        if (editMode || isTouchDevice) {
             return;
         }
 
         let lastClientX = window.innerWidth / 2;
         let lastClientY = window.innerHeight / 2;
+        let frameId = 0;
+        let frameQueued = false;
 
         const updatePosition = () => {
-            if (!containerRef.current) return;
+            frameQueued = false;
+
+            if (!containerRef.current || !revealLayerRef.current) {
+                return;
+            }
+
             const rect = containerRef.current.getBoundingClientRect();
             const relativeX = lastClientX - rect.left;
             const relativeY = lastClientY - rect.top;
@@ -79,29 +86,54 @@ export default function ContactFlashlightBlock({
             const maxY = rect.height + maskRadius;
             const x = Math.min(Math.max(relativeX, minX), maxX);
             const y = Math.min(Math.max(relativeY, minY), maxY);
-            setMousePos({ x: `${x}px`, y: `${y}px` });
+
+            revealLayerRef.current.style.setProperty("--flashlight-x", `${x}px`);
+            revealLayerRef.current.style.setProperty("--flashlight-y", `${y}px`);
+        };
+
+        const queueUpdate = () => {
+            if (frameQueued) {
+                return;
+            }
+
+            frameQueued = true;
+            frameId = window.requestAnimationFrame(updatePosition);
         };
 
         const handleMouseMove = (e: MouseEvent) => {
             lastClientX = e.clientX;
             lastClientY = e.clientY;
-            updatePosition();
-        };
-
-        const handleScroll = () => {
-            updatePosition();
+            queueUpdate();
         };
 
         window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("scroll", handleScroll);
+        window.addEventListener("scroll", queueUpdate, { passive: true });
+        window.addEventListener("resize", queueUpdate);
 
-        updatePosition();
+        queueUpdate();
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("scroll", handleScroll);
+            window.removeEventListener("scroll", queueUpdate);
+            window.removeEventListener("resize", queueUpdate);
+
+            if (frameId) {
+                window.cancelAnimationFrame(frameId);
+            }
         };
-    }, [editMode, maskRadius]);
+    }, [editMode, isTouchDevice, maskRadius]);
+
+    const revealLayerStyle: CSSProperties = {
+        color: lightTextColor,
+        WebkitMaskImage: isTouchDevice
+            ? "none"
+            : `radial-gradient(${maskRadius}px circle at var(--flashlight-x, 50%) var(--flashlight-y, 50%), black 0%, black ${maskSmoothness}%, transparent 100%)`,
+        maskImage: isTouchDevice
+            ? "none"
+            : `radial-gradient(${maskRadius}px circle at var(--flashlight-x, 50%) var(--flashlight-y, 50%), black 0%, black ${maskSmoothness}%, transparent 100%)`,
+        WebkitMaskRepeat: "no-repeat",
+        maskRepeat: "no-repeat",
+    };
 
     const renderContentData = () => (
         <div className="grid-container w-full rhythm-section-spacious">
@@ -323,19 +355,10 @@ export default function ContactFlashlightBlock({
 
                 {/* Reveal Layer (White Text masked by cursor) */}
                 <div
+                    ref={revealLayerRef}
                     className="absolute inset-0 z-20 pointer-events-none drop-shadow-[0_0_15px_rgba(255,255,255,0.45)]"
                     aria-hidden="true"
-                    style={{
-                        color: lightTextColor,
-                        WebkitMaskImage: isTouchDevice
-                            ? "none"
-                            : `radial-gradient(${maskRadius}px circle at ${mousePos.x} ${mousePos.y}, black 0%, black ${maskSmoothness}%, transparent 100%)`,
-                        maskImage: isTouchDevice
-                            ? "none"
-                            : `radial-gradient(${maskRadius}px circle at ${mousePos.x} ${mousePos.y}, black 0%, black ${maskSmoothness}%, transparent 100%)`,
-                        WebkitMaskRepeat: "no-repeat",
-                        maskRepeat: "no-repeat",
-                    }}
+                    style={revealLayerStyle}
                 >
                     {renderContentData()}
                 </div>

@@ -12,16 +12,9 @@
         "title": "ABOUT",
         "subtitle": "JIANG CHENGYAN",
         "descriptionLine1": "LIGHTING / TECH ART / GAME DESIGN",
-        "descriptionLine2": "从灯光氛围到工具管线，我更习惯直接动手解决让团队卡住的问题。",
+        "descriptionLine2": "我更关心如何让氛围、系统和落地流程一起服务体验，而不是把这些能力拆成孤立条目。我目前的创作重心是把灯光氛围、技术美术思维和游戏设计组织成同一个叙事系统。对我来说，灯光不是最后的美术修饰，而是空间秩序、节奏控制与信息引导的一部分；技术美术也不仅是工具实现，而是把团队协作、编辑效率与视觉质量放进同一条生产链。",
         "ctaLabel": "进入全部作品",
         "ctaHref": "/works"
-      }
-    },
-    {
-      "type": "RichParagraph",
-      "props": {
-        "id": "about-intro-1",
-        "content": "我目前的重心在灯光与技术美术的交叉点上。在腾讯光子艺术部实习期间，我负责开发了一套对标《刺客信条：影》的灯具蓝图系统：用光照函数还原火光在地面的自然闪烁与影子纹理，同时只把亮度（0–1 的滑动条）和衰减范围暴露给美术——其余参数写死在预设里，防止风格因过度自由而失控。编辑器支持逐灯覆写，也支持一键保存为新预设，最终被项目实装。\n\n这段经历让我相信，好的工具设计不是给美术越多选项越好，而是在'可控'与'灵活'之间找到项目真正需要的平衡点。我更习惯从问题根源出发做决策，而不是先定一个抽象的方法论。"
       }
     },
     {
@@ -30,13 +23,13 @@
         "id": "about-info-1",
         "phase1Title": "我在做什么",
         "phase1Subtitle": "Current Focus",
-        "phase1Content": "以灯光氛围和技术美术工具为入口，让美术能在可控范围内高效产出。从灯具预设、编辑器控件到场景氛围的统一收敛，核心目标是把'调灯光'从重复劳动变成可复用、可迭代的流程。",
+        "phase1Content": "以灯光与氛围塑造为入口，同时延伸到技术美术、工具链和交互叙事设计。近期的重点在于：让视觉氛围服务可读性，让系统设计服务情绪，让生产流程支持更稳定的创作输出。",
         "phase2Title": "我如何推进项目",
         "phase2Subtitle": "How I Work",
-        "phase2Content": "先分析团队最可能卡住的环节——是资产管线、版本控制，还是美术和程序之间的信息差——再在工具或流程层面做前置解决。我相信等问题爆发后再返工，成本远高于提前花一天搭好规范。",
+        "phase2Content": "我习惯先拆出项目真正需要解决的问题，再回到版式、机制、工具或流程层面做收束。面对多人协作，我会优先建立命名、资产、版本控制与验证标准；面对单人项目，我会把交互、视觉与叙事节奏放在同一条设计链路里反复迭代。",
         "phase3Title": "我能带来的结果",
         "phase3Subtitle": "What I Bring",
-        "phase3Content": "能在美术、程序、策划之间推进需求并直接落地。无论是 UE 蓝图、编辑器工具、灯光氛围还是项目管线，我更关心结果是否让团队少返工一次、让场景的氛围更接近最初的设计意图。",
+        "phase3Content": "我能在策划、美术、程序之间进行翻译和推进，也能直接动手实现关键节点。无论是灯具蓝图、编辑器控件、版本控制辅助、UE 蓝图逻辑，还是项目级的视觉和信息组织，我都更关注它们最终是否让体验更完整、团队更顺畅。",
         "phase3ImageSrc": "/images/train-station/2Night.webp",
         "phase3ImagePreset": "ratio-16-9",
         "phase3ImageFitMode": "cover"
@@ -60,8 +53,8 @@
             "type": "MetadataListItem",
             "props": {
               "id": "about-exp-1",
-              "label": "腾讯 - 光子艺术部",
-              "value": "灯光技术美术"
+              "label": "腾讯光子艺术部",
+              "value": "Lighting Technical Art Intern"
             }
           },
           {
@@ -69,23 +62,15 @@
             "props": {
               "id": "about-exp-2",
               "label": "企鹅贸易公司",
-              "value": "主策划 / 技术美术 / PM"
+              "value": "Lead Designer / Tech Art / PM"
             }
           },
           {
             "type": "MetadataListItem",
             "props": {
               "id": "about-exp-3",
-              "label": "暗喻之间 - Insight",
-              "value": "主策划 / 程序 / 编剧"
-            }
-          },
-          {
-            "type": "MetadataListItem",
-            "props": {
-              "id": "about-exp-4",
-              "label": "杀毒奇兵 - Slay the Virus",
-              "value": "UI设计 / 海报设计 / 策划"
+              "label": "Insight",
+              "value": "Lead Designer / Blueprint / Writer"
             }
           }
         ],
@@ -94,32 +79,24 @@
             "type": "MetadataListItem",
             "props": {
               "id": "about-dir-1",
-              "label": "交互叙事与关卡设计",
-              "value": "Interactive Narrative & Level Design"
+              "label": "氛围塑造与视觉引导",
+              "value": "Lighting, Mood, Spatial Hierarchy"
             }
           },
           {
             "type": "MetadataListItem",
             "props": {
               "id": "about-dir-2",
-              "label": "光影表现与视觉引导",
-              "value": "Lighting Atmosphere & Visual Guidance"
+              "label": "工具化流程与团队效率",
+              "value": "Tooling, Pipeline, Validation"
             }
           },
           {
             "type": "MetadataListItem",
             "props": {
               "id": "about-dir-3",
-              "label": "程序化生成与创作工具链",
-              "value": "Procedural Generation & Toolchains"
-            }
-          },
-          {
-            "type": "MetadataListItem",
-            "props": {
-              "id": "about-dir-4",
-              "label": "UI系统与交互原型落地",
-              "value": "UI Systems & Rapid Prototyping"
+              "label": "叙事系统与交互结构",
+              "value": "Narrative Systems, Game Design"
             }
           }
         ]

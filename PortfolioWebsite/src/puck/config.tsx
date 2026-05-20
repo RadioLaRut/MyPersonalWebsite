@@ -638,7 +638,6 @@ export const config: Config = {
         title: { type: "text", contentEditable: true, label: "Title" },
         subtitle: { type: "text", contentEditable: true, label: "Subtitle" },
         description: { type: "textarea", contentEditable: true, label: "Description" },
-        scrollHint: { type: "text", contentEditable: true, label: "Scroll Hint" },
         _g_cta: createFieldGroup("行动按钮 (CTA)"),
         primaryCtaLabel: { type: "text", contentEditable: true, label: "Primary CTA Label" },
         primaryCtaHref: { type: "text", label: "Primary CTA Href" },
@@ -652,26 +651,24 @@ export const config: Config = {
       },
       defaultProps: {
         eyebrow: "LIGHTING / TECH ART / GAME DESIGN",
-        title: "JIANG CHENGYAN",
-        subtitle: "PORTFOLIO",
-        description: "以灯光建立氛围与引导，再把技术美术、游戏设计和叙事系统组织成完整体验。",
-        scrollHint: "SCROLL / SELECTED WORKS",
-        primaryCtaLabel: "ENTER LIGHTING",
-        primaryCtaHref: "/works/lighting-portfolio",
-        secondaryCtaLabel: "ABOUT",
-        secondaryCtaHref: "/about",
+        title: "JIANG\nCHENGYAN",
+        subtitle: "",
+        description: "",
+        primaryCtaLabel: "",
+        primaryCtaHref: "",
+        secondaryCtaLabel: "",
+        secondaryCtaHref: "",
         imageSrc: "/images/covers/2026/ShotForCrewWithoutWord.0004.webp",
         imageAlt: "Hero Background",
         imagePreset: "ratio-21-9",
         imageFitMode: "x",
       },
-      render: ({ eyebrow, title, subtitle, description, scrollHint, primaryCtaLabel, primaryCtaHref, secondaryCtaLabel, secondaryCtaHref, imageSrc, imageAlt, imagePreset, imageFitMode, editMode }) => (
+      render: ({ eyebrow, title, subtitle, description, primaryCtaLabel, primaryCtaHref, secondaryCtaLabel, secondaryCtaHref, imageSrc, imageAlt, imagePreset, imageFitMode, editMode }) => (
         <HeroSection
           eyebrow={eyebrow}
           title={title}
           subtitle={subtitle}
           description={description}
-          scrollHint={scrollHint}
           primaryCtaLabel={primaryCtaLabel}
           primaryCtaHref={toEditorAwareHref(primaryCtaHref, editMode)}
           secondaryCtaLabel={secondaryCtaLabel}

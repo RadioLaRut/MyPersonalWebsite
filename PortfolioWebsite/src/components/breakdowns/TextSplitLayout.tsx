@@ -51,6 +51,7 @@ export default function TextSplitLayout({
           size={design.bodySize}
           weight="semantic"
           wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"}
+          align={layoutVariant === "stack" ? "center" : "left"}
           className="text-textMuted"
         >
           {p}

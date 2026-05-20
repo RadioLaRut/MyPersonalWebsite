@@ -1,7 +1,7 @@
 "use client";
-/* eslint-disable @next/next/no-img-element */
 
 import clsx from "clsx";
+import Image from "next/image";
 
 import {
   type ImageFitMode,
@@ -29,6 +29,14 @@ type PresetImageProps = {
   imageClassName?: string;
 };
 
+function getPresetDimensions(preset: ImagePreset) {
+  if (preset === "ratio-21-9") {
+    return { width: 2100, height: 900 };
+  }
+
+  return { width: 1600, height: 900 };
+}
+
 export function PresetImage({
   src,
   alt,
@@ -46,9 +54,19 @@ export function PresetImage({
   const resolvedPreset = normalizeImagePreset(preset);
   const resolvedFitMode = normalizeImageFitMode(fitMode);
   const normalizedSrc = normalizeImageSrc(src);
+  const isRemoteSrc = /^https?:\/\//i.test(normalizedSrc);
+  const isSvg = normalizedSrc.toLowerCase().endsWith(".svg");
+  const imageProps = getPresetDimensions(resolvedPreset);
   const frameClasses = lockFrame
     ? getImagePresetFrameClassName(resolvedPreset)
     : "relative h-full w-full overflow-hidden bg-black";
+  const resolvedLoading = priority ? undefined : loading;
+  const resolvedSizes = sizes ?? "100vw";
+  const imageClasses = clsx(
+    getImageElementClassName(resolvedPreset, resolvedFitMode),
+    imageClassName,
+  );
+  const shouldUseImgFallback = resolvedPreset === "native" || isRemoteSrc;
 
   return (
     <div className={clsx(frameClasses, frameClassName)}>
@@ -58,19 +76,35 @@ export function PresetImage({
           canvasClassName,
         )}
       >
-        <img
-          src={normalizedSrc}
-          alt={alt}
-          loading={loading ?? (priority ? "eager" : "lazy")}
-          fetchPriority={priority ? "high" : "auto"}
-          decoding="async"
-          sizes={sizes}
-          draggable={draggable}
-          className={clsx(
-            getImageElementClassName(resolvedPreset, resolvedFitMode),
-            imageClassName,
-          )}
-        />
+        {shouldUseImgFallback ? (
+          <>
+            {/* native 预设与远程 URL 仍走 img 兜底，避免原始比例失真和 next/image 外链白名单报错 */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={normalizedSrc}
+              alt={alt}
+              loading={loading ?? (priority ? "eager" : "lazy")}
+              fetchPriority={priority ? "high" : "auto"}
+              decoding="async"
+              sizes={sizes}
+              draggable={draggable}
+              className={imageClasses}
+            />
+          </>
+        ) : (
+          <Image
+            src={normalizedSrc}
+            alt={alt}
+            width={imageProps.width}
+            height={imageProps.height}
+            priority={priority}
+            loading={resolvedLoading}
+            sizes={resolvedSizes}
+            unoptimized={isSvg}
+            draggable={draggable}
+            className={imageClasses}
+          />
+        )}
       </div>
     </div>
   );

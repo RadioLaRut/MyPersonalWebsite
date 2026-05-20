@@ -78,9 +78,9 @@
           "cjkLetterSpacing": 0.02,
           "cjkVerticalOffset": 0,
           "fontSize": "2.06rem",
-          "latinEdgeOffset": 0,
+          "latinEdgeOffset": -0.05,
           "latinLetterSpacing": 0.02,
-          "latinRelativeOffset": -0.045,
+          "latinRelativeOffset": 0.07,
           "lineHeight": 1.55,
           "semanticWeight": "medium"
         },
@@ -155,7 +155,7 @@
           "latinLetterSpacing": 0.005,
           "latinRelativeOffset": 0.05,
           "lineHeight": 1.5,
-          "semanticWeight": "display"
+          "semanticWeight": "strong"
         }
       }
     },

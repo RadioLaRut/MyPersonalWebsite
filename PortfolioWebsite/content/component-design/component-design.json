@@ -77,26 +77,17 @@
     },
     "HeroSection": {
       "ctaTopSpacing": "48",
-      "descriptionBounds": {
+      "contentBounds": {
         "base": {
           "leftCol": 1,
           "rightCol": 12
         },
         "lg": {
-          "leftCol": 10,
+          "leftCol": 8,
           "rightCol": 12
         }
       },
-      "titleBounds": {
-        "base": {
-          "leftCol": 1,
-          "rightCol": 12
-        },
-        "lg": {
-          "leftCol": 2,
-          "rightCol": 8
-        }
-      }
+      "eyebrowTopSpacing": "12"
     },
     "HighDensityInfoBlock": {
       "bodyAutoWrap": true,
@@ -244,6 +235,8 @@
       }
     },
     "ProjectSection": {
+      "lockupGap": "12",
+      "titleUnderlineOpticalPull": "56",
       "textLeftBounds": {
         "base": {
           "leftCol": 1,

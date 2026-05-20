@@ -1,7 +1,7 @@
 {
   "root": {
     "props": {
-"title": "普罗米修斯计划 - The Prometheus"
+      "title": "PROMETHEUS"
     }
   },
   "content": [
@@ -9,8 +9,8 @@
       "type": "HeroHeadline",
       "props": {
         "id": "prometheus-hero-1",
-        "eyebrow": "Project / 主策划 / 灯光",
-        "title": "普罗米修斯计划 - The Prometheus",
+        "eyebrow": "PROJECT 05",
+        "title": "PROMETHEUS",
         "subtitle": "潜行拍摄游戏",
         "heroImage": "/images/prometheus/PrometheusTitle.webp",
         "navLink": "https://www.bilibili.com/video/BV1GSGmzBEx8",
@@ -22,7 +22,7 @@
       "type": "RichParagraph",
       "props": {
         "id": "prometheus-desc-1",
-        "content": "《普罗米修斯计划》是一款潜行拍摄游戏，灵感来自《万神殿》的科幻设定：各国政府秘密研发 Upload Intelligence 技术，玩家扮演记者潜入政府大楼试图曝光真相。核心机制围绕有限胶卷、目标权重和场景机关展开——携带的胶卷越少，每一次快门的决策压力越大。\n\n这是虚幻引擎动画创作课程的结课作业，1–2 周内由 2–3 人完成。我同时负责主策划、世界观设计和全部灯光。时间极紧，流程被迫线性化：先跑通白盒验证巡逻路径和拍摄点位的可达性，再交给同学做关卡美术，最后我自己进场调灯光。灯光参考了《人生切割术》的冷感美学：整体冷色基调营造科幻疏离感，只在关键目标和安全通道处打暖光，让玩家在紧张潜行中能通过光影直觉判断优先级。"
+        "content": "PROMETHEUS 是一款潜行拍摄游戏。在类似《万神殿》的科幻世界观中，各国政府秘密研发 Upload Intelligence 技术。玩家扮演一位记者，潜入政府大楼试图曝光这一惊人秘密。游戏的核心机制是资源管理与策略规划：玩家携带有限数量的胶卷，需要在躲避巡逻的同时，拍摄尽可能多的目标人物以获取更高分数。不同目标具有不同的优先级权重，玩家还可以操纵场景中的机关来创造拍摄机会或规避风险。"
       }
     },
     {
@@ -33,13 +33,13 @@
         "id": "prometheus-info-1",
         "phase1Title": "项目背景",
         "phase1Subtitle": "Context",
-        "phase1Content": "虚幻引擎动画创作课程的结课作业，2–3 人团队，1–2 周完成。世界观灵感来自《万神殿》的 Upload Intelligence 设定，探索技术伦理困境。",
+        "phase1Content": "作为虚幻引擎动画创作课程的结课作业，我与 2-3 人小团队在 1-2 周内完成了这个潜行拍摄游戏 Demo。项目灵感来自《万神殿》的科幻世界观，探索 Upload Intelligence 技术带来的伦理困境。",
         "phase2Title": "核心机制",
         "phase2Subtitle": "Core Mechanics",
-        "phase2Content": "有限胶卷驱动资源管理，玩家必须在拍摄目标与保留胶卷之间做策略选择；场景机关可创造拍摄机会或规避巡逻；目标优先级系统鼓励玩家识别高价值目标并规划最优路线。",
+        "phase2Content": "游戏结合了资源管理、潜行和策略规划三大核心机制。玩家需要在有限的胶卷约束下，规划最优的拍摄路线，同时利用场景机关创造机会或规避风险。目标优先级系统鼓励玩家做出策略性选择。",
         "phase3Title": "我的贡献",
         "phase3Subtitle": "My Role",
-        "phase3Content": "负责关卡白盒、全部灯光和项目管理。白盒阶段优先验证巡逻路径和拍摄点位的可达性；灯光参考《人生切割术》，以冷色基调营造科幻疏离感，暖光只用于关键目标和安全通道，引导玩家直觉判断优先级。关卡美术由其他同学完成，我在最终阶段对灯光与氛围做统一收敛。",
+        "phase3Content": "我主要负责关卡设计和项目管理。设计了巡逻路径、拍摄点位布局和机关交互逻辑，确保玩家在紧张的潜行过程中有多种策略选择。同时协调团队分工，在短时间内完成了可玩的 Demo。",
         "phase3ImageSrc": "/images/prometheus/Shot01.webp",
         "phase2Label": "",
         "phase3ImagePreset": "ratio-21-9"

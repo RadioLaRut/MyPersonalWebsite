@@ -70,15 +70,15 @@ export default function WorksListEntry({
   useEffect(() => {
     if (!isMobile || editMode) return;
 
-    const handlePointerMove = (e: PointerEvent | TouchEvent) => {
+    let frameId = 0;
+    let frameQueued = false;
+
+    const updateExpandedState = () => {
+      frameQueued = false;
+
       if (!entryRef.current) return;
 
       const rect = entryRef.current.getBoundingClientRect();
-      const clientY = "touches" in e ? e.touches[0]?.clientY : e.clientY;
-
-      if (clientY === undefined) return;
-
-      // 计算元素在视口中的位置
       const elementCenterY = rect.top + rect.height / 2;
       const viewportCenterY = window.innerHeight / 2;
 
@@ -92,22 +92,26 @@ export default function WorksListEntry({
       setIsExpanded(inZone);
     };
 
-    window.addEventListener("scroll", handlePointerMove as EventListener, { passive: true });
-    window.addEventListener("touchmove", handlePointerMove as EventListener, { passive: true });
+    const queueExpandedStateUpdate = () => {
+      if (frameQueued) {
+        return;
+      }
 
-    // 初始检测
-    handlePointerMove(new TouchEvent("touchmove", {
-      touches: [new Touch({
-        identifier: 0,
-        target: document.body,
-        clientX: window.innerWidth / 2,
-        clientY: window.innerHeight / 2,
-      })]
-    }) as unknown as TouchEvent);
+      frameQueued = true;
+      frameId = window.requestAnimationFrame(updateExpandedState);
+    };
+
+    window.addEventListener("scroll", queueExpandedStateUpdate, { passive: true });
+    window.addEventListener("resize", queueExpandedStateUpdate);
+
+    updateExpandedState();
 
     return () => {
-      window.removeEventListener("scroll", handlePointerMove as EventListener);
-      window.removeEventListener("touchmove", handlePointerMove as EventListener);
+      window.removeEventListener("scroll", queueExpandedStateUpdate);
+      window.removeEventListener("resize", queueExpandedStateUpdate);
+      if (frameId) {
+        window.cancelAnimationFrame(frameId);
+      }
     };
   }, [isMobile, editMode]);
 
@@ -198,14 +202,14 @@ export default function WorksListEntry({
           className={`${sidebarBoundsClassName} mt-6 grid content-center lg:mt-0 lg:pl-8`}
         >
           <div className="grid gap-1">
-              <Typography
-                as="p"
-                preset="gothic-editorial"
-                size="label"
-                weight="semantic"
-                wrapPolicy="label"
-                className="text-textPrimary"
-              >
+            <Typography
+              as="p"
+              preset="gothic-editorial"
+              size="label"
+              weight="semantic"
+              wrapPolicy="label"
+              className="text-textPrimary"
+            >
               {category}
             </Typography>
             <Typography

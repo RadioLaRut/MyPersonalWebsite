@@ -141,25 +141,17 @@ export const COMPONENT_LAB_REGISTRY: Record<
   HeroSection: {
     key: "HeroSection",
     label: "HeroSection",
-    description: "首页首屏模块，重点看标题区与说明区在移动端和桌面端的相对落点。",
+    description: "首页首屏模块，重点看海报式单栏文字锁定与图像之间的关系。",
     sections: [
       {
         title: "布局",
         fields: [
           {
             type: "responsive-bounds",
-            label: "主标题区边界",
-            getValue: (document) => document.components.HeroSection.titleBounds,
+            label: "内容区边界",
+            getValue: (document) => document.components.HeroSection.contentBounds,
             setValue: (document, value) => {
-              document.components.HeroSection.titleBounds = value;
-            },
-          },
-          {
-            type: "responsive-bounds",
-            label: "右侧说明区边界",
-            getValue: (document) => document.components.HeroSection.descriptionBounds,
-            setValue: (document, value) => {
-              document.components.HeroSection.descriptionBounds = value;
+              document.components.HeroSection.contentBounds = value;
             },
           },
         ],
@@ -167,6 +159,16 @@ export const COMPONENT_LAB_REGISTRY: Record<
       {
         title: "节奏",
         fields: [
+          {
+            type: "select",
+            label: "身份行上间距",
+            options: SPACING_OPTIONS,
+            getValue: (document) => document.components.HeroSection.eyebrowTopSpacing,
+            setValue: (document, value) => {
+              document.components.HeroSection.eyebrowTopSpacing =
+                value as ComponentDesignDocument["components"]["HeroSection"]["eyebrowTopSpacing"];
+            },
+          },
           {
             type: "select",
             label: "CTA 上间距",
@@ -179,6 +181,46 @@ export const COMPONENT_LAB_REGISTRY: Record<
           },
         ],
       },
+      {
+        title: "节奏",
+        fields: [
+          {
+            type: "select",
+            label: "锁组间距",
+            options: SPACING_OPTIONS,
+            getValue: (document) => document.components.ProjectSection.lockupGap,
+            setValue: (document, value) => {
+              document.components.ProjectSection.lockupGap =
+                value as ComponentDesignDocument["components"]["ProjectSection"]["lockupGap"];
+            },
+          },
+        ],
+      },
+      {
+        title: "节奏",
+        fields: [
+          {
+            type: "select",
+            label: "锁组间距",
+            options: SPACING_OPTIONS,
+            getValue: (document) => document.components.ProjectSection.lockupGap,
+            setValue: (document, value) => {
+              document.components.ProjectSection.lockupGap =
+                value as ComponentDesignDocument["components"]["ProjectSection"]["lockupGap"];
+            },
+          },
+          {
+            type: "select",
+            label: "底线光学上提",
+            options: SPACING_OPTIONS,
+            getValue: (document) => document.components.ProjectSection.titleUnderlineOpticalPull,
+            setValue: (document, value) => {
+              document.components.ProjectSection.titleUnderlineOpticalPull =
+                value as ComponentDesignDocument["components"]["ProjectSection"]["titleUnderlineOpticalPull"];
+            },
+          },
+        ],
+      },
     ],
     renderPreview: (variant) => (
       <HeroSection
@@ -187,17 +229,15 @@ export const COMPONENT_LAB_REGISTRY: Record<
             ? "LIGHTING / TECH ART / SYSTEM DESIGN / INTERACTIVE NARRATIVE"
             : "LIGHTING / TECH ART / GAME DESIGN"
         }
-        title={variant === "stress" ? "JIANG CHENGYAN / PORTFOLIO SYSTEM" : "JIANG CHENGYAN"}
-        subtitle={variant === "stress" ? "SELECTED WORKS 2026" : "MY 2026 PORTFOLIO"}
+        title={"JIANG\nCHENGYAN"}
+        subtitle=""
         description={
-          variant === "stress"
-            ? "以灯光建立氛围，再把技术美术、叙事系统和交互结构组织成完整体验。这个极端样本会故意拉长说明文字，帮助观察右栏是否开始拥挤或漂移。"
-            : "以灯光建立氛围与引导，再把技术美术、游戏设计和叙事系统组织成完整体验。"
+          ""
         }
-        primaryCtaLabel="ENTER LIGHTING"
-        primaryCtaHref="/works/lighting-portfolio"
-        secondaryCtaLabel="ABOUT"
-        secondaryCtaHref="/about"
+        primaryCtaLabel=""
+        primaryCtaHref=""
+        secondaryCtaLabel=""
+        secondaryCtaHref=""
         imageSrc="/images/covers/2026/ShotForCrewWithoutWord.0004.webp"
         imageAlt="Hero Background"
         imagePreset="ratio-21-9"
@@ -1357,8 +1397,8 @@ export const COMPONENT_LAB_REGISTRY: Record<
     renderPreview: (variant) => (
       <ProjectSection
         title={variant === "stress" ? "PENGUIN TRADING CO. / LONG CASE TITLE" : "PENGUIN TRADING CO."}
-        subtitle={variant === "stress" ? "Lead Designer / PM / Tech Art / Systems" : "Lead Designer / PM / Tech Art"}
-        imageSrc={CANONICAL_PLACEHOLDER_PATH}
+        subtitle={variant === "stress" ? "黑色幽默经营 / 遗传繁育 / 资源压榨 / 系统推进" : "黑色幽默经营 / 遗传繁育 / 资源压榨"}
+        imageSrc="/images/penguin/CyberRestaurant.webp"
         imagePreset="ratio-16-9"
         imageFitMode="x"
         link="/works/penguin"
@@ -1409,7 +1449,7 @@ export const COMPONENT_LAB_REGISTRY: Record<
     ],
     renderPreview: (variant) => (
       <WorksList
-        heading={variant === "stress" ? "All Selected Works / Full Index" : "All Selected Works"}
+        heading={variant === "stress" ? "WORKS / CASES / EXPERIMENTS / FULL INDEX" : "WORKS / CASES / EXPERIMENTS"}
         works={[
           {
             id: "playground-work-1",
@@ -1421,8 +1461,8 @@ export const COMPONENT_LAB_REGISTRY: Record<
             imagePreset: "ratio-21-9",
             imageFitMode: "x",
             desc: variant === "stress"
-              ? "A curated collection of lighting studies with a slightly longer description for stress testing."
-              : "A curated collection of lighting and mood practices",
+              ? "从城市夜景到站台晨昏，用光线、天气与镜头节奏搭建情绪场。这条更长的文案用于测试侧栏在更高密度下是否仍稳定。"
+              : "从城市夜景到站台晨昏，用光线、天气与镜头节奏搭建情绪场。",
           },
           {
             id: "playground-work-2",
@@ -1433,7 +1473,7 @@ export const COMPONENT_LAB_REGISTRY: Record<
             imageSrc: CANONICAL_PLACEHOLDER_PATH,
             imagePreset: "ratio-21-9",
             imageFitMode: "x",
-            desc: "Simulation management game with asset lock systems",
+            desc: "在外星冰川经营一座企鹅血汗工厂，把繁育、压榨与消耗做成黑色幽默系统。",
           },
           ...(variant === "stress"
             ? [{
@@ -1445,7 +1485,7 @@ export const COMPONENT_LAB_REGISTRY: Record<
               imageSrc: "/images/city-2026/001.webp",
               imagePreset: "ratio-21-9" as const,
               imageFitMode: "x" as const,
-              desc: "Narrative systems case used to expose denser list rhythm.",
+              desc: "你要删掉谁的发言、相信谁的私语，并在舆情秩序与个人伦理之间做决定。",
             }]
             : []),
         ]}
@@ -1500,8 +1540,8 @@ export const COMPONENT_LAB_REGISTRY: Record<
         imageFitMode="x"
         desc={
           variant === "stress"
-            ? "This longer side description is used to expose whether the sidebar remains stable when copy density increases."
-            : "Simulation management game with asset lock systems"
+            ? "在外星冰川经营一座企鹅血汗工厂，把繁育、压榨与消耗做成黑色幽默系统。这条更长的文案用来检查侧栏在高密度文本下的稳定性。"
+            : "在外星冰川经营一座企鹅血汗工厂，把繁育、压榨与消耗做成黑色幽默系统。"
         }
         editMode
       />

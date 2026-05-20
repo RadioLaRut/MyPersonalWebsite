@@ -145,7 +145,7 @@ html[data-site-mode="testing"] ::selection {
   top: 0;
   bottom: 0;
   width: 1px;
-  background: rgba(255, 255, 255, 0.025);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* 每列单独绘制左右边界，让 gap 作为空白显式保留。 */

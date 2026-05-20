@@ -44,6 +44,7 @@ export default function WorksList({ heading = "All Selected Works", works = [], 
                     size="caption"
                     weight="semantic"
                     wrapPolicy="label"
+                    align="center"
                     className="text-textMuted"
                 >
                     No works available. Add some works to the list.
