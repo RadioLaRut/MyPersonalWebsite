@@ -16,9 +16,9 @@
               "number": "01",
               "href": "/works/lighting-portfolio",
               "title": "LIGHTING",
-              "category": "Lighting Art",
+              "category": "灯光艺术",
               "imageSrc": "/images/train-station/2Day.webp",
-              "desc": "灯光与氛围练习作品集"
+              "desc": "灯光氛围练习与技术探索，覆盖城市场景、车站、西部风格等多种主题。"
             }
           },
           {
@@ -27,10 +27,10 @@
               "id": "w2",
               "number": "02",
               "href": "/works/penguin",
-              "title": "PENGUIN TRADING CO.",
-              "category": "主策划 / TA / PM",
+              "title": "企鹅贸易公司",
+              "category": "主策划 / 技术美术 / PM",
               "imageSrc": "/assets/images/placeholder.svg",
-              "desc": "黑色幽默的贩卖企鹅的资本主义游戏\n"
+              "desc": "黑色幽默模拟经营，8人团队3D项目。我覆盖主策划、TA和PM，从零搭建管线并开发GitLock工具。"
             }
           },
           {
@@ -39,10 +39,10 @@
               "id": "w3",
               "number": "03",
               "href": "/works/insight",
-              "title": "INSIGHT",
-              "category": "主策划 / 程序",
+              "title": "暗喻之间 - Insight",
+              "category": "主策划 / 程序 / 编剧",
               "imageSrc": "/images/insight/InsightOnlyCover.webp",
-              "desc": "在信息洪流中操控真相，体验操纵舆论场的权力游戏"
+              "desc": "分支剧情叙事，一个月内独立完成剧本、蓝图和UI。Articy Draft中文字符崩溃让我记住先看报错再问人。"
             }
           },
           {
@@ -51,10 +51,10 @@
               "id": "w4",
               "number": "04",
               "href": "/works/slay-the-virus",
-              "title": "SLAY THE VIRUS",
-              "category": "策划 / UI设计 / 制作人",
+              "title": "杀毒奇兵 - Slay the Virus",
+              "category": "UI设计 / 海报设计 / 策划",
               "imageSrc": "/images/slay-the-virus/STVTitle.webp",
-              "desc": "卡牌构筑与背包管理融合的策略游戏\n"
+              "desc": "Roguelike卡牌+俄罗斯方块机制，4-6人团队2-3个月。我负责UI设计、海报精修和视觉统一。"
             }
           },
           {
@@ -63,10 +63,10 @@
               "id": "w5",
               "number": "05",
               "href": "/works/prometheus",
-              "title": "THE PROMETHEUS",
-              "category": "关卡策划 / 灯光",
+              "title": "普罗米修斯计划 - The Prometheus",
+              "category": "主策划 / 世界观设计 / 灯光",
               "imageSrc": "/images/prometheus/PrometheusTitle.webp",
-              "desc": "策略潜行拍摄游戏，有限胶卷×目标权重×机关互动的\n多重决策\n"
+              "desc": "潜行拍摄游戏，1-2周课程作业。我负责主策划、世界观和全部灯光，参考《人生切割术》的冷感美学。"
             }
           },
           {
@@ -75,10 +75,10 @@
               "id": "w6",
               "number": "06",
               "href": "/works/wow-otto",
-              "title": "WOW, OTTO!",
-              "category": "主策划 / 交互设计",
+              "title": "帅油桶 - WOW, Otto！",
+              "category": "主策划",
               "imageSrc": "/assets/images/placeholder.svg",
-              "desc": "非常规输入设备的叙事游戏探索"
+              "desc": "轨迹球叙事交互，探讨敌意建筑对残障群体的隐性排斥。极简交互，通感叙事。"
             }
           },
           {
@@ -87,10 +87,10 @@
               "id": "w7",
               "number": "07",
               "href": "/works/im-explode",
-              "title": "I'M EXPLODE WITH U",
+              "title": "我和你爆了 - I'm Explode with U",
               "category": "主策划",
               "imageSrc": "/assets/images/placeholder.svg",
-              "desc": "基于物理击退机制的多人平台游戏\n"
+              "desc": "物理驱动双人对战，Global Game Jam 2025站点第三名。48小时验证核心对抗体验。"
             }
           },
           {
@@ -102,7 +102,7 @@
               "title": "HOUDINI PCG",
               "category": "程序化生成",
               "imageSrc": "/images/penguin/PCG/PCG01.webp",
-              "desc": "HOUDINI和UE的全流程探索"
+              "desc": "Houdini驱动的程序化小镇生成工具，70余项参数可调。学习PCG思维的实践项目。"
             }
           },
           {
@@ -111,10 +111,10 @@
               "id": "w9",
               "number": "09",
               "href": "/works/epic-stage",
-              "title": "EPIC ",
+              "title": "EPIC",
               "category": "舞台灯光设计",
               "imageSrc": "/images/penguin/Epic.webp",
-              "desc": "音乐剧概念灯光编排，舞台光影的视觉节奏设计\n"
+              "desc": "音乐剧《Epic》概念舞台灯光设计，为希腊诸神建立性格化色彩语言，UE全流程即时演算。"
             }
           }
         ],

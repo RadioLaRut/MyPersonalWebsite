@@ -14,8 +14,8 @@
         "darkTextColor": "rgba(255,255,255,0.4)",
         "lightTextColor": "rgba(255,255,255,1)",
         "name": "JIANG CHENGYAN",
-        "taglineText": "艺术与科技 / 交互叙事设计 / 游戏设计",
-        "taglineSub": "CUC '2028",
+        "taglineText": "灯光 / 技术美术 / 游戏设计",
+        "taglineSub": "中国传媒大学 CUC '2028",
         "email": "3115437519@qq.com",
         "wechat": "radiowithouthead",
         "experienceHistory": [
@@ -23,32 +23,32 @@
             "type": "MetadataListItem",
             "props": {
               "id": "exp-1",
-              "label": "腾讯光子工作室",
-              "value": "Lighting Technical Art Intern"
+              "label": "腾讯 - 光子艺术部",
+              "value": "灯光技术美术"
             }
           },
           {
             "type": "MetadataListItem",
             "props": {
               "id": "exp-2",
-              "label": "企鹅贸易公司 (Penguin Trading)",
-              "value": "Lead Designer & PM"
+              "label": "企鹅贸易公司",
+              "value": "主策划 / 技术美术 / PM"
             }
           },
           {
             "type": "MetadataListItem",
             "props": {
               "id": "exp-3",
-              "label": "暗喻之间 (Insight)",
-              "value": "Lead Narrative System & Engineering"
+              "label": "暗喻之间 - Insight",
+              "value": "主策划 / 程序 / 编剧"
             }
           },
           {
             "type": "MetadataListItem",
             "props": {
               "id": "exp-4",
-              "label": "杀毒奇兵 (Slay the Virus)",
-              "value": "Core UI & UX Direction"
+              "label": "杀毒奇兵 - Slay the Virus",
+              "value": "UI设计 / 海报设计 / 策划"
             }
           }
         ],

@@ -11,7 +11,8 @@
         "id": "hero-section-1",
         "title": "JIANG CHENGYAN",
         "subtitle": "MY 2026 PORTFOLIO",
-        "description": "策划/技术美术",
+        "description": "主策划 / 技术美术",
+        "scrollHint": "SCROLL / SELECTED WORKS",
         "imageSrc": "/images/covers/2026/ShotForCrewWithoutWord.0004.webp",
         "imageAlt": "Hero Background"
       }
@@ -32,7 +33,7 @@
       "props": {
         "id": "proj-2",
         "title": "企鹅贸易公司",
-        "subtitle": "Lead Designer / Tech Art / Project Manager",
+        "subtitle": "主策划 / 技术美术 / PM",
         "imageSrc": "/images/penguin/CyberRestaurant.webp",
         "link": "/works/penguin",
         "index": 1,
@@ -43,8 +44,8 @@
       "type": "ProjectSection",
       "props": {
         "id": "proj-3",
-        "title": "INSIGHT",
-        "subtitle": "Lead Designer / Programmer / Writer",
+        "title": "暗喻之间",
+        "subtitle": "主策划 / 程序 / 编剧",
         "imageSrc": "/images/insight/InsightOnlyCover.webp",
         "link": "/works/insight",
         "index": 2
@@ -56,7 +57,7 @@
         "id": "home-endcap-1",
         "eyebrow": "更多作品",
         "title": "WATCH MORE",
-        "description": "包括策划、技术美术、灯光研究在内的所有项目\n",
+        "description": "包括策划、技术美术、灯光研究在内的所有项目",
         "buttonLabel": "了解更多",
         "buttonHref": "/works"
       }

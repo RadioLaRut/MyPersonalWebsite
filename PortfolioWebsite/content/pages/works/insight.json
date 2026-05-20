@@ -1,7 +1,7 @@
 {
   "root": {
     "props": {
-      "title": "INSIGHT"
+"title": "暗喻之间 - Insight"
     }
   },
   "content": [
@@ -9,8 +9,8 @@
       "type": "HeroHeadline",
       "props": {
         "id": "insight-hero-1",
-        "eyebrow": "Project 02",
-        "title": "INSIGHT",
+        "eyebrow": "Project / 主策划 / 程序 / 编剧",
+        "title": "暗喻之间 - Insight",
         "subtitle": "互动叙事游戏",
         "heroImage": "/images/insight/InsightOnlyCover.webp",
         "navLink": "https://www.bilibili.com/video/BV1gQbDzQEUL",
@@ -22,7 +22,7 @@
       "type": "RichParagraph",
       "props": {
         "id": "insight-desc-1",
-        "content": "INSIGHT 是一款轻交互的互动叙事游戏。玩家扮演一位网络舆情监管员，通过审查社交媒体内容、与用户对话，在维护网络秩序与尊重个人隐私之间做出选择。游戏通过对话选择驱动 2-3 条主要剧情分支，探讨网络监管的伦理困境。这是我第一个从概念到完成全流程独立开发的游戏项目，在一个月内完成了剧本写作、系统搭建、UI 设计与技术实现。"
+        "content": "《暗喻之间》是一款分支剧情叙事游戏。玩家扮演一名网络舆论监察员，每天查阅上百条评论和帖子，判断哪些应该被推流、哪些应该被限流——在维护秩序与尊重隐私之间做出选择，并在无声中改变世界走向。\n\n这是我第一次从剧本到可玩版本全流程独立开发。一个月内同时写剧本、搭系统、做 UI，最大的技术坑出在 Articy Draft 和 UE 蓝图的集成上：插件导入固定崩溃，问 AI 也没解决，最后从报错日志里读到中文字符冲突，才发现必须把 Articy Draft 的导出语言切成英文才能正常导入。这个低级却隐蔽的问题卡了我半天，也让我记住了'报错信息比教程更可靠'。"
       }
     },
     {
@@ -45,13 +45,13 @@
         "id": "insight-info-1",
         "phase1Title": "项目背景",
         "phase1Subtitle": "Context",
-        "phase1Content": "作为游戏叙事课程的结课作业，我独立完成了这款互动叙事游戏的全部设计与开发工作。项目周期约一个月，使用 Unreal Engine 5 和 Articy Draft 构建。这是我第一次完整实现从剧本到可玩版本的全流程开发。",
+        "phase1Content": "游戏叙事课程的结课作业，一个月周期，独立完成剧本、系统、UI 和技术实现。使用 UE5 和 Articy Draft 构建，这是我第一次完整跑通从剧本到可玩版本的全流程。",
         "phase2Title": "系统架构",
         "phase2Subtitle": "Architecture",
-        "phase2Content": "游戏采用对话选择驱动的叙事机制，使用 Articy Draft 管理多分支剧情树，通过自定义蓝图系统将对话数据导入 Unreal Engine。拟真的桌面操作系统 UI 设计增强了沉浸感，玩家在审查内容与对话选择中推进剧情。",
+        "phase2Content": "对话选择驱动叙事，Articy Draft 管理多分支剧情树，自定义蓝图负责数据导入。UI 采用拟真桌面操作系统风格，增强审查员的代入感。Articy Draft 中文字符导致导入崩溃的问题，通过切换导出语言为英文解决。",
         "phase3Title": "项目成果",
         "phase3Subtitle": "Execution",
-        "phase3Content": "项目最终完成了完整可玩版本，包含 2-3 条主要剧情分支和多个结局。游戏在课程中获得高分，并在 B 站发布了演示视频。开发过程中克服了蓝图基础不牢固、Articy Draft 集成、以及题材表现难度等挑战。",
+        "phase3Content": "完成了包含 2–3 条主要分支和多个结局的可玩版本，在课程中获得高分并在 B 站发布演示视频。除了技术集成，最大的挑战是题材表现：如何让'审查帖子'这个日常动作产生足够的叙事张力，而不是变成枯燥的点击劳动。",
         "phase3ImageSrc": ""
       }
     },
@@ -67,7 +67,7 @@
       "props": {
         "id": "insight-card-1",
         "title": "多分支叙事与题材表现",
-        "description": "设计多分支剧情时面临两个核心挑战：如何保持不同分支的叙事连贯性，以及如何表现网络舆情监管员这一特殊角色的内心活动。由于一般人不会在互联网上表露真实想法，设计真实可信的私密对话和心理活动成为难点。最终通过 Articy Draft 的节点系统实现了清晰的剧情流程管理。",
+        "description": "题材灵感是偶然想到的，但执行中最大的难题是'审查帖子'这个核心动作容易变得重复枯燥。我通过设计私密对话和心理活动段落来打破单调感——监管员在公屏上的操作和私下的思考形成对照，让玩家感受到角色在系统规则和个人判断之间的拉扯。多分支的连贯性则靠 Articy Draft 的节点系统严格管理，避免逻辑漏洞。",
         "imageSrc": "",
         "tags": [
           {
@@ -90,7 +90,7 @@
       "props": {
         "id": "insight-card-2",
         "title": "技术集成与边学边做",
-        "description": "这是我第一次使用 Articy Draft 和深度使用 UE 蓝图系统。在蓝图基础不牢固的情况下，边学习边开发，最终实现了 Articy Draft 对话树与 Unreal Engine 的完整集成，搭建了可扩展的对话系统框架。",
+        "description": "第一次深度使用 Articy Draft 和 UE 蓝图。集成过程中最隐蔽的坑是 Articy Draft 默认导出携带中文字符，导致 UE 插件固定崩溃。问 AI 没得到正确答案，最后从报错日志里自己定位到语言编码问题，把导出语言切成英文后才跑通。这个经历让我养成了先看原始报错、再问人的习惯。",
         "imageSrc": "",
         "tags": [
           {
@@ -113,13 +113,13 @@
       "props": {
         "id": "insight-triptych-1",
         "col1Title": "剧情树管理",
-        "col1Text": "剧本写作使用了 Articy Draft，通过节点极为方便地实现多分支剧情流程树的管理。",
+        "col1Text": "Articy Draft 节点化管理多分支剧情，控制叙事逻辑与条件跳转。",
         "col1Img": "/images/insight/Code01.webp",
         "col2Title": "蓝图系统",
-        "col2Text": "Unreal Engine 蓝图深度结合对话树系统，实现对话数据的导入与运行时逻辑。",
+        "col2Text": "自定义蓝图实现对话数据导入与运行时逻辑，处理中文字符导出崩溃等兼容问题。",
         "col2Img": "/images/insight/Code02.webp",
         "col3Title": "UI 设计",
-        "col3Text": "拟真桌面操作系统 UI 设计，增强玩家的沉浸感与代入感。",
+        "col3Text": "拟真桌面操作系统 UI，通过窗口层级和屏幕细节强化审查员代入感。",
         "col3Img": "/images/insight/Shot04.webp"
       }
     },

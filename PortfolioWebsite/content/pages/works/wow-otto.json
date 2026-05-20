@@ -1,7 +1,7 @@
 {
   "root": {
     "props": {
-      "title": "WOW, OTTO!"
+"title": "帅油桶 - WOW, Otto！"
     }
   },
   "content": [
@@ -10,7 +10,7 @@
       "props": {
         "id": "hero-1",
         "eyebrow": "Project / 主策划",
-        "title": "WOW, OTTO!",
+        "title": "帅油桶 - WOW, Otto！",
         "subtitle": "帅油桶 — Trackball Narrative Experience",
         "heroImage": "/images/holy-tank/HostileArchitecture.webp",
         "navLink": ""
@@ -20,7 +20,7 @@
       "type": "RichParagraph",
       "props": {
         "id": "desc-1",
-        "content": "使用轨迹球进行叙事交互的互动叙事游戏。玩家扮演行动不便者，在充满敌意的城市空间中生存与前进。游戏抛弃传统键鼠，完全绑定实体「轨迹球」模拟轮椅推移操作，将玩家的操作难度与角色身体残障体验深度绑定，在无声处实现通感共鸣。灵感源自《Florence》，以极简而精准的交互语言，探讨城市建筑「无障碍」命题背后的隐性敌意。"
+        "content": "《帅油桶》是一款使用轨迹球进行叙事交互的游戏。玩家扮演行动不便者，在充满敌意建筑的城市空间中前进。游戏抛弃键鼠，完全绑定实体轨迹球——轨迹球本身就是鼠标，可以直接控制，但手握轨迹球原地旋转的操作方式，天然带有轮椅遥杆的体感。这种映射不需要额外的物理参数调整，轨迹球本身的阻力就是叙事的一部分。\n\n灵感来自《Florence》的极简交互语言：用最少的操作传递最明确的情绪。在帅油桶里，轨迹球的每一次推动都是角色轮椅的前进，而城市中那些'反游民尖刺'和刻意设计的路障，会让玩家切身体会到公共空间对弱势群体的隐性敌意。"
       }
     },
     {
@@ -28,13 +28,13 @@
       "props": {
         "id": "triptych-1",
         "col1Title": "交互方案设计",
-        "col1Text": "对比键鼠与轨迹球输入差异，提出并落地轨迹球交互方案，将「轮椅操控感」精准映射为游戏的核心操作体验。",
+        "col1Text": "轨迹球原生映射鼠标输入，手握原地旋转的操作方式天然对应轮椅遥杆体感。",
         "col1Img": "/images/holy-tank/GameScreenshot.webp",
         "col2Title": "机制服务叙事",
-        "col2Text": "围绕轨迹球的物理阻力操控体验设计交互逻辑，使玩法机制直接服务于情绪表达与叙事目标。",
+        "col2Text": "受《Florence》启发，用最少的操作传递最明确的情绪，让机制本身成为叙事载体。",
         "col2Img": "/images/holy-tank/HostileArchitecture.webp",
         "col3Title": "通感与批判",
-        "col3Text": "针对带有显性恶意的公共城市建筑体系，通过游戏语言发起系统性探究与社会批判。",
+        "col3Text": "通过敌意建筑（反游民尖刺、限制座椅等）让玩家切身体会公共空间对弱势群体的隐性排斥。",
         "col3Img": "/images/holy-tank/GameScreenshot.webp"
       }
     },

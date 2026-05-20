@@ -9,7 +9,7 @@
       "type": "HeroHeadline",
       "props": {
         "id": "hero-1",
-        "eyebrow": "Project 06",
+        "eyebrow": "Project / 程序化生成",
         "title": "PCG生成",
         "subtitle": "",
         "heroImage": "/images/penguin/PCG/PCG01.webp",
@@ -22,7 +22,7 @@
       "type": "ContentCard",
       "props": {
         "title": "",
-        "description": "这是一个基于 Houdini 的程序化小镇生成工具，通过节点化开发实现了与 Unreal Engine 的深度集成。设计师只需框定场景边界、绘制道路和水域样条线，即可一键生成完整的小镇场景。工具封装了 70 余项可调参数，支持房屋密度控制、建筑朝向、墙体风化效果以及植被撒布系统。这是我学习 Houdini 和探索程序化生成技术的实践项目。",
+        "description": "学习 Houdini 期间做的程序化生成实践项目。工具通过节点化开发实现了与 UE 的深度集成：设计师只需框定场景边界、绘制道路和水域样条线，即可一键生成完整小镇。封装了 70 余项可调参数，覆盖房屋密度、建筑朝向、墙体风化到植被撒布。\n\n做这个项目的动机是理解'程序化'真正的价值——不是生成无限内容，而是把重复劳动交给机器，让人专注在审美决策上。比如房屋密度和朝向可以一键调整，但风化程度和植被疏密仍然需要设计师反复试错，这些才是值得人花时间的部分。",
         "imageSrc": "/images/penguin/PCG/PCG02.webp",
         "imagePreset": "ratio-16-9",
         "imageFitMode": "x",

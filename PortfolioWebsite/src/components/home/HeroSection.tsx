@@ -36,6 +36,7 @@ export interface HeroSectionProps {
   title: ReactNode;
   subtitle: ReactNode;
   description: ReactNode;
+  scrollHint?: ReactNode;
   primaryCtaLabel?: ReactNode;
   primaryCtaHref?: string;
   secondaryCtaLabel?: ReactNode;
@@ -52,6 +53,7 @@ export default function HeroSection({
   title,
   subtitle,
   description,
+  scrollHint,
   primaryCtaLabel,
   primaryCtaHref,
   secondaryCtaLabel,
@@ -174,6 +176,24 @@ export default function HeroSection({
                     >
                       {description}
                     </Typography>
+                    {scrollHint ? (
+                      <div
+                        className="grid grid-flow-col auto-cols-max items-center gap-4 text-textMuted"
+                        style={{ marginTop: getSpacingRem(design.ctaTopSpacing) }}
+                      >
+                        <span className="h-px w-8 bg-white/26" />
+                        <Typography
+                          as="p"
+                          preset="sans-body"
+                          size="caption"
+                          weight="semantic"
+                          wrapPolicy="label"
+                          className="text-inherit"
+                        >
+                          {scrollHint}
+                        </Typography>
+                      </div>
+                    ) : null}
                     {(primaryCtaLabel || secondaryCtaLabel) ? (
                       <div
                         className="grid gap-6 pointer-events-auto sm:grid-cols-2"
