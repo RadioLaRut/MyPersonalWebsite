@@ -136,7 +136,7 @@ export default function ProjectSection({
                   as="p"
                   preset="sans-body"
                   size="label"
-                  weight="medium"
+                  weight="semantic"
                   wrapPolicy="label"
                   align={shouldAlignRight ? "right" : "left"}
                   className="text-textPrimary"

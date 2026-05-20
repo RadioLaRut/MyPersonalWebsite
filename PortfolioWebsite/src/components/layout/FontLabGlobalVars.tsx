@@ -2,28 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
-import type { FontLabCssVars } from "@/lib/font-lab-css-vars";
-
-const FONT_LAB_UPDATED_EVENT = "font-lab-config-updated";
-
-function applyVars(
-  target: HTMLElement,
-  nextVars: FontLabCssVars,
-  previousKeys: Set<string>,
-) {
-  previousKeys.forEach((key) => {
-    if (!(key in nextVars)) {
-      target.style.removeProperty(key);
-    }
-  });
-
-  Object.entries(nextVars).forEach(([key, value]) => {
-    target.style.setProperty(key, value);
-  });
-
-  previousKeys.clear();
-  Object.keys(nextVars).forEach((key) => previousKeys.add(key));
-}
+import { FONT_LAB_UPDATED_EVENT } from "@/lib/font-lab-events";
+import { applyFontLabCssVars, type FontLabCssVars } from "@/lib/font-lab-css-vars";
 
 export default function FontLabGlobalVars({
   initialVars,
@@ -33,7 +13,7 @@ export default function FontLabGlobalVars({
   const appliedKeysRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    applyVars(document.documentElement, initialVars, appliedKeysRef.current);
+    applyFontLabCssVars(document.documentElement, initialVars, appliedKeysRef.current);
   }, [initialVars]);
 
   useEffect(() => {
@@ -44,7 +24,7 @@ export default function FontLabGlobalVars({
         return;
       }
 
-      applyVars(document.documentElement, nextVars, appliedKeysRef.current);
+      applyFontLabCssVars(document.documentElement, nextVars, appliedKeysRef.current);
     };
 
     window.addEventListener(FONT_LAB_UPDATED_EVENT, handleUpdate as EventListener);

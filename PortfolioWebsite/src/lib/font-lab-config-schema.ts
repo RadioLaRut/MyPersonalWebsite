@@ -17,8 +17,19 @@ import {
   isTypographyWeight,
 } from "./typography.ts";
 import { PREVIEW_REFERENCE_VIEWPORT_PX } from "./preview-viewports.ts";
+import { isPlainRecord } from "./json-utils.ts";
 
 export const FONT_LAB_SCHEMA_VERSION = 6 as const;
+
+export type FontLabApiPayload = {
+  config?: unknown;
+  error?: {
+    code?: string;
+    message?: string;
+  };
+  hasSaved?: boolean;
+  path?: string;
+};
 
 type FontLabFontSizeMode = "reference" | "legacy-max";
 
@@ -68,10 +79,6 @@ type LegacyFontLabConfig = {
   size: TypographySize;
   tracking: number;
 };
-
-function isPlainRecord(value: unknown): value is Record<string, unknown> {
-  return !!value && typeof value === "object" && !Array.isArray(value);
-}
 
 function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);

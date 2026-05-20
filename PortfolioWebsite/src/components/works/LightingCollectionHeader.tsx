@@ -91,7 +91,7 @@ export default function LightingCollectionHeader({
                 as="p"
                 preset="sans-body"
                 size="body"
-                weight="regular"
+                weight="semantic"
                 wrapPolicy="prose"
                 align="right"
                 className="ml-auto max-w-[22rem] text-textPrimary/90"

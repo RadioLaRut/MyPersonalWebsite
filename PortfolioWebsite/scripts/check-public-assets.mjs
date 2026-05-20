@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { getCanonicalSlugSegmentIssue } from "./lib/slug-segments.mjs";
 
 const projectRoot = process.cwd();
 const contentPagesRoot = path.join(projectRoot, "content", "pages");
@@ -16,8 +17,6 @@ const excludedPathSegments = [
   `${path.sep}node_modules${path.sep}`,
   `${path.sep}route-backups${path.sep}`,
 ];
-const CANONICAL_SLUG_SEGMENT_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const WINDOWS_RESERVED_FILE_NAME_PATTERN = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/;
 
 function toPosixPath(filePath) {
   return filePath.split(path.sep).join("/");
@@ -120,32 +119,6 @@ function hasExactCasePath(rootDir, relativePath) {
   return true;
 }
 
-function validateCanonicalSlugSegment(segment) {
-  const normalized = segment.trim().toLowerCase();
-
-  if (!normalized) {
-    return "must not be empty";
-  }
-
-  if (normalized === "." || normalized === "..") {
-    return 'must not be "." or ".."';
-  }
-
-  if (!CANONICAL_SLUG_SEGMENT_PATTERN.test(normalized)) {
-    return "must use lowercase letters, numbers, and hyphens only";
-  }
-
-  if (WINDOWS_RESERVED_FILE_NAME_PATTERN.test(normalized)) {
-    return "must not use a Windows reserved file name";
-  }
-
-  if (normalized !== segment) {
-    return "must already use canonical lowercase slug casing";
-  }
-
-  return null;
-}
-
 function collectContentPathIssues(rootDir, relativeDir = "") {
   if (!existsSync(rootDir)) {
     return [];
@@ -159,7 +132,7 @@ function collectContentPathIssues(rootDir, relativeDir = "") {
     const relativePath = relativeDir ? `${relativeDir}/${entry.name}` : entry.name;
 
     if (entry.isDirectory()) {
-      const directoryIssue = validateCanonicalSlugSegment(entry.name);
+      const directoryIssue = getCanonicalSlugSegmentIssue(entry.name);
       if (directoryIssue) {
         issues.push(`${relativePath}: directory ${directoryIssue}`);
       }
@@ -177,7 +150,7 @@ function collectContentPathIssues(rootDir, relativeDir = "") {
     }
 
     const baseName = entry.name.slice(0, -path.extname(entry.name).length);
-    const fileIssue = validateCanonicalSlugSegment(baseName);
+    const fileIssue = getCanonicalSlugSegmentIssue(baseName);
     if (fileIssue) {
       issues.push(`${relativePath}: file name ${fileIssue}`);
     }

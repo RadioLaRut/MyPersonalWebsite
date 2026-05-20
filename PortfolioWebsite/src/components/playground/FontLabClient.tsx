@@ -17,6 +17,7 @@ import { buildFontLabDocumentCssVars } from "@/lib/font-lab-css-vars";
 import {
   createDefaultFontLabDocument,
   parseFontLabDocument,
+  type FontLabApiPayload,
   type FontLabDocument,
   type FontLabSizeConfig,
 } from "@/lib/font-lab-config-schema";
@@ -959,11 +960,7 @@ export default function FontLabClient() {
           throw new Error("Failed to load Font Lab config");
         }
 
-        const payload = (await response.json()) as {
-          config?: unknown;
-          hasSaved?: boolean;
-          path?: string;
-        };
+        const payload = (await response.json()) as FontLabApiPayload;
         const nextDocument =
           parseFontLabDocument(payload.config) ?? createDefaultFontLabDocument();
 

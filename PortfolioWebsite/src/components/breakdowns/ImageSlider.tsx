@@ -108,7 +108,7 @@ export default function ImageSlider({
                                         as="span"
                                         preset="sans-body"
                                         size="label"
-                                        weight="medium"
+                                        weight="semantic"
                                         wrapPolicy="label"
                                         className="text-white/88"
                                     >

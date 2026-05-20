@@ -215,7 +215,7 @@ export default function HeroSection({
                     as="p"
                     preset="sans-body"
                     size="caption"
-                    weight="medium"
+                    weight="semantic"
                     wrapPolicy="prose"
                     className={`${hasStackedPosterTitle ? "max-w-[20rem]" : hasLongPosterTitle ? "max-w-[24rem]" : "max-w-[28rem]"} text-white/58`}
                     align="right"
@@ -237,7 +237,7 @@ export default function HeroSection({
                     as="p"
                     preset="sans-body"
                     size="caption"
-                    weight="medium"
+                    weight="semantic"
                     wrapPolicy="label"
                     className="text-white/56"
                   >
@@ -264,7 +264,7 @@ export default function HeroSection({
                       as="p"
                       preset="sans-body"
                       size="label"
-                      weight="medium"
+                      weight="semantic"
                       wrapPolicy="label"
                       className="text-white/84"
                     >
@@ -285,7 +285,7 @@ export default function HeroSection({
                         as="p"
                         preset="sans-body"
                         size="body"
-                        weight="regular"
+                        weight="semantic"
                         wrapPolicy="prose"
                         className="mt-4 max-w-[24rem] text-white/76 whitespace-pre-line"
                       >

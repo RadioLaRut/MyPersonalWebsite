@@ -1,4 +1,5 @@
 import type { TypographySize } from "@/lib/typography-tokens";
+import { isPlainRecord } from "./json-utils.ts";
 
 export const COMPONENT_DESIGN_SCHEMA_VERSION = 1 as const;
 
@@ -265,10 +266,6 @@ export type ComponentDesignDocument = {
   };
   version: typeof COMPONENT_DESIGN_SCHEMA_VERSION;
 };
-
-function isPlainRecord(value: unknown): value is Record<string, unknown> {
-  return !!value && typeof value === "object" && !Array.isArray(value);
-}
 
 function isFiniteInteger(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value) && Number.isInteger(value);

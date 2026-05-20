@@ -26,6 +26,22 @@ export const TYPOGRAPHY_WEIGHTS = [
   "display",
 ] as const;
 
+export const FONT_VARIABLE_NAMES = [
+  "--font-futura",
+  "--font-han-yi-qi-hei",
+  "--font-luna",
+  "--font-gothic",
+  "--font-dm-serif",
+  "--font-noto-serif",
+  "--font-latin-sans",
+  "--font-cjk-sans",
+  "--font-latin-editorial",
+  "--font-cjk-editorial",
+  "--font-latin-gothic",
+  "--font-latin-classical",
+  "--font-cjk-classical",
+] as const;
+
 export const TYPOGRAPHY_WRAP_POLICIES = [
   "prose",
   "heading",

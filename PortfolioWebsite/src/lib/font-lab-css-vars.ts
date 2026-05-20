@@ -160,3 +160,24 @@ export function buildFontLabDocumentCssVars(
 
   return vars;
 }
+
+export function applyFontLabCssVars(
+  target: HTMLElement,
+  nextVars: FontLabCssVars,
+  previousKeys: Set<string>,
+) {
+  previousKeys.forEach((key) => {
+    if (!(key in nextVars)) {
+      target.style.removeProperty(key);
+    }
+  });
+
+  Object.entries(nextVars).forEach(([key, value]) => {
+    if (target.style.getPropertyValue(key) !== value) {
+      target.style.setProperty(key, value);
+    }
+  });
+
+  previousKeys.clear();
+  Object.keys(nextVars).forEach((key) => previousKeys.add(key));
+}

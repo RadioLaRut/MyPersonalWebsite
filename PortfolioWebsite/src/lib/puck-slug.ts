@@ -1,10 +1,20 @@
 import path from "node:path";
 
+import {
+  getCanonicalSlugSegmentIssue,
+  trySafeNormalizeSlugSegment,
+} from "./slug-segments.ts";
+
+export {
+  SAFE_SLUG_SEGMENT_PATTERN,
+  WINDOWS_RESERVED_FILE_NAME_PATTERN,
+  getCanonicalSlugSegmentIssue,
+  trySafeNormalizeSlugSegment,
+} from "./slug-segments.ts";
+
 export const CONTENT_PAGES_ROOT = path.resolve(process.cwd(), "content/pages");
 
 const ENCODED_TRAVERSAL_PATTERN = /%2e%2e/i;
-const SAFE_SLUG_SEGMENT_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const WINDOWS_RESERVED_FILE_NAME_PATTERN = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/;
 
 export class SlugValidationError extends Error {
   readonly code = "BAD_REQUEST";
@@ -57,28 +67,6 @@ function normalizeRawStringInput(rawInput: string): string[] {
   return trimmedPath.split("/");
 }
 
-function validateNormalizedSlugSegment(normalized: string) {
-  if (!normalized) {
-    throw makeSlugValidationError("Empty slug segment is not allowed");
-  }
-
-  if (normalized === "." || normalized === "..") {
-    throw makeSlugValidationError("Slug segment is invalid");
-  }
-
-  if (normalized.includes("\0")) {
-    throw makeSlugValidationError("Slug segment contains null byte");
-  }
-
-  if (!SAFE_SLUG_SEGMENT_PATTERN.test(normalized)) {
-    throw makeSlugValidationError("Slug segment must use lowercase letters, numbers, and hyphens only");
-  }
-
-  if (WINDOWS_RESERVED_FILE_NAME_PATTERN.test(normalized)) {
-    throw makeSlugValidationError("Slug segment uses a reserved file name");
-  }
-}
-
 export function normalizePuckSlugSegment(rawSegment: string): string {
   if (!rawSegment) {
     throw makeSlugValidationError("Empty slug segment is not allowed");
@@ -89,7 +77,11 @@ export function normalizePuckSlugSegment(rawSegment: string): string {
   }
 
   const normalized = rawSegment.trim().toLowerCase();
-  validateNormalizedSlugSegment(normalized);
+  const issue = getCanonicalSlugSegmentIssue(normalized);
+  if (issue) {
+    throw makeSlugValidationError(`Slug segment ${issue}`);
+  }
+
   return normalized;
 }
 
@@ -98,18 +90,12 @@ function decodeAndNormalizeSegment(segment: string): string {
     throw makeSlugValidationError("Empty slug segment is not allowed");
   }
 
-  let decoded: string;
-  try {
-    decoded = decodeURIComponent(segment);
-  } catch {
-    throw makeSlugValidationError("Slug contains invalid URI encoding");
+  const normalized = trySafeNormalizeSlugSegment(segment);
+  if (!normalized) {
+    throw makeSlugValidationError("Slug segment is invalid");
   }
 
-  if (decoded.includes("/") || decoded.includes("\\")) {
-    throw makeSlugValidationError("Slug segment contains path separator");
-  }
-
-  return normalizePuckSlugSegment(decoded);
+  return normalized;
 }
 
 export function normalizePuckSlugInput(rawInput: string | string[] | undefined): NormalizedPuckSlug {

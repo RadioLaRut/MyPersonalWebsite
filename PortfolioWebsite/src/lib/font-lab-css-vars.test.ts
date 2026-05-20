@@ -1,66 +1,54 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { buildFontLabDocumentCssVars } from "./font-lab-css-vars.ts";
-import { createDefaultFontLabDocument } from "./font-lab-config-schema.ts";
+import { applyFontLabCssVars } from "./font-lab-css-vars.ts";
 
-test("buildFontLabDocumentCssVars exposes semantic weight vars per preset size", () => {
-  const document = createDefaultFontLabDocument();
-  document.presets["gothic-editorial"].latinWeightOffsetSteps = -1;
-  document.presets["gothic-editorial"].sizes.label = {
-    ...document.presets["gothic-editorial"].sizes.label!,
-    cjkEdgeOffset: -0.08,
-    latinEdgeOffset: -0.03,
-    semanticWeight: "medium",
+function createStyleTarget() {
+  const values = new Map<string, string>();
+  let removeCount = 0;
+  let setCount = 0;
+
+  return {
+    get removeCount() {
+      return removeCount;
+    },
+    get setCount() {
+      return setCount;
+    },
+    target: {
+      style: {
+        getPropertyValue(key: string) {
+          return values.get(key) ?? "";
+        },
+        removeProperty(key: string) {
+          removeCount += 1;
+          values.delete(key);
+        },
+        setProperty(key: string, value: string) {
+          setCount += 1;
+          values.set(key, value);
+        },
+      },
+    } as unknown as HTMLElement,
   };
+}
 
-  const vars = buildFontLabDocumentCssVars(document);
+test("applyFontLabCssVars skips writes when values are unchanged", () => {
+  const previousKeys = new Set<string>();
+  const styleTarget = createStyleTarget();
 
-  assert.equal(
-    vars["--typography-gothic-editorial-label-semantic-cjk-weight"],
-    "500",
-  );
-  assert.equal(
-    vars["--typography-gothic-editorial-label-semantic-latin-weight"],
-    "300",
-  );
-  assert.equal(
-    vars["--typography-gothic-editorial-label-cjk-edge-offset"],
-    "-0.08em",
-  );
-  assert.equal(
-    vars["--typography-gothic-editorial-label-latin-edge-offset"],
-    "-0.03em",
-  );
+  applyFontLabCssVars(styleTarget.target, { "--typography-test": "1rem" }, previousKeys);
+  applyFontLabCssVars(styleTarget.target, { "--typography-test": "1rem" }, previousKeys);
+
+  assert.equal(styleTarget.setCount, 1);
 });
 
-test("buildFontLabDocumentCssVars keeps clamp-based sizes anchored to the configured base size", () => {
-  const document = createDefaultFontLabDocument();
-  document.presets["sans-body"].sizes["body-lg"] = {
-    ...document.presets["sans-body"].sizes["body-lg"]!,
-    fontSize: "1.13rem",
-  };
+test("applyFontLabCssVars removes keys no longer present", () => {
+  const previousKeys = new Set<string>();
+  const styleTarget = createStyleTarget();
 
-  const vars = buildFontLabDocumentCssVars(document);
+  applyFontLabCssVars(styleTarget.target, { "--typography-test": "1rem" }, previousKeys);
+  applyFontLabCssVars(styleTarget.target, {}, previousKeys);
 
-  assert.equal(vars["--typography-sans-body-body-font-size"], "1rem");
-  assert.equal(
-    vars["--typography-sans-body-body-lg-font-size"],
-    "clamp(1.13rem,1.1551vw,1.3811rem)",
-  );
-});
-
-test("buildFontLabDocumentCssVars preserves heading-scale clamp behavior at the reference viewport", () => {
-  const document = createDefaultFontLabDocument();
-  document.presets["sans-body"].sizes.title = {
-    ...document.presets["sans-body"].sizes.title!,
-    fontSize: "2.06rem",
-  };
-
-  const vars = buildFontLabDocumentCssVars(document);
-
-  assert.equal(
-    vars["--typography-sans-body-title-font-size"],
-    "clamp(0.9156rem,2.6704vw,2.06rem)",
-  );
+  assert.equal(styleTarget.removeCount, 1);
 });
