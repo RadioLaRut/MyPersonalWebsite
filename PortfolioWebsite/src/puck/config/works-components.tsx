@@ -20,7 +20,7 @@ import {
   imageFitModeField,
   imagePresetField,
 } from "@/puck/fields/image-fields";
-import { castSelectValue } from "@/puck/fields/select-fields";
+import { castSelectValue, coerceLegacyBooleanSelectValue } from "@/puck/fields/select-fields";
 import {
   ALLOW_METADATA_LIST_ITEM,
   ALLOW_WORKS_LIST_ENTRY,
@@ -54,6 +54,7 @@ const nextProjectImageFields = buildImageFieldTriple("nextBg", {
 });
 const CONTENT_CARD_IMAGE_POSITION_VALUES = ["left", "right"] as const;
 const PROJECT_SECTION_ALIGN_VALUES = ["auto", "left", "right"] as const;
+const BOOLEAN_SELECT_VALUES = [false, true] as const;
 type ParameterGridParameters = ComponentProps<typeof ParameterGrid>["parameters"];
 
 function buildTriptychColumnFields(column: 1 | 2 | 3) {
@@ -248,8 +249,8 @@ export const worksComponents = {
           type: "select",
           label: "Is Video",
           options: [
-            { label: "Image", value: "false" },
-            { label: "Video", value: "true" }
+            { label: "Image", value: false },
+            { label: "Video", value: true }
           ]
         },
         _g_params: createFieldGroup("参数列表"),
@@ -266,7 +267,7 @@ export const worksComponents = {
       },
       defaultProps: {
         ...parameterGridImageFields.defaults,
-        isVideo: "false",
+        isVideo: false,
         parameters: []
       },
       render: ({ mediaSrc, imagePreset, imageFitMode, isVideo, parameters }) => (
@@ -274,7 +275,7 @@ export const worksComponents = {
           mediaSrc={mediaSrc}
           imagePreset={castImagePreset(imagePreset)}
           imageFitMode={castImageFitMode(imageFitMode)}
-          isVideo={isVideo === "true"}
+          isVideo={castSelectValue(coerceLegacyBooleanSelectValue(isVideo), BOOLEAN_SELECT_VALUES, false)}
           parameters={parameters as ParameterGridParameters}
         />
       )

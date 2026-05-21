@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
@@ -18,6 +19,10 @@ const contentRoot = path.join(projectRoot, "content/pages");
 const publicRoot = path.join(projectRoot, "public");
 const editorEmptyStatePath = path.join(projectRoot, "content/component-design/editor-empty-state.json");
 const lightingCollectionsRoot = path.join(contentRoot, "works/lighting-portfolio");
+const editorEmptyStateData = JSON.parse(fs.readFileSync(editorEmptyStatePath, "utf8")) as {
+  content: Array<{ props: Record<string, unknown>; type: string }>;
+  root: { props: Record<string, unknown> };
+};
 
 test("content pages satisfy the normalized Puck data contract", () => {
   const issues = validateContentPages({ contentRoot, publicRoot });
@@ -25,14 +30,38 @@ test("content pages satisfy the normalized Puck data contract", () => {
 });
 
 test("editor empty-state fixture is valid neutral starter content", () => {
-  const data = JSON.parse(fs.readFileSync(editorEmptyStatePath, "utf8")) as unknown;
-  const issues = validatePuckContentData(data, editorEmptyStatePath);
+  const issues = validatePuckContentData(editorEmptyStateData, editorEmptyStatePath);
 
   assert.deepEqual(formatContentValidationIssues(issues), []);
   assert.doesNotMatch(
-    JSON.stringify(data),
-    /HeroHeadline-123|RichParagraph-456|Puck Local Editor|Phase 3|disk persistence|tmp -> rename|Publish writes/i,
+    JSON.stringify(editorEmptyStateData),
+    /HeroHeadline-123|RichParagraph-456|Puck Local Editor|Phase 3|disk persistence|tmp -> rename|Publish writes|project study|short narrative block|process, visuals, and outcomes/i,
   );
+});
+
+test("editor empty-state fixture satisfies the full content page contract", (t) => {
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "editor-empty-state-content-"));
+  t.after(() => {
+    fs.rmSync(tempRoot, { force: true, recursive: true });
+  });
+
+  const tempContentRoot = path.join(tempRoot, "content/pages");
+  fs.mkdirSync(tempContentRoot, { recursive: true });
+  fs.copyFileSync(editorEmptyStatePath, path.join(tempContentRoot, "index.json"));
+
+  const issues = validateContentPages({ contentRoot: tempContentRoot, publicRoot });
+
+  assert.deepEqual(formatContentValidationIssues(issues), []);
+});
+
+test("editor empty-state fixture uses short neutral placeholders", () => {
+  const hero = editorEmptyStateData.content.find((node) => node.type === "HeroHeadline");
+  const paragraph = editorEmptyStateData.content.find((node) => node.type === "RichParagraph");
+
+  assert.equal(editorEmptyStateData.root.props.title, "Untitled");
+  assert.equal(hero?.props.title, "Untitled");
+  assert.equal(hero?.props.subtitle, "");
+  assert.equal(paragraph?.props.content, "");
 });
 
 function collectComponentTypes(value: unknown, acc: string[] = []): string[] {

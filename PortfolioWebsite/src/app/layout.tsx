@@ -7,6 +7,7 @@ import CustomCursor from "@/components/layout/CustomCursor";
 import ComponentDesignProvider from "@/components/layout/ComponentDesignProvider";
 import FontLabGlobalVars from "@/components/layout/FontLabGlobalVars";
 import Navigation from "@/components/layout/Navigation";
+import { SITE_MODE_ATTRIBUTE } from "@/lib/admin-attributes";
 import { readComponentDesignConfig } from "@/lib/component-design-config";
 import { buildFontLabDocumentCssVars } from "@/lib/font-lab-css-vars";
 import { readFontLabConfig } from "@/lib/font-lab-config";
@@ -175,7 +176,7 @@ export default async function RootLayout({
   return (
     <html
       lang="zh-CN"
-      data-site-mode={testingMode ? "testing" : "normal"}
+      {...{ [SITE_MODE_ATTRIBUTE]: testingMode ? "testing" : "normal" }}
       style={fontLabCssVars}
     >
       <body

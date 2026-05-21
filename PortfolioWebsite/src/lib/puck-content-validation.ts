@@ -2,7 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { PUCK_COMPONENT_TYPE_SET } from "../puck/component-manifest.ts";
+import { isNonEmptyString } from "./json-utils.ts";
 import { isPlainRecord, normalizePuckData } from "./puck-data-normalization.ts";
+import { splitPublicPathSegments } from "./public-paths.ts";
 import { getCanonicalSlugSegmentIssue } from "./slug-segments.ts";
 
 export type ContentValidationIssue = {
@@ -133,7 +135,7 @@ function validatePuckNode(
   }
 
   const { type, props } = node;
-  if (typeof type !== "string" || type.trim().length === 0) {
+  if (!isNonEmptyString(type)) {
     issues.push(makeIssue(`${pathName}.type`, "must be a non-empty string", filePath));
   } else if (!PUCK_COMPONENT_TYPE_SET.has(type)) {
     issues.push(makeIssue(`${pathName}.type`, `unknown component type "${type}"`, filePath));
@@ -144,7 +146,7 @@ function validatePuckNode(
     return;
   }
 
-  if (typeof props.id !== "string" || props.id.trim().length === 0) {
+  if (!isNonEmptyString(props.id)) {
     issues.push(makeIssue(`${pathName}.props.id`, "props.id must be a non-empty string", filePath));
   }
 }
@@ -239,8 +241,12 @@ export function hasExactCasePath(
   dirEntriesCache = new Map<string, Set<string>>(),
 ): ExactCasePathStatus {
   let currentPath = rootDir;
+  const segments = splitPublicPathSegments(relativePath);
+  if (segments === null) {
+    return "missing";
+  }
 
-  for (const segment of relativePath.split("/").filter(Boolean)) {
+  for (const segment of segments) {
     const entries = readDirectoryEntryNames(currentPath, dirEntriesCache);
     if (!entries) {
       return "missing";

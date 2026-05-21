@@ -1,4 +1,4 @@
-import { isPlainRecord } from "./json-utils.ts";
+import { isNonEmptyString, isPlainRecord } from "./json-utils.ts";
 import { PUCK_COMPONENT_TYPE_SET } from "../puck/component-manifest.ts";
 
 const COMPONENT_TYPE_ALIASES: Record<string, string> = {
@@ -25,7 +25,7 @@ function normalizeComponentType(type: string) {
 }
 
 function isBlankText(value: unknown) {
-  return typeof value !== "string" || value.trim().length === 0;
+  return !isNonEmptyString(value);
 }
 
 function hashString(value: string) {

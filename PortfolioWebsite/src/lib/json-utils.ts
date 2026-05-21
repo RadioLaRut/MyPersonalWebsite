@@ -10,6 +10,10 @@ export function isPlainRecord(value: unknown): value is Record<string, unknown> 
   return !!value && typeof value === "object" && !Array.isArray(value);
 }
 
+export function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
 export function isJsonValue(value: unknown): value is JsonValue {
   if (value === null) {
     return true;

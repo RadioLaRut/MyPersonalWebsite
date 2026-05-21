@@ -2,12 +2,30 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  splitPublicPathSegments,
   normalizeLegacyPublicPath,
   normalizeEditorPathInputToSlugKey,
   toAdminPathFromPublicPath,
   tryNormalizeLegacyPublicRedirectPath,
   tryNormalizePublicPath,
 } from "./public-paths.ts";
+
+test("splitPublicPathSegments keeps exact casing while normalizing slashes", () => {
+  assert.deepEqual(splitPublicPathSegments("/Images//Gallery/CaseImage.webp/"), [
+    "Images",
+    "Gallery",
+    "CaseImage.webp",
+  ]);
+  assert.deepEqual(splitPublicPathSegments(""), []);
+  assert.deepEqual(splitPublicPathSegments("/"), []);
+});
+
+test("splitPublicPathSegments rejects backslash-separated paths", () => {
+  // 这里刻意拼接，确保反斜杠作为路径内容进入被测函数，而不是被读者误当作源码转义。
+  const invalidAssetPath = "/images/" + "gallery\\CaseImage.webp";
+
+  assert.equal(splitPublicPathSegments(invalidAssetPath), null);
+});
 
 test("tryNormalizeLegacyPublicRedirectPath maps /p legacy paths to canonical public paths", () => {
   assert.equal(tryNormalizeLegacyPublicRedirectPath("/p"), "/");

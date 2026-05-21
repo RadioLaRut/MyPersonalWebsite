@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { ADMIN_MODE_ATTRIBUTE } from "@/lib/admin-attributes";
 
 type CustomCursorProps = {
   isWithinIframe?: boolean;
@@ -27,9 +28,9 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
     // Disable outer custom cursor in the admin dashboard completely
     if (adminShell || fontLabMode || componentLabMode) {
       if (adminShell) {
-        htmlElement.setAttribute("data-admin-mode", "true");
+        htmlElement.setAttribute(ADMIN_MODE_ATTRIBUTE, "true");
       } else {
-        htmlElement.removeAttribute("data-admin-mode");
+        htmlElement.removeAttribute(ADMIN_MODE_ATTRIBUTE);
       }
 
       if (fontLabMode) {
@@ -44,13 +45,13 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
 
       setIsCursorEnabled(false);
       return () => {
-        htmlElement.removeAttribute("data-admin-mode");
+        htmlElement.removeAttribute(ADMIN_MODE_ATTRIBUTE);
         htmlElement.removeAttribute("data-font-lab-mode");
       };
     }
 
     if (!isWithinIframe) {
-      htmlElement.removeAttribute("data-admin-mode");
+      htmlElement.removeAttribute(ADMIN_MODE_ATTRIBUTE);
       htmlElement.removeAttribute("data-font-lab-mode");
     }
 

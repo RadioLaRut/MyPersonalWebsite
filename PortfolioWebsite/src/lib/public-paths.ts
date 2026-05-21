@@ -32,7 +32,7 @@ function canonicalizeWorkSegments(segments: string[]) {
   return segments;
 }
 
-function parsePublicPathSegments(pathname: string): string[] | null {
+export function splitPublicPathSegments(pathname: string): string[] | null {
   const trimmed = pathname.trim();
   if (!trimmed || trimmed === "/") {
     return [];
@@ -49,7 +49,16 @@ function parsePublicPathSegments(pathname: string): string[] | null {
     return [];
   }
 
-  const decodedSegments = rawPath.split("/").map(trySafeNormalizeSlugSegment);
+  return rawPath.split("/");
+}
+
+function parsePublicPathSegments(pathname: string): string[] | null {
+  const segments = splitPublicPathSegments(pathname);
+  if (segments === null) {
+    return null;
+  }
+
+  const decodedSegments = segments.map(trySafeNormalizeSlugSegment);
   if (decodedSegments.some((segment) => segment === null)) {
     return null;
   }

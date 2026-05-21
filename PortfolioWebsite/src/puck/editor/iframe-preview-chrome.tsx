@@ -5,6 +5,13 @@ import {
   getLatestFontLabPreviewVarsSnapshot,
   type FontLabCssVars,
 } from "./font-lab-preview-sync";
+import { restoreElement, snapshotElement } from "./dom-snapshot";
+import {
+  ADMIN_MODE_ATTRIBUTE,
+  ADMIN_ROOT_ATTRIBUTE,
+  PREVIEW_HTML_ATTRIBUTES,
+  SITE_MODE_ATTRIBUTE,
+} from "@/lib/admin-attributes";
 import { applyFontLabCssVars } from "@/lib/font-lab-css-vars";
 import { FONT_VARIABLE_NAMES } from "@/lib/typography-tokens";
 
@@ -105,18 +112,11 @@ function IframePreviewChrome({
     const appliedVarKeys = new Set<string>();
     const htmlElement = frameDocument.documentElement;
     const bodyElement = frameDocument.body;
-    const previousHtmlOverflow = htmlElement.style.overflow;
-    const previousHtmlHeight = htmlElement.style.height;
-    const previousHtmlOverscrollBehavior = htmlElement.style.overscrollBehavior;
-    const previousBodyOverflow = bodyElement.style.overflow;
-    const previousBodyHeight = bodyElement.style.height;
-    const previousBodyOverscrollBehavior = bodyElement.style.overscrollBehavior;
-    const previousBodyClassName = bodyElement.className;
-    const previousHtmlClassName = htmlElement.className;
-    const previousAdminMode = htmlElement.getAttribute("data-admin-mode");
-    const previousAdminRoot = htmlElement.getAttribute("data-admin-root");
-    const previousSiteMode = htmlElement.getAttribute("data-site-mode");
-    const previousLang = htmlElement.lang;
+    const previousHtml = snapshotElement(htmlElement, {
+      attributes: PREVIEW_HTML_ATTRIBUTES,
+      includeLang: true,
+    });
+    const previousBody = snapshotElement(bodyElement);
 
     const syncPreviewEnvironment = (overrideVars?: FontLabCssVars | null) => {
       syncPreviewHeadNodes(frameDocument, lastClonedHeadSignatureRef);
@@ -126,11 +126,11 @@ function IframePreviewChrome({
       htmlElement.className = document.documentElement.className;
       bodyElement.className = document.body.className;
 
-      const parentSiteMode = document.documentElement.getAttribute("data-site-mode");
+      const parentSiteMode = document.documentElement.getAttribute(SITE_MODE_ATTRIBUTE);
       if (parentSiteMode === null) {
-        htmlElement.removeAttribute("data-site-mode");
+        htmlElement.removeAttribute(SITE_MODE_ATTRIBUTE);
       } else {
-        htmlElement.setAttribute("data-site-mode", parentSiteMode);
+        htmlElement.setAttribute(SITE_MODE_ATTRIBUTE, parentSiteMode);
       }
 
       htmlElement.lang = document.documentElement.lang || "zh-CN";
@@ -143,8 +143,8 @@ function IframePreviewChrome({
       );
     };
 
-    htmlElement.setAttribute("data-admin-mode", "true");
-    htmlElement.removeAttribute("data-admin-root");
+    htmlElement.setAttribute(ADMIN_MODE_ATTRIBUTE, "true");
+    htmlElement.removeAttribute(ADMIN_ROOT_ATTRIBUTE);
     htmlElement.style.overflow = "";
     htmlElement.style.height = "";
     htmlElement.style.overscrollBehavior = "";
@@ -157,33 +157,8 @@ function IframePreviewChrome({
     return () => {
       window.removeEventListener(FONT_LAB_UPDATED_EVENT, handleFontLabUpdate as EventListener);
 
-      if (previousAdminMode === null) {
-        htmlElement.removeAttribute("data-admin-mode");
-      } else {
-        htmlElement.setAttribute("data-admin-mode", previousAdminMode);
-      }
-
-      if (previousAdminRoot === null) {
-        htmlElement.removeAttribute("data-admin-root");
-      } else {
-        htmlElement.setAttribute("data-admin-root", previousAdminRoot);
-      }
-
-      if (previousSiteMode === null) {
-        htmlElement.removeAttribute("data-site-mode");
-      } else {
-        htmlElement.setAttribute("data-site-mode", previousSiteMode);
-      }
-
-      htmlElement.lang = previousLang;
-      htmlElement.style.overflow = previousHtmlOverflow;
-      htmlElement.style.height = previousHtmlHeight;
-      htmlElement.style.overscrollBehavior = previousHtmlOverscrollBehavior;
-      htmlElement.className = previousHtmlClassName;
-      bodyElement.style.overflow = previousBodyOverflow;
-      bodyElement.style.height = previousBodyHeight;
-      bodyElement.style.overscrollBehavior = previousBodyOverscrollBehavior;
-      bodyElement.className = previousBodyClassName;
+      restoreElement(htmlElement, previousHtml);
+      restoreElement(bodyElement, previousBody);
       frameDocument.head.querySelectorAll(`[${PREVIEW_CLONED_HEAD_ATTR}]`).forEach((node) => node.remove());
       lastClonedHeadSignatureRef.current = null;
       applyFontLabCssVars(htmlElement, {}, appliedVarKeys);

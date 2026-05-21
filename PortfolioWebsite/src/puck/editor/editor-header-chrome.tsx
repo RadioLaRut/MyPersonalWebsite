@@ -1,6 +1,7 @@
 import { memo, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { FontLabSyncState } from "./types";
+import { splitPublicPathSegments } from "@/lib/public-paths";
 
 const FONT_LAB_SYNC_LABEL: Record<FontLabSyncState, string> = {
   idle: "FontLab Synced",
@@ -48,7 +49,11 @@ function buildTree(paths: string[]) {
   const sorted = [...paths].filter(p => p !== "/").sort((a, b) => a.localeCompare(b));
 
   for (const p of sorted) {
-    const segments = p.split("/").filter(Boolean);
+    const segments = splitPublicPathSegments(p);
+    if (segments === null) {
+      continue;
+    }
+
     let current = root;
     let currentPath = "";
 

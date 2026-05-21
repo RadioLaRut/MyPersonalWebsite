@@ -1,7 +1,7 @@
 {
   "root": {
     "props": {
-      "title": "Untitled Portfolio Page"
+      "title": "Untitled"
     }
   },
   "content": [
@@ -9,16 +9,16 @@
       "type": "HeroHeadline",
       "props": {
         "id": "hero-headline-empty-state",
-        "eyebrow": "Portfolio",
-        "title": "Untitled Project",
-        "subtitle": "A concise project study with room for process, visuals, and outcomes."
+        "eyebrow": "",
+        "title": "Untitled",
+        "subtitle": ""
       }
     },
     {
       "type": "RichParagraph",
       "props": {
         "id": "rich-paragraph-empty-state",
-        "content": "A short narrative block can carry the project context, decisions, and result."
+        "content": ""
       }
     }
   ]
