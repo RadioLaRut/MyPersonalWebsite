@@ -93,22 +93,6 @@ export default function HeroSection({
   const eyebrowTopSpacing = getSpacingRem(design.eyebrowTopSpacing);
   const ctaTopSpacing = getSpacingRem(hasDescription ? design.ctaTopSpacing : "32");
 
-  const upperPlainTitle = plainTitle?.trim().toUpperCase() ?? "";
-  const hasGeometricOverhang =
-    upperPlainTitle.startsWith("T") ||
-    upperPlainTitle.startsWith("V") ||
-    upperPlainTitle.startsWith("W") ||
-    upperPlainTitle.startsWith("Y") ||
-    upperPlainTitle.startsWith("A");
-
-  const hasRoundOverhang =
-    upperPlainTitle.startsWith("O") ||
-    upperPlainTitle.startsWith("C") ||
-    upperPlainTitle.startsWith("G") ||
-    upperPlainTitle.startsWith("Q");
-
-  const opticalIndent = hasGeometricOverhang ? "-0.06em" : hasRoundOverhang ? "-0.03em" : "0em";
-
   const baseOuterClasses = "relative min-h-[100dvh] w-full overflow-hidden bg-black px-0";
   const outerSectionClassName = editMode ? `${baseOuterClasses} lg:min-h-[720px]` : baseOuterClasses;
 
@@ -252,7 +236,6 @@ export default function HeroSection({
                   weight="semantic"
                   wrapPolicy="heading"
                   className="mt-3 w-fit max-w-none text-white"
-                  style={opticalIndent !== "0em" ? { textIndent: opticalIndent } : undefined}
                 >
                   {title}
                 </Typography>

@@ -70,7 +70,7 @@ export default function NextProjectBlock({
                                     weight="semantic"
                                     wrapPolicy="label"
                                     align="center"
-                                    className="text-textMuted opacity-70 transition-all duration-700 group-hover:opacity-100"
+                                    className="text-textMuted opacity-70 transition-all duration-700 group-hover:opacity-100 [&_.typography-run]:transition-[letter-spacing] [&_.typography-run]:duration-1000 [&_.typography-run]:ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:[&_.typography-run]:!tracking-[0.25em]"
                                 >
                                     NEXT PROJECT
                                 </Typography>
@@ -81,7 +81,7 @@ export default function NextProjectBlock({
                                     weight="display"
                                     wrapPolicy="heading"
                                     align="center"
-                                    className="text-white uppercase transition-all duration-700"
+                                    className="text-white uppercase transition-all duration-700 [&_.typography-run]:transition-[letter-spacing] [&_.typography-run]:duration-1000 [&_.typography-run]:ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:[&_.typography-run]:!tracking-[0.08em]"
                                 >
                                     {nextName}
                                 </Typography>

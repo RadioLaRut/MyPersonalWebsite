@@ -8,7 +8,6 @@ import {
   getResponsiveGridColumnClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
-import { toPlainText } from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset, normalizeImagePreset } from "@/lib/image-presentation";
 
 interface ProjectSectionProps {
@@ -61,23 +60,6 @@ export default function ProjectSection({
   const titleLockupClassName = shouldAlignRight
     ? "justify-self-end justify-items-end"
     : "justify-self-start justify-items-start";
-
-  const plainTitle = toPlainText(title) ?? "";
-  const upperPlainTitle = plainTitle.trim().toUpperCase();
-  const hasGeometricOverhang =
-    upperPlainTitle.startsWith("T") ||
-    upperPlainTitle.startsWith("V") ||
-    upperPlainTitle.startsWith("W") ||
-    upperPlainTitle.startsWith("Y") ||
-    upperPlainTitle.startsWith("A");
-
-  const hasRoundOverhang =
-    upperPlainTitle.startsWith("O") ||
-    upperPlainTitle.startsWith("C") ||
-    upperPlainTitle.startsWith("G") ||
-    upperPlainTitle.startsWith("Q");
-
-  const opticalIndent = hasGeometricOverhang ? "-0.06em" : hasRoundOverhang ? "-0.03em" : "0em";
 
   const underlineTrackClassName = shouldAlignRight ? "justify-end" : "justify-start";
   const underlineFillClassName =
@@ -154,10 +136,7 @@ export default function ProjectSection({
                   wrapPolicy="heading"
                   align={shouldAlignRight ? "right" : "left"}
                   className="max-w-full text-white antialiased uppercase [transform:translateZ(0)] lg:whitespace-nowrap"
-                  style={{
-                    marginTop: "-0.15em",
-                    ...(opticalIndent !== "0em" && !shouldAlignRight ? { textIndent: opticalIndent } : {})
-                  }}
+                  style={{ marginTop: "-0.15em" }}
                 >
                   {title}
                 </Typography>

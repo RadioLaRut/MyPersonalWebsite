@@ -46,23 +46,6 @@ export default function HeroHeadlineBlock({
   const heroImageAlt = toPlainText(title) ?? "PROJECT TITLE";
   const contentBoundsClassName = getGridColumnClassName(design.contentBounds);
 
-  const plainTitle = toPlainText(title) ?? "";
-  const upperPlainTitle = plainTitle.trim().toUpperCase();
-  const hasGeometricOverhang =
-    upperPlainTitle.startsWith("T") ||
-    upperPlainTitle.startsWith("V") ||
-    upperPlainTitle.startsWith("W") ||
-    upperPlainTitle.startsWith("Y") ||
-    upperPlainTitle.startsWith("A");
-
-  const hasRoundOverhang =
-    upperPlainTitle.startsWith("O") ||
-    upperPlainTitle.startsWith("C") ||
-    upperPlainTitle.startsWith("G") ||
-    upperPlainTitle.startsWith("Q");
-
-  const opticalIndent = hasGeometricOverhang ? "-0.06em" : hasRoundOverhang ? "-0.03em" : "0em";
-
   if (editMode) {
     return (
       <section className="relative isolate w-full min-h-[560px] overflow-hidden border-y border-white/5 bg-black">
@@ -103,7 +86,6 @@ export default function HeroHeadlineBlock({
                 weight="semantic"
                 wrapPolicy="heading"
                 className="text-white uppercase leading-[0.9]"
-                style={opticalIndent !== "0em" ? { textIndent: opticalIndent } : undefined}
               >
                 {resolvedTitle}
               </Typography>
@@ -184,7 +166,6 @@ export default function HeroHeadlineBlock({
                 weight="semantic"
                 wrapPolicy="heading"
                 className="text-white uppercase leading-[0.9]"
-                style={opticalIndent !== "0em" ? { textIndent: opticalIndent } : undefined}
               >
                 {resolvedTitle}
               </Typography>
