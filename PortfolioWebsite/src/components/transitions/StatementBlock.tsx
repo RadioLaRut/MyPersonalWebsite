@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { Reveal } from "@/components/motion";
 import { getGridColumnClassName } from "@/lib/component-design-style";
 
 interface StatementBlockProps {
@@ -47,12 +47,9 @@ export default function StatementBlock({
   return (
     <section className={`relative z-20 grid w-full ${heightClass} ${bgClass} ${rhythmClass} content-center`}>
       <div className="grid-container w-full">
-        <motion.div
+        <Reveal
           className={`${getGridColumnClassName(design.contentBounds)} grid ${alignClass} ${editMode ? "pointer-events-auto" : ""}`}
-          initial={editMode ? false : { opacity: 0, y: 20 }}
-          whileInView={editMode ? undefined : { opacity: 1, y: 0 }}
-          viewport={editMode ? undefined : { once: true, margin: "-100px" }}
-          transition={editMode ? undefined : { duration: 0.8, ease: "easeOut" }}
+          disabled={editMode}
         >
           <Typography
             as="p"
@@ -65,7 +62,7 @@ export default function StatementBlock({
           >
             {content}
           </Typography>
-        </motion.div>
+        </Reveal>
       </div>
     </section>
   );

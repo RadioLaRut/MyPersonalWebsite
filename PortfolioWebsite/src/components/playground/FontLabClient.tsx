@@ -13,6 +13,7 @@ import {
 
 import Typography from "@/components/common/Typography";
 import { FONT_LAB_UPDATED_EVENT } from "@/components/layout/FontLabGlobalVars";
+import { MotionButton } from "@/components/motion";
 import { buildFontLabDocumentCssVars } from "@/lib/font-lab-css-vars";
 import {
   createDefaultFontLabDocument,
@@ -943,7 +944,7 @@ export default function FontLabClient() {
 
   const navigateToPlayground = () => {
     document.documentElement.removeAttribute("data-font-lab-mode");
-    window.location.assign("/playground");
+    router.push("/playground");
   };
 
   useEffect(() => {
@@ -1148,13 +1149,13 @@ export default function FontLabClient() {
                   Font Lab
                 </Typography>
               </div>
-              <button
+              <MotionButton
                 type="button"
                 onClick={navigateToPlayground}
                 className="transition-colors hover:text-white"
               >
                 <ActionText>返回 Playground</ActionText>
-              </button>
+              </MotionButton>
             </div>
             <Typography
               as="p"
@@ -1167,21 +1168,21 @@ export default function FontLabClient() {
               这里用于校准字体模板本体。保存时只合并当前模板；调试层仅影响当前会话，不写入模板文件。
             </Typography>
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <button
+              <MotionButton
                 type="button"
                 onClick={handleSave}
                 className="grid min-h-[4.75rem] min-w-[11.75rem] place-items-center border border-white/12 px-6 py-3 text-center text-textPrimary transition-colors hover:border-white/25 hover:text-white"
               >
                 <ActionText>保存当前模板</ActionText>
-              </button>
-              <button
+              </MotionButton>
+              <MotionButton
                 type="button"
                 onClick={handleRestore}
                 disabled={!hasSavedConfig}
                 className="grid min-h-[4.75rem] min-w-[11.75rem] place-items-center border border-white/12 px-6 py-3 text-center text-textPrimary transition-colors hover:border-white/25 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
               >
                 <ActionText>恢复已保存模板</ActionText>
-              </button>
+              </MotionButton>
             </div>
             <div className="mt-5 space-y-2">
               <StatusText>{statusMessage ?? `配置文件：${configPath}`}</StatusText>
@@ -1416,7 +1417,7 @@ export default function FontLabClient() {
                 const active = Math.abs(previewScale - scale) < 0.001;
 
                 return (
-                  <button
+                  <MotionButton
                     key={scale}
                     type="button"
                     onClick={() => setPreviewScale(scale)}
@@ -1428,7 +1429,7 @@ export default function FontLabClient() {
                     ].join(" ")}
                   >
                     <ActionText>{formatPreviewScaleLabel(scale)}</ActionText>
-                  </button>
+                  </MotionButton>
                 );
               })}
             </div>
@@ -1890,13 +1891,13 @@ export default function FontLabClient() {
               >
                 真实组件预览已移出本页。需要做最终组件验收时，请进入 Playground 统一检查页面模块，而不是在 Font Lab 内直接注入真实组件。
               </Typography>
-              <button
+              <MotionButton
                 type="button"
                 onClick={navigateToPlayground}
                 className="mt-6 inline-grid grid-flow-col auto-cols-max items-center border border-white/12 px-4 py-3 text-textPrimary transition-colors hover:border-white/25 hover:text-white"
               >
                 <ActionText>打开 Playground 做组件验收</ActionText>
-              </button>
+              </MotionButton>
             </div>
             </div>
             </div>

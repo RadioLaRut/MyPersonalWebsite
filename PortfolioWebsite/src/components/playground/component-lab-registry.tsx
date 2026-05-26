@@ -1160,6 +1160,7 @@ export const COMPONENT_LAB_REGISTRY: Record<
         alt="Lighting Comparison"
         imagePreset="ratio-16-9"
         imageFitMode="x"
+        initialPosition={variant === "stress" ? 62 : 48}
         leftLabel={variant === "stress" ? "UNLIT VERSION" : "DAY"}
         rightLabel={variant === "stress" ? "LIT VERSION" : "NIGHT"}
         editMode

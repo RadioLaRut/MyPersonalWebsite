@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ADMIN_MODE_ATTRIBUTE } from "@/lib/admin-attributes";
+import { resolveInputCapabilities } from "@/lib/motion";
 
 type CustomCursorProps = {
   isWithinIframe?: boolean;
@@ -60,7 +61,15 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
     const reducedMotionQuery = win.matchMedia("(prefers-reduced-motion: reduce)");
 
     const updateCursorAvailability = () => {
-      setIsCursorEnabled(pointerQuery.matches && !reducedMotionQuery.matches);
+      const capabilities = resolveInputCapabilities({
+        hasTouchStart: "ontouchstart" in win,
+        innerWidth: win.innerWidth,
+        matchMedia: win.matchMedia.bind(win),
+        maxTouchPoints: win.navigator.maxTouchPoints,
+      });
+      setIsCursorEnabled(
+        capabilities.supportsHoverIntent && !capabilities.prefersReducedMotion,
+      );
     };
 
     const addMediaListener = (query: MediaQueryList, handler: () => void) => {

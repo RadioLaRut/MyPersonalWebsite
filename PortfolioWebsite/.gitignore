@@ -13,7 +13,12 @@ venv/
 
 # next.js
 /.next/
+/.next-dev-*/
 /out/
+
+# local tooling artifacts
+/.cache/
+/.codex*.log
 
 # production
 /build

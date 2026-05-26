@@ -1,5 +1,7 @@
 import { memo, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ChevronDown } from "lucide-react/dist/cjs/lucide-react.js";
 
+import { MotionButton } from "@/components/motion";
 import type { FontLabSyncState } from "./types";
 import { splitPublicPathSegments } from "@/lib/public-paths";
 
@@ -25,13 +27,14 @@ function HeaderActionsWithOpenPage({
   return (
     <div className="flex flex-wrap items-center justify-end gap-3">
       {children}
-      <button
+      <MotionButton
         type="button"
         onClick={onOpenPublicPage}
+        interactionPreset="lightButton"
         className="rounded-sm border border-slate-200 bg-white px-3 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-950"
       >
         OPEN PAGE
-      </button>
+      </MotionButton>
     </div>
   );
 }
@@ -76,16 +79,17 @@ const TreeRender = memo(function TreeRender({ node, level, selected, onSelect }:
   return (
     <div className="flex flex-col">
       {node.isExactMatch && (
-        <button
+        <MotionButton
           type="button"
           onClick={() => onSelect(node.path)}
+          interactionPreset="lightButton"
           style={{ paddingLeft: `${level === 0 ? 1 : level * 1.5 + 1}rem` }}
           className={`flex w-full items-center pr-4 py-2 text-xs font-mono tracking-[0.05em] text-left transition-colors hover:bg-slate-50 ${node.path === selected ? 'text-black font-semibold bg-slate-50 relative' : 'text-slate-600'}`}
         >
           {node.path === selected && <div className="absolute left-0 top-0 bottom-0 w-1 bg-slate-800" />}
           {level > 0 && <span className="mr-2 text-slate-300">└─</span>}
           {node.name}
-        </button>
+        </MotionButton>
       )}
       {!node.isExactMatch && level > 0 && (
         <div style={{ paddingLeft: `${level * 1.5 + 1}rem` }} className="flex w-full items-center pr-4 py-2 text-xs font-mono tracking-[0.05em] text-left text-slate-400">
@@ -130,18 +134,20 @@ function CustomPageSelector({
 
   return (
     <div className="relative min-w-[260px]" ref={containerRef}>
-      <button
+      <MotionButton
         type="button"
         disabled={disabled}
+        interactionPreset="lightButton"
         className={`flex w-full items-center justify-between bg-transparent px-3 py-2 text-xs font-mono tracking-[0.14em] outline-none transition-colors ${disabled ? 'text-slate-400 cursor-not-allowed' : 'text-slate-700 hover:text-slate-900'}`}
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Switch page"
       >
         <span>{selected}</span>
-        <svg className={`h-4 w-4 text-slate-400 transition-transform ${isOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
+        <ChevronDown
+          className={`h-4 w-4 text-slate-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          strokeWidth={2}
+        />
+      </MotionButton>
 
       {isOpen && (
         <div className="absolute top-full left-0 z-50 mt-1 flex w-full min-w-[320px] max-h-[60vh] flex-col overflow-y-auto rounded-md border border-slate-200 bg-white shadow-xl py-2">
@@ -205,14 +211,15 @@ function EditorHeaderChrome({
               placeholder="/new-page"
               aria-label="Create page"
             />
-            <button
+            <MotionButton
               type="button"
               disabled={isSwitchingPage}
+              interactionPreset="lightButton"
               className="border-l border-slate-200 bg-slate-50 px-3 py-2 text-[10px] font-mono uppercase tracking-[0.24em] text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950"
               onClick={() => onCreatePage(newPageInputValue)}
             >
               CREATE
-            </button>
+            </MotionButton>
           </div>
         </div>
         <div className="flex items-center">

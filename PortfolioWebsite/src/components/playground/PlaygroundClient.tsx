@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { motion } from "framer-motion";
+import { MotionLink } from "@/components/motion";
+import { motion, motionTransitions } from "@/lib/motion";
 import puckConfig from "@/puck/config";
 import { CANONICAL_PLACEHOLDER_PATH } from "@/lib/public-paths";
 import Typography from "@/components/common/Typography";
@@ -132,6 +132,7 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     unlitSrc: "/images/train-station/2Day.webp",
     litSrc: "/images/train-station/2Night.webp",
     alt: "Lighting Comparison",
+    initialPosition: 48,
     leftLabel: "DAY",
     rightLabel: "NIGHT",
   },
@@ -294,9 +295,9 @@ export default function PlaygroundClient() {
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={motionTransitions.standard}
             >
-              <Link
+              <MotionLink
                 href="/"
                 className="group inline-grid grid-flow-col auto-cols-max items-center gap-4"
               >
@@ -310,7 +311,7 @@ export default function PlaygroundClient() {
                 >
                   ← 返回首页
                 </Typography>
-              </Link>
+              </MotionLink>
             </motion.div>
 
             <motion.h1
@@ -333,7 +334,7 @@ export default function PlaygroundClient() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ ...motionTransitions.fade, delay: 0.2 }}
               className="grid gap-6"
             >
               <Typography
@@ -362,7 +363,7 @@ export default function PlaygroundClient() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ ...motionTransitions.fade, delay: 0.2 }}
             className="grid grid-cols-1 lg:grid-cols-12 gap-6"
           >
             <div className="lg:col-span-4 border border-white/10 bg-white/[0.02] p-6">
@@ -396,7 +397,7 @@ export default function PlaygroundClient() {
               >
                 独立字体实验室。只负责校准字体模板内部的字号、字重映射、基线与字距；真实组件验收统一在 Playground 中完成。
               </Typography>
-              <Link
+              <MotionLink
                 href="/playground/font-lab"
                 className="mt-8 inline-grid grid-flow-col auto-cols-max items-center gap-3 border border-white/12 px-4 py-3 text-textPrimary transition-colors duration-300 hover:border-white/25 hover:text-white"
               >
@@ -410,7 +411,7 @@ export default function PlaygroundClient() {
                 >
                   ENTER FONT LAB
                 </Typography>
-              </Link>
+              </MotionLink>
             </div>
             <div className="lg:col-span-4 border border-white/10 bg-white/[0.02] p-6">
               <Typography
@@ -443,7 +444,7 @@ export default function PlaygroundClient() {
               >
                 组件级排版与布局工作台。直接校准全部可视组件的共享字号档位、文本组间距和左右网格边界，保存后会同步影响对应实例。
               </Typography>
-              <Link
+              <MotionLink
                 href="/playground/component-lab"
                 className="mt-8 inline-grid grid-flow-col auto-cols-max items-center gap-3 border border-white/12 px-4 py-3 text-textPrimary transition-colors duration-300 hover:border-white/25 hover:text-white"
               >
@@ -457,7 +458,7 @@ export default function PlaygroundClient() {
                 >
                   ENTER COMPONENT LAB
                 </Typography>
-              </Link>
+              </MotionLink>
             </div>
           </motion.div>
         </div>

@@ -11,6 +11,7 @@ import {
 import { useRouter } from "next/navigation";
 
 import Typography from "@/components/common/Typography";
+import { MotionButton } from "@/components/motion";
 import ComponentDesignProvider, {
   dispatchComponentDesignUpdated,
   useComponentDesignDocument,
@@ -632,7 +633,7 @@ export default function ComponentLabClient() {
 
   function navigateToPlayground() {
     document.documentElement.removeAttribute("data-font-lab-mode");
-    window.location.assign("/playground");
+    router.push("/playground");
   }
 
   return (
@@ -663,13 +664,13 @@ export default function ComponentLabClient() {
                   Component Lab
                 </Typography>
               </div>
-              <button
+              <MotionButton
                 type="button"
                 onClick={navigateToPlayground}
                 className="inline-flex min-h-[3rem] items-center justify-center border border-white/10 px-4 text-textPrimary transition-colors hover:border-white/20 hover:text-white"
               >
                 <ActionText>返回 Playground</ActionText>
-              </button>
+              </MotionButton>
             </div>
             <Typography
               as="p"
@@ -697,7 +698,7 @@ export default function ComponentLabClient() {
               {COMPONENT_LAB_COMPONENT_KEYS.map((componentKey) => {
                 const definition = COMPONENT_LAB_REGISTRY[componentKey];
                 return (
-                  <button
+                  <MotionButton
                     key={componentKey}
                     type="button"
                     onClick={() => setSelectedComponent(componentKey)}
@@ -727,7 +728,7 @@ export default function ComponentLabClient() {
                     >
                       {definition.description}
                     </Typography>
-                  </button>
+                  </MotionButton>
                 );
               })}
             </div>
@@ -743,7 +744,7 @@ export default function ComponentLabClient() {
               <div className="grid gap-4">
                 <div className="flex flex-wrap gap-3">
                   {PREVIEW_VIEWPORTS.map((viewport) => (
-                    <button
+                    <MotionButton
                       key={viewport.key}
                       type="button"
                       onClick={() => setSelectedViewport(viewport.key)}
@@ -754,12 +755,12 @@ export default function ComponentLabClient() {
                       }`}
                     >
                       <ActionText>{viewport.label}</ActionText>
-                    </button>
+                    </MotionButton>
                   ))}
                 </div>
                 <div className="flex flex-wrap gap-3">
                   {PREVIEW_VARIANTS.map((variant) => (
-                    <button
+                    <MotionButton
                       key={variant.key}
                       type="button"
                       onClick={() => setSelectedVariant(variant.key)}
@@ -770,9 +771,9 @@ export default function ComponentLabClient() {
                       }`}
                     >
                       <ActionText>{variant.label}</ActionText>
-                    </button>
+                    </MotionButton>
                   ))}
-                  <button
+                  <MotionButton
                     type="button"
                     onClick={saveDocument}
                     disabled={!isDirty || saveState === "saving"}
@@ -781,7 +782,7 @@ export default function ComponentLabClient() {
                     <ActionText>
                       {saveState === "saving" ? "保存中" : "保存配置"}
                     </ActionText>
-                  </button>
+                  </MotionButton>
                 </div>
                 <StatusText>
                   当前预览约束固定为 390 / 820 / 1440 三档舞台；桌面档始终按 1440px 校准并自动缩放显示。
@@ -853,13 +854,13 @@ export default function ComponentLabClient() {
             ))}
 
             <div className="flex flex-wrap gap-3 border-t border-white/8 pt-4">
-              <button
+              <MotionButton
                 type="button"
                 onClick={resetCurrentComponent}
                 className="border border-white/10 px-4 py-3 text-textPrimary transition-colors hover:border-white/20 hover:text-white"
               >
                 <ActionText>重置当前组件配置</ActionText>
-              </button>
+              </MotionButton>
             </div>
           </ControlBlock>
         </aside>

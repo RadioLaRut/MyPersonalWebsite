@@ -1,9 +1,9 @@
 "use client";
 
 import type { ReactNode } from "react";
-import Link from "next/link";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { MotionLink } from "@/components/motion";
 import {
   getGridColumnClassName,
   getSpacingRem,
@@ -88,14 +88,10 @@ export default function HomeEndcapSection({
           ) : null}
 
           <div style={{ marginTop: buttonTopSpacing }}>
-            <Link
+            <MotionLink
               href={buttonHref}
               scroll
-              onClick={(event) => {
-                if (editMode) {
-                  event.preventDefault();
-                }
-              }}
+              disabled={editMode}
               className="interactive inline-grid grid-flow-col auto-cols-max items-center gap-4 border border-white/20 px-6 py-4 text-white transition-colors duration-300 hover:bg-white hover:text-black"
             >
               <Typography
@@ -107,7 +103,7 @@ export default function HomeEndcapSection({
               >
                 {buttonLabel}
               </Typography>
-            </Link>
+            </MotionLink>
           </div>
         </div>
       </div>

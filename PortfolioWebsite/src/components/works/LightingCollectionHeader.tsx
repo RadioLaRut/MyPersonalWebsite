@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
+import { ChevronLeft } from "lucide-react/dist/cjs/lucide-react.js";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { MotionLink } from "@/components/motion";
 import {
   getResponsiveGridColumnClassName,
   getSpacingRem,
@@ -32,24 +33,16 @@ export default function LightingCollectionHeader({
         <div className="col-span-12 grid grid-cols-12 gap-10 lg:[align-items:last_baseline]">
           <div className={getResponsiveGridColumnClassName(design.titleBounds)}>
             <div className="mb-10">
-              <Link
+              <MotionLink
                 href={backHref}
-                onClick={(event) => {
-                  if (editMode) {
-                    event.preventDefault();
-                  }
-                }}
+                disabled={editMode}
                 className="group interactive inline-grid grid-cols-[0.32rem_auto] items-center gap-1.5 text-textMuted transition-colors duration-300 hover:text-white"
               >
-                <svg
-                  className="h-2.5 w-[0.32rem] shrink-0 overflow-visible translate-y-[1px] transition-transform duration-300 group-hover:translate-x-[1px]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 7 12"
+                <ChevronLeft
+                  className="h-2.5 w-2.5 shrink-0 translate-y-[1px] transition-transform duration-300 group-hover:translate-x-[1px]"
+                  strokeWidth={1.35}
                   aria-hidden="true"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.35} d="M6.25 0.75 0.9 6l5.35 5.25" />
-                </svg>
+                />
                 <Typography
                   preset="sans-body"
                   size="caption"
@@ -59,7 +52,7 @@ export default function LightingCollectionHeader({
                 >
                   BACK TO LIGHTING
                 </Typography>
-              </Link>
+              </MotionLink>
             </div>
 
             <Typography

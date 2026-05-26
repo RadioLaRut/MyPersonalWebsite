@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
 import ImageSlider from '@/components/breakdowns/ImageSlider';
+import { MotionLink } from '@/components/motion';
+import { motion } from '@/lib/motion';
 import ContentCard from '@/components/breakdowns/ContentCard';
 import TextSplitLayout from '@/components/breakdowns/TextSplitLayout';
 import ParameterGrid from '@/components/breakdowns/ParameterGrid';
@@ -20,7 +20,7 @@ export default function SampleBreakdownPage() {
                 {/* Header Section */}
                 <div className="col-start-2 col-span-10 mb-32">
                     <div className="rhythm-stack-4">
-                        <Link href="/" className="inline-block transition-colors hover:text-white">
+                        <MotionLink href="/" className="inline-block transition-colors hover:text-white">
                             <Typography
                                 as="span"
                                 preset="sans-body"
@@ -31,7 +31,7 @@ export default function SampleBreakdownPage() {
                             >
                                 ← 返回主页
                             </Typography>
-                        </Link>
+                        </MotionLink>
                         <motion.h1
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}

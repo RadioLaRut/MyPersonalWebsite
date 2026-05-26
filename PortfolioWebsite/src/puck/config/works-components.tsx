@@ -142,6 +142,7 @@ export const worksComponents = {
         _g_display: createFieldGroup("显示设置"),
         imagePreset: { ...imagePresetField, label: "Image Preset" },
         imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
+        initialPosition: { type: "number", label: "Initial Slider Position" },
         _g_labels: createFieldGroup("标签文字"),
         leftLabel: { type: "text", label: "Left Label" },
         rightLabel: { type: "text", label: "Right Label" },
@@ -153,8 +154,9 @@ export const worksComponents = {
         alt: "Lighting Comparison",
         imagePreset: "ratio-16-9",
         imageFitMode: "x",
+        initialPosition: 50,
       },
-      render: ({ title, unlitSrc, litSrc, alt, imagePreset, imageFitMode, leftLabel, rightLabel, editMode }) => (
+      render: ({ title, unlitSrc, litSrc, alt, imagePreset, imageFitMode, initialPosition, leftLabel, rightLabel, editMode }) => (
         <ImageSlider
           title={title}
           unlitSrc={unlitSrc}
@@ -162,6 +164,7 @@ export const worksComponents = {
           alt={alt}
           imagePreset={castImagePreset(imagePreset)}
           imageFitMode={castImageFitMode(imageFitMode)}
+          initialPosition={typeof initialPosition === "number" ? initialPosition : 50}
           leftLabel={leftLabel}
           rightLabel={rightLabel}
           editMode={editMode}

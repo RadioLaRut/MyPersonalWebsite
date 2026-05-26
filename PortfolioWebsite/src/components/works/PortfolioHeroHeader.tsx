@@ -1,9 +1,9 @@
 "use client";
 
 import React, { type ReactNode } from "react";
-import Link from "next/link";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { MotionLink } from "@/components/motion";
 import {
     getGridColumnClassName,
     getResponsiveGridColumnClassName,
@@ -114,13 +114,9 @@ export default function LightingCollectionHeroHeader({
                                     </Typography>
                                 ) : null}
                                 {ctaLabel && ctaHref ? (
-                                    <Link
+                                    <MotionLink
                                         href={ctaHref}
-                                        onClick={(event) => {
-                                            if (editMode) {
-                                                event.preventDefault();
-                                            }
-                                        }}
+                                        disabled={editMode}
                                         className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 text-textMuted transition-colors duration-300 hover:text-white"
                                         style={{ marginTop: getSpacingRem(design.ctaTopSpacing) }}
                                     >
@@ -134,7 +130,7 @@ export default function LightingCollectionHeroHeader({
                                         >
                                             {ctaLabel}
                                         </Typography>
-                                    </Link>
+                                    </MotionLink>
                                 ) : null}
                             </div>
                         </div>

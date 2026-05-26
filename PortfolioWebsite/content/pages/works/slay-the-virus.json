@@ -82,6 +82,7 @@
         "unlitSrc": "/images/slay-the-virus/PosterLandscapeOrigineClean.webp",
         "litSrc": "/images/slay-the-virus/STVTitle.webp",
         "alt": "海报优化对比",
+        "initialPosition": 50,
         "leftLabel": "ORIGINAL",
         "rightLabel": "OPTIMIZED"
       }
@@ -96,6 +97,7 @@
         "alt": "海报优化对比",
         "leftLabel": "ORIGINAL",
         "rightLabel": "OPTIMIZED",
+        "initialPosition": 50,
         "imagePreset": "native",
         "imageFitMode": "y"
       }

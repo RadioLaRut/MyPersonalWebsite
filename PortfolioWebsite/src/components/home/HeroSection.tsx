@@ -1,17 +1,17 @@
 "use client";
-import Link from "next/link";
 import React, { type ReactNode, useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { MotionLink } from "@/components/motion";
 import {
   getResponsiveGridColumnClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
 import { toPlainText } from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
+import { motion, useScroll, useTransform } from "@/lib/motion";
 
 function hasNodeContent(value: ReactNode) {
   if (value === null || value === undefined || value === false) {
@@ -282,13 +282,9 @@ export default function HeroSection({
                         style={{ marginTop: ctaTopSpacing }}
                       >
                         {hasPrimaryCta ? (
-                          <Link
+                          <MotionLink
                             href={primaryCtaHref!}
-                            onClick={(event) => {
-                              if (editMode) {
-                                event.preventDefault();
-                              }
-                            }}
+                            disabled={editMode}
                             className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 text-white/92 transition-colors duration-300 hover:text-white"
                           >
                             <span className="h-px w-7 bg-white/52 transition-all duration-300 group-hover:w-11 group-hover:bg-white" />
@@ -301,17 +297,13 @@ export default function HeroSection({
                             >
                               {primaryCtaLabel}
                             </Typography>
-                          </Link>
+                          </MotionLink>
                         ) : null}
 
                         {hasSecondaryCta ? (
-                          <Link
+                          <MotionLink
                             href={secondaryCtaHref!}
-                            onClick={(event) => {
-                              if (editMode) {
-                                event.preventDefault();
-                              }
-                            }}
+                            disabled={editMode}
                             className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 text-white/48 transition-colors duration-300 hover:text-white"
                           >
                             <span className="h-px w-7 bg-white/18 transition-all duration-300 group-hover:w-11 group-hover:bg-white" />
@@ -324,7 +316,7 @@ export default function HeroSection({
                             >
                               {secondaryCtaLabel}
                             </Typography>
-                          </Link>
+                          </MotionLink>
                         ) : null}
                       </div>
                     ) : null}

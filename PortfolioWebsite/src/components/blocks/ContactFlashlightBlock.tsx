@@ -1,9 +1,9 @@
 "use client";
-import React, { type CSSProperties, type ReactNode, useEffect, useState, useRef } from "react";
-import { motion } from "framer-motion";
+import React, { type CSSProperties, type ReactNode, useEffect, useRef, useState } from "react";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
 import { getGridColumnClassName } from "@/lib/component-design-style";
+import { motion, useInputCapabilities } from "@/lib/motion";
 
 export interface ContactFlashlightBlockProps {
     maskRadius?: number;
@@ -42,6 +42,8 @@ export default function ContactFlashlightBlock({
     const containerRef = useRef<HTMLDivElement>(null);
     const revealLayerRef = useRef<HTMLDivElement>(null);
     const [isTouchDevice, setIsTouchDevice] = useState(false);
+    const { isTouchLike } = useInputCapabilities();
+    const disablesFlashlight = editMode || isTouchLike || isTouchDevice;
 
     useEffect(() => {
         if (editMode) {
@@ -61,7 +63,7 @@ export default function ContactFlashlightBlock({
     }, [editMode]);
 
     useEffect(() => {
-        if (editMode || isTouchDevice) {
+        if (disablesFlashlight) {
             return;
         }
 
@@ -121,14 +123,14 @@ export default function ContactFlashlightBlock({
                 window.cancelAnimationFrame(frameId);
             }
         };
-    }, [editMode, isTouchDevice, maskRadius]);
+    }, [disablesFlashlight, maskRadius]);
 
     const revealLayerStyle: CSSProperties = {
         color: lightTextColor,
-        WebkitMaskImage: isTouchDevice
+        WebkitMaskImage: disablesFlashlight
             ? "none"
             : `radial-gradient(${maskRadius}px circle at var(--flashlight-x, 50%) var(--flashlight-y, 50%), black 0%, black ${maskSmoothness}%, transparent 100%)`,
-        maskImage: isTouchDevice
+        maskImage: disablesFlashlight
             ? "none"
             : `radial-gradient(${maskRadius}px circle at var(--flashlight-x, 50%) var(--flashlight-y, 50%), black 0%, black ${maskSmoothness}%, transparent 100%)`,
         WebkitMaskRepeat: "no-repeat",

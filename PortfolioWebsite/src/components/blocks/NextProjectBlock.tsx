@@ -5,6 +5,7 @@ import React from "react";
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { MotionLink } from "@/components/motion";
 import {
     getGridColumnClassName,
     getResponsiveGridColumnClassName,
@@ -38,13 +39,10 @@ export default function NextProjectBlock({
 
     return (
         <footer className="mt-0 border-t border-white/20 relative z-20">
-            <a
+            <MotionLink
                 href={nextHref}
-                onClick={(event) => {
-                    if (editMode) {
-                        event.preventDefault();
-                    }
-                }}
+                disabled={editMode}
+                interactionPreset="blockLink"
                 className={`group block relative h-[40vh] md:h-[60vh] overflow-hidden w-full bg-black ${editMode ? "cursor-default" : "interactive"}`}
             >
                 <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 z-10 transition-colors duration-700 pointer-events-none"></div>
@@ -89,7 +87,7 @@ export default function NextProjectBlock({
                         </div>
                     </div>
                 </div>
-            </a>
+            </MotionLink>
             <div className="border-t border-white/10 bg-black">
                 <div
                     className="grid-container gap-y-2 py-8 text-center md:text-left"

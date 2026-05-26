@@ -1,11 +1,11 @@
 "use client";
 
 import { type ReactNode } from "react";
-import Link from "next/link";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { MotionLink } from "@/components/motion";
 import { getGridColumnClassName } from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
@@ -118,17 +118,14 @@ export default function LightingProjectCard({
     <section className="w-full py-6 md:py-8">
       <div className="grid-container">
         {href ? (
-          <Link
+          <MotionLink
             href={href}
-            onClick={(event) => {
-              if (editMode) {
-                event.preventDefault();
-              }
-            }}
+            disabled={editMode}
+            interactionPreset="blockLink"
             className={`${getGridColumnClassName(design.contentBounds)} block w-full ${editMode ? "cursor-default" : "interactive"}`}
           >
             {content}
-          </Link>
+          </MotionLink>
         ) : (
           <div className={`${getGridColumnClassName(design.contentBounds)} w-full`}>
             {content}

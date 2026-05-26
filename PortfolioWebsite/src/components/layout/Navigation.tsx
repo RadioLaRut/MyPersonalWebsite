@@ -1,9 +1,16 @@
 "use client";
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Typography from "@/components/common/Typography";
+import { MotionButton, MotionLink } from "@/components/motion";
+import {
+  menuItemVariants,
+  motion,
+  motionDurations,
+  motionEasings,
+  motionStagger,
+  motionTransitions,
+} from "@/lib/motion";
 import { isTestingMode } from "@/lib/site-mode";
 
 export default function Navigation() {
@@ -19,14 +26,14 @@ export default function Navigation() {
     pathname?.startsWith("/playground/component-lab");
   const keepsSpotlightVisible = pathname === "/about";
   const headerDuration = 0.4;
-  const overlayDuration = 0.65;
-  const panelDuration = 0.82;
-  const menuItemDuration = 0.52;
-  const menuItemDelayStep = 0.12;
-  const menuItemInitialDelay = 0.16;
+  const overlayDuration = motionDurations.slow;
+  const panelDuration = motionDurations.reveal;
+  const menuItemDuration = motionDurations.standard;
+  const menuItemDelayStep = motionStagger.itemDelay;
+  const menuItemInitialDelay = motionStagger.itemInitialDelay;
   const footerDelay = 0.66;
-  const overlayTransition = { duration: overlayDuration, ease: [0.22, 1, 0.36, 1] as const };
-  const panelTransition = { duration: panelDuration, ease: [0.22, 1, 0.36, 1] as const };
+  const overlayTransition = { duration: overlayDuration, ease: motionEasings.standard };
+  const panelTransition = { duration: panelDuration, ease: motionEasings.standard };
 
   useEffect(() => {
     if (pathname?.startsWith("/admin") || isInternalLabRoute) return;
@@ -166,7 +173,7 @@ export default function Navigation() {
         className="pointer-events-none fixed left-0 top-0 z-40 w-full px-5 py-6 md:px-8 md:py-8"
       >
         <div className="grid items-center justify-items-end">
-          <button
+          <MotionButton
             onClick={openMenu}
             ref={menuButtonRef}
             className="group interactive pointer-events-auto relative inline-grid grid-flow-col auto-cols-max items-center gap-3 transition-colors duration-300 text-edge-shadow"
@@ -189,7 +196,7 @@ export default function Navigation() {
               <span className="h-[1.5px] w-10 bg-white/90 transition-all duration-300 group-hover:w-14 group-hover:bg-white md:w-12"></span>
               <span className="h-[1.5px] w-6 bg-white/90 transition-all duration-300 group-hover:w-14 group-hover:bg-white md:w-8"></span>
             </span>
-          </button>
+          </MotionButton>
         </div>
       </motion.header>
 
@@ -216,12 +223,10 @@ export default function Navigation() {
           aria-hidden="true"
         />
 
-        <AnimatePresence>
-          {isOverlayActive && (
-            <motion.div
+        {isOverlayActive && (
+          <motion.div
               initial={{ x: "100%", opacity: 1 }}
               animate={{ x: isOpen ? 0 : "100%", opacity: 1 }}
-              exit={{ x: "100%", opacity: 1 }}
               transition={panelTransition}
               style={{ willChange: "transform" }}
               className="relative min-h-[100dvh] w-full overflow-y-auto overscroll-contain border-l border-white/10 bg-[linear-gradient(180deg,rgba(8,8,8,0.98)_0%,rgba(5,5,5,0.94)_100%)] shadow-[-24px_0_80px_rgba(0,0,0,0.4)] backdrop-blur-2xl sm:w-[40vw] sm:min-w-[400px]"
@@ -238,7 +243,7 @@ export default function Navigation() {
             >
               <div className="relative grid min-h-[100dvh] grid-rows-[1fr_auto] px-8 pt-28 pb-16 md:px-16 md:pt-32 md:pb-20">
                 <div className="absolute right-5 top-6 grid justify-items-end text-edge-shadow md:right-8 md:top-8">
-                  <button
+                  <MotionButton
                     onClick={closeMenu}
                     className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 outline-none transition-colors duration-300 focus:outline-none focus-visible:outline-none"
                     aria-label="Close menu"
@@ -265,7 +270,7 @@ export default function Navigation() {
                         strokeLinecap="round"
                       />
                     </svg>
-                  </button>
+                  </MotionButton>
                 </div>
 
                 <div className="grid w-full content-center justify-items-start">
@@ -275,15 +280,16 @@ export default function Navigation() {
                       return (
                         <motion.div
                           key={item.label}
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: 20 }}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                          variants={menuItemVariants}
                           transition={{
                             delay: menuItemInitialDelay + i * menuItemDelayStep,
                             duration: menuItemDuration,
                           }}
                         >
-                          <Link
+                          <MotionLink
                             href={item.href}
                             className={`group relative grid items-center transition-all duration-300 ${isActive ? "text-white" : "text-white/20"} hover:text-white`}
                             onClick={closeMenu}
@@ -304,7 +310,7 @@ export default function Navigation() {
                                         scaleY: 1.5, 
                                         x: 8,
                                         opacity: 1,
-                                        transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] }
+                                        transition: motionTransitions.hover
                                       }
                                     }}
                                     className="h-8 w-[0.5px] shrink-0 bg-gradient-to-b from-transparent via-white to-transparent origin-center"
@@ -319,7 +325,7 @@ export default function Navigation() {
                               <motion.div
                                 variants={{
                                   initial: { x: 0 },
-                                  hover: { x: 8, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }
+                                  hover: { x: 8, transition: motionTransitions.hover }
                                 }}
                               >
                                 <Typography
@@ -334,7 +340,7 @@ export default function Navigation() {
                                 </Typography>
                               </motion.div>
                             </motion.div>
-                          </Link>
+                          </MotionLink>
                         </motion.div>
                       );
                     })}
@@ -358,9 +364,8 @@ export default function Navigation() {
                   </Typography>
                 </motion.div>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </motion.div>
+        )}
       </div>
     </>
   );

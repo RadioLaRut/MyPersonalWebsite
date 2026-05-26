@@ -1,14 +1,15 @@
 "use client";
 import React, { type ReactNode, useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { MotionLink } from "@/components/motion";
 import {
   getResponsiveGridColumnClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset, normalizeImagePreset } from "@/lib/image-presentation";
+import { motion, useScroll, useTransform } from "@/lib/motion";
 
 interface ProjectSectionProps {
   title: ReactNode;
@@ -34,10 +35,11 @@ export default function ProjectSection({
   editMode = false,
 }: ProjectSectionProps) {
   const design = useComponentDesign("ProjectSection");
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
   const imageAlt = typeof title === "string" ? title : "Project cover";
   const resolvedImagePreset = normalizeImagePreset(imagePreset);
-  const cursorClass = editMode ? "cursor-default" : "interactive cursor-pointer";
+  const isLinkEnabled = !editMode && Boolean(link);
+  const cursorClass = isLinkEnabled ? "cursor-pointer" : "cursor-default";
   const sectionClassName = `relative m-0 grid min-h-screen min-h-[100dvh] w-full place-items-center overflow-hidden p-0 mix-blend-normal group ${cursorClass}`;
   const mediaLayerClassName = "absolute inset-0 grid place-items-center px-0";
   const frameClassName = resolvedImagePreset === "native" ? "w-full h-full" : "w-full";
@@ -71,16 +73,14 @@ export default function ProjectSection({
   const titleUnderlineOpticalPull = getSpacingRem(design.titleUnderlineOpticalPull);
   const adjustedGap = `max(0px, calc(${lockupGap} - ${titleUnderlineOpticalPull}))`;
 
-  const handleInteraction = () => {
-    if (!editMode && link) {
-      window.location.href = link;
-    }
-  };
-
   return (
-    <section
+    <MotionLink
       ref={containerRef}
-      onClick={handleInteraction}
+      href={link || "#"}
+      disabled={!isLinkEnabled}
+      disabledElement="section"
+      interactionPreset="blockLink"
+      aria-label={typeof title === "string" ? `Open ${title}` : "Open project"}
       className={sectionClassName}
     >
       <motion.div
@@ -151,6 +151,6 @@ export default function ProjectSection({
           </div>
         </div>
       </motion.div>
-    </section>
+    </MotionLink>
   );
 }

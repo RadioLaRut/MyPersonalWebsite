@@ -54,6 +54,7 @@
         "alt": "Lighting Comparison",
         "imagePreset": "ratio-21-9",
         "imageFitMode": "x",
+        "initialPosition": 48,
         "id": "ImageSlider-45aed034-2cb1-4994-b18a-49fcf3e43eff",
         "leftLabel": "无光照",
         "rightLabel": "光照"
@@ -98,6 +99,7 @@
         "alt": "Lighting Comparison",
         "imagePreset": "ratio-21-9",
         "imageFitMode": "x",
+        "initialPosition": 48,
         "id": "ImageSlider-fdcfce2e-8290-4e78-899a-66d4e5428702",
         "leftLabel": "无光照",
         "rightLabel": "光照"
