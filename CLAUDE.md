@@ -1,191 +1,49 @@
-# CLAUDE.md
+# Repository Guidelines
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## 语言与执行原则
+- 所有输出都必须使用中文，包括计划、说明、注释、评审意见与 PR 描述，任何情况不得使用 Emoji。
+- 常规开发命令默认直接执行，无需逐条确认，如 `npm run dev`、`npm run dev:test`、`npm run build`、`npm run lint`、`npm run test:slug`、`npm run test:assets`。
+- 任何必须向用户确认的问题，优先使用当前代理环境提供的提问工具；仅在该环境不提供相应工具时，才改用普通文本提问。
+- 不得刻意迎合用户。所有回答都必须独立分析，任何结论都必须能自洽并经得起严格审查。
+- 所有建议和代码都必须能经受严格 review，不允许用模糊表述、硬编码或掩盖根因的方式交付。
 
-## 项目概述
-
-这是一个基于 Next.js 14 的个人作品集网站，采用 App Router 架构。项目使用 TypeScript、Tailwind CSS 和 Framer Motion 构建，集成了 Puck CMS 可视化编辑器用于内容管理。
-
-## 安全规范
-- 所有输出都必须使用中文（包括说明、注释、评审意见与 PR 描述），不得使用任何Emoji。
-- 任何提问**必须**使用 `AskUserQuestion` 提问工具 
-- 常规开发命令默认直接执行，无需逐条确认（如 `npm run dev`、`npm run build`、`npm run lint`、`npm test`）。
-- 严禁执行不可逆操作：不得删除文件夹、磁盘分区、Git 仓库或执行等价高风险命令（如 `rm -rf`、破坏性 `git reset`）。任何此类操作需要向用户二次确认。
-- 仅当命令具有高风险或不可逆性时，才需要先征得确认。
+## 安全与变更边界
+- 严禁执行不可逆操作：不得删除文件夹、磁盘分区、Git 仓库，或执行等价高风险命令，如 `rm -rf`、破坏性 `git reset`。
+- 仅当命令具有高风险、不可逆性或明显越过安全边界时，才需要先征得确认。
 - 任何可能越过安全边界的操作，必须先确认影响范围，并优先采用可回滚方案。
-- **CodeX 会Review你的任何内容。**
+
+## 项目事实速查
+- 主应用位于 `PortfolioWebsite/`，技术栈为 Next.js 14 + TypeScript + Tailwind CSS + Framer Motion + Puck。
+- 页面内容以 `PortfolioWebsite/content/pages/**/*.json` 为单一来源；页面主体内容不要直接绕过这套内容链路硬编码。
+- `FontLab` 与 `ComponentLab` 的预设内容同样属于配置数据；字体样本、组件样本、默认文案、默认图片与默认参数不得散落在 `src/**` 实现中长期硬编码。
+- 当前联系信息并入 `/about` 页面；`PortfolioWebsite/src/app/contact/page.tsx` 只负责重定向到 `/about`。
+- 网站运行依赖的 `PortfolioWebsite/public/**` 图片资源必须以普通 Git 文件提交，严禁通过 Git LFS 管理。
+- `PortfolioData.md` 仅作历史资料参考，不是当前页面渲染的权威数据结构。
 
 ## 开发命令
+- 所有命令都在 `PortfolioWebsite/` 目录执行。
+- `npm run dev`：常规开发模式，设置 `NEXT_PUBLIC_SITE_MODE=normal`。
+- `npm run dev:test`：测试模式，设置 `NEXT_PUBLIC_SITE_MODE=testing`，启用 `/admin`、`/playground` 与全页可选中复制。
+- `npm run build`：生产构建；执行前会先跑 `npm run test:assets`。
+- `npm run start`：启动生产构建后的站点。
+- `npm run lint`：运行 Next.js ESLint 检查。
+- `npm run test:slug`：执行 slug 安全与归一化测试。
+- `npm run test:assets`：检查 `public/` 资源引用完整性。
+- `npm run build:puck-preview-css`：构建 Puck 预览样式文件。
+- `npm run convert:images`：将 `public/images/` 下的 png/jpg/jpeg 转为 webp，并同步更新 `src/` 与 `content/` 中的引用；依赖 `cwebp` 在 PATH 中可用，或通过 `CWEBP_BIN` 指定路径。
 
-```bash
-# 安装依赖
-npm install
+## 实现与协作约束
+- 所有新增组件或明显扩展后的组件，都应同步更新到 `/playground` 或对应演示入口。
+- 涉及页面排版、组件布局、视觉系统、Typography、FontLab 链路或图片呈现规范的修改，必须先遵循 `PortfolioWebsite/网页风格和规范.md`；不要在本文件重复维护展开版规则。
+- 文本渲染优先走现有 `Typography` 体系；图片渲染优先走现有 `PresetImage` 与统一图片预设。
+- 任何字体相关内容调整，不得直接在组件或页面里硬编码字符串、字号样本或默认展示；必须修改 `FontLab` 预设链路，优先落到 `PortfolioWebsite/content/font-lab/font-presets.json` 或其统一配置入口。
+- 任何组件相关样本内容、默认文案、默认图片、默认参数的调整，不得直接在业务组件或页面 JSX 中硬编码；必须修改 `ComponentLab` 预设链路，优先落到 `PortfolioWebsite/src/components/playground/component-lab-registry.tsx`、`PortfolioWebsite/content/component-design/component-design.json` 或其统一配置入口。
+- 如果现有 `FontLab` 或 `ComponentLab` 预设结构无法承载需求，先扩展预设结构与消费链路，再接入变更；不允许跳过预设层直接把内容写死在实现里。
+- 页面和组件布局必须落在统一 12 列 `.grid-container` 或既有 grid helper 上，不允许脱离网格自由摆放。
+- 样式优先复用现有 token、全局样式和已有组件，不要为单页局部需求发明新的视觉常量。
 
-# 启动开发服务器（常规模式）
-npm run dev
-
-# 启动测试模式（启用 Puck CMS 编辑器，可访问 /admin 和 /playground）
-npm run dev:test
-
-# 构建生产版本
-npm run build
-
-# 启动生产服务器
-npm start
-
-# 代码检查
-npm run lint
-
-# 运行 slug 验证测试
-npm run test:slug
-
-# 构建 Puck 预览样式
-npm run build:puck-preview-css
-
-# 将 public/images/ 下所有 png/jpg/jpeg 转换为 webp 并更新代码引用
-# 需要系统安装 cwebp（/usr/local/bin/cwebp），跳过 placeholder 文件
-npm run convert:images
-```
-
-## 核心架构
-
-### 双模式系统
-
-项目支持两种内容模式，通过环境变量 `NEXT_PUBLIC_SITE_MODE` 控制：
-
-- **常规模式** (`npm run dev`)：使用 JSON 正式路由，`/admin` 与 `/playground` 不可访问
-- **测试模式** (`npm run dev:test`)：启用 Puck CMS，可访问 `/admin` 和 `/playground`，内容保存到 `content/pages/*.json`
-
-### 路由结构
-
-- `/` - 首页（英雄区 + 项目展示）
-- `/works` - 作品列表页（网格布局）
-- `/works/[id]` - 作品详情页（breakdown 展示）
-- `/works/lighting-portfolio` - 灯光作品集索引
-- `/works/lighting-portfolio/[id]` - 灯光作品详情
-- `/contact` - 联系页（手电筒交互效果）
-- `/playground` - 仅测试模式可见
-- `/admin` - Puck CMS 编辑器（仅测试模式）
-- `/p/[[...slug]]` - 旧链接兼容重定向入口，不再作为正式页面
-
-### 中间件逻辑
-
-`src/middleware.ts` 实现：
-- 旧 `/p/*` 路径兼容重定向到无前缀正式路由
-- 旧 works slug 兼容重定向（如 `pcg-town` -> `houdini-pcg`）
-- 路径安全验证，阻止路径遍历攻击（`..`、`%2e%2e`、反斜杠等）
-
-### 内容管理
-
-- **正式内容数据**：存储在 `content/pages/*.json`，通过 Puck 编辑器管理
-- **旧硬编码备份**：仅保留在非路由备份文件中，用于人工核对迁移结果
-- **图片资源**：统一放置在 `public/images/` 下，按项目分文件夹组织
-
-## 设计系统
-
-### 颜色规范
-
-- 背景：纯黑 `#000000` 或 `bg-black`
-- 主文本：`text-white` 用于标题和强调
-- 次级文本：`text-white/70`、`text-white/50`、`text-white/40` 建立层次
-- 边框/分割线：`border-white/10`、`border-white/20` 极弱对比
-
-### 字体系统
-
-- **Display 字体** (`font-luna`, `font-futura`)：超大标题，极粗字重，紧凑字距
-- **Serif** (`font-serif`, Noto Serif SC)：正文、副标题，优雅感
-- **Mono** (`font-mono`)：年份、标签、辅助文字，全大写，超宽字距
-
-### 布局原则
-
-- 采用 12 列网格系统（移动端 4 列）
-- 不对称布局，通过 `col-start` 和 `col-span` 控制留白
-- 避免简单居中堆砌，强调视觉层次和呼吸感
-
-### 交互特性
-
-- **自定义光标**：全站隐藏系统光标，使用白色圆圈跟随，`mix-blend-mode: difference`
-- **作品列表悬停**：文字从幽灵描边变为实心白，背景显示预览图，微小位移
-- **手电筒效果**：Contact 页面使用 radial gradient mask 跟随鼠标
-- **图片对比滑块**：灯光作品支持 lit/unlit 对比，拖动滑块查看
-
-## 关键组件
-
-### Breakdown 组件（作品详情页）
-
-位于 `src/components/breakdowns/`：
-- `BreakdownHeadline` - 标题区
-- `BreakdownTriptych` - 三栏技术展示
-- `ImageSlider` - 光照对比滑块（支持 `litImg`/`unlitImg`）
-- `MosaicGallery` - 图片画廊
-- `ParameterGrid` - 参数网格
-- `ContentCard` - 内容卡片（支持图文混排和纯文本模式）
-- `TextSplitLayout` - 文本分栏布局
-- `HighDensityInfoBlock` - 高密度信息块
-- `MetaDataBlock` - 元数据展示
-
-### Puck CMS 配置
-
-- 配置文件：`src/puck/config.tsx`
-- 所有 breakdown 组件已注册为 Puck 组件，可在编辑器中拖拽使用
-- 编辑器客户端：`src/puck/editor-client.tsx`
-- 渲染客户端：`src/puck/render-client.tsx`
-
-## 数据结构
-
-### 作品数据字段
-
-```typescript
-{
-  title: string;           // 作品标题
-  idNum: string;          // 编号（如 "01"）
-  heroImage: string;      // 英雄区图片路径
-  description: string;    // 描述文案
-  col1/col2/col3: {       // 三栏展示
-    title: string;
-    text: string;
-    img: string;
-  };
-  gallery: string[] | Array<{  // 图库（支持对比）
-    litImg: string;
-    unlitImg?: string;
-    caption?: string;
-  }>;
-  navLink?: string;       // 外部链接
-  nextId: string;         // 下一个作品 ID
-  nextName: string;       // 下一个作品名称
-  nextBg: string;         // 下一个作品背景图
-}
-```
-
-## 重要文档
-
-- `网页风格和规范.md` - 详细的设计规范和视觉语言定义
-- `配置指南.md` - 内容配置、添加作品、Puck 使用指南
-- `PortfolioData.md` - 作品集数据结构说明
-
-## 安全注意事项
-
-- Puck 路径验证在 `src/middleware.ts` 和 `src/lib/puck-slug.test.ts` 中实现
-- 禁止路径遍历：`..`、`%2e%2e`、`%2f`、反斜杠、空字节等均被拦截
-- 测试模式仅用于本地开发，生产环境应使用常规模式
-
-## 技术栈
-
-- **框架**：Next.js 14 (App Router)
-- **语言**：TypeScript
-- **样式**：Tailwind CSS
-- **动画**：Framer Motion
-- **平滑滚动**：Lenis
-- **CMS**：Puck (@measured/puck)
-- **图标**：Lucide React
-
-## 开发注意事项
-
-1. 修改设计时必须遵循 `网页风格和规范.md` 中的规范
-2. 添加新作品参考 `配置指南.md` 的步骤
-3. 图片路径必须以 `/images/` 开头，对应 `public/images/` 目录
-4. 所有作品 ID 必须唯一
-5. 不得输出任何 Emoji
-6. 不得进行破坏性操作（删除文件夹、硬盘、git 仓库）
-7. 删除文件前必须明确征得用户同意
+## 测试与交付要求
+- 当前测试体系以 Node 内置测试运行器 `node --test` 为主。
+- 新增测试文件建议命名为 `*.test.ts`，尽量与被测模块同目录。
+- 涉及 slug、上传、API 路由、Puck 内容归一化、字体配置或图片路径处理的改动，必须补充正常与异常用例。
+- 涉及页面排版或视觉系统调整时，除必要测试外，还应同步更新 Playground 与相关规范文档。

@@ -1,6 +1,13 @@
 "use client";
 import React, { type ReactNode } from "react";
 
+import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+    getGridColumnClassName,
+    getSectionSpacingClassName,
+    getSpacingRem,
+} from "@/lib/component-design-style";
 import WorksListEntry from "@/components/works/WorksListEntry";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
@@ -24,25 +31,52 @@ export interface WorksListProps {
 }
 
 export default function WorksList({ heading = "All Selected Works", works = [], entriesContent, editMode = false }: WorksListProps) {
+    const design = useComponentDesign("WorksList");
     const hasLegacyWorks = works && works.length > 0;
     const hasEntriesContent = Boolean(entriesContent);
 
     if (!hasLegacyWorks && !hasEntriesContent) {
-        return <div className="p-12 text-textMuted text-center font-mono text-xs">No works available. Add some works to the list.</div>
+        return (
+            <div className="p-12 text-center">
+                <Typography
+                    as="p"
+                    preset="sans-body"
+                    size="caption"
+                    weight="semantic"
+                    wrapPolicy="label"
+                    align="center"
+                    className="text-textMuted"
+                >
+                    No works available. Add some works to the list.
+                </Typography>
+            </div>
+        );
     }
 
     return (
-        <div className="w-full text-white flex flex-col justify-center pt-32 pb-20">
-            <div className={`px-8 sm:px-16 mb-16 relative z-20 ${editMode ? "pointer-events-auto" : "mix-blend-difference pointer-events-none"}`}>
-                <h1 className="text-sm tracking-widest text-textMuted uppercase font-medium">
-                    {heading}
-                </h1>
+        <div className={`grid w-full content-center text-white ${getSectionSpacingClassName(design.sectionSpacing)}`}>
+            <div
+                className={`grid-container relative z-20 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}
+                style={{ marginBottom: getSpacingRem(design.headingBottomSpacing) }}
+            >
+                <div className={`${getGridColumnClassName(design.headingBounds)} border-b border-white/10 pb-8`}>
+                    <Typography
+                        as="h1"
+                        preset="sans-body"
+                        size="caption"
+                        weight="semantic"
+                        wrapPolicy="label"
+                        className="text-textMuted"
+                    >
+                        {heading}
+                    </Typography>
+                </div>
             </div>
 
             {entriesContent ? (
-                <div className="flex flex-col w-full border-t border-white/10">{entriesContent}</div>
+                <div className="grid w-full border-t border-white/10">{entriesContent}</div>
             ) : (
-                <div className="flex flex-col w-full border-t border-white/10">
+                <div className="grid w-full border-t border-white/10">
                     {works.map((work, index) => (
                         <WorksListEntry
                             key={work.id || index}

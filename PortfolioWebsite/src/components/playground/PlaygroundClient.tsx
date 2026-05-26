@@ -1,15 +1,14 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { motion } from "framer-motion";
+import { MotionLink } from "@/components/motion";
+import { motion, motionTransitions } from "@/lib/motion";
 import puckConfig from "@/puck/config";
 import { CANONICAL_PLACEHOLDER_PATH } from "@/lib/public-paths";
-import BilingualText from "@/components/common/BilingualText";
+import Typography from "@/components/common/Typography";
 
 const EXCLUDED_COMPONENT_KEYS = new Set(["ContactFlashlight"]);
 const HIDDEN_LEGACY_COMPONENT_KEYS = new Set([
-  "PortfolioHeroHeader",
   "MetadataListItem",
   "TextParagraphBlock",
   "ContactExperienceItem",
@@ -39,13 +38,46 @@ const PLAYGROUND_GROUPS = [
   {
     label: "Lighting Blocks",
     description: "灯光作品集专用模块。",
-    keys: ["LightingCollectionHeader"],
+    keys: ["LightingCollectionHeader", "LightingProjectCard"],
   },
   {
     label: "Page Blocks",
     description: "首页、作品流和跳转模块。",
     keys: ["HeroSection", "ProjectSection", "HomeEndcapSection", "WorksList", "NextProjectBlock"],
   },
+] as const;
+const RHYTHM_PROFILES = [
+  {
+    label: "Compact",
+    utility: "rhythm-section-compact",
+    spacing: "64 / 64",
+    description: "用于紧凑型信息块、元数据区和较短的收束段。",
+  },
+  {
+    label: "Normal",
+    utility: "rhythm-section-normal",
+    spacing: "96 / 96",
+    description: "用于常规正文区块、列表页和大多数标准 section。",
+  },
+  {
+    label: "Spacious",
+    utility: "rhythm-section-spacious",
+    spacing: "96 / 96 -> 128 / 128",
+    description: "用于首页收束、关于页大区块和需要更强呼吸感的内容段。",
+  },
+  {
+    label: "Hero",
+    utility: "rhythm-section-hero",
+    spacing: "128 / 96 -> 160 / 128",
+    description: "用于首页 Hero 和作品页头图这类首屏落版区块。",
+  },
+] as const;
+const RHYTHM_STACKS = [
+  { utility: "rhythm-stack-2", spacing: "16px", usage: "紧贴的标签与元信息" },
+  { utility: "rhythm-stack-3", spacing: "24px", usage: "标题与副标题、小型 lockup" },
+  { utility: "rhythm-stack-4", spacing: "32px", usage: "常规段落组和区块内主次层级" },
+  { utility: "rhythm-stack-6", spacing: "48px", usage: "CTA 前后的呼吸感和分组切换" },
+  { utility: "rhythm-stack-8", spacing: "64px", usage: "大图区块内部的强切换" },
 ] as const;
 
 const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
@@ -61,10 +93,12 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     title: "SECTION TITLE",
   },
   PortfolioHeroHeader: {
-    title: "LIGHTING",
-    subtitle: "PORTFOLIO",
-    descriptionLine1: "A Curated Selection",
-    descriptionLine2: "Unreal Engine 5",
+    title: "ALL WORKS",
+    subtitle: "ARCHIVE",
+    descriptionLine1: "CURATED INDEX",
+    descriptionLine2: "按灯光、技术美术与游戏设计线索组织全部项目。",
+    ctaLabel: "ABOUT",
+    ctaHref: "/about",
   },
   RichParagraph: {
     content: "这是一个富文本段落组件，支持中英文混排。This is a rich paragraph component supporting bilingual text. 可以用于展示项目描述、设计思路或任何需要详细说明的内容。",
@@ -75,7 +109,6 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     imageSrc: "/images/train-station/2Day.webp",
     imagePreset: "ratio-16-9",
     imageFitMode: "x",
-    tags: [{ tag: "Tag 1" }, { tag: "Tag 2" }, { tag: "Tag 3" }],
     imagePosition: "right",
   },
   TextSplitLayout: {
@@ -92,12 +125,14 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     caption: "Image Panel Caption",
     preset: "ratio-16-9",
     fitMode: "x",
-    variant: "content",
+    variant: "large",
   },
   ImageSlider: {
+    title: "LIGHTING COMPARISON",
     unlitSrc: "/images/train-station/2Day.webp",
     litSrc: "/images/train-station/2Night.webp",
     alt: "Lighting Comparison",
+    initialPosition: 48,
     leftLabel: "DAY",
     rightLabel: "NIGHT",
   },
@@ -122,7 +157,7 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     mediaSrc: "/images/train-station/2Day.webp",
     imagePreset: "ratio-21-9",
     imageFitMode: "x",
-    isVideo: "false",
+    isVideo: false,
     parameters: [
       { name: "Parameter 1", value: "Value 1", description: "Description 1" },
       { name: "Parameter 2", value: "Value 2", description: "Description 2" },
@@ -155,9 +190,14 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     phase3ImageFitMode: "x",
   },
   HeroSection: {
-    title: "HERO SECTION",
-    subtitle: "Portfolio / Design / Development",
-    description: "GAME DIRECTOR\n& DEVELOPER",
+    eyebrow: "LIGHTING / TECH ART / GAME DESIGN",
+    title: "JIANG\nCHENGYAN",
+    subtitle: "",
+    description: "",
+    primaryCtaLabel: "",
+    primaryCtaHref: "",
+    secondaryCtaLabel: "",
+    secondaryCtaHref: "",
     imageSrc: "/images/covers/2026/ShotForCrewWithoutWord.0004.webp",
     imageAlt: "Hero Background",
     imagePreset: "ratio-21-9",
@@ -165,8 +205,8 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
   },
   ProjectSection: {
     title: "PENGUIN TRADING CO.",
-    subtitle: "Lead Designer / PM / Tech Art",
-    imageSrc: CANONICAL_PLACEHOLDER_PATH,
+    subtitle: "黑色幽默经营 / 遗传繁育 / 资源压榨",
+    imageSrc: "/images/penguin/CyberRestaurant.webp",
     imagePreset: "ratio-16-9",
     imageFitMode: "x",
     link: "/works/penguin",
@@ -181,7 +221,7 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     buttonHref: "/works",
   },
   WorksList: {
-    heading: "All Selected Works",
+    heading: "WORKS / CASES / EXPERIMENTS",
     entries: [
       {
         type: "WorksListEntry",
@@ -194,7 +234,7 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
           imageSrc: "/images/train-station/2Day.webp",
           imagePreset: "ratio-21-9",
           imageFitMode: "x",
-          desc: "A curated collection of lighting and mood practices",
+          desc: "从城市夜景到站台晨昏，用光线、天气与镜头节奏搭建情绪场。",
         },
       },
       {
@@ -208,7 +248,7 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
           imageSrc: CANONICAL_PLACEHOLDER_PATH,
           imagePreset: "ratio-21-9",
           imageFitMode: "x",
-          desc: "Simulation management game with asset lock systems",
+          desc: "在外星冰川经营一座企鹅血汗工厂，把繁育、压榨与消耗做成黑色幽默系统。",
         },
       },
     ],
@@ -223,8 +263,16 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
   LightingCollectionHeader: {
     title: "CITY ADD",
     number: "01",
-    description: "A detailed breakdown of lighting setup, mood exploration, and before/after comparisons for city add.",
+    description: "围绕城市氛围、镜头构图与照明节奏展开的灯光练习集合。",
     backHref: "/works/lighting-portfolio",
+  },
+  LightingProjectCard: {
+    number: "01",
+    title: "CITY AFTER RAIN",
+    coverImage: "/images/city-2026/002.webp",
+    href: "/works/lighting-portfolio/collection-1",
+    imagePreset: "ratio-21-9",
+    imageFitMode: "cover",
   },
 };
 
@@ -238,47 +286,69 @@ const groupedPlaygroundComponents = PLAYGROUND_GROUPS.map((group) => ({
 
 export default function PlaygroundClient() {
   return (
-    <main className="min-h-screen bg-black text-white pt-24 md:pt-32 pb-24 md:pb-32">
+    <main className="min-h-screen bg-black text-white rhythm-section-spacious">
       <div className="grid-container">
         {/* Header Section */}
-        <div className="col-start-2 col-span-10 mb-16 lg:mb-24">
+        <div className="col-start-2 col-span-10 mb-24 lg:mb-32">
           {/* Back Button */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Link
-              href="/"
-              className="group inline-flex items-center gap-4 mb-10 lg:mb-12"
+          <div className="rhythm-stack-4">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={motionTransitions.standard}
             >
-              <span className="font-mono text-sm uppercase tracking-[0.25em] text-textMuted group-hover:text-white transition-colors duration-300">
-                ← 返回首页
-              </span>
-            </Link>
-          </motion.div>
+              <MotionLink
+                href="/"
+                className="group inline-grid grid-flow-col auto-cols-max items-center gap-4"
+              >
+                <Typography
+                  as="span"
+                  preset="sans-body"
+                  size="label"
+                  weight="medium"
+                  wrapPolicy="label"
+                  className="text-textMuted transition-colors duration-300 group-hover:text-white"
+                >
+                  ← 返回首页
+                </Typography>
+              </MotionLink>
+            </motion.div>
 
-          {/* Title */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-[12vw] sm:text-[10vw] md:text-[6vw] font-luna font-black leading-[0.9] tracking-tighter mb-6 lg:mb-8"
-          >
-            PLAYGROUND
-          </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+            >
+              <Typography
+                as="span"
+                preset="luna-editorial"
+                size="display"
+                weight="display"
+                wrapPolicy="heading"
+                className="text-white"
+              >
+                PLAYGROUND
+              </Typography>
+            </motion.h1>
 
-          {/* Subtitle */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex flex-col md:flex-row md:items-end justify-between gap-6"
-          >
-            <p className="font-futura text-textMuted tracking-wide text-base md:text-lg max-w-2xl leading-relaxed">
-              组件预览与交互测试空间。展示 Puck 中全部常规组件，用于统一预览布局与交互效果。
-            </p>
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...motionTransitions.fade, delay: 0.2 }}
+              className="grid gap-6"
+            >
+              <Typography
+                as="p"
+                preset="sans-body"
+                size="body"
+                weight="regular"
+                wrapPolicy="prose"
+                className="max-w-2xl text-textMuted"
+              >
+                组件预览与交互测试空间。展示 Puck 中全部常规组件，用于统一预览布局与交互效果。
+              </Typography>
+            </motion.div>
+          </div>
         </div>
 
         {/* Divider */}
@@ -286,29 +356,317 @@ export default function PlaygroundClient() {
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="col-span-12 border-b border-white/15 mb-16 lg:mb-20 origin-left"
+          className="col-span-12 mb-24 origin-left border-b border-white/15 lg:mb-32"
         />
 
-        {/* BilingualText Component Showcase */}
-        <div className="col-span-12 mb-16 lg:mb-24">
+        <div className="col-span-12 mb-24 lg:mb-32">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ...motionTransitions.fade, delay: 0.2 }}
+            className="grid grid-cols-1 lg:grid-cols-12 gap-6"
+          >
+            <div className="lg:col-span-4 border border-white/10 bg-white/[0.02] p-6">
+              <Typography
+                as="span"
+                preset="sans-body"
+                size="caption"
+                weight="medium"
+                wrapPolicy="label"
+                className="text-textMuted"
+              >
+                INTERNAL TOOL
+              </Typography>
+              <Typography
+                as="h2"
+                preset="luna-editorial"
+                size="title-sm"
+                weight="strong"
+                wrapPolicy="heading"
+                className="mt-4 text-white"
+              >
+                Font Lab
+              </Typography>
+              <Typography
+                as="p"
+                preset="sans-body"
+                size="body"
+                weight="regular"
+                wrapPolicy="prose"
+                className="mt-4 text-textMuted"
+              >
+                独立字体实验室。只负责校准字体模板内部的字号、字重映射、基线与字距；真实组件验收统一在 Playground 中完成。
+              </Typography>
+              <MotionLink
+                href="/playground/font-lab"
+                className="mt-8 inline-grid grid-flow-col auto-cols-max items-center gap-3 border border-white/12 px-4 py-3 text-textPrimary transition-colors duration-300 hover:border-white/25 hover:text-white"
+              >
+                <Typography
+                  as="span"
+                  preset="sans-body"
+                  size="caption"
+                  weight="medium"
+                  wrapPolicy="label"
+                  className="text-current"
+                >
+                  ENTER FONT LAB
+                </Typography>
+              </MotionLink>
+            </div>
+            <div className="lg:col-span-4 border border-white/10 bg-white/[0.02] p-6">
+              <Typography
+                as="span"
+                preset="sans-body"
+                size="caption"
+                weight="medium"
+                wrapPolicy="label"
+                className="text-textMuted"
+              >
+                INTERNAL TOOL
+              </Typography>
+              <Typography
+                as="h2"
+                preset="luna-editorial"
+                size="title-sm"
+                weight="strong"
+                wrapPolicy="heading"
+                className="mt-4 text-white"
+              >
+                Component Lab
+              </Typography>
+              <Typography
+                as="p"
+                preset="sans-body"
+                size="body"
+                weight="regular"
+                wrapPolicy="prose"
+                className="mt-4 text-textMuted"
+              >
+                组件级排版与布局工作台。直接校准全部可视组件的共享字号档位、文本组间距和左右网格边界，保存后会同步影响对应实例。
+              </Typography>
+              <MotionLink
+                href="/playground/component-lab"
+                className="mt-8 inline-grid grid-flow-col auto-cols-max items-center gap-3 border border-white/12 px-4 py-3 text-textPrimary transition-colors duration-300 hover:border-white/25 hover:text-white"
+              >
+                <Typography
+                  as="span"
+                  preset="sans-body"
+                  size="caption"
+                  weight="medium"
+                  wrapPolicy="label"
+                  className="text-current"
+                >
+                  ENTER COMPONENT LAB
+                </Typography>
+              </MotionLink>
+            </div>
+          </motion.div>
+        </div>
+
+        <div className="col-span-12 mb-24 lg:mb-32">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6 }}
-            className="mb-10 lg:mb-12 border-b border-white/10 pb-6"
+            className="mb-12 border-b border-white/10 pb-8"
           >
-            <div className="flex items-baseline gap-4 mb-3">
-              <span className="font-mono text-xs uppercase tracking-[0.3em] text-textMuted">
-                00
-              </span>
-              <h2 className="text-2xl md:text-3xl font-futura tracking-[0.1em] uppercase text-white">
-                BilingualText
-              </h2>
+            <div className="mb-4 grid grid-cols-[auto_1fr] items-baseline gap-4">
+              <Typography
+                as="span"
+                preset="sans-body"
+                size="label"
+                weight="medium"
+                wrapPolicy="label"
+                className="text-textMuted"
+              >
+                00A
+              </Typography>
+              <Typography
+                as="h2"
+                preset="sans-body"
+                size="title-sm"
+                weight="strong"
+                wrapPolicy="label"
+                className="text-white"
+              >
+                Vertical Rhythm System
+              </Typography>
             </div>
-            <p className="font-futura text-sm md:text-base tracking-wide text-textMuted ml-10">
-              双语文本组件，支持三种字重与自动中英文混排。
-            </p>
+            <Typography
+              as="p"
+              preset="sans-body"
+              size="body"
+              weight="regular"
+              wrapPolicy="prose"
+              className="ml-10 max-w-3xl text-textMuted"
+            >
+              当前站点采用 12 列栅格加纵向节奏的双轨系统。区块外轮廓回到 32px 主节奏线，组件内部再用 stack token 做更细的堆叠控制。
+            </Typography>
+          </motion.div>
+
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+            <div className="grid gap-6 lg:col-span-7">
+              {RHYTHM_PROFILES.map((profile, index) => (
+                <motion.div
+                  key={profile.utility}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.6, delay: index * 0.06 }}
+                  className={`border border-white/10 bg-white/[0.02] px-6 ${profile.utility}`}
+                >
+                  <div className="grid gap-4 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-baseline">
+                    <Typography
+                      as="span"
+                      preset="sans-body"
+                      size="caption"
+                      weight="medium"
+                      wrapPolicy="label"
+                      className="text-textMuted"
+                    >
+                      {profile.utility}
+                    </Typography>
+                    <Typography
+                      as="p"
+                      preset="sans-body"
+                      size="body"
+                      weight="regular"
+                      wrapPolicy="prose"
+                      className="text-textPrimary"
+                    >
+                      {profile.label}。{profile.description}
+                    </Typography>
+                    <Typography
+                      as="span"
+                      preset="sans-body"
+                      size="caption"
+                      weight="medium"
+                      wrapPolicy="label"
+                      className="text-textMuted"
+                    >
+                      {profile.spacing}
+                    </Typography>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6, delay: 0.18 }}
+              className="border border-white/10 bg-white/[0.02] p-6 lg:col-span-5"
+            >
+              <div className="rhythm-stack-4">
+                <div className="rhythm-stack-2">
+                  <Typography
+                    as="span"
+                    preset="sans-body"
+                    size="caption"
+                    weight="medium"
+                    wrapPolicy="label"
+                    className="text-textMuted"
+                  >
+                    STACK TOKENS
+                  </Typography>
+                  <Typography
+                    as="h3"
+                    preset="sans-body"
+                    size="body-lg"
+                    weight="strong"
+                    wrapPolicy="heading"
+                    className="text-textPrimary"
+                  >
+                    组件内部不再临时拍间距
+                  </Typography>
+                </div>
+
+                <div className="rhythm-stack-3">
+                  {RHYTHM_STACKS.map((stack) => (
+                    <div key={stack.utility} className="grid gap-2 border-t border-white/8 pt-4">
+                      <div className="grid grid-cols-[auto_auto] items-center gap-4">
+                        <Typography
+                          as="span"
+                          preset="sans-body"
+                          size="caption"
+                          weight="medium"
+                          wrapPolicy="label"
+                          className="text-textMuted"
+                        >
+                          {stack.utility}
+                        </Typography>
+                        <Typography
+                          as="span"
+                          preset="sans-body"
+                          size="caption"
+                          weight="medium"
+                          wrapPolicy="label"
+                          className="text-textMuted"
+                        >
+                          {stack.spacing}
+                        </Typography>
+                      </div>
+                      <Typography
+                        as="p"
+                        preset="sans-body"
+                        size="body"
+                        weight="regular"
+                        wrapPolicy="prose"
+                        className="text-textPrimary"
+                      >
+                        {stack.usage}
+                      </Typography>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Typography Mixed Script Showcase */}
+        <div className="col-span-12 mb-24 lg:mb-32">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6 }}
+            className="mb-12 border-b border-white/10 pb-8"
+          >
+            <div className="mb-4 grid grid-cols-[auto_1fr] items-baseline gap-4">
+              <Typography
+                as="span"
+                preset="sans-body"
+                size="label"
+                weight="medium"
+                wrapPolicy="label"
+                className="text-textMuted"
+              >
+                00
+              </Typography>
+              <Typography
+                as="h2"
+                preset="sans-body"
+                size="title-sm"
+                weight="strong"
+                wrapPolicy="label"
+                className="text-white"
+              >
+                Typography Mixed Script
+              </Typography>
+            </div>
+            <Typography
+              as="p"
+              preset="sans-body"
+              size="body"
+              weight="regular"
+              wrapPolicy="prose"
+              className="ml-10 text-textMuted"
+            >
+              `Typography` 负责把组件已经选定的模板、字号和字重稳定渲染出来；这里保留一组高密度样本用于校验混排细节。
+            </Typography>
           </motion.div>
 
           <div className="space-y-12">
@@ -319,27 +677,27 @@ export default function PlaygroundClient() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6 }}
             >
-              <h3 className="text-lg md:text-xl font-futura tracking-wider text-textPrimary mb-6">
+              <Typography as="h3" preset="sans-body" size="body-lg" weight="strong" wrapPolicy="heading" className="mb-6 text-textPrimary">
                 三种字重对比
-              </h3>
+              </Typography>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="space-y-3">
-                  <span className="font-mono text-xs text-textMuted uppercase tracking-[0.2em]">light</span>
-                  <p className="text-textPrimary text-lg leading-relaxed">
-                    <BilingualText text="中文轻量字重 / Light English Weight" weight="light" />
-                  </p>
+                  <Typography as="span" preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="text-textMuted">light</Typography>
+                  <Typography as="p" preset="sans-body" size="body-lg" weight="light" wrapPolicy="prose" className="text-textPrimary">
+                    中文轻量字重 / Light English Weight
+                  </Typography>
                 </div>
                 <div className="space-y-3">
-                  <span className="font-mono text-xs text-textMuted uppercase tracking-[0.2em]">medium</span>
-                  <p className="text-textPrimary text-lg leading-relaxed">
-                    <BilingualText text="中文中等字重 / Medium English Weight" weight="medium" />
-                  </p>
+                  <Typography as="span" preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="text-textMuted">medium</Typography>
+                  <Typography as="p" preset="sans-body" size="body-lg" weight="medium" wrapPolicy="prose" className="text-textPrimary">
+                    中文中等字重 / Medium English Weight
+                  </Typography>
                 </div>
                 <div className="space-y-3">
-                  <span className="font-mono text-xs text-textMuted uppercase tracking-[0.2em]">black</span>
-                  <p className="text-textPrimary text-lg leading-relaxed">
-                    <BilingualText text="中文粗黑字重 / Black English Weight" weight="black" />
-                  </p>
+                  <Typography as="span" preset="sans-body" size="caption" weight="medium" wrapPolicy="label" className="text-textMuted">display</Typography>
+                  <Typography as="p" preset="sans-body" size="body-lg" weight="display" wrapPolicy="prose" className="text-textPrimary">
+                    中文粗黑字重 / Display English Weight
+                  </Typography>
                 </div>
               </div>
             </motion.div>
@@ -351,22 +709,16 @@ export default function PlaygroundClient() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
-              <h3 className="text-lg md:text-xl font-futura tracking-wider text-textPrimary mb-6">
+              <Typography as="h3" preset="sans-body" size="body-lg" weight="strong" wrapPolicy="heading" className="mb-6 text-textPrimary">
                 中英文混排效果
-              </h3>
+              </Typography>
               <div className="bg-white/[0.02] rounded-lg p-6 md:p-8 space-y-6">
-                <p className="text-textPrimary text-base md:text-lg leading-loose">
-                  <BilingualText
-                    text="这是一个BilingualText组件示例，展示中英文混排效果。This is a demo showing Chinese and English mixed text rendering with proper weight and baseline alignment."
-                    weight="medium"
-                  />
-                </p>
-                <p className="text-textMuted text-sm md:text-base leading-[1.85]">
-                  <BilingualText
-                    text="组件会自动检测文本中的中英文内容，并分别应用不同的字体和字重。The component automatically detects Chinese and English text, applying appropriate fonts and weights."
-                    weight="light"
-                  />
-                </p>
+                <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="prose" className="text-textPrimary">
+                  这是一个 Typography 组件示例，展示中英文混排效果。This is a demo showing Chinese and English mixed text rendering with proper weight and baseline alignment.
+                </Typography>
+                <Typography as="p" preset="sans-body" size="body" weight="light" wrapPolicy="prose" className="text-textMuted">
+                  组件会自动检测文本中的中英文内容，并分别应用不同的字体和字重。The component automatically detects Chinese and English text, applying appropriate fonts and weights.
+                </Typography>
               </div>
             </motion.div>
 
@@ -377,40 +729,25 @@ export default function PlaygroundClient() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <h3 className="text-lg md:text-xl font-futura tracking-wider text-textPrimary mb-6">
+              <Typography as="h3" preset="sans-body" size="body-lg" weight="strong" wrapPolicy="heading" className="mb-6 text-textPrimary">
                 更多混排示例
-              </h3>
+              </Typography>
               <div className="bg-white/[0.02] rounded-lg p-6 md:p-8 space-y-6">
-                <p className="text-textPrimary text-base md:text-lg leading-loose">
-                  <BilingualText
-                    text="在UnrealEngine5中，我们使用Lumen全局光照系统来实现真实的光影效果。In Unreal Engine 5, we use the Lumen global illumination system to achieve realistic lighting effects."
-                    weight="medium"
-                  />
-                </p>
-                <p className="text-textPrimary text-base md:text-lg leading-loose">
-                  <BilingualText
-                    text="本项目的GitHub仓库地址是github.com/example/project，欢迎提交Issue和PR。The GitHub repository for this project is github.com/example/project, welcome to submit Issues and PRs."
-                    weight="medium"
-                  />
-                </p>
-                <p className="text-textMuted text-sm md:text-base leading-[1.85]">
-                  <BilingualText
-                    text="版本号v2.1.0已于2024年1月15日发布，包含15个新功能和23个Bug修复。Version v2.1.0 was released on January 15, 2024, including 15 new features and 23 bug fixes."
-                    weight="light"
-                  />
-                </p>
-                <p className="text-textPrimary text-lg md:text-xl leading-loose font-black">
-                  <BilingualText
-                    text="CSS3和HTML5是现代Web开发的基础技术，配合TypeScript使用效果更佳。CSS3 and HTML5 are fundamental technologies for modern web development, and work even better with TypeScript."
-                    weight="black"
-                  />
-                </p>
-                <p className="text-textPrimary text-base md:text-lg leading-loose">
-                  <BilingualText
-                    text="请访问我们的官网www.example.com或发送邮件至contact@example.com获取更多信息。Please visit our website www.example.com or email contact@example.com for more information."
-                    weight="medium"
-                  />
-                </p>
+                <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="prose" className="text-textPrimary">
+                  在 Unreal Engine 5 中，我们使用 Lumen 全局光照系统来实现真实的光影效果。In Unreal Engine 5, we use the Lumen global illumination system to achieve realistic lighting effects.
+                </Typography>
+                <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="url" className="text-textPrimary">
+                  本项目的 GitHub 仓库地址是 github.com/example/project，欢迎提交 Issue 和 PR。The GitHub repository for this project is github.com/example/project, welcome to submit Issues and PRs.
+                </Typography>
+                <Typography as="p" preset="sans-body" size="body" weight="light" wrapPolicy="prose" className="text-textMuted">
+                  版本号 v2.1.0 已于 2024 年 1 月 15 日发布，包含 15 个新功能和 23 个 Bug 修复。Version v2.1.0 was released on January 15, 2024, including 15 new features and 23 bug fixes.
+                </Typography>
+                <Typography as="p" preset="sans-body" size="body-lg" weight="display" wrapPolicy="prose" className="text-textPrimary">
+                  CSS3 和 HTML5 是现代 Web 开发的基础技术，配合 TypeScript 使用效果更佳。CSS3 and HTML5 are fundamental technologies for modern web development, and work even better with TypeScript.
+                </Typography>
+                <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="url" className="text-textPrimary">
+                  请访问我们的官网 www.example.com 或发送邮件至 contact@example.com 获取更多信息。Please visit our website www.example.com or email contact@example.com for more information.
+                </Typography>
               </div>
             </motion.div>
           </div>
@@ -418,26 +755,47 @@ export default function PlaygroundClient() {
 
         {/* Component Groups */}
         {groupedPlaygroundComponents.map((group, groupIndex) => (
-          <div key={group.label} className="col-span-12 mb-16 lg:mb-24">
+          <div key={group.label} className="col-span-12 mb-24 lg:mb-32">
             {/* Group Header */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6 }}
-              className="mb-10 lg:mb-12 border-b border-white/10 pb-6"
+              className="mb-12 border-b border-white/10 pb-8"
             >
-              <div className="flex items-baseline gap-4 mb-3">
-                <span className="font-mono text-xs uppercase tracking-[0.3em] text-textMuted">
+              <div className="mb-4 grid grid-cols-[auto_1fr] items-baseline gap-4">
+                <Typography
+                  as="span"
+                  preset="sans-body"
+                  size="label"
+                  weight="medium"
+                  wrapPolicy="label"
+                  className="text-textMuted"
+                >
                   {String(groupIndex + 1).padStart(2, "0")}
-                </span>
-                <h2 className="text-2xl md:text-3xl font-futura tracking-[0.1em] uppercase text-white">
+                </Typography>
+                <Typography
+                  as="h2"
+                  preset="sans-body"
+                  size="title-sm"
+                  weight="strong"
+                  wrapPolicy="label"
+                  className="text-white"
+                >
                   {group.label}
-                </h2>
+                </Typography>
               </div>
-              <p className="font-futura text-sm md:text-base tracking-wide text-textMuted ml-10">
+              <Typography
+                as="p"
+                preset="sans-body"
+                size="body"
+                weight="regular"
+                wrapPolicy="prose"
+                className="ml-10 text-textMuted"
+              >
                 {group.description}
-              </p>
+              </Typography>
             </motion.div>
 
             {/* Components */}
@@ -459,17 +817,31 @@ export default function PlaygroundClient() {
                     className="group"
                   >
                     {/* Component Label */}
-                    <div className="mb-6 lg:mb-8 flex items-start justify-between">
+                    <div className="mb-6 grid items-start lg:mb-8">
                       <div>
-                        <div className="flex items-center gap-3 mb-2">
-                          <span className="font-mono text-[10px] text-textMuted uppercase tracking-[0.25em]">
+                        <div className="mb-2 grid grid-cols-[auto_auto] items-center gap-3">
+                          <Typography
+                            as="span"
+                            preset="sans-body"
+                            size="caption"
+                            weight="medium"
+                            wrapPolicy="label"
+                            className="text-textMuted"
+                          >
                             COMP {String(componentIndex + 1).padStart(2, "0")}
-                          </span>
+                          </Typography>
                           <div className="h-px w-8 bg-white/10"></div>
                         </div>
-                        <h3 className="text-xl md:text-2xl font-futura tracking-wider text-textPrimary group-hover:text-white transition-colors">
+                        <Typography
+                          as="h3"
+                          preset="sans-body"
+                          size="body-lg"
+                          weight="strong"
+                          wrapPolicy="heading"
+                          className="text-textPrimary group-hover:text-white transition-colors"
+                        >
                           {`<${COMPONENT_DISPLAY_NAMES[componentKey] ?? componentKey} />`}
-                        </h3>
+                        </Typography>
                       </div>
                     </div>
 
@@ -490,11 +862,18 @@ export default function PlaygroundClient() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="col-span-12 mt-16 lg:mt-24 pt-12 border-t border-white/10 text-center"
+          className="col-span-12 mt-24 border-t border-white/10 pt-16 text-center lg:mt-32"
         >
-          <p className="font-mono text-xs text-textMuted tracking-[0.2em]">
+          <Typography
+            as="p"
+            preset="sans-body"
+            size="caption"
+            weight="medium"
+            wrapPolicy="label"
+            className="text-textMuted"
+          >
             END OF PLAYGROUND
-          </p>
+          </Typography>
         </motion.div>
       </div>
     </main>

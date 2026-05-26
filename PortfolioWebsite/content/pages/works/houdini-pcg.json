@@ -9,7 +9,7 @@
       "type": "HeroHeadline",
       "props": {
         "id": "hero-1",
-        "eyebrow": "Project 06",
+        "eyebrow": "PROJECT 08",
         "title": "PCG生成",
         "subtitle": "",
         "heroImage": "/images/penguin/PCG/PCG01.webp",
@@ -54,6 +54,7 @@
       "props": {
         "id": "next-1",
         "nextId": "lighting-portfolio",
+        "href": "/works/lighting-portfolio",
         "nextName": "LIGHTING PORTFOLIO",
         "nextBg": "/images/city-2026/002.webp"
       }

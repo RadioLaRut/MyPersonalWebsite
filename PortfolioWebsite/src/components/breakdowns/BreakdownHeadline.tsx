@@ -1,19 +1,34 @@
-'use client';
+"use client";
 
-import React, { type ReactNode } from 'react';
+import type { ReactNode } from "react";
+import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+  getGridColumnClassName,
+  getSectionSpacingClassName,
+} from "@/lib/component-design-style";
 
 interface SectionHeadlineProps {
-    title: ReactNode;
+  title: ReactNode;
 }
 
 export default function BreakdownSectionHeadline({ title }: SectionHeadlineProps) {
-    return (
-        <div className="w-full my-16 grid-container">
-            <div className="col-span-12">
-                <h2 className="text-5xl lg:text-7xl font-black tracking-tight leading-none font-futura">
-                    {title}
-                </h2>
-            </div>
-        </div>
-    );
+  const design = useComponentDesign("BreakdownHeadline");
+
+  return (
+    <div className={`w-full ${getSectionSpacingClassName(design.sectionSpacing)} grid-container`}>
+      <div className={getGridColumnClassName(design.contentBounds)}>
+        <Typography
+          as="h2"
+          preset="sans-body"
+          size={design.titleSize}
+          weight="display"
+          wrapPolicy="heading"
+          className="text-white"
+        >
+          {title}
+        </Typography>
+      </div>
+    </div>
+  );
 }

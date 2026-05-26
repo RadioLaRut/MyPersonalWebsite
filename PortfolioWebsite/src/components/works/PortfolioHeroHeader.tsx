@@ -1,9 +1,14 @@
 "use client";
 
 import React, { type ReactNode } from "react";
-import Link from "next/link";
-
-import { isTestingMode } from "@/lib/site-mode";
+import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { MotionLink } from "@/components/motion";
+import {
+    getGridColumnClassName,
+    getResponsiveGridColumnClassName,
+    getSpacingRem,
+} from "@/lib/component-design-style";
 
 interface LightingCollectionHeroHeaderProps {
     title: ReactNode;
@@ -15,6 +20,18 @@ interface LightingCollectionHeroHeaderProps {
     editMode?: boolean;
 }
 
+function hasNodeContent(value: ReactNode) {
+    if (value === null || value === undefined || value === false) {
+        return false;
+    }
+
+    if (typeof value === "string") {
+        return value.trim().length > 0;
+    }
+
+    return true;
+}
+
 export default function LightingCollectionHeroHeader({
     title,
     subtitle,
@@ -24,54 +41,105 @@ export default function LightingCollectionHeroHeader({
     ctaHref,
     editMode = false,
 }: LightingCollectionHeroHeaderProps) {
-    const testingMode = isTestingMode();
+    const design = useComponentDesign("PortfolioHeroHeader");
+    const hasSubtitle = hasNodeContent(subtitle);
+    const hasDescriptionLine1 = hasNodeContent(descriptionLine1);
+    const hasDescriptionLine2 = hasNodeContent(descriptionLine2);
+    const hasCta = hasNodeContent(ctaLabel) && Boolean(ctaHref);
+    const hasSideRail = hasDescriptionLine1 || hasDescriptionLine2 || hasCta;
+
+    const titleLockup = (
+        <div className={hasSideRail ? "max-w-[52rem]" : "max-w-[64rem]"}>
+            <Typography
+                as="h1"
+                preset="luna-editorial"
+                size="display"
+                weight="semantic"
+                wrapPolicy="heading"
+                className="text-white"
+            >
+                {title}
+            </Typography>
+            {hasSubtitle ? (
+                <div className="mt-1 lg:mt-2">
+                    <Typography
+                        as="h2"
+                        preset="luna-editorial"
+                        size="title"
+                        weight="display"
+                        wrapPolicy="heading"
+                        className="text-white/82"
+                    >
+                        {subtitle}
+                    </Typography>
+                </div>
+            ) : null}
+        </div>
+    );
 
     return (
-        <section className="pt-40 pb-20 border-b border-white/10">
+        <section className="border-b border-white/10 rhythm-section-hero">
             <div className="grid-container">
-                <div className="col-span-12 pb-8">
-                    {testingMode && ctaLabel && ctaHref ? (
-                        <div className="grid grid-cols-4 lg:grid-cols-12 gap-4 mb-8">
-                            <div className="col-span-12">
-                                <Link
-                                    href={ctaHref}
-                                    onClick={(event) => {
-                                        if (editMode) {
-                                            event.preventDefault();
-                                        }
-                                    }}
-                                    className="inline-flex items-center border border-white/30 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/85 transition-colors hover:bg-white hover:text-black"
-                                >
-                                    {ctaLabel}
-                                </Link>
-                            </div>
+                {hasSideRail ? (
+                    <div className="col-span-12 grid grid-cols-12 gap-10 lg:items-end">
+                        <div className={getResponsiveGridColumnClassName(design.titleBounds)}>
+                            {titleLockup}
                         </div>
-                    ) : null}
-                    <div className="grid grid-cols-4 lg:grid-cols-12">
-                        <div className="col-span-12">
-                            <h1 className="text-[12vw] sm:text-[8vw] font-black tracking-tighter uppercase leading-none font-luna transform translate-y-2 text-white break-words">
-                                {title}
-                            </h1>
-                            <div className="flex flex-col lg:flex-row lg:items-baseline lg:justify-between gap-4 mt-4">
-                                <h2 className="text-[12vw] sm:text-[8vw] font-black tracking-tighter uppercase leading-none font-luna text-textMuted break-words">
-                                    {subtitle}
-                                </h2>
-                                <div className="lg:text-right lg:self-end pb-1">
-                                    {descriptionLine1 && (
-                                        <p className="font-mono text-xs uppercase tracking-[0.3em] text-textMuted break-words">
-                                            {descriptionLine1}
-                                        </p>
-                                    )}
-                                    {descriptionLine2 && (
-                                        <p className="font-futura text-sm tracking-widest text-textPrimary mt-2 break-words">
-                                            {descriptionLine2}
-                                        </p>
-                                    )}
-                                </div>
+
+                        <div className={getResponsiveGridColumnClassName(design.sideBounds)}>
+                            <div className="grid content-start justify-items-start lg:pl-4">
+                                {hasDescriptionLine1 ? (
+                                    <Typography
+                                        as="p"
+                                        preset="sans-body"
+                                        size="caption"
+                                        weight="semantic"
+                                        wrapPolicy="label"
+                                        className="text-textMuted"
+                                    >
+                                        {descriptionLine1}
+                                    </Typography>
+                                ) : null}
+                                {hasDescriptionLine2 ? (
+                                    <Typography
+                                        as="p"
+                                        preset="sans-body"
+                                        size="body"
+                                        weight="semantic"
+                                        wrapPolicy="prose"
+                                        className="text-textPrimary/90"
+                                        style={{ marginTop: getSpacingRem(design.descriptionTopSpacing) }}
+                                    >
+                                        {descriptionLine2}
+                                    </Typography>
+                                ) : null}
+                                {ctaLabel && ctaHref ? (
+                                    <MotionLink
+                                        href={ctaHref}
+                                        disabled={editMode}
+                                        className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 text-textMuted transition-colors duration-300 hover:text-white"
+                                        style={{ marginTop: getSpacingRem(design.ctaTopSpacing) }}
+                                    >
+                                        <span className="h-px w-6 bg-white/30 transition-all duration-300 group-hover:w-10 group-hover:bg-white"></span>
+                                        <Typography
+                                            preset="sans-body"
+                                            size="label"
+                                            weight="semantic"
+                                            wrapPolicy="label"
+                                            className="text-inherit"
+                                        >
+                                            {ctaLabel}
+                                        </Typography>
+                                    </MotionLink>
+                                ) : null}
                             </div>
                         </div>
                     </div>
-                </div>
+                ) : (
+                    <div className={getGridColumnClassName(design.singleColumnBounds)}>
+                        {titleLockup}
+                    </div>
+                )}
             </div>
         </section>
     );

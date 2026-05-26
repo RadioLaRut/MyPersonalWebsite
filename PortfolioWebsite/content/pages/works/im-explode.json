@@ -8,7 +8,7 @@
     {
       "type": "HeroHeadline",
       "props": {
-        "eyebrow": "BREAKDOWN",
+        "eyebrow": "PROJECT 07",
         "title": "I'm explode with u",
         "subtitle": "",
         "heroImage": "/images/exploding/Title.webp",
@@ -76,6 +76,7 @@
       "props": {
         "id": "next-1",
         "nextId": "insight",
+        "href": "/works/insight",
         "nextName": "INSIGHT",
         "nextBg": "/images/insight/InsightOnlyCover.webp"
       }

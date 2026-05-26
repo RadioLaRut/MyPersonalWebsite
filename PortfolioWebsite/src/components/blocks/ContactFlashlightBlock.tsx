@@ -1,6 +1,9 @@
 "use client";
-import React, { type ReactNode, useEffect, useState, useRef } from "react";
-import { motion } from "framer-motion";
+import React, { type CSSProperties, type ReactNode, useEffect, useRef, useState } from "react";
+import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { getGridColumnClassName } from "@/lib/component-design-style";
+import { motion, useInputCapabilities } from "@/lib/motion";
 
 export interface ContactFlashlightBlockProps {
     maskRadius?: number;
@@ -16,6 +19,7 @@ export interface ContactFlashlightBlockProps {
     creativeDirection?: { title: ReactNode; subtitle: ReactNode }[];
     experienceContent?: ReactNode;
     creativeContent?: ReactNode;
+    editMode?: boolean;
 }
 
 export default function ContactFlashlightBlock({
@@ -32,14 +36,21 @@ export default function ContactFlashlightBlock({
     creativeDirection = [],
     experienceContent,
     creativeContent,
+    editMode = false,
 }: ContactFlashlightBlockProps) {
-    const wechatTextClass = "copyable-contact block whitespace-nowrap text-[clamp(1.35rem,1.9vw,2.2rem)] font-medium mix-blend-normal tracking-tight leading-[1] font-serif text-left";
-    const emailTextClass = "copyable-contact block whitespace-nowrap text-[clamp(1.25rem,1.75vw,2rem)] font-medium mix-blend-normal tracking-tight leading-[1] font-serif";
+    const design = useComponentDesign("ContactFlashlight");
     const containerRef = useRef<HTMLDivElement>(null);
-    const [mousePos, setMousePos] = useState({ x: "50%", y: "50%" });
+    const revealLayerRef = useRef<HTMLDivElement>(null);
     const [isTouchDevice, setIsTouchDevice] = useState(false);
+    const { isTouchLike } = useInputCapabilities();
+    const disablesFlashlight = editMode || isTouchLike || isTouchDevice;
 
     useEffect(() => {
+        if (editMode) {
+            setIsTouchDevice(true);
+            return;
+        }
+
         const checkTouchDevice = () => {
             const isCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
             const isSmallScreen = window.innerWidth < 1024;
@@ -49,14 +60,25 @@ export default function ContactFlashlightBlock({
         checkTouchDevice();
         window.addEventListener("resize", checkTouchDevice);
         return () => window.removeEventListener("resize", checkTouchDevice);
-    }, []);
+    }, [editMode]);
 
     useEffect(() => {
+        if (disablesFlashlight) {
+            return;
+        }
+
         let lastClientX = window.innerWidth / 2;
         let lastClientY = window.innerHeight / 2;
+        let frameId = 0;
+        let frameQueued = false;
 
         const updatePosition = () => {
-            if (!containerRef.current) return;
+            frameQueued = false;
+
+            if (!containerRef.current || !revealLayerRef.current) {
+                return;
+            }
+
             const rect = containerRef.current.getBoundingClientRect();
             const relativeX = lastClientX - rect.left;
             const relativeY = lastClientY - rect.top;
@@ -66,89 +88,191 @@ export default function ContactFlashlightBlock({
             const maxY = rect.height + maskRadius;
             const x = Math.min(Math.max(relativeX, minX), maxX);
             const y = Math.min(Math.max(relativeY, minY), maxY);
-            setMousePos({ x: `${x}px`, y: `${y}px` });
+
+            revealLayerRef.current.style.setProperty("--flashlight-x", `${x}px`);
+            revealLayerRef.current.style.setProperty("--flashlight-y", `${y}px`);
+        };
+
+        const queueUpdate = () => {
+            if (frameQueued) {
+                return;
+            }
+
+            frameQueued = true;
+            frameId = window.requestAnimationFrame(updatePosition);
         };
 
         const handleMouseMove = (e: MouseEvent) => {
             lastClientX = e.clientX;
             lastClientY = e.clientY;
-            updatePosition();
-        };
-
-        const handleScroll = () => {
-            updatePosition();
+            queueUpdate();
         };
 
         window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("scroll", handleScroll);
+        window.addEventListener("scroll", queueUpdate, { passive: true });
+        window.addEventListener("resize", queueUpdate);
 
-        updatePosition();
+        queueUpdate();
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("scroll", handleScroll);
+            window.removeEventListener("scroll", queueUpdate);
+            window.removeEventListener("resize", queueUpdate);
+
+            if (frameId) {
+                window.cancelAnimationFrame(frameId);
+            }
         };
-    }, [maskRadius]);
+    }, [disablesFlashlight, maskRadius]);
+
+    const revealLayerStyle: CSSProperties = {
+        color: lightTextColor,
+        WebkitMaskImage: disablesFlashlight
+            ? "none"
+            : `radial-gradient(${maskRadius}px circle at var(--flashlight-x, 50%) var(--flashlight-y, 50%), black 0%, black ${maskSmoothness}%, transparent 100%)`,
+        maskImage: disablesFlashlight
+            ? "none"
+            : `radial-gradient(${maskRadius}px circle at var(--flashlight-x, 50%) var(--flashlight-y, 50%), black 0%, black ${maskSmoothness}%, transparent 100%)`,
+        WebkitMaskRepeat: "no-repeat",
+        maskRepeat: "no-repeat",
+    };
 
     const renderContentData = () => (
-        <div className="grid-container w-full py-16 sm:py-32">
-            <section className="col-start-3 col-span-8 flex flex-col gap-6 mb-16 sm:mb-24">
+        <div className="grid-container w-full rhythm-section-spacious">
+            <section className={`${getGridColumnClassName(design.heroBounds)} mb-24 grid rhythm-stack-3 lg:mb-32`}>
                 <motion.h1
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1 }}
-                    className="text-[12vw] sm:text-[9vw] font-black tracking-tighter mix-blend-normal leading-none font-luna"
+                    initial={editMode ? false : { opacity: 0, y: 20 }}
+                    animate={editMode ? undefined : { opacity: 1, y: 0 }}
+                    transition={editMode ? undefined : { duration: 1 }}
+                    className="mix-blend-normal"
                 >
-                    {name}
+                    <Typography
+                        as="span"
+                        preset="luna-editorial"
+                        size="hero"
+                        weight="semantic"
+                        wrapPolicy="heading"
+                        className="text-inherit"
+                    >
+                        {name}
+                    </Typography>
                 </motion.h1>
-                <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3, duration: 1 }}
-                    className="text-xl sm:text-2xl lg:text-3xl leading-loose font-semibold text-left max-w-2xl mix-blend-normal font-serif tracking-widest mt-8"
+                <motion.div
+                    initial={editMode ? false : { opacity: 0 }}
+                    animate={editMode ? undefined : { opacity: 1 }}
+                    transition={editMode ? undefined : { delay: 0.3, duration: 1 }}
+                    className="max-w-2xl text-left mix-blend-normal"
                 >
-                    {taglineText}
+                    <Typography
+                        as="p"
+                        preset="sans-body"
+                        size="body"
+                        weight="strong"
+                        wrapPolicy="prose"
+                        className="text-inherit"
+                    >
+                        {taglineText}
+                    </Typography>
                     <br />
-                    <span className="text-sm font-mono opacity-50 tracking-[0.2em]">{taglineSub}</span>
-                </motion.p>
+                    <Typography
+                        as="span"
+                        preset="sans-body"
+                        size="label"
+                        weight="semantic"
+                        wrapPolicy="label"
+                        className="opacity-50"
+                    >
+                        {taglineSub}
+                    </Typography>
+                </motion.div>
             </section>
 
             <motion.section
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6, duration: 1 }}
-                className="col-start-4 col-span-8 grid grid-cols-1 lg:grid-cols-2 gap-16 text-left border-t border-current pt-16"
+                initial={editMode ? false : { opacity: 0 }}
+                animate={editMode ? undefined : { opacity: 1 }}
+                transition={editMode ? undefined : { delay: 0.6, duration: 1 }}
+                className={`${getGridColumnClassName(design.detailBounds)} grid grid-cols-1 gap-16 border-t border-current text-left rhythm-divider-top lg:grid-cols-2`}
             >
-                <div className="space-y-8">
-                    <span className="text-xs uppercase tracking-[0.4em] font-mono opacity-40 mix-blend-normal">
+                <div className="rhythm-stack-4">
+                    <Typography
+                        as="span"
+                        preset="sans-body"
+                        size="label"
+                        weight="semantic"
+                        wrapPolicy="label"
+                        className="opacity-40 mix-blend-normal"
+                    >
                         Experience History
-                    </span>
-                    <div className="space-y-6 text-lg sm:text-xl font-medium mix-blend-normal leading-relaxed font-serif">
+                    </Typography>
+                    <div className="mix-blend-normal rhythm-stack-3">
                         {experienceContent ? (
                             experienceContent
                         ) : (
                             experienceHistory.map((item, i) => (
-                                <div key={i} className="flex flex-col">
-                                    <span>{item.company}</span>
-                                    <span className="text-sm font-mono opacity-50 mt-1">{item.role}</span>
+                                <div key={i} className="grid gap-1">
+                                    <Typography
+                                        as="span"
+                                        preset="sans-body"
+                                        size="body"
+                                        weight="strong"
+                                        wrapPolicy="prose"
+                                        className="text-inherit"
+                                    >
+                                        {item.company}
+                                    </Typography>
+                                    <Typography
+                                        as="span"
+                                        preset="sans-body"
+                                        size="label"
+                                        weight="semantic"
+                                        wrapPolicy="label"
+                                        className="mt-2 opacity-50"
+                                    >
+                                        {item.role}
+                                    </Typography>
                                 </div>
                             ))
                         )}
                     </div>
                 </div>
 
-                <div className="space-y-8">
-                    <span className="text-xs uppercase tracking-[0.4em] font-mono opacity-40 mix-blend-normal">
+                <div className="rhythm-stack-4">
+                    <Typography
+                        as="span"
+                        preset="sans-body"
+                        size="label"
+                        weight="semantic"
+                        wrapPolicy="label"
+                        className="opacity-40 mix-blend-normal"
+                    >
                         Creative Direction
-                    </span>
-                    <div className="space-y-6 text-lg sm:text-xl font-medium mix-blend-normal leading-relaxed font-serif tracking-wide">
+                    </Typography>
+                    <div className="mix-blend-normal rhythm-stack-3">
                         {creativeContent ? (
                             creativeContent
                         ) : (
                             creativeDirection.map((item, i) => (
-                                <div key={i} className="flex flex-col">
-                                    <span>{item.title}</span>
-                                    <span className="text-sm font-mono opacity-50 mt-1">{item.subtitle}</span>
+                                <div key={i} className="grid gap-1">
+                                    <Typography
+                                        as="span"
+                                        preset="sans-body"
+                                        size="body"
+                                        weight="strong"
+                                        wrapPolicy="prose"
+                                        className="text-inherit"
+                                    >
+                                        {item.title}
+                                    </Typography>
+                                    <Typography
+                                        as="span"
+                                        preset="sans-body"
+                                        size="label"
+                                        weight="semantic"
+                                        wrapPolicy="label"
+                                        className="mt-2 opacity-50"
+                                    >
+                                        {item.subtitle}
+                                    </Typography>
                                 </div>
                             ))
                         )}
@@ -157,35 +281,72 @@ export default function ContactFlashlightBlock({
             </motion.section>
 
             <motion.section
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.9, duration: 1 }}
-                className="col-start-4 col-span-8 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-12 lg:gap-20 text-left border-t border-current pt-16 mt-24 items-start"
+                initial={editMode ? false : { opacity: 0 }}
+                animate={editMode ? undefined : { opacity: 1 }}
+                transition={editMode ? undefined : { delay: 0.9, duration: 1 }}
+                className={`${getGridColumnClassName(design.contactBounds)} mt-24 grid grid-cols-1 items-start gap-12 border-t border-current text-left rhythm-divider-top lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-20`}
             >
-                <div className="space-y-6">
-                    <span className="text-xs uppercase tracking-[0.4em] font-mono opacity-40 mix-blend-normal">
+                <div className="rhythm-stack-3">
+                    <Typography
+                        as="span"
+                        preset="sans-body"
+                        size="label"
+                        weight="semantic"
+                        wrapPolicy="label"
+                        className="opacity-40 mix-blend-normal"
+                    >
                         WeChat / Social
-                    </span>
-                    <span className={wechatTextClass}>
+                    </Typography>
+                    <Typography
+                        as="span"
+                        preset="gothic-editorial"
+                        size="body-lg"
+                        weight="semantic"
+                        wrapPolicy="url"
+                        className="copyable-contact block whitespace-nowrap text-left mix-blend-normal"
+                    >
                         {wechat}
-                    </span>
+                    </Typography>
                 </div>
 
-                <div className="space-y-6">
-                    <span className="text-xs uppercase tracking-[0.4em] font-mono opacity-40 mix-blend-normal">
+                <div className="rhythm-stack-3">
+                    <Typography
+                        as="span"
+                        preset="sans-body"
+                        size="label"
+                        weight="semantic"
+                        wrapPolicy="label"
+                        className="opacity-40 mix-blend-normal"
+                    >
                         Email / Contact
-                    </span>
-                    <span className={emailTextClass}>
+                    </Typography>
+                    <Typography
+                        as="span"
+                        preset="gothic-editorial"
+                        size="body-lg"
+                        weight="semantic"
+                        wrapPolicy="url"
+                        className="copyable-contact block whitespace-nowrap mix-blend-normal"
+                    >
                         {email}
-                    </span>
+                    </Typography>
                 </div>
             </motion.section>
         </div>
     );
 
     return (
-        <div className="relative w-full overflow-hidden font-luna selection:bg-white selection:text-black">
-            <div ref={containerRef} className="relative w-full mx-auto pb-12">
+        <div className="relative w-full overflow-hidden selection:bg-white selection:text-black">
+            <div ref={containerRef} className="relative w-full mx-auto pb-16">
+                {editMode ? (
+                    <div
+                        className="z-10 transition-colors duration-300"
+                        style={{ color: lightTextColor }}
+                    >
+                        {renderContentData()}
+                    </div>
+                ) : (
+                    <>
                 {/* Base Layer (Dark Text) */}
                 <div
                     className="z-10 transition-colors duration-300"
@@ -196,22 +357,15 @@ export default function ContactFlashlightBlock({
 
                 {/* Reveal Layer (White Text masked by cursor) */}
                 <div
+                    ref={revealLayerRef}
                     className="absolute inset-0 z-20 pointer-events-none drop-shadow-[0_0_15px_rgba(255,255,255,0.45)]"
                     aria-hidden="true"
-                    style={{
-                        color: lightTextColor,
-                        WebkitMaskImage: isTouchDevice
-                            ? "none"
-                            : `radial-gradient(${maskRadius}px circle at ${mousePos.x} ${mousePos.y}, black 0%, black ${maskSmoothness}%, transparent 100%)`,
-                        maskImage: isTouchDevice
-                            ? "none"
-                            : `radial-gradient(${maskRadius}px circle at ${mousePos.x} ${mousePos.y}, black 0%, black ${maskSmoothness}%, transparent 100%)`,
-                        WebkitMaskRepeat: "no-repeat",
-                        maskRepeat: "no-repeat",
-                    }}
+                    style={revealLayerStyle}
                 >
                     {renderContentData()}
                 </div>
+                    </>
+                )}
             </div>
         </div>
     );

@@ -1,8 +1,15 @@
 "use client";
 import React, { type ReactNode, useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
 import { PresetImage } from "@/components/common/PresetImage";
+import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { MotionLink } from "@/components/motion";
+import {
+  getResponsiveGridColumnClassName,
+  getSpacingRem,
+} from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset, normalizeImagePreset } from "@/lib/image-presentation";
+import { motion, useScroll, useTransform } from "@/lib/motion";
 
 interface ProjectSectionProps {
   title: ReactNode;
@@ -27,18 +34,15 @@ export default function ProjectSection({
   imageFitMode = "x",
   editMode = false,
 }: ProjectSectionProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const design = useComponentDesign("ProjectSection");
+  const containerRef = useRef<HTMLElement>(null);
   const imageAlt = typeof title === "string" ? title : "Project cover";
   const resolvedImagePreset = normalizeImagePreset(imagePreset);
-  const sectionClassName = editMode
-    ? "relative w-full min-h-[420px] lg:min-h-[500px] overflow-hidden flex items-center justify-center m-0 p-0 mix-blend-normal group cursor-default"
-    : "relative w-full min-h-screen min-h-[100dvh] overflow-hidden flex items-center justify-center m-0 p-0 mix-blend-normal group interactive cursor-pointer";
-  const mediaLayerClassName = editMode
-    ? "absolute inset-0 flex items-center justify-center px-0"
-    : "absolute inset-0 flex items-center justify-center px-0";
-  const frameClassName = resolvedImagePreset === "native"
-    ? "w-full h-full"
-    : "w-full";
+  const isLinkEnabled = !editMode && Boolean(link);
+  const cursorClass = isLinkEnabled ? "cursor-pointer" : "cursor-default";
+  const sectionClassName = `relative m-0 grid min-h-screen min-h-[100dvh] w-full place-items-center overflow-hidden p-0 mix-blend-normal group ${cursorClass}`;
+  const mediaLayerClassName = "absolute inset-0 grid place-items-center px-0";
+  const frameClassName = resolvedImagePreset === "native" ? "w-full h-full" : "w-full";
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -50,21 +54,33 @@ export default function ProjectSection({
   const opacity = useTransform(scrollYProgress, [0, 0.4, 0.6, 1], [0, 1, 1, 0]);
   const shouldAlignRight = align === "right" || (align === "auto" && index % 2 !== 0);
   const textColumnClassName = shouldAlignRight
-    ? "col-start-5 items-end text-right"
-    : "col-start-2 items-start";
-  const subtitleClassName = shouldAlignRight ? "text-right" : "";
-  const underlineClassName = shouldAlignRight ? "origin-right self-end" : "origin-left";
+    ? "justify-items-end text-right"
+    : "justify-items-start";
+  const lockupClassName = shouldAlignRight
+    ? "ml-auto justify-items-end text-right"
+    : "mr-auto justify-items-start text-left";
+  const titleLockupClassName = shouldAlignRight
+    ? "justify-self-end justify-items-end"
+    : "justify-self-start justify-items-start";
 
-  const handleInteraction = () => {
-    if (!editMode && link) {
-      window.location.href = link;
-    }
-  };
+  const underlineTrackClassName = shouldAlignRight ? "justify-end" : "justify-start";
+  const underlineFillClassName =
+    "w-0 transition-[width] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:w-full";
+  const textBoundsClassName = getResponsiveGridColumnClassName(
+    shouldAlignRight ? design.textRightBounds : design.textLeftBounds,
+  );
+  const lockupGap = getSpacingRem(design.lockupGap);
+  const titleUnderlineOpticalPull = getSpacingRem(design.titleUnderlineOpticalPull);
+  const adjustedGap = `max(0px, calc(${lockupGap} - ${titleUnderlineOpticalPull}))`;
 
   return (
-    <section
+    <MotionLink
       ref={containerRef}
-      onClick={handleInteraction}
+      href={link || "#"}
+      disabled={!isLinkEnabled}
+      disabledElement="section"
+      interactionPreset="blockLink"
+      aria-label={typeof title === "string" ? `Open ${title}` : "Open project"}
       className={sectionClassName}
     >
       <motion.div
@@ -72,7 +88,7 @@ export default function ProjectSection({
         style={editMode ? undefined : { y, scale }}
       >
         {/* Environment ambient gradient/shadow to improve contrast */}
-        <div className={`absolute inset-0 z-10 ${editMode ? "bg-black/55" : "bg-black/30 custom-blend transition-colors duration-1000 group-hover:bg-black/10"}`} />
+        <div className="absolute inset-0 z-10 bg-black/30 custom-blend transition-colors duration-1000 group-hover:bg-black/10" />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40 z-10" />
 
@@ -90,24 +106,51 @@ export default function ProjectSection({
 
       <motion.div
         style={editMode ? undefined : { opacity }}
-        className={`absolute inset-0 z-20 flex flex-col justify-center py-20 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}
+        className={`absolute inset-0 z-20 grid content-center rhythm-section-normal ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}
       >
-        <div className={`grid-container w-full relative ${editMode ? "" : "mix-blend-difference"}`}>
+        <div className="grid-container relative w-full mix-blend-difference">
           <div
-            className={`col-span-8 flex flex-col ${textColumnClassName}`}
+            className={`${textBoundsClassName} grid content-start ${textColumnClassName}`}
           >
-            {subtitle && (
-              <p className={`text-textPrimary font-gothic tracking-[0.4em] mb-4 text-xs sm:text-sm font-medium uppercase ${subtitleClassName}`}>
-                {subtitle}
-              </p>
-            )}
-            <h2 className={`text-[clamp(2rem,7vw,5rem)] font-futura font-black tracking-tight leading-[0.9] text-white antialiased [transform:translateZ(0)] ${editMode ? "whitespace-normal break-words max-w-full" : "origin-left lg:whitespace-nowrap transition-all duration-500 group-hover:tracking-normal group-hover:scale-[1.02]"}`}>
-              {title}
-            </h2>
-            <div className={`h-1 bg-white mt-8 ${editMode ? "w-1/3 max-w-40" : `w-0 transition-all duration-700 ease-out group-hover:w-1/3 ${underlineClassName}`}`}></div>
+            <div className={`grid max-w-full auto-rows-max gap-y-0 ${lockupClassName}`}>
+              {subtitle && (
+                <Typography
+                  as="p"
+                  preset="sans-body"
+                  size="label"
+                  weight="semantic"
+                  wrapPolicy="label"
+                  align={shouldAlignRight ? "right" : "left"}
+                  className="text-textPrimary"
+                  style={{ marginBottom: adjustedGap }}
+                >
+                  {subtitle}
+                </Typography>
+              )}
+              <div className={`grid w-fit max-w-full auto-rows-max gap-y-0 ${titleLockupClassName}`}>
+                <Typography
+                  as="h2"
+                  preset="luna-editorial"
+                  size="hero"
+                  weight="semantic"
+                  wrapPolicy="heading"
+                  align={shouldAlignRight ? "right" : "left"}
+                  className="max-w-full text-white antialiased uppercase [transform:translateZ(0)] lg:whitespace-nowrap"
+                  style={{ marginTop: "-0.15em" }}
+                >
+                  {title}
+                </Typography>
+                <div
+                  className={`flex w-full ${underlineTrackClassName}`}
+                  style={{ marginTop: adjustedGap }}
+                >
+                  <div className={`h-[2px] bg-white ${underlineFillClassName}`} />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </motion.div>
-    </section>
+    </MotionLink>
   );
 }

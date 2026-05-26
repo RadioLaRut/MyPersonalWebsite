@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
+const isDevelopmentServer = process.env.NODE_ENV === "development";
+const siteMode = process.env.NEXT_PUBLIC_SITE_MODE === "testing" ? "testing" : "normal";
+
 const nextConfig = {
+  distDir: isDevelopmentServer ? `.next-dev-${siteMode}` : ".next",
   reactStrictMode: false,
   eslint: {
     ignoreDuringBuilds: true,

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { PUCK_COMPONENT_TYPES } from "../puck/component-manifest.ts";
 import { normalizePuckData } from "./puck-data-normalization.ts";
 
 test("normalizePuckData canonicalizes Heroheadline and hydrates hero defaults", () => {
@@ -20,13 +21,13 @@ test("normalizePuckData canonicalizes Heroheadline and hydrates hero defaults", 
     },
   });
 
-  const hero = normalized.content[0];
+  const hero = normalized.content[0] as { props: Record<string, unknown>; type: string };
   assert.equal(hero.type, "HeroHeadline");
   assert.equal(hero.props.title, "PROJECT TITLE");
   assert.equal(hero.props.heroImage, "/images/train-station/2Day.webp");
 });
 
-test("normalizePuckData migrates LightingCollectionItem lit to src", () => {
+test("normalizePuckData migrates LightingCollectionItem to ImagePanel.large", () => {
   const normalized = normalizePuckData({
     content: [
       {
@@ -44,9 +45,11 @@ test("normalizePuckData migrates LightingCollectionItem lit to src", () => {
     },
   });
 
-  const item = normalized.content[0];
+  const item = normalized.content[0] as { props: Record<string, unknown>; type: string };
+  assert.equal(item.type, "ImagePanel");
   assert.equal(item.props.src, "/images/city-2026/001.webp");
   assert.equal(item.props.caption, "IMAGE");
+  assert.equal(item.props.variant, "large");
 });
 
 test("normalizePuckData hydrates blank HeroHeadline props", () => {
@@ -71,7 +74,7 @@ test("normalizePuckData hydrates blank HeroHeadline props", () => {
     },
   });
 
-  const header = normalized.content[0];
+  const header = normalized.content[0] as { props: Record<string, unknown> };
   assert.equal(header.props.title, "PROJECT TITLE");
   assert.equal(header.props.heroImage, "/images/train-station/2Day.webp");
 });
@@ -95,7 +98,62 @@ test("normalizePuckData migrates ImageSlider left/right image aliases", () => {
     },
   });
 
-  const slider = normalized.content[0];
+  const slider = normalized.content[0] as { props: Record<string, unknown> };
   assert.equal(slider.props.unlitSrc, "/images/train-station/2NoLight.webp");
   assert.equal(slider.props.litSrc, "/images/train-station/2Day.webp");
+});
+
+test("normalizePuckData creates stable component ids for legacy nodes", () => {
+  const legacyData = {
+    content: [
+      {
+        type: "ImagePanel",
+        props: {
+          src: "/images/train-station/2Day.webp",
+        },
+      },
+    ],
+    root: {
+      props: {
+        title: "Demo",
+      },
+    },
+  };
+
+  const first = normalizePuckData(legacyData);
+  const second = normalizePuckData(legacyData);
+  const firstItem = first.content[0] as { props: Record<string, unknown> };
+  const secondItem = second.content[0] as { props: Record<string, unknown> };
+
+  assert.equal(typeof firstItem.props.id, "string");
+  assert.equal(firstItem.props.id, "ImagePanel-e8yjd");
+  assert.equal(firstItem.props.id, secondItem.props.id);
+});
+
+test("normalizePuckData creates props and stable ids for known component nodes without legacy props", () => {
+  const legacyData = {
+    content: PUCK_COMPONENT_TYPES.map((type) => ({ type })),
+    root: {
+      props: {
+        title: "Demo",
+      },
+    },
+  };
+
+  const first = normalizePuckData(legacyData);
+  const second = normalizePuckData(legacyData);
+
+  const firstIds = first.content.map((node, index) => {
+    const item = node as { props?: Record<string, unknown>; type: string };
+    assert.equal(item.type, PUCK_COMPONENT_TYPES[index]);
+    assert.equal(typeof item.props?.id, "string");
+    assert.notEqual((item.props?.id as string).trim(), "");
+    return item.props?.id;
+  });
+  const secondIds = second.content.map((node) => {
+    const item = node as { props?: Record<string, unknown> };
+    return item.props?.id;
+  });
+
+  assert.deepEqual(firstIds, secondIds);
 });

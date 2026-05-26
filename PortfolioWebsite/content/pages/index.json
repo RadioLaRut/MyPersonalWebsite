@@ -9,11 +9,13 @@
       "type": "HeroSection",
       "props": {
         "id": "hero-section-1",
-        "title": "JIANG CHENGYAN",
-        "subtitle": "MY 2026 PORTFOLIO",
-        "description": "策划/技术美术",
+        "eyebrow": "LIGHTING / TECH ART / GAME DESIGN",
+        "title": "JIANG\nCHENGYAN",
+        "subtitle": "",
+        "description": "",
         "imageSrc": "/images/covers/2026/ShotForCrewWithoutWord.0004.webp",
-        "imageAlt": "Hero Background"
+        "imageAlt": "Hero Background",
+        "imageFitMode": "x"
       }
     },
     {
@@ -21,7 +23,7 @@
       "props": {
         "id": "proj-1",
         "title": "LIGHTING",
-        "subtitle": "Lighting Art",
+        "subtitle": "镜头 / 氛围 / 空间叙事",
         "imageSrc": "/images/train-station/2Day.webp",
         "link": "/works/lighting-portfolio",
         "index": 0
@@ -32,8 +34,8 @@
       "props": {
         "id": "proj-2",
         "title": "企鹅贸易公司",
-        "subtitle": "Lead Designer / Tech Art / Project Manager",
-        "imageSrc": "",
+        "subtitle": "黑色幽默经营 / 遗传繁育 / 资源压榨",
+        "imageSrc": "/images/penguin/CyberRestaurant.webp",
         "link": "/works/penguin",
         "index": 1,
         "align": "left"
@@ -44,7 +46,7 @@
       "props": {
         "id": "proj-3",
         "title": "INSIGHT",
-        "subtitle": "Lead Designer / Programmer / Writer",
+        "subtitle": "舆情监管 / 互动叙事 / 道德选择",
         "imageSrc": "/images/insight/InsightOnlyCover.webp",
         "link": "/works/insight",
         "index": 2
@@ -56,8 +58,8 @@
         "id": "home-endcap-1",
         "eyebrow": "更多作品",
         "title": "WATCH MORE",
-        "description": "包括策划、技术美术、灯光研究在内的所有项目\n",
-        "buttonLabel": "了解更多",
+        "description": "从互动叙事、系统设计到灯光研究，查看完整项目归档。",
+        "buttonLabel": "进入作品归档",
         "buttonHref": "/works"
       }
     }

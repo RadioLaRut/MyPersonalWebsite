@@ -1,0 +1,25 @@
+{
+  "root": {
+    "props": {
+      "title": "Untitled"
+    }
+  },
+  "content": [
+    {
+      "type": "HeroHeadline",
+      "props": {
+        "id": "hero-headline-empty-state",
+        "eyebrow": "",
+        "title": "Untitled",
+        "subtitle": ""
+      }
+    },
+    {
+      "type": "RichParagraph",
+      "props": {
+        "id": "rich-paragraph-empty-state",
+        "content": ""
+      }
+    }
+  ]
+}

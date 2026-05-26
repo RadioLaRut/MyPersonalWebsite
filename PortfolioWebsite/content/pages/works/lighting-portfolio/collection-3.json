@@ -11,7 +11,7 @@
         "id": "collection-3-header",
         "title": "WEST",
         "number": "03",
-        "description": "",
+        "description": "以西部场景为基础，测试双重构图下的景深关系、天气层次与远景照明。",
         "backHref": "/works/lighting-portfolio"
       }
     },
@@ -48,11 +48,13 @@
     {
       "type": "ImageSlider",
       "props": {
+        "title": "灯光对比",
         "unlitSrc": "/images/west/CNoLight.webp",
         "litSrc": "/images/west/CDay.webp",
         "alt": "Lighting Comparison",
         "imagePreset": "ratio-21-9",
         "imageFitMode": "x",
+        "initialPosition": 48,
         "id": "ImageSlider-45aed034-2cb1-4994-b18a-49fcf3e43eff",
         "leftLabel": "无光照",
         "rightLabel": "光照"
@@ -91,11 +93,13 @@
     {
       "type": "ImageSlider",
       "props": {
+        "title": "灯光对比",
         "unlitSrc": "/images/west/NoLight.webp",
         "litSrc": "/images/west/Day.webp",
         "alt": "Lighting Comparison",
         "imagePreset": "ratio-21-9",
         "imageFitMode": "x",
+        "initialPosition": 48,
         "id": "ImageSlider-fdcfce2e-8290-4e78-899a-66d4e5428702",
         "leftLabel": "无光照",
         "rightLabel": "光照"

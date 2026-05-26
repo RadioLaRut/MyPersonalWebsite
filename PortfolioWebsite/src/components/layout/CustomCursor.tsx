@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { ADMIN_MODE_ATTRIBUTE } from "@/lib/admin-attributes";
+import { resolveInputCapabilities } from "@/lib/motion";
 
 type CustomCursorProps = {
   isWithinIframe?: boolean;
@@ -10,7 +12,7 @@ type CustomCursorProps = {
 export default function CustomCursor({ isWithinIframe, targetDocument }: CustomCursorProps = {}) {
   const cursorRef = useRef<HTMLDivElement>(null);
   const [isCursorEnabled, setIsCursorEnabled] = useState(false);
-  const [isAdminShell, setIsAdminShell] = useState(false);
+  const [isCursorBlockedByRoute, setIsCursorBlockedByRoute] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -20,19 +22,38 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
       ? targetDocument?.defaultView?.location.pathname ?? ""
       : pathname ?? "";
     const adminShell = !isWithinIframe && currentPathname.startsWith("/admin");
-    setIsAdminShell(adminShell);
+    const fontLabMode = !isWithinIframe && currentPathname.startsWith("/playground/font-lab");
+    const componentLabMode = !isWithinIframe && currentPathname.startsWith("/playground/component-lab");
+    setIsCursorBlockedByRoute(adminShell || fontLabMode || componentLabMode);
 
     // Disable outer custom cursor in the admin dashboard completely
-    if (adminShell) {
-      htmlElement.setAttribute("data-admin-mode", "true");
+    if (adminShell || fontLabMode || componentLabMode) {
+      if (adminShell) {
+        htmlElement.setAttribute(ADMIN_MODE_ATTRIBUTE, "true");
+      } else {
+        htmlElement.removeAttribute(ADMIN_MODE_ATTRIBUTE);
+      }
+
+      if (fontLabMode) {
+        htmlElement.setAttribute("data-font-lab-mode", "true");
+      } else {
+        htmlElement.removeAttribute("data-font-lab-mode");
+      }
+
+      if (componentLabMode) {
+        htmlElement.setAttribute("data-font-lab-mode", "true");
+      }
+
       setIsCursorEnabled(false);
       return () => {
-        htmlElement.removeAttribute("data-admin-mode");
+        htmlElement.removeAttribute(ADMIN_MODE_ATTRIBUTE);
+        htmlElement.removeAttribute("data-font-lab-mode");
       };
     }
 
     if (!isWithinIframe) {
-      htmlElement.removeAttribute("data-admin-mode");
+      htmlElement.removeAttribute(ADMIN_MODE_ATTRIBUTE);
+      htmlElement.removeAttribute("data-font-lab-mode");
     }
 
     const win = targetDocument?.defaultView || window;
@@ -40,7 +61,15 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
     const reducedMotionQuery = win.matchMedia("(prefers-reduced-motion: reduce)");
 
     const updateCursorAvailability = () => {
-      setIsCursorEnabled(pointerQuery.matches && !reducedMotionQuery.matches);
+      const capabilities = resolveInputCapabilities({
+        hasTouchStart: "ontouchstart" in win,
+        innerWidth: win.innerWidth,
+        matchMedia: win.matchMedia.bind(win),
+        maxTouchPoints: win.navigator.maxTouchPoints,
+      });
+      setIsCursorEnabled(
+        capabilities.supportsHoverIntent && !capabilities.prefersReducedMotion,
+      );
     };
 
     const addMediaListener = (query: MediaQueryList, handler: () => void) => {
@@ -73,7 +102,11 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
       return;
     }
 
+    const activeDocument = targetDocument ?? document;
     const win = targetDocument?.defaultView || window;
+    const magnetElements = Array.from(
+      activeDocument.querySelectorAll<HTMLElement>("[data-cursor-magnet]"),
+    );
     let rafId: number;
     let mouseX = win.innerWidth / 2;
     let mouseY = win.innerHeight / 2;
@@ -104,22 +137,23 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
         "a, button, input, [role='button'], .interactive",
       );
       const isText = target?.closest?.(".hover-text");
-      const magnetElements = Array.from(
-        (targetDocument ?? document).querySelectorAll<HTMLElement>("[data-cursor-magnet]"),
-      );
       let nearestMagnet: HTMLElement | null = null;
       let nearestDistance = Number.POSITIVE_INFINITY;
 
-      for (const magnetElement of magnetElements) {
-        const rect = magnetElement.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const distance = Math.hypot(centerX - e.clientX, centerY - e.clientY);
+      if (magnetElements.length > 0) {
+        for (const magnetElement of magnetElements) {
+          const rect = magnetElement.getBoundingClientRect();
+          const centerX = rect.left + rect.width / 2;
+          const centerY = rect.top + rect.height / 2;
+          const distance = Math.hypot(centerX - e.clientX, centerY - e.clientY);
 
-        if (distance < nearestDistance) {
-          nearestDistance = distance;
-          nearestMagnet = magnetElement;
+          if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearestMagnet = magnetElement;
+          }
         }
+      } else {
+        clearMagnet();
       }
 
       if (nearestMagnet && nearestDistance < 34) {
@@ -190,9 +224,9 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
       win.removeEventListener("mouseup", onMouseUp);
       cancelAnimationFrame(rafId);
     };
-  }, [isCursorEnabled, targetDocument]);
+  }, [isCursorEnabled, pathname, targetDocument]);
 
-  if (isAdminShell) {
+  if (isCursorBlockedByRoute) {
     return null;
   }
 

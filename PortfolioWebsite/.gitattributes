@@ -4,6 +4,9 @@ src/app/fonts/** -filter -diff -merge -text
 src/app/**/*.ttf -filter -diff -merge -text
 src/app/**/*.otf -filter -diff -merge -text
 src/app/**/*.woff2 -filter -diff -merge -text
+# 网站运行时会直接读取 public/ 下的真实图片文件。
+# 这些资源一旦走 Git LFS，仓库里留下的将是 pointer 而不是真实字节，Next.js/静态资源访问会失效。
+# 因此 PortfolioWebsite/public/** 下的所有网页图片必须始终以普通 Git 文件提交，不能通过 LFS 管理。
 public/images/** -filter -diff -merge -text
 public/assets/images/** -filter -diff -merge -text
 public/**/*.png -filter -diff -merge -text

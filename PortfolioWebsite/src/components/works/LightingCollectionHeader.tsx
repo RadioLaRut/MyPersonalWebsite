@@ -1,12 +1,20 @@
 "use client";
 
-import Link from "next/link";
+import { ChevronLeft } from "lucide-react/dist/cjs/lucide-react.js";
+import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { MotionLink } from "@/components/motion";
+import {
+  getResponsiveGridColumnClassName,
+  getSpacingRem,
+} from "@/lib/component-design-style";
 
 export interface LightingCollectionHeaderProps {
   title: string;
   number: string;
   description?: string;
   backHref?: string;
+  editMode?: boolean;
 }
 
 export default function LightingCollectionHeader({
@@ -14,39 +22,77 @@ export default function LightingCollectionHeader({
   number,
   description,
   backHref = "/works/lighting-portfolio",
+  editMode = false,
 }: LightingCollectionHeaderProps) {
+  const design = useComponentDesign("LightingCollectionHeader");
+  const hasDescription = typeof description === "string" && description.trim().length > 0;
+
   return (
-    <section className="pt-40 pb-20 border-b border-white/10">
+    <section className="border-b border-white/10 rhythm-section-hero">
       <div className="grid-container">
-        <div className="col-span-12">
-          <div className="grid grid-cols-4 lg:grid-cols-12 gap-8">
-            <div className="col-span-12 mb-12">
-              <Link
+        <div className="col-span-12 grid grid-cols-12 gap-10 lg:[align-items:last_baseline]">
+          <div className={getResponsiveGridColumnClassName(design.titleBounds)}>
+            <div className="mb-10">
+              <MotionLink
                 href={backHref}
-                className="inline-flex items-center text-textMuted hover:text-white transition-colors uppercase tracking-[0.25em] text-sm font-mono px-4 py-2 border border-white/20 hover:border-white/40 rounded"
+                disabled={editMode}
+                className="group interactive inline-grid grid-cols-[0.32rem_auto] items-center gap-1.5 text-textMuted transition-colors duration-300 hover:text-white"
               >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                BACK TO PORTFOLIO
-              </Link>
+                <ChevronLeft
+                  className="h-2.5 w-2.5 shrink-0 translate-y-[1px] transition-transform duration-300 group-hover:translate-x-[1px]"
+                  strokeWidth={1.35}
+                  aria-hidden="true"
+                />
+                <Typography
+                  preset="sans-body"
+                  size="caption"
+                  weight="semantic"
+                  wrapPolicy="label"
+                  className="text-inherit"
+                >
+                  BACK TO LIGHTING
+                </Typography>
+              </MotionLink>
             </div>
+
+            <Typography
+              as="p"
+              preset="sans-body"
+              size="caption"
+              weight="semantic"
+              wrapPolicy="label"
+              className="text-white/38"
+            >
+              COLLECTION {number}
+            </Typography>
+            <Typography
+              as="h1"
+              preset="luna-editorial"
+              size="title"
+              weight="display"
+              wrapPolicy="heading"
+              className="text-white"
+              style={{ marginTop: getSpacingRem(design.titleTopSpacing) }}
+            >
+              {title}
+            </Typography>
           </div>
-          <div className="grid grid-cols-4 lg:grid-cols-12">
-            <div className="col-span-12">
-              <p className="font-mono text-textMuted tracking-[0.4em] text-sm mb-4">COLLECTION {number}</p>
-              <div className="flex flex-col lg:flex-row lg:items-baseline lg:justify-between gap-8">
-                <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase font-luna text-white leading-none">
-                  {title}
-                </h1>
-                {description ? (
-                  <p className="font-futura tracking-widest text-textMuted text-sm max-w-sm lg:text-right lg:self-end">
-                    {description}
-                  </p>
-                ) : null}
-              </div>
+
+          {hasDescription ? (
+            <div className={`${getResponsiveGridColumnClassName(design.descriptionBounds)} lg:pb-[0.12rem]`}>
+              <Typography
+                as="p"
+                preset="sans-body"
+                size="body"
+                weight="semantic"
+                wrapPolicy="prose"
+                align="right"
+                className="ml-auto max-w-[22rem] text-textPrimary/90"
+              >
+                {description}
+              </Typography>
             </div>
-          </div>
+          ) : null}
         </div>
       </div>
     </section>

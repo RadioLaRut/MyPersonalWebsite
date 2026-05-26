@@ -1,10 +1,17 @@
-'use client';
+"use client";
 
-import React, { type ReactNode } from 'react';
-import BilingualText from '@/components/common/BilingualText';
-import { PresetImage } from '@/components/common/PresetImage';
-import { type ImageFitMode, type ImagePreset } from '@/lib/image-presentation';
-import { toParagraphNodes } from '@/lib/editable-text';
+import type { CSSProperties, ReactNode } from "react";
+
+import { PresetImage } from "@/components/common/PresetImage";
+import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { toParagraphNodes } from "@/lib/editable-text";
+import {
+  getGridColumnStyle,
+  getSectionSpacingClassName,
+  getSpacingRem,
+} from "@/lib/component-design-style";
+import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 interface ContentCardProps {
   title: ReactNode;
@@ -12,58 +19,71 @@ interface ContentCardProps {
   imageSrc?: string;
   imagePreset?: ImagePreset;
   imageFitMode?: ImageFitMode;
-  tags?: ReactNode[];
-  imagePosition?: 'left' | 'right';
+  imagePosition?: "left" | "right";
 }
+
+type StyleWithVars = CSSProperties & Record<string, string>;
 
 export default function ContentCard({
   title,
   description,
   imageSrc,
-  imagePreset = 'ratio-16-9',
-  imageFitMode = 'x',
-  tags,
-  imagePosition = 'right',
+  imagePreset = "ratio-16-9",
+  imageFitMode = "x",
+  imagePosition = "right",
 }: ContentCardProps) {
+  const design = useComponentDesign("ContentCard");
   const paragraphs = toParagraphNodes(description);
-  const imageAlt = typeof title === 'string' ? title : 'Content card image';
+  const imageAlt = typeof title === "string" ? title : "Content card image";
   const hasImage = Boolean(imageSrc);
+  const mobileMediaOffsetStyle: StyleWithVars = {
+    "--content-card-mobile-media-top-spacing": getSpacingRem(design.mobileMediaTopSpacing),
+  };
 
-  const TextContent = (
-    <div className="flex flex-col justify-start">
-      {tags && tags.length > 0 && (
-        <div className="flex flex-wrap gap-3 mb-6">
-          {tags.map((tag, i) => (
-            <span
-              key={i}
-              className="font-mono text-[10px] uppercase tracking-[0.2em] text-textMuted border border-white/10 px-2 py-1"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
-
-      <h3 className="text-4xl lg:text-5xl font-black tracking-tighter mb-8 leading-[0.95] font-futura break-words">
+  const textContent = (
+    <div
+      className="grid w-full content-start self-start"
+      style={{ rowGap: getSpacingRem(design.titleBodyGap) }}
+    >
+      <Typography
+        as="h3"
+        preset="sans-body"
+        size={design.titleSize}
+        weight="display"
+        wrapPolicy={design.titleAutoWrap ? "heading" : "nowrap"}
+        className="text-white leading-none"
+        style={{ lineHeight: 1 }}
+      >
         {title}
-      </h3>
+      </Typography>
 
-      <div className="text-textMuted tracking-[0.02em] text-base lg:text-lg leading-[1.95] space-y-5 max-w-none lg:max-w-[36ch]">
+      <div
+        className="grid w-full max-w-none"
+        style={{ rowGap: getSpacingRem(design.paragraphGap) }}
+      >
         {paragraphs.map((paragraph, i) => (
-          <p key={i} className="text-balance">
-            <BilingualText text={paragraph} weight="medium" />
-          </p>
+          <Typography
+            key={i}
+            as="p"
+            preset="sans-body"
+            size={design.bodySize}
+            weight="medium"
+            wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"}
+            className="text-textMuted"
+          >
+            {paragraph}
+          </Typography>
         ))}
       </div>
     </div>
   );
 
-  const ImageContent = hasImage ? (
+  const imageContent = hasImage && imageSrc ? (
     <div className="relative group">
-      <div className="relative w-full overflow-hidden rounded-sm border border-white/10 bg-[#0a0a0a] transition-colors duration-500 group-hover:border-white/20">
+      <div className="relative w-full overflow-hidden rounded-none border border-white/10 bg-[#0a0a0a] transition-colors duration-500 group-hover:border-white/20">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
         <PresetImage
-          src={imageSrc!}
+          src={imageSrc}
           alt={imageAlt}
           preset={imagePreset}
           fitMode={imageFitMode}
@@ -75,33 +95,37 @@ export default function ContentCard({
 
   if (!hasImage) {
     return (
-      <div className="w-full my-24 grid-container">
-        <div className="col-start-3 col-span-8">{TextContent}</div>
+      <div className={`grid-container w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
+        <div className="w-full" style={getGridColumnStyle(design.textOnlyBounds)}>
+          {textContent}
+        </div>
       </div>
     );
   }
 
-  const isImageLeft = imagePosition === 'left';
+  const isImageLeft = imagePosition === "left";
+  const textOrder = isImageLeft ? "order-1 lg:order-2" : "";
+  const imageOrder = isImageLeft ? "order-2 lg:order-1" : "";
+  const textBounds = isImageLeft ? design.imageLeftTextBounds : design.imageRightTextBounds;
+  const imageBounds = isImageLeft ? design.imageLeftMediaBounds : design.imageRightMediaBounds;
 
   return (
-    <div className="w-full my-24 grid-container">
-      {isImageLeft ? (
-        <>
-          <div className="col-span-8 col-start-1 order-2 lg:order-1 mt-12 lg:mt-0">
-            {ImageContent}
-          </div>
-          <div className="col-span-4 col-start-9 order-1 lg:order-2">
-            {TextContent}
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="col-span-4 col-start-1">{TextContent}</div>
-          <div className="col-span-8 col-start-5 mt-12 lg:mt-0">
-            {ImageContent}
-          </div>
-        </>
-      )}
+    <div className={`grid-container w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
+      <div
+        className={`w-full self-start ${textOrder}`}
+        style={getGridColumnStyle(textBounds)}
+      >
+        {textContent}
+      </div>
+      <div
+        className={`w-full self-start mt-[var(--content-card-mobile-media-top-spacing)] lg:mt-0 ${imageOrder}`}
+        style={{
+          ...mobileMediaOffsetStyle,
+          ...getGridColumnStyle(imageBounds),
+        }}
+      >
+        {imageContent}
+      </div>
     </div>
   );
 }

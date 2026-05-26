@@ -1,5 +1,5 @@
-import { renderPuckPage } from "@/lib/render-puck-page";
+import { redirect } from "next/navigation";
 
-export default async function ContactPage() {
-  return renderPuckPage("contact");
+export default function ContactPage() {
+  redirect("/about");
 }

@@ -11,8 +11,10 @@
         "id": "hero-1",
         "title": "LIGHTING",
         "subtitle": "PORTFOLIO",
-        "descriptionLine1": "",
-        "descriptionLine2": ""
+        "descriptionLine1": "MOOD / SHOT / SPATIAL HIERARCHY",
+        "descriptionLine2": "围绕镜头构图、时间变化与空间情绪展开的灯光研究归档。",
+        "ctaLabel": "进入全部作品",
+        "ctaHref": "/works"
       }
     },
     {
@@ -20,7 +22,7 @@
       "props": {
         "id": "collection-1",
         "number": "01",
-        "title": "",
+        "title": "CINEMATIC SHOTS",
         "coverImage": "/images/city-2026/002.webp",
         "href": "/works/lighting-portfolio/collection-1",
         "imagePreset": "native"
@@ -31,7 +33,7 @@
       "props": {
         "id": "collection-2",
         "number": "02",
-        "title": "",
+        "title": "TRAIN STATION",
         "coverImage": "/images/train-station/Cut2Day.webp",
         "href": "/works/lighting-portfolio/collection-2",
         "imagePreset": "native"
@@ -42,7 +44,7 @@
       "props": {
         "id": "collection-3",
         "number": "03",
-        "title": "",
+        "title": "WEST",
         "coverImage": "/images/west/CDay.webp",
         "href": "/works/lighting-portfolio/collection-3",
         "imagePreset": "ratio-21-9",
@@ -54,7 +56,7 @@
       "props": {
         "id": "collection-4",
         "number": "04",
-        "title": "",
+        "title": "ATMOSPHERE PRACTICE",
         "coverImage": "/images/penguin/01.webp",
         "href": "/works/lighting-portfolio/collection-4",
         "imagePreset": "native",

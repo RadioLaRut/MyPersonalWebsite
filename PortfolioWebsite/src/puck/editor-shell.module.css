@@ -41,6 +41,11 @@
   overflow: hidden !important;
 }
 
+.adminShell :global(#puck) {
+  height: 100% !important;
+  max-height: 100% !important;
+}
+
 .adminShell :global(.Puck)> :first-child,
 .adminShell :global(.Puck)> :first-child>[class*="_PuckLayout_"] {
   flex: 1 1 auto;

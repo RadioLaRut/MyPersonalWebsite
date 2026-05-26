@@ -1,8 +1,14 @@
 "use client";
 
-import React, { type ReactNode } from "react";
-import BilingualText from "@/components/common/BilingualText";
+import type { CSSProperties, ReactNode } from "react";
 import { PresetImage } from "@/components/common/PresetImage";
+import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+  getGridColumnClassName,
+  getSectionSpacingClassName,
+  getSpacingRem,
+} from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 import { toPlainText } from "@/lib/editable-text";
 
@@ -24,6 +30,50 @@ interface BreakdownTriptychProps {
   col3FitMode?: ImageFitMode;
 }
 
+function TriptychColumn({
+  title,
+  text,
+  img,
+  alt,
+  boundsClassName,
+  preset = "ratio-16-9",
+  fitMode = "x",
+  className = "",
+  style,
+}: {
+  title: ReactNode;
+  text: ReactNode;
+  img: string;
+  alt: string;
+  boundsClassName: string;
+  preset?: ImagePreset;
+  fitMode?: ImageFitMode;
+  className?: string;
+  style?: CSSProperties;
+}) {
+  if (!title && !text && !img) return null;
+
+  return (
+    <div className={`${boundsClassName} space-y-4 ${className}`} style={style}>
+      {title && (
+        <Typography as="h4" preset="sans-body" size="label" weight="strong" wrapPolicy="label" className="border-l-2 pl-3 border-white/80 text-white">
+          {title}
+        </Typography>
+      )}
+      {text && (
+        <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="prose" className="text-textPrimary">
+          {text}
+        </Typography>
+      )}
+      {img && (
+        <div className="w-full relative overflow-hidden mt-6 border border-white/10">
+          <PresetImage src={img} alt={alt} preset={preset} fitMode={fitMode} />
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function BreakdownTriptych({
   col1Title,
   col1Text,
@@ -41,72 +91,51 @@ export default function BreakdownTriptych({
   col3Preset = "ratio-16-9",
   col3FitMode = "x",
 }: BreakdownTriptychProps) {
+  const design = useComponentDesign("BreakdownTriptych");
   const col1Alt = toPlainText(col1Title) ?? "Breakdown image 1";
   const col2Alt = toPlainText(col2Title) ?? "Breakdown image 2";
   const col3Alt = toPlainText(col3Title) ?? "Breakdown image 3";
+  const col2Style = {
+    "--triptych-col-top-spacing": getSpacingRem(design.col2TopSpacing),
+  } as CSSProperties;
+  const col3Style = {
+    "--triptych-col-top-spacing": getSpacingRem(design.col3TopSpacing),
+  } as CSSProperties;
 
   return (
-    <section className="w-full relative z-20 bg-black pb-32">
-      <div className="grid-container w-full pt-16 border-t border-white/10">
-        {(col1Title || col1Text || col1Img) && (
-          <div className="col-span-3 space-y-4">
-            {col1Title && (
-              <h4 className="text-white text-base font-bold tracking-[0.18em] uppercase border-l-2 pl-3 border-white/80 leading-snug font-futura break-words">
-                {col1Title}
-              </h4>
-            )}
-            {col1Text && (
-              <p className="text-textPrimary text-sm lg:text-[15px] leading-[1.95] break-words">
-                <BilingualText text={col1Text} weight="medium" />
-              </p>
-            )}
-            {col1Img && (
-              <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-                <PresetImage src={col1Img} alt={col1Alt} preset={col1Preset} fitMode={col1FitMode} />
-              </div>
-            )}
-          </div>
-        )}
-
-        {(col2Title || col2Text || col2Img) && (
-          <div className="col-start-5 col-span-4 space-y-4 mt-16 lg:mt-0">
-            {col2Title && (
-              <h4 className="text-white text-base font-bold tracking-[0.18em] uppercase border-l-2 pl-3 border-white/80 leading-snug font-futura break-words">
-                {col2Title}
-              </h4>
-            )}
-            {col2Text && (
-              <p className="text-textPrimary text-sm lg:text-[15px] leading-[1.95] break-words">
-                <BilingualText text={col2Text} weight="medium" />
-              </p>
-            )}
-            {col2Img && (
-              <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-                <PresetImage src={col2Img} alt={col2Alt} preset={col2Preset} fitMode={col2FitMode} />
-              </div>
-            )}
-          </div>
-        )}
-
-        {(col3Title || col3Text || col3Img) && (
-          <div className="col-start-10 col-span-3 space-y-4 mt-16 lg:mt-0">
-            {col3Title && (
-              <h4 className="text-white text-base font-bold tracking-[0.18em] uppercase border-l-2 pl-3 border-white/80 leading-snug font-futura break-words">
-                {col3Title}
-              </h4>
-            )}
-            {col3Text && (
-              <p className="text-textPrimary text-sm lg:text-[15px] leading-[1.95] break-words">
-                <BilingualText text={col3Text} weight="medium" />
-              </p>
-            )}
-            {col3Img && (
-              <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-                <PresetImage src={col3Img} alt={col3Alt} preset={col3Preset} fitMode={col3FitMode} />
-              </div>
-            )}
-          </div>
-        )}
+    <section className={`relative z-20 w-full bg-black ${getSectionSpacingClassName(design.sectionSpacing)}`}>
+      <div className="grid-container w-full border-t border-white/10 rhythm-divider-top">
+        <TriptychColumn
+          title={col1Title}
+          text={col1Text}
+          img={col1Img}
+          alt={col1Alt}
+          boundsClassName={getGridColumnClassName(design.col1Bounds)}
+          preset={col1Preset}
+          fitMode={col1FitMode}
+        />
+        <TriptychColumn
+          title={col2Title}
+          text={col2Text}
+          img={col2Img}
+          alt={col2Alt}
+          boundsClassName={getGridColumnClassName(design.col2Bounds)}
+          preset={col2Preset}
+          fitMode={col2FitMode}
+          className="mt-[var(--triptych-col-top-spacing)] lg:mt-0"
+          style={col2Style}
+        />
+        <TriptychColumn
+          title={col3Title}
+          text={col3Text}
+          img={col3Img}
+          alt={col3Alt}
+          boundsClassName={getGridColumnClassName(design.col3Bounds)}
+          preset={col3Preset}
+          fitMode={col3FitMode}
+          className="mt-[var(--triptych-col-top-spacing)] lg:mt-0"
+          style={col3Style}
+        />
       </div>
     </section>
   );

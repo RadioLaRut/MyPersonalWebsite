@@ -1,111 +1,231 @@
-import { execSync } from 'child_process';
-import { existsSync, readdirSync, statSync, readFileSync, writeFileSync } from 'fs';
-import { join, extname, basename, dirname } from 'path';
+import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
+import process from "node:process";
+import { fileURLToPath } from "node:url";
 
-const IMAGES_DIR = new URL('../public/images', import.meta.url).pathname;
-const SRC_DIR = new URL('../src', import.meta.url).pathname;
-const CONTENT_DIR = new URL('../content', import.meta.url).pathname;
-const CWEBP = '/usr/local/bin/cwebp';
+import sharp from "sharp";
+
+sharp.cache({ files: 0 });
+sharp.concurrency(1);
+
+const projectRoot = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
+const PUBLIC_DIR = path.join(projectRoot, "public");
+const IMAGES_DIR = path.join(PUBLIC_DIR, "images");
+const SRC_DIR = path.join(projectRoot, "src");
+const CONTENT_DIR = path.join(projectRoot, "content");
 const QUALITY = 85;
-const SKIP_FILES = ['placeholder-16-9-1772675072147-5143c516.jpg'];
+const EFFORT = 6;
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 250;
+const SKIP_FILES = new Set(["placeholder-16-9-1772675072147-5143c516.jpg"]);
+const CODE_FILE_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".json"]);
+const IMAGE_EXTENSION_PRIORITY = new Map([
+  [".png", 4],
+  [".jpg", 3],
+  [".jpeg", 2],
+  [".webp", 1],
+]);
 
-// 递归收集所有 png/jpg/jpeg 文件
-function collectImages(dir) {
-  const results = [];
-  for (const entry of readdirSync(dir)) {
-    const full = join(dir, entry);
-    if (statSync(full).isDirectory()) {
-      results.push(...collectImages(full));
-    } else if (/\.(png|jpg|jpeg)$/i.test(entry) && !SKIP_FILES.includes(entry)) {
-      results.push(full);
+function toPosixPath(filePath) {
+  return filePath.split(path.sep).join("/");
+}
+
+function collectFiles(rootDir, predicate, results = []) {
+  if (!existsSync(rootDir)) {
+    return results;
+  }
+
+  for (const entry of readdirSync(rootDir, { withFileTypes: true })) {
+    const absolutePath = path.join(rootDir, entry.name);
+
+    if (entry.isDirectory()) {
+      collectFiles(absolutePath, predicate, results);
+      continue;
+    }
+
+    if (predicate(absolutePath, entry.name)) {
+      results.push(absolutePath);
     }
   }
+
   return results;
 }
 
-// 用 cwebp 转换单张图片，返回是否成功
-function convertToWebp(src) {
-  const dest = src.replace(/\.(png|jpg|jpeg)$/i, '.webp');
-  if (existsSync(dest)) {
-    console.log(`已存在，跳过: ${basename(dest)}`);
-    return { src, dest, success: true, skipped: true };
-  }
-  try {
-    execSync(`"${CWEBP}" -q ${QUALITY} "${src}" -o "${dest}"`, { stdio: 'pipe' });
-    // 验证输出文件确实存在且大小 > 0
-    if (existsSync(dest) && statSync(dest).size > 0) {
-      console.log(`转换成功: ${basename(src)} -> ${basename(dest)}`);
-      return { src, dest, success: true, skipped: false };
-    } else {
-      console.error(`转换失败（输出文件无效）: ${src}`);
-      return { src, dest, success: false };
-    }
-  } catch (e) {
-    console.error(`转换失败: ${src}\n${e.message}`);
-    return { src, dest, success: false };
-  }
+function collectImageFiles(rootDir) {
+  return collectFiles(
+    rootDir,
+    (_absolutePath, entryName) => /\.(png|jpg|jpeg|webp)$/i.test(entryName) && !SKIP_FILES.has(entryName),
+  );
 }
 
-// 替换文件内容中的图片引用
+function collectCodeFiles(rootDir) {
+  return collectFiles(rootDir, (absolutePath) => CODE_FILE_EXTENSIONS.has(path.extname(absolutePath)));
+}
+
+function resolvePublicAssetPath(filePath) {
+  const relativePath = path.relative(PUBLIC_DIR, filePath);
+  return `/${toPosixPath(relativePath)}`;
+}
+
+function logProjectRelativePath(filePath) {
+  return toPosixPath(path.relative(projectRoot, filePath));
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function buildConversionJobs(rootDir) {
+  const candidates = collectImageFiles(rootDir);
+  const jobsByKey = new Map();
+
+  for (const candidate of candidates) {
+    const extension = path.extname(candidate).toLowerCase();
+    const priority = IMAGE_EXTENSION_PRIORITY.get(extension);
+
+    if (priority === undefined) {
+      continue;
+    }
+
+    const baseKey = toPosixPath(path.join(path.dirname(candidate), path.basename(candidate, path.extname(candidate)))).toLowerCase();
+    const destinationPath = extension === ".webp"
+      ? candidate
+      : path.join(path.dirname(candidate), `${path.basename(candidate, path.extname(candidate))}.webp`);
+    const current = jobsByKey.get(baseKey);
+
+    if (!current || priority > current.priority) {
+      jobsByKey.set(baseKey, {
+        sourcePath: candidate,
+        destinationPath,
+        priority,
+        updateReferences: extension !== ".webp",
+      });
+    }
+  }
+
+  return {
+    candidates,
+    jobs: [...jobsByKey.values()].sort((left, right) => left.destinationPath.localeCompare(right.destinationPath)),
+  };
+}
+
+async function writeOutputFile(destinationPath, buffer) {
+  await mkdir(path.dirname(destinationPath), { recursive: true });
+  await writeFile(destinationPath, buffer);
+}
+
+function delay(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+async function renderWebpBuffer(sourcePath) {
+  return sharp(sourcePath)
+    .rotate()
+    .toColorspace("srgb")
+    .webp({
+      quality: QUALITY,
+      effort: EFFORT,
+    })
+    .toBuffer();
+}
+
+async function convertToWebp(job) {
+  const { sourcePath, destinationPath } = job;
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt += 1) {
+    try {
+      const metadata = await sharp(sourcePath).metadata();
+      const outputBuffer = await renderWebpBuffer(sourcePath);
+
+      await writeOutputFile(destinationPath, outputBuffer);
+
+      if (!existsSync(destinationPath) || statSync(destinationPath).size <= 0) {
+        throw new Error("Generated file is empty.");
+      }
+
+      const actionLabel = sourcePath === destinationPath ? "Normalized" : "Converted";
+      const sourceFormat = metadata.format ?? "unknown";
+      const sourceSpace = metadata.space ?? "unknown";
+
+      console.log(
+        `${actionLabel}: ${path.basename(sourcePath)} [${sourceFormat}/${sourceSpace}] -> ${path.basename(destinationPath)} [webp/srgb]`,
+      );
+
+      return { ...job, success: true, sourceFormat, sourceSpace };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unknown conversion error";
+      const canRetry = attempt < MAX_RETRIES && /open|EACCES|EPERM|UNKNOWN/i.test(errorMessage);
+
+      if (canRetry) {
+        console.warn(`Retrying (${attempt}/${MAX_RETRIES - 1}): ${sourcePath}`);
+        await delay(RETRY_DELAY_MS);
+        continue;
+      }
+
+      console.error(`Conversion failed: ${sourcePath}\n${errorMessage}`);
+      return { ...job, success: false };
+    }
+  }
+
+  return { ...job, success: false };
+}
+
 function replaceInFile(filePath, conversions) {
-  let content = readFileSync(filePath, 'utf-8');
+  let content = readFileSync(filePath, "utf8");
   let changed = false;
-  for (const { src, dest, success } of conversions) {
-    if (!success) continue;
-    // 提取 /images/... 相对路径部分
-    const relSrc = src.replace(/.*\/public/, '').replace(/\.(png|jpg|jpeg)$/i, (ext) => ext);
-    const relDest = dest.replace(/.*\/public/, '');
-    // 替换所有出现的原路径（含扩展名，大小写不敏感）
-    const escaped = relSrc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(escaped, 'gi');
+
+  for (const { sourcePath, destinationPath, success, updateReferences } of conversions) {
+    if (!success || !updateReferences) {
+      continue;
+    }
+
+    const relativeSourcePath = resolvePublicAssetPath(sourcePath);
+    const relativeDestinationPath = resolvePublicAssetPath(destinationPath);
+    const regex = new RegExp(escapeRegExp(relativeSourcePath), "gi");
+
     if (regex.test(content)) {
-      content = content.replace(regex, relDest);
+      content = content.replace(regex, relativeDestinationPath);
       changed = true;
     }
   }
+
   if (changed) {
-    writeFileSync(filePath, content, 'utf-8');
-    console.log(`已更新引用: ${filePath.replace(/.*PortfolioWebsite\//, '')}`);
+    writeFileSync(filePath, content, "utf8");
+    console.log(`Updated references: ${logProjectRelativePath(filePath)}`);
   }
 }
 
-// 递归收集代码文件
-function collectCodeFiles(dir, exts) {
-  const results = [];
-  for (const entry of readdirSync(dir)) {
-    const full = join(dir, entry);
-    if (statSync(full).isDirectory()) {
-      results.push(...collectCodeFiles(full, exts));
-    } else if (exts.includes(extname(entry))) {
-      results.push(full);
-    }
-  }
-  return results;
+const { candidates, jobs } = buildConversionJobs(IMAGES_DIR);
+console.log(`Found ${candidates.length} image files and ${jobs.length} conversion jobs. Starting conversion.`);
+
+const conversions = [];
+for (const job of jobs) {
+  conversions.push(await convertToWebp(job));
 }
 
-// 主流程
-const images = collectImages(IMAGES_DIR);
-console.log(`\n找到 ${images.length} 张图片，开始转换...\n`);
+const succeeded = conversions.filter((conversion) => conversion.success);
+const failed = conversions.filter((conversion) => !conversion.success);
 
-const conversions = images.map(convertToWebp);
-const succeeded = conversions.filter(c => c.success);
-const failed = conversions.filter(c => !c.success);
-
-console.log(`\n转换完成: ${succeeded.length} 成功, ${failed.length} 失败`);
+console.log(`Conversion finished: ${succeeded.length} succeeded, ${failed.length} failed.`);
 
 if (failed.length > 0) {
-  console.error('\n以下文件转换失败，将跳过其代码替换:');
-  failed.forEach(c => console.error(' -', c.src));
+  console.error("The following files failed to convert and will be skipped when updating references:");
+  for (const conversion of failed) {
+    console.error(` - ${conversion.sourcePath}`);
+  }
 }
 
-console.log('\n开始替换代码引用...\n');
+console.log("Updating code and content references.");
 const codeFiles = [
-  ...collectCodeFiles(SRC_DIR, ['.ts', '.tsx', '.js', '.jsx']),
-  ...collectCodeFiles(CONTENT_DIR, ['.json']),
+  ...collectCodeFiles(SRC_DIR),
+  ...collectCodeFiles(CONTENT_DIR),
 ];
 
-for (const file of codeFiles) {
-  replaceInFile(file, conversions);
+for (const filePath of codeFiles) {
+  replaceInFile(filePath, conversions);
 }
 
-console.log('\n全部完成。');
+console.log("All done.");

@@ -1,6 +1,16 @@
+"use client";
+
 import React from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
+import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { MotionLink } from "@/components/motion";
+import {
+    getGridColumnClassName,
+    getResponsiveGridColumnClassName,
+    getSpacingRem,
+} from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 import { CANONICAL_PLACEHOLDER_PATH } from "@/lib/public-paths";
 
@@ -11,6 +21,7 @@ interface NextProjectBlockProps {
     href?: string;
     imagePreset?: ImagePreset;
     imageFitMode?: ImageFitMode;
+    editMode?: boolean;
 }
 
 export default function NextProjectBlock({
@@ -20,18 +31,22 @@ export default function NextProjectBlock({
     href,
     imagePreset = "ratio-21-9",
     imageFitMode = "x",
+    editMode = false,
 }: NextProjectBlockProps) {
+    const design = useComponentDesign("NextProjectBlock");
     const nextHref = href ?? `/works/${nextId}`;
     const backgroundImage = nextBg || CANONICAL_PLACEHOLDER_PATH;
 
     return (
         <footer className="mt-0 border-t border-white/20 relative z-20">
-            <a
+            <MotionLink
                 href={nextHref}
-                className="group block relative h-[40vh] md:h-[60vh] overflow-hidden w-full interactive bg-black"
+                disabled={editMode}
+                interactionPreset="blockLink"
+                className={`group block relative h-[40vh] md:h-[60vh] overflow-hidden w-full bg-black ${editMode ? "cursor-default" : "interactive"}`}
             >
                 <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 z-10 transition-colors duration-700 pointer-events-none"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
+                <div className="absolute inset-0 grid place-items-center">
                     <PresetImage
                         src={backgroundImage}
                         alt="Next Project"
@@ -43,18 +58,64 @@ export default function NextProjectBlock({
                     />
                 </div>
 
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-20 mix-blend-difference pointer-events-none">
-                    <span className="font-mono text-xs text-textMuted tracking-[0.3em] uppercase mb-4 opacity-70 group-hover:opacity-100 transition-all duration-700">
-                        NEXT PROJECT
-                    </span>
-                    <h2 className="text-4xl md:text-[6vw] text-white font-black uppercase tracking-tighter transition-all duration-700 leading-none font-futura">
-                        {nextName}
-                    </h2>
+                <div className="pointer-events-none absolute inset-0 z-20">
+                    <div className="grid-container h-full">
+                        <div className={`${getGridColumnClassName(design.overlayBounds)} grid h-full place-items-center text-center mix-blend-difference`}>
+                            <div className="rhythm-stack-4">
+                                <Typography
+                                    preset="sans-body"
+                                    size="label"
+                                    weight="semantic"
+                                    wrapPolicy="label"
+                                    align="center"
+                                    className="text-textMuted opacity-70 transition-all duration-700 group-hover:opacity-100 [&_.typography-run]:transition-[letter-spacing] [&_.typography-run]:duration-1000 [&_.typography-run]:ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:[&_.typography-run]:!tracking-[0.25em]"
+                                >
+                                    NEXT PROJECT
+                                </Typography>
+                                <Typography
+                                    as="h2"
+                                    preset="sans-body"
+                                    size="title"
+                                    weight="display"
+                                    wrapPolicy="heading"
+                                    align="center"
+                                    className="text-white uppercase transition-all duration-700 [&_.typography-run]:transition-[letter-spacing] [&_.typography-run]:duration-1000 [&_.typography-run]:ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:[&_.typography-run]:!tracking-[0.08em]"
+                                >
+                                    {nextName}
+                                </Typography>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </a>
-            <div className="bg-black py-8 px-8 md:px-12 flex flex-col md:flex-row justify-between items-center text-[10px] sm:text-xs font-mono text-textMuted tracking-widest border-t border-white/10">
-                <span className="mb-2 md:mb-0">© 2026 江承彦 / JIANG CHENGYAN</span>
-                <span>Designed for Darkness</span>
+            </MotionLink>
+            <div className="border-t border-white/10 bg-black">
+                <div
+                    className="grid-container gap-y-2 py-8 text-center md:text-left"
+                    style={{ paddingTop: getSpacingRem(design.footerTopSpacing), paddingBottom: getSpacingRem(design.footerTopSpacing) }}
+                >
+                    <div className="col-span-12 grid grid-cols-12 gap-y-2 text-center lg:items-center lg:text-left">
+                        <Typography
+                            as="span"
+                            preset="sans-body"
+                            size="caption"
+                            weight="semantic"
+                            wrapPolicy="label"
+                            className={`${getResponsiveGridColumnClassName(design.footerLeftBounds)} text-textMuted`}
+                        >
+                            © 2026 江承彦 / JIANG CHENGYAN
+                        </Typography>
+                        <Typography
+                            as="span"
+                            preset="sans-body"
+                            size="caption"
+                            weight="semantic"
+                            wrapPolicy="label"
+                            className={`${getResponsiveGridColumnClassName(design.footerRightBounds)} text-textMuted lg:text-right lg:justify-self-end`}
+                        >
+                            Designed for Darkness
+                        </Typography>
+                    </div>
+                </div>
             </div>
         </footer>
     );

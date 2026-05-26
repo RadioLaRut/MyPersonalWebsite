@@ -1,13 +1,54 @@
 "use client";
-import React, { type ReactNode, useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import React, { type ReactNode, useRef } from "react";
+
 import { PresetImage } from "@/components/common/PresetImage";
-import { type ImageFitMode, type ImagePreset, normalizeImagePreset } from "@/lib/image-presentation";
+import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { MotionLink } from "@/components/motion";
+import {
+  getResponsiveGridColumnClassName,
+  getSpacingRem,
+} from "@/lib/component-design-style";
+import { toPlainText } from "@/lib/editable-text";
+import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
+import { motion, useScroll, useTransform } from "@/lib/motion";
+
+function hasNodeContent(value: ReactNode) {
+  if (value === null || value === undefined || value === false) {
+    return false;
+  }
+
+  if (typeof value === "string") {
+    return value.trim().length > 0;
+  }
+
+  return true;
+}
+
+function getPosterTitleLines(title: ReactNode) {
+  const plainTitle = toPlainText(title);
+
+  if (!plainTitle) {
+    return null;
+  }
+
+  const lines = plainTitle
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  return lines.length > 1 ? lines : null;
+}
 
 export interface HeroSectionProps {
+  eyebrow?: ReactNode;
   title: ReactNode;
   subtitle: ReactNode;
   description: ReactNode;
+  primaryCtaLabel?: ReactNode;
+  primaryCtaHref?: string;
+  secondaryCtaLabel?: ReactNode;
+  secondaryCtaHref?: string;
   imageSrc: string;
   imageAlt: string;
   imagePreset?: ImagePreset;
@@ -16,48 +57,67 @@ export interface HeroSectionProps {
 }
 
 export default function HeroSection({
+  eyebrow,
   title,
   subtitle,
   description,
+  primaryCtaLabel,
+  primaryCtaHref,
+  secondaryCtaLabel,
+  secondaryCtaHref,
   imageSrc,
   imageAlt,
   imagePreset = "ratio-21-9",
   imageFitMode = "x",
   editMode = false,
 }: HeroSectionProps) {
+  const design = useComponentDesign("HeroSection");
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
-  // We will manage everything through native CSS flex and absolute positioning
-  // to prevent react re-render flashes on orientation changes.
-  const outerSectionClassName = editMode
-    ? "relative w-full lg:min-h-[620px] min-h-[100dvh] flex flex-col px-0 overflow-hidden bg-black"
-    : "relative w-full min-h-[100dvh] flex flex-col px-0 overflow-hidden bg-black";
+  const contentBoundsClassName = getResponsiveGridColumnClassName(design.contentBounds);
+  const hasSubtitle = hasNodeContent(subtitle);
+  const hasDescription = hasNodeContent(description);
+  const hasPrimaryCta = hasNodeContent(primaryCtaLabel) && Boolean(primaryCtaHref);
+  const hasSecondaryCta = hasNodeContent(secondaryCtaLabel) && Boolean(secondaryCtaHref);
+  const hasCta = hasPrimaryCta || hasSecondaryCta;
+  const posterMode = !hasDescription && !hasCta;
+  const posterTitleLines = posterMode && !hasSubtitle ? getPosterTitleLines(title) : null;
+  const hasStackedPosterTitle = Boolean(posterTitleLines && posterTitleLines.length > 1);
+  const plainTitle = toPlainText(title);
+  const compactPosterTitle = plainTitle?.replace(/\s+/g, "") ?? "";
+  const hasLongPosterTitle =
+    posterMode &&
+    !hasSubtitle &&
+    !hasStackedPosterTitle &&
+    compactPosterTitle.length > 10;
+  const posterTitleSize = hasStackedPosterTitle ? "hero" : hasLongPosterTitle ? "display" : "hero";
+  const eyebrowTopSpacing = getSpacingRem(design.eyebrowTopSpacing);
+  const ctaTopSpacing = getSpacingRem(hasDescription ? design.ctaTopSpacing : "32");
 
-  // The wrapper takes the full available height of the section.
-  // In PC mode, we maintain the cinematic border.
+  const baseOuterClasses = "relative min-h-[100dvh] w-full overflow-hidden bg-black px-0";
+  const outerSectionClassName = editMode ? `${baseOuterClasses} lg:min-h-[720px]` : baseOuterClasses;
+
+  const baseViewportClasses = "relative min-h-[100dvh] w-full overflow-hidden bg-black";
   const viewportWrapperClassName = editMode
-    ? `relative flex-1 w-full overflow-hidden border-y border-white/5 bg-black shadow-none`
-    : `relative flex-1 w-full overflow-hidden bg-black shadow-none lg:border-y lg:border-white/5`;
+    ? `${baseViewportClasses} border-y border-white/5 lg:min-h-[720px]`
+    : `${baseViewportClasses} lg:border-y lg:border-white/5`;
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
-  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
 
   return (
     <section
       ref={containerRef}
       className={outerSectionClassName}
     >
-      {/* Cinema Viewport Wrapper */}
       <div className={viewportWrapperClassName}>
         <motion.div
-          className="absolute inset-0 w-full h-full"
-          style={editMode ? undefined : { y, scale, opacity }}
+          className="absolute inset-0 overflow-hidden"
+          style={editMode ? undefined : { y, scale }}
         >
           <PresetImage
             src={imageSrc}
@@ -72,34 +132,198 @@ export default function HeroSection({
           />
         </motion.div>
 
-        {/* Front Content Overlay based on Grid */}
-        <div className={`absolute inset-0 z-20 mix-blend-normal flex flex-col justify-end ${editMode ? "pointer-events-auto pt-24 pb-24 lg:pb-28" : "pointer-events-none pt-32 pb-24 lg:pb-28"}`}>
-          <div className="grid-container w-full relative">
-            <motion.div
-              className="col-start-2 col-span-10 flex flex-col justify-end lg:translate-y-6"
-              initial={editMode ? false : { opacity: 0 }}
-              animate={editMode ? undefined : { opacity: 1 }}
-              transition={editMode ? undefined : { duration: 1.5, delay: 0.5, ease: "easeOut" }}
-            >
-              <h1 className="font-gothic font-light text-[clamp(1.75rem,5vw,3.5rem)] tracking-[0.1em] lg:tracking-[0.2em] text-white uppercase leading-[1.1] select-none break-words hyphens-auto">
-                {title}
-              </h1>
-              <div className="flex items-center gap-4 mt-2">
-                <span className="inline-block w-8 lg:w-16 h-px bg-white/40"></span>
-                <h1 className="font-gothic font-light text-[clamp(1rem,2.5vw,1.5rem)] tracking-[0.1em] lg:tracking-widest text-textMuted uppercase select-none">
-                  {subtitle}
-                </h1>
-              </div>
-
-              <motion.p
-                className="mt-10 lg:mt-12 font-futura text-textMuted text-xs lg:text-sm tracking-[0.2em] lg:tracking-[0.3em] uppercase w-full md:max-w-md lg:max-w-sm select-none whitespace-pre-line"
-                initial={editMode ? false : { opacity: 0, x: -20 }}
-                animate={editMode ? undefined : { opacity: 1, x: 0 }}
-                transition={editMode ? undefined : { duration: 1.5, delay: 1, ease: "easeOut" }}
+        <div className={`absolute inset-0 z-20 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
+          <div className="grid-container relative h-full items-center rhythm-section-hero">
+            {posterMode ? (
+              <motion.div
+                className={`${contentBoundsClassName} min-w-0 self-center grid auto-rows-max justify-items-end text-right text-edge-shadow lg:ml-auto`}
+                initial={editMode ? false : { opacity: 0, y: 28 }}
+                animate={editMode ? undefined : { opacity: 1, y: 0 }}
+                transition={editMode ? undefined : { duration: 1.1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
               >
-                {description}
-              </motion.p>
-            </motion.div>
+                {hasSubtitle ? (
+                  <div className="relative w-fit">
+                    <Typography
+                      as="h1"
+                      preset="luna-editorial"
+                      size={posterTitleSize}
+                      weight="semantic"
+                      wrapPolicy="label"
+                      align="right"
+                      className="text-white/14"
+                    >
+                      {title}
+                    </Typography>
+
+                    <div className="absolute inset-0 grid place-items-center">
+                      <Typography
+                        as="p"
+                        preset="sans-body"
+                        size="title"
+                        weight="semantic"
+                        wrapPolicy="label"
+                        align="right"
+                        className="text-white/88"
+                      >
+                        {subtitle}
+                      </Typography>
+                    </div>
+                  </div>
+                ) : (
+                  <Typography
+                    as="h1"
+                    preset="luna-editorial"
+                    size={posterTitleSize}
+                    weight="semantic"
+                    wrapPolicy={hasStackedPosterTitle ? "heading" : "label"}
+                    align="right"
+                    className={hasStackedPosterTitle ? "max-w-full text-white/92 leading-[0.92]" : "max-w-full text-white/92"}
+                  >
+                    {hasStackedPosterTitle
+                      ? (
+                        <>
+                          {posterTitleLines!.map((line, index) => (
+                            <React.Fragment key={`${line}-${index}`}>
+                              {index > 0 ? <br /> : null}
+                              {line}
+                            </React.Fragment>
+                          ))}
+                        </>
+                        )
+                      : title}
+                  </Typography>
+                )}
+
+                {eyebrow ? (
+                  <Typography
+                    as="p"
+                    preset="sans-body"
+                    size="caption"
+                    weight="semantic"
+                    wrapPolicy="prose"
+                    className={`${hasStackedPosterTitle ? "max-w-[20rem]" : hasLongPosterTitle ? "max-w-[24rem]" : "max-w-[28rem]"} text-white/58`}
+                    align="right"
+                    style={{ marginTop: eyebrowTopSpacing }}
+                  >
+                    {eyebrow}
+                  </Typography>
+                ) : null}
+              </motion.div>
+            ) : (
+              <motion.div
+                className={`${contentBoundsClassName} self-center grid max-w-[28rem] auto-rows-max justify-items-start text-edge-shadow sm:max-w-[31rem] lg:ml-auto lg:max-w-[36rem]`}
+                initial={editMode ? false : { opacity: 0, y: 28 }}
+                animate={editMode ? undefined : { opacity: 1, y: 0 }}
+                transition={editMode ? undefined : { duration: 1.1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {eyebrow ? (
+                  <Typography
+                    as="p"
+                    preset="sans-body"
+                    size="caption"
+                    weight="semantic"
+                    wrapPolicy="label"
+                    className="text-white/56"
+                  >
+                    {eyebrow}
+                  </Typography>
+                ) : null}
+
+                <Typography
+                  as="h1"
+                  preset="luna-editorial"
+                  size="display"
+                  weight="semantic"
+                  wrapPolicy="heading"
+                  className="mt-3 w-fit max-w-none text-white"
+                >
+                  {title}
+                </Typography>
+
+                {hasSubtitle ? (
+                  <div className="mt-4 inline-grid grid-flow-col auto-cols-max items-center gap-3">
+                    <span className="h-px w-8 bg-white/44" />
+                    <Typography
+                      as="p"
+                      preset="sans-body"
+                      size="label"
+                      weight="semantic"
+                      wrapPolicy="label"
+                      className="text-white/84"
+                    >
+                      {subtitle}
+                    </Typography>
+                  </div>
+                ) : null}
+
+                <motion.div
+                  className="grid auto-rows-max justify-items-start"
+                  initial={editMode ? false : { opacity: 0, x: 24 }}
+                  animate={editMode ? undefined : { opacity: 1, x: 0 }}
+                  transition={editMode ? undefined : { duration: 0.95, delay: 0.38, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <div className="grid content-start justify-items-start">
+                    {hasDescription ? (
+                      <Typography
+                        as="p"
+                        preset="sans-body"
+                        size="body"
+                        weight="semantic"
+                        wrapPolicy="prose"
+                        className="mt-4 max-w-[24rem] text-white/76 whitespace-pre-line"
+                      >
+                        {description}
+                      </Typography>
+                    ) : null}
+
+                    {hasCta ? (
+                      <div
+                        className="pointer-events-auto flex flex-wrap items-center gap-x-7 gap-y-4"
+                        style={{ marginTop: ctaTopSpacing }}
+                      >
+                        {hasPrimaryCta ? (
+                          <MotionLink
+                            href={primaryCtaHref!}
+                            disabled={editMode}
+                            className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 text-white/92 transition-colors duration-300 hover:text-white"
+                          >
+                            <span className="h-px w-7 bg-white/52 transition-all duration-300 group-hover:w-11 group-hover:bg-white" />
+                            <Typography
+                              preset="sans-body"
+                              size="label"
+                              weight="semantic"
+                              wrapPolicy="label"
+                              className="text-inherit"
+                            >
+                              {primaryCtaLabel}
+                            </Typography>
+                          </MotionLink>
+                        ) : null}
+
+                        {hasSecondaryCta ? (
+                          <MotionLink
+                            href={secondaryCtaHref!}
+                            disabled={editMode}
+                            className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 text-white/48 transition-colors duration-300 hover:text-white"
+                          >
+                            <span className="h-px w-7 bg-white/18 transition-all duration-300 group-hover:w-11 group-hover:bg-white" />
+                            <Typography
+                              preset="sans-body"
+                              size="label"
+                              weight="semantic"
+                              wrapPolicy="label"
+                              className="text-inherit"
+                            >
+                              {secondaryCtaLabel}
+                            </Typography>
+                          </MotionLink>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
           </div>
         </div>
       </div>

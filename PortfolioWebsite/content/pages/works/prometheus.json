@@ -1,7 +1,7 @@
 {
   "root": {
     "props": {
-      "title": "THE PROMETHEUS PROJECT"
+      "title": "PROMETHEUS"
     }
   },
   "content": [
@@ -9,8 +9,8 @@
       "type": "HeroHeadline",
       "props": {
         "id": "prometheus-hero-1",
-        "eyebrow": "Project 04",
-        "title": "THE PROMETHEUS PROJECT",
+        "eyebrow": "PROJECT 05",
+        "title": "PROMETHEUS",
         "subtitle": "潜行拍摄游戏",
         "heroImage": "/images/prometheus/PrometheusTitle.webp",
         "navLink": "https://www.bilibili.com/video/BV1GSGmzBEx8",
@@ -78,6 +78,7 @@
       "props": {
         "id": "next-1",
         "nextId": "holy-tank",
+        "href": "/works/holy-tank",
         "nextName": "HOLY TANK (帅油桶)",
         "nextBg": "/images/holy-tank/HostileArchitecture.webp"
       }

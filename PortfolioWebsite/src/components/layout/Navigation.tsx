@@ -1,26 +1,79 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import Link from "next/link";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import Typography from "@/components/common/Typography";
+import { MotionButton, MotionLink } from "@/components/motion";
+import {
+  menuItemVariants,
+  motion,
+  motionDurations,
+  motionEasings,
+  motionStagger,
+  motionTransitions,
+} from "@/lib/motion";
 import { isTestingMode } from "@/lib/site-mode";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isOverlayActive, setIsOverlayActive] = useState(false);
   const menuPanelRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const pathname = usePathname();
   const testingMode = isTestingMode();
-  const keepsSpotlightVisible = pathname === "/contact";
+  const isInternalLabRoute =
+    pathname?.startsWith("/playground/font-lab") ||
+    pathname?.startsWith("/playground/component-lab");
+  const keepsSpotlightVisible = pathname === "/about";
+  const headerDuration = 0.4;
+  const overlayDuration = motionDurations.slow;
+  const panelDuration = motionDurations.reveal;
+  const menuItemDuration = motionDurations.standard;
+  const menuItemDelayStep = motionStagger.itemDelay;
+  const menuItemInitialDelay = motionStagger.itemInitialDelay;
+  const footerDelay = 0.66;
+  const overlayTransition = { duration: overlayDuration, ease: motionEasings.standard };
+  const panelTransition = { duration: panelDuration, ease: motionEasings.standard };
 
   useEffect(() => {
-    if (pathname?.startsWith("/admin")) return;
+    if (pathname?.startsWith("/admin") || isInternalLabRoute) return;
     setIsOpen(false);
-  }, [pathname]);
+  }, [isInternalLabRoute, pathname]);
 
   useEffect(() => {
-    if (pathname?.startsWith("/admin") || !isOpen) {
+    if (isOpen || !isOverlayActive) {
+      return;
+    }
+
+    const overlayTeardownTimer = window.setTimeout(() => {
+      setIsOverlayActive(false);
+    }, panelDuration * 1000);
+
+    return () => window.clearTimeout(overlayTeardownTimer);
+  }, [isOpen, isOverlayActive, panelDuration]);
+
+  useLayoutEffect(() => {
+    if (pathname?.startsWith("/admin") || isInternalLabRoute || !isOpen) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    const previousPaddingRight = document.body.style.paddingRight;
+    const scrollbarCompensation = window.innerWidth - document.documentElement.clientWidth;
+
+    document.body.style.overflow = "hidden";
+    if (scrollbarCompensation > 0) {
+      document.body.style.paddingRight = `${scrollbarCompensation}px`;
+    }
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.body.style.paddingRight = previousPaddingRight;
+    };
+  }, [isInternalLabRoute, isOpen, pathname]);
+
+  useEffect(() => {
+    if (pathname?.startsWith("/admin") || isInternalLabRoute || !isOpen) {
       return;
     }
 
@@ -32,14 +85,6 @@ export default function Navigation() {
 
     previousFocusRef.current =
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
-
-    const previousOverflow = document.body.style.overflow;
-    const previousPaddingRight = document.body.style.paddingRight;
-    const scrollbarCompensation = window.innerWidth - document.documentElement.clientWidth;
-    document.body.style.overflow = "hidden";
-    if (scrollbarCompensation > 0) {
-      document.body.style.paddingRight = `${scrollbarCompensation}px`;
-    }
 
     const focusableSelector =
       "a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex='-1'])";
@@ -91,8 +136,6 @@ export default function Navigation() {
     document.addEventListener("keydown", onKeyDown);
     return () => {
       document.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = previousOverflow;
-      document.body.style.paddingRight = previousPaddingRight;
 
       if (previousFocusRef.current && document.contains(previousFocusRef.current)) {
         previousFocusRef.current.focus();
@@ -100,116 +143,230 @@ export default function Navigation() {
         menuButtonElement.focus();
       }
     };
-  }, [isOpen, pathname]);
+  }, [isInternalLabRoute, isOpen, pathname]);
 
-  if (pathname?.startsWith("/admin")) return null;
+  if (pathname?.startsWith("/admin") || isInternalLabRoute) return null;
 
+  const openMenu = () => {
+    setIsOverlayActive(true);
+    setIsOpen(true);
+  };
   const closeMenu = () => setIsOpen(false);
 
   const menuItems = [
-    { label: "HOME", href: "/" },
-    { label: "WORKS", href: "/works" },
+    { label: "Home", href: "/" },
+    { label: "Lighting", href: "/works/lighting-portfolio" },
+    { label: "All Works", href: "/works" },
+    { label: "About", href: "/about" },
     ...(testingMode ? [
-      { label: "PLAYGROUND", href: "/playground" },
-      { label: "EDITOR", href: "/admin" },
+      { label: "Playground", href: "/playground" },
+      { label: "Editor", href: "/admin" },
     ] : []),
-    { label: "CONTACT", href: "/contact" },
   ];
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-40 px-8 py-8 flex justify-between items-center pointer-events-none mix-blend-difference">
-        <div />
-
-        <button
-          onClick={() => setIsOpen(true)}
-          ref={menuButtonRef}
-          className="group pointer-events-auto flex flex-col items-end gap-1.5 interactive p-4"
-          aria-label="Menu"
-          aria-expanded={isOpen}
-          aria-controls="site-navigation-drawer"
-        >
-          <span className="w-8 h-[1px] bg-white group-hover:w-12 transition-all duration-300"></span>
-          <span className="w-5 h-[1px] bg-white group-hover:w-12 transition-all duration-300 delay-75"></span>
-        </button>
-      </header>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="fixed inset-0 z-[99] flex justify-end"
+      <motion.header
+        initial={false}
+        animate={{ opacity: isOpen ? 0 : 1 }}
+        transition={{ duration: headerDuration, ease: "easeOut" }}
+        className="pointer-events-none fixed left-0 top-0 z-40 w-full px-5 py-6 md:px-8 md:py-8"
+      >
+        <div className="grid items-center justify-items-end">
+          <MotionButton
+            onClick={openMenu}
+            ref={menuButtonRef}
+            className="group interactive pointer-events-auto relative inline-grid grid-flow-col auto-cols-max items-center gap-3 transition-colors duration-300 text-edge-shadow"
+            aria-label="Menu"
+            aria-expanded={isOpen}
+            aria-controls="site-navigation-drawer"
           >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-              className={`absolute inset-0 ${keepsSpotlightVisible ? "bg-black/5" : "bg-black/18 backdrop-blur-sm"}`}
-              onClick={closeMenu}
-              onWheel={closeMenu}
-              onTouchMove={closeMenu}
-              aria-hidden="true"
-            />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: "100%" }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="relative w-full sm:w-[40vw] h-full min-h-screen min-h-[100dvh] border-l border-white/10 bg-black/92 backdrop-blur-2xl shadow-[-20px_0_60px_rgba(0,0,0,0.2)]"
+            <span aria-hidden="true" className="absolute -inset-3 md:-inset-4" />
+            <Typography
+              as="span"
+              preset="sans-body"
+              size="body-sm"
+              weight="semantic"
+              wrapPolicy="label"
+              className="relative z-10 text-white/80 transition-colors duration-300 group-hover:text-white"
+            >
+              MENU
+            </Typography>
+            <span className="relative z-10 grid justify-items-end gap-[7px] drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">
+              <span className="h-[1.5px] w-10 bg-white/90 transition-all duration-300 group-hover:w-14 group-hover:bg-white md:w-12"></span>
+              <span className="h-[1.5px] w-6 bg-white/90 transition-all duration-300 group-hover:w-14 group-hover:bg-white md:w-8"></span>
+            </span>
+          </MotionButton>
+        </div>
+      </motion.header>
+
+      <div
+        className={`fixed inset-0 z-[99] grid justify-items-end ${isOverlayActive ? "pointer-events-auto" : "pointer-events-none"}`}
+        data-lenis-prevent="true"
+        aria-hidden={!isOverlayActive}
+      >
+        <motion.div
+          initial={false}
+          animate={{ opacity: isOpen ? 1 : 0 }}
+          transition={overlayTransition}
+          className={`absolute inset-0 ${keepsSpotlightVisible ? "bg-black/5" : "bg-black/18 backdrop-blur-md"}`}
+        />
+
+        <motion.div
+          initial={false}
+          animate={{ opacity: isOpen ? 1 : 0 }}
+          transition={overlayTransition}
+          className="absolute inset-0 cursor-pointer"
+          onClick={closeMenu}
+          onWheel={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
+          aria-hidden="true"
+        />
+
+        {isOverlayActive && (
+          <motion.div
+              initial={{ x: "100%", opacity: 1 }}
+              animate={{ x: isOpen ? 0 : "100%", opacity: 1 }}
+              transition={panelTransition}
+              style={{ willChange: "transform" }}
+              className="relative min-h-[100dvh] w-full overflow-y-auto overscroll-contain border-l border-white/10 bg-[linear-gradient(180deg,rgba(8,8,8,0.98)_0%,rgba(5,5,5,0.94)_100%)] shadow-[-24px_0_80px_rgba(0,0,0,0.4)] backdrop-blur-2xl sm:w-[40vw] sm:min-w-[400px]"
               id="site-navigation-drawer"
               role="dialog"
               aria-modal="true"
               aria-label="Main navigation"
               tabIndex={-1}
               ref={menuPanelRef}
+              data-lenis-prevent="true"
               onClick={(event) => event.stopPropagation()}
+              onWheel={(e) => e.stopPropagation()}
+              onTouchMove={(e) => e.stopPropagation()}
             >
-              <div className="h-full flex flex-col justify-center px-16 relative">
-                <button
-                  onClick={closeMenu}
-                  className="absolute top-8 right-8 text-textMuted hover:text-white interactive p-4 tracking-widest text-sm"
-                  aria-label="Close menu"
-                >
-                  CLOSE
-                </button>
-
-                <nav className="flex flex-col gap-8">
-                  {menuItems.map((item, i) => (
-                    <motion.div
-                      key={item.label}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 20 }}
-                      transition={{ delay: 0.1 + i * 0.1, duration: 0.4 }}
+              <div className="relative grid min-h-[100dvh] grid-rows-[1fr_auto] px-8 pt-28 pb-16 md:px-16 md:pt-32 md:pb-20">
+                <div className="absolute right-5 top-6 grid justify-items-end text-edge-shadow md:right-8 md:top-8">
+                  <MotionButton
+                    onClick={closeMenu}
+                    className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 outline-none transition-colors duration-300 focus:outline-none focus-visible:outline-none"
+                    aria-label="Close menu"
+                  >
+                    <Typography
+                      as="span"
+                      preset="sans-body"
+                      size="body-sm"
+                      weight="semantic"
+                      wrapPolicy="label"
+                      className="text-white/50 transition-colors duration-300 group-hover:text-white"
                     >
-                      <Link
-                        href={item.href}
-                        className="text-4xl sm:text-5xl font-bold tracking-tighter hover-text"
-                        onClick={closeMenu}
-                      >
-                        {item.label}
-                      </Link>
-                    </motion.div>
-                  ))}
-                </nav>
+                      CLOSE
+                    </Typography>
+                    <svg
+                      aria-hidden="true"
+                      viewBox="0 0 24 24"
+                      className="h-5 w-5 text-white/50 transition-colors duration-300 group-hover:text-white md:h-6 md:w-6"
+                    >
+                      <path
+                        d="M6 6L18 18M18 6L6 18"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </MotionButton>
+                </div>
+
+                <div className="grid w-full content-center justify-items-start">
+                  <nav className="grid justify-items-start gap-0.5 md:gap-1">
+                    {menuItems.map((item, i) => {
+                      const isActive = pathname === item.href;
+                      return (
+                        <motion.div
+                          key={item.label}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                          variants={menuItemVariants}
+                          transition={{
+                            delay: menuItemInitialDelay + i * menuItemDelayStep,
+                            duration: menuItemDuration,
+                          }}
+                        >
+                          <MotionLink
+                            href={item.href}
+                            className={`group relative grid items-center transition-all duration-300 ${isActive ? "text-white" : "text-white/20"} hover:text-white`}
+                            onClick={closeMenu}
+                          >
+                            <motion.div 
+                              className="grid grid-cols-[auto_auto] items-center gap-7"
+                              initial="initial"
+                              whileHover="hover"
+                              animate="initial"
+                            >
+                              <div className="grid w-1 place-items-center overflow-visible pt-[6px]">
+                                {isActive && (
+                                  <motion.div
+                                    layoutId="active-indicator"
+                                    variants={{
+                                      initial: { scaleY: 1, x: 0, opacity: 0.8 },
+                                      hover: { 
+                                        scaleY: 1.5, 
+                                        x: 8,
+                                        opacity: 1,
+                                        transition: motionTransitions.hover
+                                      }
+                                    }}
+                                    className="h-8 w-[0.5px] shrink-0 bg-gradient-to-b from-transparent via-white to-transparent origin-center"
+                                    transition={{
+                                      type: "spring",
+                                      stiffness: 300,
+                                      damping: 30,
+                                    }}
+                                  />
+                                )}
+                              </div>
+                              <motion.div
+                                variants={{
+                                  initial: { x: 0 },
+                                  hover: { x: 8, transition: motionTransitions.hover }
+                                }}
+                              >
+                                <Typography
+                                  as="span"
+                                  preset="classical-display"
+                                  size="menu"
+                                  weight="semantic"
+                                  wrapPolicy="heading"
+                                  className={`inline-block text-inherit transition-all duration-500 ease-[0.22,1,0.36,1] ${isActive ? "tracking-widest" : "tracking-normal"}`}
+                                >
+                                  {item.label}
+                                </Typography>
+                              </motion.div>
+                            </motion.div>
+                          </MotionLink>
+                        </motion.div>
+                      );
+                    })}
+                  </nav>
+                </div>
 
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                  className="absolute bottom-16 left-16 text-textMuted text-sm tracking-widest font-futura"
+                  transition={{ delay: footerDelay, duration: 0.45 }}
+                  className="pt-16"
                 >
-                  JIANG CHENGYAN © 2026
+                  <Typography
+                    preset="sans-body"
+                    size="caption"
+                    weight="semantic"
+                    wrapPolicy="label"
+                    className="text-white/34"
+                  >
+                    JIANG CHENGYAN © 2026
+                  </Typography>
                 </motion.div>
               </div>
-            </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
+      </div>
     </>
   );
 }

@@ -1,7 +1,13 @@
 "use client";
 
 import type { ReactNode } from "react";
-import Link from "next/link";
+import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { MotionLink } from "@/components/motion";
+import {
+  getGridColumnClassName,
+  getSpacingRem,
+} from "@/lib/component-design-style";
 
 interface HomeEndcapSectionProps {
   eyebrow?: ReactNode;
@@ -28,42 +34,76 @@ export default function HomeEndcapSection({
   buttonHref,
   editMode = false,
 }: HomeEndcapSectionProps) {
+  const design = useComponentDesign("HomeEndcapSection");
   const hasDescription = !isContentEmpty(description);
+  const buttonTopSpacing = getSpacingRem(
+    hasDescription ? design.buttonTopSpacing : "32",
+  );
 
   return (
-    <section className="relative isolate flex min-h-[68vh] w-full items-center overflow-hidden border-t border-white/10 bg-black py-24 lg:py-32">
+    <section className="relative isolate grid min-h-[68vh] w-full items-center overflow-hidden border-t border-white/10 bg-black rhythm-section-spacious">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_45%)]" />
 
       <div className="grid-container relative z-10">
-        <div className="col-start-3 col-span-8 text-center">
+        <div className={`${getGridColumnClassName(design.contentBounds)} text-center`}>
           {eyebrow ? (
-            <p className="font-mono text-[11px] uppercase tracking-[0.32em] text-white/35">
+            <Typography
+              as="p"
+              preset="sans-body"
+              size="caption"
+              weight="semantic"
+              wrapPolicy="label"
+              align="center"
+              className="text-white/35"
+            >
               {eyebrow}
-            </p>
+            </Typography>
           ) : null}
 
-          <h2 className="mt-6 font-luna text-[clamp(4.8rem,13vw,10rem)] uppercase leading-[0.92] tracking-[0.015em] text-white lg:text-[clamp(5.6rem,8vw,8.6rem)]">
+          <Typography
+            as="h2"
+            preset="luna-editorial"
+            size="hero"
+            weight="semantic"
+            wrapPolicy="heading"
+            align="center"
+            className="mt-6 text-white uppercase"
+          >
             {title}
-          </h2>
+          </Typography>
 
           {hasDescription ? (
-            <p className="mx-auto mt-8 max-w-3xl font-futura text-sm uppercase leading-loose tracking-[0.14em] text-white/55 lg:text-base">
+            <Typography
+              as="p"
+              preset="sans-body"
+              size="body"
+              weight="medium"
+              wrapPolicy="prose"
+              align="center"
+              className="mx-auto max-w-3xl text-white/55 uppercase"
+              style={{ marginTop: getSpacingRem(design.descriptionTopSpacing) }}
+            >
               {description}
-            </p>
+            </Typography>
           ) : null}
 
-          <div className={hasDescription ? "mt-12" : "mt-8"}>
-            <Link
+          <div style={{ marginTop: buttonTopSpacing }}>
+            <MotionLink
               href={buttonHref}
-              onClick={(event) => {
-                if (editMode) {
-                  event.preventDefault();
-                }
-              }}
-              className="interactive inline-flex items-center gap-4 border border-white/20 px-6 py-4 font-mono text-xs uppercase tracking-[0.26em] text-white transition-colors duration-300 hover:bg-white hover:text-black"
+              scroll
+              disabled={editMode}
+              className="interactive inline-grid grid-flow-col auto-cols-max items-center gap-4 border border-white/20 px-6 py-4 text-white transition-colors duration-300 hover:bg-white hover:text-black"
             >
-              <span>{buttonLabel}</span>
-            </Link>
+              <Typography
+                preset="sans-body"
+                size="label"
+                weight="semantic"
+                wrapPolicy="label"
+                className="text-inherit"
+              >
+                {buttonLabel}
+              </Typography>
+            </MotionLink>
           </div>
         </div>
       </div>

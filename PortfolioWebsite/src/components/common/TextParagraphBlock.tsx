@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import BilingualText from "@/components/common/BilingualText";
+import Typography from "@/components/common/Typography";
 
 interface TextParagraphBlockProps {
   text: ReactNode;
@@ -8,8 +8,15 @@ interface TextParagraphBlockProps {
 
 export default function TextParagraphBlock({ text }: TextParagraphBlockProps) {
   return (
-    <p className="break-words">
-      <BilingualText text={text} weight="medium" />
-    </p>
+    <Typography
+      as="p"
+      preset="sans-body"
+      size="body"
+      weight="medium"
+      wrapPolicy="prose"
+      className="text-textPrimary"
+    >
+      {text}
+    </Typography>
   );
 }

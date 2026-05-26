@@ -1,8 +1,10 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
-import BilingualText from "@/components/common/BilingualText";
+import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import { Reveal } from "@/components/motion";
+import { getGridColumnClassName } from "@/lib/component-design-style";
 
 interface StatementBlockProps {
   content: string;
@@ -19,10 +21,11 @@ export default function StatementBlock({
   minHeight = "medium",
   editMode = false,
 }: StatementBlockProps) {
+  const design = useComponentDesign("StatementBlock");
   const alignClass = {
-    left: "items-start text-left",
-    center: "items-center text-center",
-    right: "items-end text-right",
+    left: "justify-items-start text-left",
+    center: "justify-items-center text-center",
+    right: "justify-items-end text-right",
   }[align];
 
   const bgClass = {
@@ -35,23 +38,31 @@ export default function StatementBlock({
     medium: "min-h-[35vh]",
     large: "min-h-[50vh]",
   }[minHeight];
+  const rhythmClass = {
+    small: "rhythm-section-compact",
+    medium: "rhythm-section-normal",
+    large: "rhythm-section-spacious",
+  }[minHeight];
 
   return (
-    <section
-      className={`w-full ${heightClass} ${bgClass} flex flex-col justify-center relative z-20`}
-    >
+    <section className={`relative z-20 grid w-full ${heightClass} ${bgClass} ${rhythmClass} content-center`}>
       <div className="grid-container w-full">
-        <motion.div
-          className={`col-start-3 col-span-8 flex flex-col ${alignClass} ${editMode ? "pointer-events-auto" : ""}`}
-          initial={editMode ? false : { opacity: 0, y: 20 }}
-          whileInView={editMode ? undefined : { opacity: 1, y: 0 }}
-          viewport={editMode ? undefined : { once: true, margin: "-100px" }}
-          transition={editMode ? undefined : { duration: 0.8, ease: "easeOut" }}
+        <Reveal
+          className={`${getGridColumnClassName(design.contentBounds)} grid ${alignClass} ${editMode ? "pointer-events-auto" : ""}`}
+          disabled={editMode}
         >
-          <p className="text-[clamp(0.875rem,2vw,1.25rem)] leading-loose text-textPrimary tracking-[0.15em] max-w-4xl">
-            <BilingualText text={content} weight="light" />
-          </p>
-        </motion.div>
+          <Typography
+            as="p"
+            preset="sans-body"
+            size={design.bodySize}
+            weight="light"
+            wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"}
+            className="max-w-4xl text-textPrimary"
+            align={align}
+          >
+            {content}
+          </Typography>
+        </Reveal>
       </div>
     </section>
   );

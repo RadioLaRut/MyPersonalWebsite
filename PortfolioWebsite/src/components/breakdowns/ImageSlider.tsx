@@ -1,161 +1,269 @@
-'use client';
+"use client";
 
-import React, { useState, useRef, useEffect } from 'react';
-import { OptimizedImage } from '@/components/common/OptimizedImage';
+import { ChevronLeft, ChevronRight } from "lucide-react/dist/cjs/lucide-react.js";
+import { useEffect, useRef, useState } from "react";
+
+import { OptimizedImage } from "@/components/common/OptimizedImage";
+import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
 import {
-    type ImageFitMode,
-    type ImagePreset,
-    getImageCanvasClassName,
-    getImageElementClassName,
-    getImagePresetFrameClassName,
-    normalizeImageFitMode,
-    normalizeImagePreset,
-} from '@/lib/image-presentation';
+  getGridColumnClassName,
+  getSectionSpacingClassName,
+  getSpacingRem,
+} from "@/lib/component-design-style";
+import {
+  type ImageFitMode,
+  type ImagePreset,
+  getImageCanvasClassName,
+  getImageElementClassName,
+  getImagePresetFrameClassName,
+  normalizeImageFitMode,
+  normalizeImagePreset,
+} from "@/lib/image-presentation";
+import {
+  type DragPoint,
+  type GestureAxis,
+  calculateHorizontalPercent,
+  classifyDirectionalIntent,
+  clampPercent,
+} from "@/lib/motion";
 
 interface ImageSliderProps {
-    unlitSrc: string;
-    litSrc: string;
-    alt?: string;
-    className?: string;
-    imagePreset?: ImagePreset;
-    imageFitMode?: ImageFitMode;
-    leftLabel?: string;
-    rightLabel?: string;
+  title?: string;
+  unlitSrc: string;
+  litSrc: string;
+  alt?: string;
+  className?: string;
+  imagePreset?: ImagePreset;
+  imageFitMode?: ImageFitMode;
+  leftLabel?: string;
+  rightLabel?: string;
+  initialPosition?: number;
+  editMode?: boolean;
 }
 
 export default function ImageSlider({
-    unlitSrc,
-    litSrc,
-    alt = 'Image Comparison',
-    className = "",
-    imagePreset = "ratio-16-9",
-    imageFitMode = "x",
-    leftLabel,
-    rightLabel,
+  title,
+  unlitSrc,
+  litSrc,
+  alt = "Image Comparison",
+  className = "",
+  imagePreset = "ratio-16-9",
+  imageFitMode = "x",
+  leftLabel,
+  rightLabel,
+  initialPosition = 50,
+  editMode = false,
 }: ImageSliderProps) {
-    const [sliderPosition, setSliderPosition] = useState(50);
-    const [isDragging, setIsDragging] = useState(false);
-    const containerRef = useRef<HTMLDivElement>(null);
-    const resolvedPreset = normalizeImagePreset(imagePreset);
-    const resolvedFitMode = normalizeImageFitMode(imageFitMode);
-    const frameClassName = getImagePresetFrameClassName(resolvedPreset);
-    const canvasClassName = getImageCanvasClassName(resolvedPreset);
-    const imageClassName = getImageElementClassName(resolvedPreset, resolvedFitMode);
+  const design = useComponentDesign("ImageSlider");
+  const [sliderPosition, setSliderPosition] = useState(() => clampPercent(initialPosition));
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const activePointerIdRef = useRef<number | null>(null);
+  const startPointRef = useRef<DragPoint | null>(null);
+  const intentRef = useRef<GestureAxis>("undecided");
+  const resolvedPreset = normalizeImagePreset(imagePreset);
+  const resolvedFitMode = normalizeImageFitMode(imageFitMode);
+  const frameClassName = getImagePresetFrameClassName(resolvedPreset);
+  const canvasClassName = getImageCanvasClassName(resolvedPreset);
+  const imageClassName = getImageElementClassName(resolvedPreset, resolvedFitMode);
+  const visibleTitle = typeof title === "string" && title.trim().length > 0 ? title : alt;
 
-    const handleMove = (clientX: number) => {
-        if (!containerRef.current) return;
-        const rect = containerRef.current.getBoundingClientRect();
-        const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-        const percentage = (x / rect.width) * 100;
-        setSliderPosition(percentage);
-    };
+  useEffect(() => {
+    setSliderPosition(clampPercent(initialPosition));
+  }, [initialPosition]);
 
-    const handleMouseMove = (e: React.MouseEvent) => {
-        if (!isDragging) return;
-        handleMove(e.clientX);
-    };
+  const updatePosition = (clientX: number) => {
+    const container = containerRef.current;
+    if (!container) {
+      return;
+    }
 
-    const handleTouchMove = (e: React.TouchEvent) => {
-        if (!isDragging) return;
-        handleMove(e.touches[0].clientX);
-    };
+    const rect = container.getBoundingClientRect();
+    setSliderPosition(calculateHorizontalPercent(clientX, rect));
+  };
 
-    useEffect(() => {
-        const handleMouseUp = () => setIsDragging(false);
-        window.addEventListener('mouseup', handleMouseUp);
-        window.addEventListener('touchend', handleMouseUp);
-        return () => {
-            window.removeEventListener('mouseup', handleMouseUp);
-            window.removeEventListener('touchend', handleMouseUp);
-        };
-    }, []);
+  const resetDrag = (event?: React.PointerEvent<HTMLDivElement>) => {
+    if (event && activePointerIdRef.current === event.pointerId) {
+      if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+        event.currentTarget.releasePointerCapture?.(event.pointerId);
+      }
+    }
 
-    return (
-        <div className={`w-full my-16 ${className}`}>
-            <div className="grid-container">
-                <div className="col-start-2 col-span-10">
-                    <div
-                        ref={containerRef}
-                        className={`${frameClassName} cursor-ew-resize select-none`}
-                        onMouseMove={handleMouseMove}
-                        onTouchMove={handleTouchMove}
-                        onMouseDown={() => setIsDragging(true)}
-                        onTouchStart={() => setIsDragging(true)}
-                    >
-                        {/* Lit Image (Background) */}
-                        <div className="absolute inset-0">
-                            <div className="absolute inset-0 bg-neutral-900" />
-                            {litSrc && (
-                                <div className={canvasClassName}>
-                                    <OptimizedImage
-                                        src={litSrc}
-                                        alt={rightLabel ? `${alt} ${rightLabel}` : alt}
-                                        width={1920}
-                                        height={1080}
-                                        className={imageClassName}
-                                        draggable={false}
-                                    />
-                                </div>
-                            )}
-                        </div>
+    activePointerIdRef.current = null;
+    startPointRef.current = null;
+    intentRef.current = "undecided";
+    setIsDragging(false);
+  };
 
-                        {/* Unlit Image (Foreground, clipped) */}
-                        <div
-                            className="absolute inset-0"
-                            style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
-                        >
-                            <div className="absolute inset-0 bg-neutral-800" />
-                            {unlitSrc && (
-                                <div className={canvasClassName}>
-                                    <OptimizedImage
-                                        src={unlitSrc}
-                                        alt={leftLabel ? `${alt} ${leftLabel}` : alt}
-                                        width={1920}
-                                        height={1080}
-                                        className={imageClassName}
-                                        draggable={false}
-                                    />
-                                </div>
-                            )}
-                        </div>
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (editMode || event.button !== 0) {
+      return;
+    }
 
-                        {/* Slider line and button */}
-                        <div
-                            className="absolute top-0 bottom-0 w-0.5 bg-white pointer-events-none"
-                            style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
-                        >
-                            <div
-                                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg transition-shadow duration-150"
-                                data-cursor-magnet="slider-handle"
-                                data-cursor-magnet-size="32"
-                            >
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <polyline points="15 18 9 12 15 6"></polyline>
-                                </svg>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="rotate-180">
-                                    <polyline points="15 18 9 12 15 6"></polyline>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
+    activePointerIdRef.current = event.pointerId;
+    startPointRef.current = { clientX: event.clientX, clientY: event.clientY };
+    intentRef.current = event.pointerType === "touch" ? "undecided" : "horizontal";
+    event.currentTarget.setPointerCapture?.(event.pointerId);
 
-                    {/* Labels - 遵循网格对齐 */}
-                    {(leftLabel || rightLabel) ? (
-                        <div className="mt-4 flex justify-between items-center px-2">
-                            {leftLabel ? (
-                                <span className="font-mono text-xs tracking-widest text-textPrimary">
-                                    {leftLabel}
-                                </span>
-                            ) : <span />}
-                            {rightLabel ? (
-                                <span className="font-mono text-xs tracking-widest text-textPrimary">
-                                    {rightLabel}
-                                </span>
-                            ) : null}
-                        </div>
-                    ) : null}
+    if (event.pointerType !== "touch") {
+      setIsDragging(true);
+      updatePosition(event.clientX);
+    }
+  };
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (editMode || activePointerIdRef.current !== event.pointerId || !startPointRef.current) {
+      return;
+    }
+
+    if (intentRef.current === "undecided") {
+      intentRef.current = classifyDirectionalIntent(startPointRef.current, {
+        clientX: event.clientX,
+        clientY: event.clientY,
+      });
+    }
+
+    if (intentRef.current === "vertical") {
+      resetDrag(event);
+      return;
+    }
+
+    if (intentRef.current !== "horizontal") {
+      return;
+    }
+
+    if (event.cancelable) {
+      event.preventDefault();
+    }
+
+    setIsDragging(true);
+    updatePosition(event.clientX);
+  };
+
+  const cursorClass = editMode
+    ? "cursor-default"
+    : isDragging
+      ? "cursor-grabbing"
+      : "cursor-ew-resize";
+
+  return (
+    <div className={`w-full ${getSectionSpacingClassName(design.sectionSpacing)} ${className}`}>
+      <div className="grid-container">
+        <div className={getGridColumnClassName(design.contentBounds)}>
+          <div
+            ref={containerRef}
+            className={`${frameClassName} select-none touch-pan-y ${cursorClass}`}
+            data-dragging={isDragging ? "true" : undefined}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={resetDrag}
+            onPointerCancel={resetDrag}
+            onLostPointerCapture={resetDrag}
+          >
+            {visibleTitle ? (
+              <div className="pointer-events-none absolute left-5 top-5 z-20 md:left-6 md:top-6">
+                <div className="border border-white/12 bg-black/58 px-3 py-2 backdrop-blur-sm">
+                  <Typography
+                    as="span"
+                    preset="sans-body"
+                    size="label"
+                    weight="semantic"
+                    wrapPolicy="label"
+                    className="text-white/88"
+                  >
+                    {visibleTitle}
+                  </Typography>
                 </div>
+              </div>
+            ) : null}
+
+            <div className={resolvedPreset === "native" ? "relative w-full" : "absolute inset-0"}>
+              <div className="absolute inset-0 bg-neutral-900" />
+              {litSrc ? (
+                <div className={`${canvasClassName} relative z-10`}>
+                  <OptimizedImage
+                    src={litSrc}
+                    alt={rightLabel ? `${alt} ${rightLabel}` : alt}
+                    width={1920}
+                    height={1080}
+                    className={`${imageClassName} select-none`}
+                    draggable={false}
+                  />
+                </div>
+              ) : null}
             </div>
+
+            <div
+              className="absolute inset-0"
+              style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
+            >
+              <div className="absolute inset-0 bg-neutral-800" />
+              {unlitSrc ? (
+                <div className={`${canvasClassName} relative z-10`}>
+                  <OptimizedImage
+                    src={unlitSrc}
+                    alt={leftLabel ? `${alt} ${leftLabel}` : alt}
+                    width={1920}
+                    height={1080}
+                    className={`${imageClassName} select-none`}
+                    draggable={false}
+                  />
+                </div>
+              ) : null}
+            </div>
+
+            <div
+              className="pointer-events-none absolute bottom-0 top-0 z-20 w-0.5 bg-white"
+              style={{ left: `${sliderPosition}%`, transform: "translateX(-50%)" }}
+            >
+              <div
+                className={`absolute left-1/2 top-1/2 grid h-8 w-8 -translate-x-1/2 -translate-y-1/2 grid-cols-2 place-items-center rounded-full bg-white text-black shadow-lg transition-[box-shadow,transform] duration-300 ease-out ${isDragging ? "scale-110 shadow-[0_0_24px_rgba(255,255,255,0.42)]" : ""}`}
+                data-cursor-magnet="slider-handle"
+                data-cursor-magnet-size="32"
+                aria-hidden="true"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2} />
+                <ChevronRight className="h-3.5 w-3.5" strokeWidth={2} />
+              </div>
+            </div>
+          </div>
+
+          {leftLabel || rightLabel ? (
+            <div
+              className="flex items-start justify-between gap-6"
+              style={{ marginTop: getSpacingRem(design.labelsTopSpacing) }}
+            >
+              {leftLabel ? (
+                <Typography
+                  as="span"
+                  preset="sans-body"
+                  size="body-sm"
+                  weight="medium"
+                  wrapPolicy="label"
+                  className="text-white/82"
+                >
+                  {leftLabel}
+                </Typography>
+              ) : (
+                <span />
+              )}
+              {rightLabel ? (
+                <Typography
+                  as="span"
+                  preset="sans-body"
+                  size="body-sm"
+                  weight="medium"
+                  wrapPolicy="label"
+                  className="text-right text-white/82"
+                >
+                  {rightLabel}
+                </Typography>
+              ) : null}
+            </div>
+          ) : null}
         </div>
-    );
+      </div>
+    </div>
+  );
 }

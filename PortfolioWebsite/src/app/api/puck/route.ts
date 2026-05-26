@@ -7,7 +7,9 @@ import {
   readPageDataByNormalizedSlug,
   writePageDataByNormalizedSlug,
 } from "@/lib/puck-content";
+import { isJsonValue, isPlainRecord } from "@/lib/json-utils";
 import { normalizePuckData } from "@/lib/puck-data-normalization";
+import { publishPuckPage } from "@/lib/puck-publish";
 import { normalizePuckSlugInput, SlugValidationError } from "@/lib/puck-slug";
 import { assertLocalEditorAccess } from "@/lib/security";
 
@@ -39,31 +41,6 @@ function errorResponse(status: number, code: string, message: string) {
     },
     status,
   );
-}
-
-function isPlainRecord(value: unknown): value is Record<string, unknown> {
-  return !!value && typeof value === "object" && !Array.isArray(value);
-}
-
-function isJsonValue(value: unknown): value is JsonValue {
-  if (value === null) {
-    return true;
-  }
-
-  const valueType = typeof value;
-  if (valueType === "string" || valueType === "number" || valueType === "boolean") {
-    return true;
-  }
-
-  if (Array.isArray(value)) {
-    return value.every(isJsonValue);
-  }
-
-  if (!isPlainRecord(value)) {
-    return false;
-  }
-
-  return Object.values(value).every(isJsonValue);
 }
 
 function normalizeSlugOrError(rawSlug: string | null) {
@@ -152,14 +129,13 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    await writePageDataByNormalizedSlug(normalizedOrError, normalizePuckData(dataValue) as JsonValue);
+    return jsonResponse(await publishPuckPage({
+      data: normalizePuckData(dataValue) as JsonValue,
+      listPageSlugs,
+      normalizedSlug: normalizedOrError,
+      writePageData: writePageDataByNormalizedSlug,
+    }));
   } catch {
     return jsonResponse(INTERNAL_ERROR, 500);
   }
-
-  return jsonResponse({
-    ok: true,
-    path: normalizedOrError.relativeJsonPath,
-    slug: normalizedOrError.slugKey,
-  });
 }

@@ -1,78 +1,123 @@
-'use client';
+"use client";
 
-import React from 'react';
-import BilingualText from '@/components/common/BilingualText';
-import { PresetImage } from '@/components/common/PresetImage';
-import { type ImageFitMode, type ImagePreset } from '@/lib/image-presentation';
+import { PresetImage } from "@/components/common/PresetImage";
+import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+  getGridColumnStyle,
+  getSectionSpacingClassName,
+  getSpacingRem,
+} from "@/lib/component-design-style";
+import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
+import { getParameterGridItemBounds } from "@/lib/parameter-grid-layout";
 
 interface Parameter {
-    name: string;
-    value?: string;
-    description: string;
+  name: string;
+  value?: string;
+  description: string;
 }
 
 interface ParameterGridProps {
-    mediaSrc: string; // Video or GIF showing generation
-    isVideo?: boolean;
-    imagePreset?: ImagePreset;
-    imageFitMode?: ImageFitMode;
-    parameters?: Parameter[];
+  mediaSrc: string;
+  isVideo?: boolean;
+  imagePreset?: ImagePreset;
+  imageFitMode?: ImageFitMode;
+  parameters?: Parameter[];
 }
 
 export default function ParameterGrid({
-    mediaSrc,
-    isVideo = false,
-    imagePreset = "ratio-21-9",
-    imageFitMode = "x",
-    parameters
+  mediaSrc,
+  isVideo = false,
+  imagePreset = "ratio-21-9",
+  imageFitMode = "x",
+  parameters
 }: ParameterGridProps) {
-    return (
-        <div className="w-full my-32">
-            {/* 1. Full-width Media */}
-            <div className="w-full relative bg-[#050505] overflow-hidden mb-12">
-                {isVideo ? (
-                    <video
-                        src={mediaSrc}
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="w-full h-full object-cover opacity-80"
-                    />
-                ) : (
-                    <PresetImage
-                        src={mediaSrc}
-                        alt="PCG Generation Overview"
-                        preset={imagePreset}
-                        fitMode={imageFitMode}
-                        imageClassName="opacity-80"
-                    />
-                )}
-                <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1 text-white font-mono text-xs tracking-widest border border-white/10">
-                    PROCEDURAL GENERATION PREVIEW
-                </div>
-            </div>
+  const design = useComponentDesign("ParameterGrid");
 
-            {/* 2. Grid of Parameters */}
-            {parameters && parameters.length > 0 && (
-                <div className="grid-container">
-                    {parameters.map((param, i) => (
-                        <div key={i} className="col-span-3 border-t border-white/20 pt-6 group">
-                            <h4 className="font-mono text-textMuted text-[10px] lg:text-xs tracking-[0.24em] uppercase mb-4 transition-colors group-hover:text-white break-words">
-                                {param.name}
-                            </h4>
-                            {param.value && (
-                                <div className="text-3xl lg:text-5xl font-black text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.4)] transition-all duration-300 group-hover:[-webkit-text-stroke:1px_rgba(255,255,255,1)] group-hover:ml-2 mb-4 font-futura break-words leading-[1.05]">
-                                    {param.value}
-                                </div>
-                            )}
-                            <p className="text-textMuted text-sm lg:text-base leading-loose break-words max-w-[32ch]">
-                                <BilingualText text={param.description} weight="light" />
-                            </p>
-                        </div>
-                    ))}
-                </div>
-            )}
+  return (
+    <div className={`w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
+      <div
+        className="relative w-full overflow-hidden bg-[#050505]"
+        style={{ marginBottom: getSpacingRem(design.mediaBottomSpacing) }}
+      >
+        {isVideo ? (
+          <video
+            src={mediaSrc}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover opacity-80"
+          />
+        ) : (
+          <PresetImage
+            src={mediaSrc}
+            alt="PCG Generation Overview"
+            preset={imagePreset}
+            fitMode={imageFitMode}
+            imageClassName="opacity-80"
+          />
+        )}
+        <div className="absolute top-4 left-4 border border-white/10 bg-black/60 px-3 py-1 backdrop-blur-md">
+          <Typography
+            as="span"
+            preset="sans-body"
+            size="caption"
+            weight="semantic"
+            wrapPolicy="label"
+            className="text-white"
+          >
+            PROCEDURAL GENERATION PREVIEW
+          </Typography>
         </div>
-    );
+      </div>
+
+      {parameters && parameters.length > 0 && (
+        <div className="grid-container">
+          {parameters.map((param, i) => (
+            <div
+              key={i}
+              className="group w-full border-t border-white/20 pt-6"
+              style={getGridColumnStyle(
+                getParameterGridItemBounds(design.parametersBounds, design.itemSpan, i),
+              )}
+            >
+              <Typography
+                as="h4"
+                preset="sans-body"
+                size="caption"
+                weight="semantic"
+                wrapPolicy="label"
+                className="mb-4 text-textMuted transition-colors group-hover:text-white"
+              >
+                {param.name}
+              </Typography>
+              {param.value && (
+                <Typography
+                  as="div"
+                  preset="sans-body"
+                  size="title"
+                  weight="display"
+                  wrapPolicy="heading"
+                  className="mb-4 text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.4)] transition-all duration-300 group-hover:[-webkit-text-stroke:1px_rgba(255,255,255,1)] group-hover:ml-2"
+                >
+                  {param.value}
+                </Typography>
+              )}
+              <Typography
+                as="p"
+                preset="sans-body"
+                size="body"
+                weight="light"
+                wrapPolicy="prose"
+                className="max-w-[32ch] text-textMuted"
+              >
+                {param.description}
+              </Typography>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }

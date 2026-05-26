@@ -9,7 +9,7 @@
       "type": "HeroHeadline",
       "props": {
         "id": "hero-1",
-        "eyebrow": "Project 08",
+        "eyebrow": "PROJECT 09",
         "title": "舞台灯光叙事概念设计",
         "subtitle": "",
         "heroImage": "/images/penguin/Epic.webp",
@@ -22,8 +22,8 @@
         "id": "tsl-1",
         "heading": "叙事概念构建",
         "paragraphs": [
-          "这是一个基于音乐剧《Epic》的舞台灯光设计项目，我独立完成了概念舞台的设计搭建、舞台调度和灯光设计。",
-          "通过对该剧的理解，我为希腊诸神设计了带有性格象征的色彩语言，当剧情中出现神的影响时，后方的两个希腊石像就会被用对应的颜色打亮。"
+          "基于音乐剧《Epic》的概念舞台灯光设计项目。我独立完成舞台搭建、调度和灯光，核心思路是为希腊诸神建立性格化的色彩语言：每位神祇对应一种高饱和冷暖色，当剧情中神的影响介入时，后方的希腊石像就会被对应的颜色打亮。",
+          "选择 UE 作为制作栈的原因是即时演算可以快速验证灯光角度和色彩对撞效果，比传统灯光软件的离线渲染更适合概念阶段的反复试错。"
         ],
         "imageSrc": "/images/train-station/2Day.webp",
         "imagePreset": "ratio-16-9",
@@ -62,6 +62,7 @@
       "props": {
         "id": "next-1",
         "nextId": "lighting-portfolio",
+        "href": "/works/lighting-portfolio",
         "nextName": "LIGHTING",
         "nextBg": "/images/train-station/2Day.webp",
         "imagePreset": "ratio-21-9"

@@ -9,7 +9,7 @@
       "type": "HeroHeadline",
       "props": {
         "id": "holytank-hero-1",
-        "eyebrow": "Project 05",
+        "eyebrow": "Project / 主策划",
         "title": "帅油桶 (HOLY TANK)",
         "subtitle": "交互叙事游戏",
         "heroImage": "/images/holy-tank/HostileArchitecture.webp",
@@ -35,17 +35,17 @@
         "id": "holytank-info-1",
         "phase1Title": "项目背景",
         "phase1Subtitle": "Context",
-        "phase1Content": "敌意建筑时时刻刻充满我们的身边，他们带来了秩序的同时也给城市添加上了一点尖锐和冷漠感我们想尝试探讨敌意建筑是否会给城市中的人带来不便和冷漠。",
+        "phase1Content": "敌意建筑充斥在日常公共空间，它们在维持秩序的同时，也给城市添上了一层尖锐和冷漠的质感。我们想通过游戏探讨：这些设计是否真的让城市变得更安全，还是仅仅让弱势群体更难生存。",
         "phase2Title": "核心创新",
         "phase2Subtitle": "Innovation",
-        "phase2Content": "游戏的核心创新在于分析并创新轨迹球能带来的操作感觉。玩家需要通过推动轨迹球的感觉来体验推动轮椅的困难，这种操作上的不便与角色的身体残障形成了强烈的通感。游戏通过这种方式让玩家切身感受到敌意建筑对残疾人的影响。",
+        "phase2Content": "轨迹球原生映射鼠标输入，手握原地旋转的操作方式天然对应轮椅遥杆体感。操作本身的阻力与不便，和角色身体残障形成通感，让玩家切身体会敌意建筑对行动不便者的影响。",
         "phase3Title": "我的贡献",
         "phase3Subtitle": "My Role",
-        "phase3Content": "我主要负责游戏的主题设定和交互实现。设计了轨迹球与轮椅操作的映射逻辑，确保玩家能够通过操作体验到残疾人的困难。同时负责整体系统设计，将敌意建筑的概念融入关卡设计中。",
+        "phase3Content": "负责主题设定、交互实现和整体系统设计。轨迹球与轮椅操作的映射采用原生方案，没有额外物理参数调整，轨迹球本身的阻力就是叙事。同时负责将敌意建筑概念转化为具体的关卡障碍和空间设计。",
         "phase3ImageSrc": "",
-        "phase1Label": "Phese 01",
-        "phase2Label": "Phese 02",
-        "phase3Label": "Phese 03"
+        "phase1Label": "Phase 01",
+        "phase2Label": "Phase 02",
+        "phase3Label": "Phase 03"
       }
     },
     {
@@ -70,6 +70,7 @@
       "props": {
         "id": "next-1",
         "nextId": "houdini-pcg",
+        "href": "/works/houdini-pcg",
         "nextName": "HOUDINI 驱动生成村镇",
         "nextBg": "/images/penguin/PCG/PCG01.webp"
       }

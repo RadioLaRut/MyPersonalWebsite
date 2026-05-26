@@ -1,95 +1,131 @@
-'use client';
+"use client";
 
-import React, { type ReactNode } from 'react';
-import BilingualText from '@/components/common/BilingualText';
-import { PresetImage } from '@/components/common/PresetImage';
-import { type ImageFitMode, type ImagePreset } from '@/lib/image-presentation';
+import type { ReactNode } from "react";
+
+import { PresetImage } from "@/components/common/PresetImage";
+import Typography from "@/components/common/Typography";
+import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+  getGridColumnStyle,
+  getSectionSpacingClassName,
+  getSpacingRem,
+} from "@/lib/component-design-style";
+import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 interface InfoItem {
-    label: ReactNode;
-    value: ReactNode;
+  label: ReactNode;
+  value: ReactNode;
 }
 
 interface HighDensityInfoBlockProps {
-    phase1: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; items?: InfoItem[]; label?: ReactNode };
-    phase2: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; items?: InfoItem[]; label?: ReactNode };
-    phase3: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; imageSrc?: string; imagePreset?: ImagePreset; imageFitMode?: ImageFitMode; label?: ReactNode };
-    phase1ItemsContent?: ReactNode;
-    phase2ItemsContent?: ReactNode;
+  phase1: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; items?: InfoItem[]; label?: ReactNode };
+  phase2: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; items?: InfoItem[]; label?: ReactNode };
+  phase3: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; imageSrc?: string; imagePreset?: ImagePreset; imageFitMode?: ImageFitMode; label?: ReactNode };
+  phase1ItemsContent?: ReactNode;
+  phase2ItemsContent?: ReactNode;
+}
+
+const DEFAULT_PHASE_LABELS = {
+  phase1: "PHASE 01 / CONTEXT",
+  phase2: "PHASE 02 / SYSTEM ARCHITECTURE",
+  phase3: "PHASE 03 / EXECUTION & RESULTS",
+} as const;
+
+function hasLabelContent(value: ReactNode) {
+  if (value === null || value === undefined || value === false) {
+    return false;
+  }
+
+  if (typeof value === "string") {
+    return value.trim().length > 0;
+  }
+
+  return true;
 }
 
 export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1ItemsContent, phase2ItemsContent }: HighDensityInfoBlockProps) {
-    const phase3ImageAlt = typeof phase3.title === "string" ? phase3.title : "Phase image";
+  const design = useComponentDesign("HighDensityInfoBlock");
+  const phase3ImageAlt = typeof phase3.title === "string" ? phase3.title : "Phase image";
+  const phase1Label = hasLabelContent(phase1.label) ? phase1.label : DEFAULT_PHASE_LABELS.phase1;
+  const phase2Label = hasLabelContent(phase2.label) ? phase2.label : DEFAULT_PHASE_LABELS.phase2;
+  const phase3Label = hasLabelContent(phase3.label) ? phase3.label : DEFAULT_PHASE_LABELS.phase3;
 
     return (
-        <div className="w-full my-32">
-            <div className="grid-container border-t border-white/20 pt-16">
+        <div className={`w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
+            <div className="grid-container border-t border-white/20 rhythm-divider-top">
 
-                {/* Phase 1 Column (Dense text + metadata) */}
-                <div className="col-span-3 pr-0 lg:pr-5 mb-12 lg:mb-0 border-r border-white/5">
-                    <div className="font-mono text-textMuted text-[10px] tracking-[0.2em] mb-4">{phase1.label || "PHASE 01 / CONTEXT"}</div>
-                    <h3 className="text-xl lg:text-2xl font-futura text-textPrimary mb-2 break-words">{phase1.title}</h3>
-                    {phase1.subtitle && <h4 className="text-sm font-futura italic text-textMuted mb-6">{phase1.subtitle}</h4>}
-                    <p className="text-textMuted text-sm lg:text-[15px] leading-[1.95] mb-8 pr-0 lg:pr-4 break-words">
-                        <BilingualText text={phase1.content} weight="medium" />
-                    </p>
+                <div className="pr-0 lg:pr-5 mb-12 lg:mb-0 border-r border-white/5" style={getGridColumnStyle(design.leftBounds)}>
+                    <Typography as="div" preset="sans-body" size="caption" weight="semantic" wrapPolicy="label" className="mb-4 text-textMuted">
+                        {phase1Label}
+                    </Typography>
+                    <Typography as="h3" preset="sans-body" size={design.titleSize} weight="semantic" wrapPolicy={design.titleAutoWrap ? "heading" : "nowrap"} className="text-textPrimary" style={{ marginBottom: getSpacingRem(design.phaseTitleGap) }}>{phase1.title}</Typography>
+                    {phase1.subtitle && <Typography as="h4" preset="sans-body" size={design.bodySize} weight="light" wrapPolicy={design.subtitleAutoWrap ? "prose" : "nowrap"} className="text-textMuted italic" style={{ marginBottom: getSpacingRem(design.subtitleGap) }}>{phase1.subtitle}</Typography>}
+                    <Typography as="p" preset="sans-body" size={design.bodySize} weight="medium" wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"} className="pr-0 text-textMuted lg:pr-4" style={{ marginBottom: getSpacingRem(design.titleBodyGap) }}>
+                        {phase1.content}
+                    </Typography>
 
                     {phase1.items && (
-                        <div className="space-y-3 mt-8 pt-6 border-t border-white/10">
+                        <div className="grid border-t border-white/10 pt-6" style={{ marginTop: getSpacingRem(design.itemsTopSpacing), rowGap: getSpacingRem("12") }}>
                             {phase1.items.map((item, i) => (
-                                <div key={i} className="flex flex-col gap-1 text-xs">
-                                    <span className="font-mono text-textMuted break-words">{item.label}</span>
-                                    <span className="font-mono text-textPrimary text-left lg:text-right max-w-full lg:max-w-[75%] self-start lg:self-end break-words leading-relaxed">{item.value}</span>
+                                <div key={i} className="grid gap-1">
+                                    <Typography as="span" preset="sans-body" size="caption" weight="semantic" wrapPolicy="label" className="text-textMuted">
+                                        {item.label}
+                                    </Typography>
+                                    <Typography as="div" preset="sans-body" size={design.bodySize} weight="semantic" wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"} align="right" className="text-textPrimary text-left lg:text-right max-w-full lg:max-w-[75%] self-start lg:self-end">{item.value}</Typography>
                                 </div>
                             ))}
                         </div>
                     )}
 
                     {phase1ItemsContent ? (
-                        <div className="mt-8 border-t border-white/10 pt-6">
+                        <div className="border-t border-white/10 pt-6" style={{ marginTop: getSpacingRem(design.itemsTopSpacing) }}>
                             {phase1ItemsContent}
                         </div>
                     ) : null}
                 </div>
 
-                {/* Phase 2 Column (Dense text + architecture abstract) */}
-                <div className="col-span-4 px-0 lg:px-8 mb-12 lg:mb-0 border-r border-transparent lg:border-white/5">
-                    <div className="font-mono text-textMuted text-[10px] tracking-[0.2em] mb-4">{phase2.label || "PHASE 02 / SYSTEM ARCHITECTURE"}</div>
-                    <h3 className="text-xl lg:text-2xl font-futura text-textPrimary mb-2 break-words">{phase2.title}</h3>
-                    {phase2.subtitle && <h4 className="text-sm font-futura italic text-textMuted mb-6">{phase2.subtitle}</h4>}
-                    <p className="text-textMuted text-sm lg:text-[15px] leading-[1.95] mb-8 break-words">
-                        <BilingualText text={phase2.content} weight="medium" />
-                    </p>
+                <div className="px-0 lg:px-8 mb-12 lg:mb-0 border-r border-transparent lg:border-white/5" style={getGridColumnStyle(design.middleBounds)}>
+                    <Typography as="div" preset="sans-body" size="caption" weight="semantic" wrapPolicy="label" className="mb-4 text-textMuted">
+                        {phase2Label}
+                    </Typography>
+                    <Typography as="h3" preset="sans-body" size={design.titleSize} weight="semantic" wrapPolicy={design.titleAutoWrap ? "heading" : "nowrap"} className="text-textPrimary" style={{ marginBottom: getSpacingRem(design.phaseTitleGap) }}>{phase2.title}</Typography>
+                    {phase2.subtitle && <Typography as="h4" preset="sans-body" size={design.bodySize} weight="light" wrapPolicy={design.subtitleAutoWrap ? "prose" : "nowrap"} className="text-textMuted italic" style={{ marginBottom: getSpacingRem(design.subtitleGap) }}>{phase2.subtitle}</Typography>}
+                    <Typography as="p" preset="sans-body" size={design.bodySize} weight="medium" wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"} className="text-textMuted" style={{ marginBottom: getSpacingRem(design.titleBodyGap) }}>
+                        {phase2.content}
+                    </Typography>
 
                     {phase2.items && (
-                        <div className="space-y-3 mt-8 pt-6 border-t border-white/10">
+                        <div className="grid border-t border-white/10 pt-6" style={{ marginTop: getSpacingRem(design.itemsTopSpacing), rowGap: getSpacingRem("12") }}>
                             {phase2.items.map((item, i) => (
-                                <div key={i} className="flex flex-col gap-1 text-xs">
-                                    <span className="font-mono text-textMuted break-words">{item.label}</span>
-                                    <span className="font-futura text-textPrimary leading-[1.85] break-words">{item.value}</span>
+                                <div key={i} className="grid gap-1">
+                                    <Typography as="span" preset="sans-body" size="caption" weight="semantic" wrapPolicy="label" className="text-textMuted">
+                                        {item.label}
+                                    </Typography>
+                                    <Typography as="span" preset="sans-body" size={design.bodySize} weight="semantic" wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"} className="text-textPrimary">{item.value}</Typography>
                                 </div>
                             ))}
                         </div>
                     )}
 
                     {phase2ItemsContent ? (
-                        <div className="mt-8 border-t border-white/10 pt-6">
+                        <div className="border-t border-white/10 pt-6" style={{ marginTop: getSpacingRem(design.itemsTopSpacing) }}>
                             {phase2ItemsContent}
                         </div>
                     ) : null}
                 </div>
 
-                {/* Phase 3 Column (Execution & Visual Result) */}
-                <div className="col-span-5 pl-0 lg:pl-8">
-                    <div className="font-mono text-textMuted text-[10px] tracking-[0.2em] mb-4">{phase3.label || "PHASE 03 / EXECUTION & RESULTS"}</div>
-                    <h3 className="text-xl lg:text-2xl font-futura text-textPrimary mb-2 break-words">{phase3.title}</h3>
-                    {phase3.subtitle && <h4 className="text-sm font-futura italic text-textMuted mb-6">{phase3.subtitle}</h4>}
-                    <p className="text-textMuted text-sm lg:text-[15px] leading-[1.95] mb-8 break-words">
-                        <BilingualText text={phase3.content} weight="medium" />
-                    </p>
+                <div className="pl-0 lg:pl-8" style={getGridColumnStyle(design.rightBounds)}>
+                    <Typography as="div" preset="sans-body" size="caption" weight="semantic" wrapPolicy="label" className="mb-4 text-textMuted">
+                        {phase3Label}
+                    </Typography>
+                    <Typography as="h3" preset="sans-body" size={design.titleSize} weight="semantic" wrapPolicy={design.titleAutoWrap ? "heading" : "nowrap"} className="text-textPrimary" style={{ marginBottom: getSpacingRem(design.phaseTitleGap) }}>{phase3.title}</Typography>
+                    {phase3.subtitle && <Typography as="h4" preset="sans-body" size={design.bodySize} weight="light" wrapPolicy={design.subtitleAutoWrap ? "prose" : "nowrap"} className="text-textMuted italic" style={{ marginBottom: getSpacingRem(design.subtitleGap) }}>{phase3.subtitle}</Typography>}
+                    <Typography as="p" preset="sans-body" size={design.bodySize} weight="medium" wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"} className="text-textMuted" style={{ marginBottom: getSpacingRem(design.titleBodyGap) }}>
+                        {phase3.content}
+                    </Typography>
 
                     {phase3.imageSrc && (
-                        <div className="relative mt-6 w-full overflow-hidden border border-white/10 bg-neutral-900">
+                        <div className="relative w-full overflow-hidden border border-white/10 bg-neutral-900" style={{ marginTop: getSpacingRem(design.imageTopSpacing) }}>
                             <PresetImage
                                 src={phase3.imageSrc}
                                 alt={phase3ImageAlt}
