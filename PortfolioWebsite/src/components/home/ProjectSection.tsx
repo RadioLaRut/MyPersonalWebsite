@@ -49,9 +49,9 @@ export default function ProjectSection({
     offset: ["start end", "end start"],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], ["-20%", "20%"]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
-  const opacity = useTransform(scrollYProgress, [0, 0.4, 0.6, 1], [0, 1, 1, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1.01, 1.04]);
+  const opacity = useTransform(scrollYProgress, [0, 0.32, 0.72, 1], [0.34, 1, 1, 0.34]);
   const shouldAlignRight = align === "right" || (align === "auto" && index % 2 !== 0);
   const textColumnClassName = shouldAlignRight
     ? "justify-items-end text-right"
@@ -65,7 +65,7 @@ export default function ProjectSection({
 
   const underlineTrackClassName = shouldAlignRight ? "justify-end" : "justify-start";
   const underlineFillClassName =
-    "w-0 transition-[width] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:w-full";
+    "w-[18%] bg-white/[0.45] transition-[width,background-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:w-full group-hover:bg-white/[0.82] group-focus-visible:w-full group-focus-visible:bg-white/[0.82]";
   const textBoundsClassName = getResponsiveGridColumnClassName(
     shouldAlignRight ? design.textRightBounds : design.textLeftBounds,
   );
@@ -88,7 +88,7 @@ export default function ProjectSection({
         style={editMode ? undefined : { y, scale }}
       >
         {/* Environment ambient gradient/shadow to improve contrast */}
-        <div className="absolute inset-0 z-10 bg-black/30 custom-blend transition-colors duration-1000 group-hover:bg-black/10" />
+        <div className="absolute inset-0 z-10 bg-black/[0.32] custom-blend transition-colors duration-1000 group-hover:bg-black/[0.24] group-focus-visible:bg-black/[0.24]" />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40 z-10" />
 
@@ -144,7 +144,7 @@ export default function ProjectSection({
                   className={`flex w-full ${underlineTrackClassName}`}
                   style={{ marginTop: adjustedGap }}
                 >
-                  <div className={`h-[2px] bg-white ${underlineFillClassName}`} />
+                  <div className={`h-[2px] ${underlineFillClassName}`} />
                 </div>
               </div>
             </div>

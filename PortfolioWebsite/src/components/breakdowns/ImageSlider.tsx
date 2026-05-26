@@ -153,7 +153,7 @@ export default function ImageSlider({
         <div className={getGridColumnClassName(design.contentBounds)}>
           <div
             ref={containerRef}
-            className={`${frameClassName} select-none touch-pan-y ${cursorClass}`}
+            className={`${frameClassName} group select-none touch-pan-y ${cursorClass}`}
             data-dragging={isDragging ? "true" : undefined}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
@@ -214,11 +214,11 @@ export default function ImageSlider({
             </div>
 
             <div
-              className="pointer-events-none absolute bottom-0 top-0 z-20 w-0.5 bg-white"
+              className={`pointer-events-none absolute bottom-0 top-0 z-20 w-px transition-[background-color,width] duration-300 ease-out ${isDragging ? "bg-white" : "bg-white/[0.74] group-hover:bg-white/[0.88]"}`}
               style={{ left: `${sliderPosition}%`, transform: "translateX(-50%)" }}
             >
               <div
-                className={`absolute left-1/2 top-1/2 grid h-8 w-8 -translate-x-1/2 -translate-y-1/2 grid-cols-2 place-items-center rounded-full bg-white text-black shadow-lg transition-[box-shadow,transform] duration-300 ease-out ${isDragging ? "scale-110 shadow-[0_0_24px_rgba(255,255,255,0.42)]" : ""}`}
+                className={`absolute left-1/2 top-1/2 grid h-8 w-8 -translate-x-1/2 -translate-y-1/2 grid-cols-2 place-items-center rounded-full bg-white/[0.92] text-black shadow-[0_0_0_1px_rgba(255,255,255,0.28),0_10px_30px_rgba(0,0,0,0.36)] transition-[background-color,box-shadow,transform] duration-300 ease-out group-hover:scale-[1.04] group-hover:bg-white ${isDragging ? "scale-[1.06] bg-white shadow-[0_0_18px_rgba(255,255,255,0.32)]" : ""}`}
                 data-cursor-magnet="slider-handle"
                 data-cursor-magnet-size="32"
                 aria-hidden="true"

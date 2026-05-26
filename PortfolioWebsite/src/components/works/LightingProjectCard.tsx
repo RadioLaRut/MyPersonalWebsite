@@ -59,7 +59,7 @@ export default function LightingProjectCard({
 
   const content = (
     <article className="group glass-panel relative h-full w-full overflow-hidden rounded-none">
-      <div className="absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.12)_0%,rgba(0,0,0,0.18)_35%,rgba(0,0,0,0.82)_100%)] transition-opacity duration-500 group-hover:opacity-90" />
+      <div className="absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.12)_0%,rgba(0,0,0,0.18)_35%,rgba(0,0,0,0.82)_100%)] opacity-95 transition-opacity duration-700 group-hover:opacity-[0.88] group-focus-visible:opacity-[0.88]" />
       <div className="absolute inset-0 z-0">
         <PresetImage
           src={coverImage}
@@ -68,7 +68,7 @@ export default function LightingProjectCard({
           fitMode={imageFitMode}
           lockFrame={false}
           frameClassName="h-full w-full"
-          imageClassName="transition-transform duration-700 group-hover:scale-[1.03]"
+          imageClassName="transition-[filter,transform] duration-700 ease-out group-hover:scale-[1.018] group-hover:contrast-[1.04] group-focus-visible:scale-[1.018] group-focus-visible:contrast-[1.04]"
         />
       </div>
 
@@ -90,7 +90,7 @@ export default function LightingProjectCard({
             size="caption"
             weight="semantic"
             wrapPolicy="label"
-            className="text-right text-white/40 transition-colors duration-300 group-hover:text-white/72"
+            className="text-right text-white/[0.42] transition-colors duration-500 group-hover:text-white/[0.66] group-focus-visible:text-white/[0.66]"
           >
             Enter
           </Typography>

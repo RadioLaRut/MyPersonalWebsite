@@ -97,16 +97,22 @@ export default function WorksListEntry({
       </AnimatePresence>
 
       <div className={`grid-container relative z-10 items-center py-16 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
-        <div className={`hidden text-textMuted lg:block ${numberBoundsClassName}`}>
-          <Typography
-            preset="sans-body"
-            size="title-sm"
-            weight="semantic"
-            wrapPolicy="label"
-            className="text-textMuted"
-          >
-            {number ?? "00"}
-          </Typography>
+        <div className={`hidden lg:block ${numberBoundsClassName}`}>
+          <div className="grid w-fit gap-3">
+            <Typography
+              preset="sans-body"
+              size="title-sm"
+              weight="semantic"
+              wrapPolicy="label"
+              className={`transition-colors duration-700 ease-out ${active ? "text-white/[0.76]" : "text-textMuted"}`}
+            >
+              {number ?? "00"}
+            </Typography>
+            <span
+              className={`h-px bg-white/60 transition-[width,opacity] duration-700 ease-out ${active ? "w-4 opacity-100" : "w-0 opacity-0"}`}
+              aria-hidden="true"
+            />
+          </div>
         </div>
 
         <div className={`${titleBoundsClassName} grid content-center py-4`}>
@@ -117,8 +123,8 @@ export default function WorksListEntry({
             weight="display"
             wrapPolicy="heading"
             className={`py-2 uppercase transition-all duration-700 ease-out ${active
-              ? "text-white"
-              : "text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.3)]"}`}
+              ? "text-white/[0.92]"
+              : "text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.42)]"}`}
           >
             {title}
           </Typography>
@@ -128,7 +134,7 @@ export default function WorksListEntry({
           initial={false}
           animate={{
             opacity: active ? 1 : 0,
-            x: active ? 0 : -20,
+            x: active ? 0 : -10,
           }}
           transition={motionTransitions.fade}
           className={`${sidebarBoundsClassName} mt-6 grid content-center lg:mt-0 lg:pl-8`}

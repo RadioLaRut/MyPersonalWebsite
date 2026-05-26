@@ -29,6 +29,6 @@ export const menuItemVariants = {
 } satisfies Variants;
 
 export const imageSettleVariants = {
-  hidden: { scale: 1.05 },
+  hidden: { scale: 1.025 },
   visible: { scale: 1, transition: motionTransitions.ambient },
 } satisfies Variants;

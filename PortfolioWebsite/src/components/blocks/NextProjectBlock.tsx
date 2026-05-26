@@ -45,7 +45,7 @@ export default function NextProjectBlock({
                 interactionPreset="blockLink"
                 className={`group block relative h-[40vh] md:h-[60vh] overflow-hidden w-full bg-black ${editMode ? "cursor-default" : "interactive"}`}
             >
-                <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 z-10 transition-colors duration-700 pointer-events-none"></div>
+                <div className="pointer-events-none absolute inset-0 z-10 bg-black/[0.58] transition-colors duration-700 group-hover:bg-black/[0.38] group-focus-visible:bg-black/[0.38]"></div>
                 <div className="absolute inset-0 grid place-items-center">
                     <PresetImage
                         src={backgroundImage}
@@ -54,7 +54,7 @@ export default function NextProjectBlock({
                         fitMode={imageFitMode}
                         sizes="100vw"
                         frameClassName="w-full"
-                        imageClassName="scale-100 transition-all duration-700 ease-out opacity-40 group-hover:scale-105 group-hover:opacity-100"
+                        imageClassName="scale-100 opacity-40 transition-[filter,opacity,transform] duration-700 ease-out group-hover:scale-[1.025] group-hover:opacity-75 group-hover:contrast-[1.04] group-focus-visible:scale-[1.025] group-focus-visible:opacity-75 group-focus-visible:contrast-[1.04]"
                     />
                 </div>
 
@@ -68,7 +68,7 @@ export default function NextProjectBlock({
                                     weight="semantic"
                                     wrapPolicy="label"
                                     align="center"
-                                    className="text-textMuted opacity-70 transition-all duration-700 group-hover:opacity-100 [&_.typography-run]:transition-[letter-spacing] [&_.typography-run]:duration-1000 [&_.typography-run]:ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:[&_.typography-run]:!tracking-[0.25em]"
+                                    className="text-textMuted opacity-70 transition-all duration-700 group-hover:opacity-95 group-focus-visible:opacity-95 [&_.typography-run]:transition-[letter-spacing] [&_.typography-run]:duration-700 [&_.typography-run]:ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:[&_.typography-run]:!tracking-[0.12em] group-focus-visible:[&_.typography-run]:!tracking-[0.12em]"
                                 >
                                     NEXT PROJECT
                                 </Typography>
@@ -79,7 +79,7 @@ export default function NextProjectBlock({
                                     weight="display"
                                     wrapPolicy="heading"
                                     align="center"
-                                    className="text-white uppercase transition-all duration-700 [&_.typography-run]:transition-[letter-spacing] [&_.typography-run]:duration-1000 [&_.typography-run]:ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:[&_.typography-run]:!tracking-[0.08em]"
+                                    className="text-white uppercase transition-all duration-700 [&_.typography-run]:transition-[letter-spacing] [&_.typography-run]:duration-700 [&_.typography-run]:ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:[&_.typography-run]:!tracking-[0.04em] group-focus-visible:[&_.typography-run]:!tracking-[0.04em]"
                                 >
                                     {nextName}
                                 </Typography>
