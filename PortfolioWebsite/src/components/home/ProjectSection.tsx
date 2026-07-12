@@ -8,7 +8,7 @@ import {
   getResponsiveGridColumnClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
-import { type ImageFitMode, type ImagePreset, normalizeImagePreset } from "@/lib/image-presentation";
+import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 import { motion, useScroll, useTransform } from "@/lib/motion";
 
 interface ProjectSectionProps {
@@ -41,12 +41,10 @@ export default function ProjectSection({
   const design = useComponentDesign("ProjectSection");
   const containerRef = useRef<HTMLElement>(null);
   const imageAlt = typeof title === "string" ? title : "Project cover";
-  const resolvedImagePreset = normalizeImagePreset(imagePreset);
   const isLinkEnabled = !editMode && Boolean(link);
   const cursorClass = isLinkEnabled ? "cursor-pointer" : "cursor-default";
   const sectionClassName = `relative m-0 grid min-h-[100svh] w-full place-items-center overflow-hidden p-0 mix-blend-normal group ${cursorClass}`;
   const mediaLayerClassName = "absolute inset-0 grid place-items-center px-0";
-  const frameClassName = resolvedImagePreset === "native" ? "w-full h-full" : "w-full";
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -107,8 +105,8 @@ export default function ProjectSection({
             base: { x: mobileImageFocalX, y: mobileImageFocalY },
             lg: { x: 50, y: 50 },
           }}
-          lockFrame={resolvedImagePreset !== "native"}
-          frameClassName={frameClassName}
+          lockFrame={false}
+          frameClassName="h-full w-full"
           imageClassName="select-none"
         />
       </motion.div>
@@ -140,7 +138,7 @@ export default function ProjectSection({
                 <Typography
                   as="h2"
                   preset="luna-editorial"
-                  size="hero"
+                  size={design.titleSize}
                   weight="semantic"
                   wrapPolicy="heading"
                   align={shouldAlignRight ? "right" : "left"}

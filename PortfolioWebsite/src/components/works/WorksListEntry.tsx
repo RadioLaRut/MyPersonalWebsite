@@ -6,7 +6,10 @@ import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
 import { MotionLink } from "@/components/motion";
-import { getResponsiveGridColumnClassName } from "@/lib/component-design-style";
+import {
+  createResponsiveGridBounds,
+  getResponsiveGridColumnClassName,
+} from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 import {
   AnimatePresence,
@@ -58,8 +61,20 @@ export default function WorksListEntry({
   const active = editMode || isHovered || isFocused || isInsideCenterZone;
   const cursorClass = isLinkEnabled ? "cursor-pointer" : "cursor-default";
   const numberBoundsClassName = getResponsiveGridColumnClassName(design.numberBounds);
-  const titleBoundsClassName = getResponsiveGridColumnClassName(design.titleBounds);
-  const sidebarBoundsClassName = getResponsiveGridColumnClassName(design.sidebarBounds);
+  const titleBoundsClassName = getResponsiveGridColumnClassName(
+    createResponsiveGridBounds(
+      { leftCol: 3, rightCol: 12 },
+      design.titleBounds.md,
+      design.titleBounds.lg,
+    ),
+  );
+  const sidebarBoundsClassName = getResponsiveGridColumnClassName(
+    createResponsiveGridBounds(
+      { leftCol: 3, rightCol: 12 },
+      design.sidebarBounds.md,
+      design.sidebarBounds.lg,
+    ),
+  );
 
   return (
     <MotionLink
@@ -68,7 +83,8 @@ export default function WorksListEntry({
       disabled={!isLinkEnabled}
       disabledElement="div"
       interactionPreset="blockLink"
-      className={`group relative grid min-h-[34vh] w-full content-center border-b border-white/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-2px] focus-visible:outline-white/70 ${cursorClass} sm:min-h-[42vh]`}
+      className={`group relative grid min-h-[32svh] w-full content-center border-b border-white/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-2px] focus-visible:outline-white/70 ${cursorClass} sm:min-h-[36svh] lg:min-h-[42vh]`}
+      data-active={active ? "true" : "false"}
       aria-label={
         typeof title === "string"
           ? `打开作品 ${title}${typeof category === "string" ? `，${category}` : ""}`
@@ -100,6 +116,10 @@ export default function WorksListEntry({
                 alt={typeof title === "string" ? title : "Work entry"}
                 preset={imagePreset}
                 fitMode={imageFitMode}
+                fitModeByBreakpoint={{
+                  base: imagePreset === "native" ? "x" : "cover",
+                  lg: imageFitMode,
+                }}
                 lockFrame={false}
                 frameClassName="h-full w-full"
               />
@@ -108,7 +128,23 @@ export default function WorksListEntry({
         ) : null}
       </AnimatePresence>
 
-      <div className={`grid-container relative z-10 items-center py-16 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
+      <div className={`grid-container relative z-10 items-center py-10 md:py-12 lg:py-16 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
+        <div className="col-start-1 col-span-2 grid content-start pt-5 md:hidden">
+          <Typography
+            preset="sans-body"
+            size="label"
+            weight="semantic"
+            wrapPolicy="label"
+            className={`transition-colors duration-700 ease-out ${active ? "text-white/[0.76]" : "text-textMuted"}`}
+          >
+            {number ?? "00"}
+          </Typography>
+          <span
+            className={`mt-3 h-px bg-white/60 transition-[width,opacity] duration-700 ease-out ${active ? "w-4 opacity-100" : "w-2 opacity-40"}`}
+            aria-hidden="true"
+          />
+        </div>
+
         <div className={`hidden lg:block ${numberBoundsClassName}`}>
           <div className="grid w-fit gap-3">
             <Typography
@@ -131,7 +167,7 @@ export default function WorksListEntry({
           <Typography
             as="h2"
             preset="luna-editorial"
-            size="display"
+            size="title"
             weight="display"
             wrapPolicy="heading"
             className={`break-words py-2 uppercase transition-colors duration-700 ease-out ${active
@@ -142,15 +178,15 @@ export default function WorksListEntry({
           </Typography>
         </div>
 
-        <div className={`${sidebarBoundsClassName} mt-6 grid content-center lg:mt-0 lg:pl-8`}>
+        <div className={`${sidebarBoundsClassName} mt-4 grid content-center md:mt-0 md:pl-6 lg:pl-8`}>
           <div className="grid gap-1">
             <Typography
               as="p"
               preset="gothic-editorial"
               size="label"
               weight="semantic"
-              wrapPolicy="label"
-              className={`transition-colors duration-700 ease-out ${active ? "text-textPrimary" : "text-textSecondary"}`}
+              wrapPolicy="prose"
+              className={`uppercase transition-colors duration-700 ease-out ${active ? "text-textPrimary" : "text-textSecondary"}`}
             >
               {category}
             </Typography>
@@ -163,7 +199,7 @@ export default function WorksListEntry({
               <Typography
                 as="p"
                 preset="sans-body"
-                size="body"
+                size="body-sm"
                 weight="light"
                 wrapPolicy="prose"
                 className="mt-4 text-textSecondary"

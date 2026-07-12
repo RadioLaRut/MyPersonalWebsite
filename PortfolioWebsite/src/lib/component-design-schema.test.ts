@@ -151,5 +151,7 @@ test("parseComponentDesignDocument accepts valid component config", () => {
   assert.equal(parsed.components.HeroSection.contentBounds.lg.leftCol, 8);
   assert.equal(parsed.components.HeroSection.eyebrowTopSpacing, "12");
   assert.equal(parsed.components.ProjectSection.lockupGap, "12");
+  assert.equal(parsed.components.ProjectSection.titleSize, "display");
   assert.equal(parsed.components.ProjectSection.titleUnderlineOpticalPull, "56");
+  assert.equal(parsed.components.HomeEndcapSection.titleSize, "display");
 });

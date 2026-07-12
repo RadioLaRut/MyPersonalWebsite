@@ -17,15 +17,16 @@
   --rhythm-4: calc(var(--rhythm-unit) * 4);
   --rhythm-6: calc(var(--rhythm-unit) * 6);
   --rhythm-8: calc(var(--rhythm-unit) * 8);
+  --rhythm-10: calc(var(--rhythm-unit) * 10);
   --rhythm-12: calc(var(--rhythm-unit) * 12);
   --rhythm-16: calc(var(--rhythm-unit) * 16);
   --rhythm-20: calc(var(--rhythm-unit) * 20);
   --rhythm-major: var(--rhythm-4);
-  --section-space-compact: var(--rhythm-8);
-  --section-space-normal: var(--rhythm-12);
-  --section-space-spacious: var(--rhythm-16);
-  --section-space-hero-top: var(--rhythm-16);
-  --section-space-hero-bottom: var(--rhythm-12);
+  --section-space-compact: var(--rhythm-6);
+  --section-space-normal: var(--rhythm-8);
+  --section-space-spacious: var(--rhythm-10);
+  --section-space-hero-top: var(--rhythm-12);
+  --section-space-hero-bottom: var(--rhythm-8);
   --section-space-hero-top-lg: var(--rhythm-20);
   --section-space-hero-bottom-lg: var(--rhythm-16);
 }
@@ -96,10 +97,24 @@ body::-webkit-scrollbar {
   margin-right: auto;
 }
 
-/* 桌面端 (1024px+) 使用规范中的 24px 列间距。 */
+/* 平板端恢复更舒展的阅读节奏，但不直接沿用桌面留白。 */
+@media (min-width: 768px) {
+  :root {
+    --section-space-compact: var(--rhythm-8);
+    --section-space-normal: var(--rhythm-10);
+    --section-space-spacious: var(--rhythm-12);
+    --section-space-hero-top: var(--rhythm-16);
+    --section-space-hero-bottom: var(--rhythm-12);
+  }
+}
+
+/* 桌面端 (1024px+) 使用规范中的 24px 列间距与完整纵向节奏。 */
 @media (min-width: 1024px) {
   :root {
     --grid-gap: 1.5rem;
+    --section-space-compact: var(--rhythm-8);
+    --section-space-normal: var(--rhythm-12);
+    --section-space-spacious: var(--rhythm-16);
   }
 
   .grid-container {
@@ -209,6 +224,70 @@ html[data-site-mode="normal"] {
 
 .responsive-preset-image {
   object-position: var(--preset-image-position-base, 50% 50%);
+}
+
+.image-loading-indicator {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 1;
+  visibility: visible;
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.035), transparent 42%),
+    #050505;
+  transition:
+    opacity 480ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 0s;
+}
+
+.image-loading-track {
+  display: block;
+  width: clamp(3.5rem, 18vw, 7rem);
+  height: 1px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.image-loading-progress {
+  display: block;
+  width: 42%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.78);
+  animation: image-loading-scan 1.35s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  will-change: transform;
+}
+
+.preset-image-frame[data-image-state="loaded"] > .image-loading-indicator {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 480ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 480ms;
+}
+
+.preset-image-frame[data-image-state="loaded"] .image-loading-progress,
+.preset-image-frame[data-image-state="error"] .image-loading-progress {
+  animation-play-state: paused;
+}
+
+.preset-image-frame[data-image-state="error"] .image-loading-progress {
+  width: 100%;
+  opacity: 0.3;
+  transform: none;
+}
+
+@keyframes image-loading-scan {
+  from {
+    transform: translateX(-125%);
+  }
+
+  to {
+    transform: translateX(240%);
+  }
 }
 
 @media (min-width: 768px) {
@@ -383,8 +462,8 @@ html[data-font-lab-mode] textarea {
   }
 
   .rhythm-section-spacious {
-    padding-top: var(--section-space-normal);
-    padding-bottom: var(--section-space-normal);
+    padding-top: var(--section-space-spacious);
+    padding-bottom: var(--section-space-spacious);
   }
 
   .rhythm-section-hero {

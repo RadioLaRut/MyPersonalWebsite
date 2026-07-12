@@ -41,7 +41,7 @@ export default function HomeEndcapSection({
   );
 
   return (
-    <section className="relative isolate grid min-h-[68vh] w-full items-center overflow-hidden border-t border-white/10 bg-black rhythm-section-spacious">
+    <section className="relative isolate grid min-h-[54svh] w-full items-center overflow-hidden border-t border-white/10 bg-black rhythm-section-spacious md:min-h-[60vh] lg:min-h-[68vh]">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_45%)]" />
 
       <div className="grid-container relative z-10">
@@ -63,7 +63,7 @@ export default function HomeEndcapSection({
           <Typography
             as="h2"
             preset="luna-editorial"
-            size="hero"
+            size={design.titleSize}
             weight="semantic"
             wrapPolicy="heading"
             align="center"

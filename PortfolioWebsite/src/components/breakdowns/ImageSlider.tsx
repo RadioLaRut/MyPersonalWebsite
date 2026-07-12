@@ -3,7 +3,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react/dist/cjs/lucide-react.js";
 import { useEffect, useId, useRef, useState } from "react";
 
-import { OptimizedImage } from "@/components/common/OptimizedImage";
+import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
 import {
@@ -14,8 +14,6 @@ import {
 import {
   type ImageFitMode,
   type ImagePreset,
-  getImageCanvasClassName,
-  getImageElementClassName,
   getImagePresetFrameClassName,
   normalizeImageFitMode,
   normalizeImagePreset,
@@ -66,8 +64,8 @@ export default function ImageSlider({
   const resolvedPreset = normalizeImagePreset(imagePreset);
   const resolvedFitMode = normalizeImageFitMode(imageFitMode);
   const frameClassName = getImagePresetFrameClassName(resolvedPreset);
-  const canvasClassName = getImageCanvasClassName(resolvedPreset);
-  const imageClassName = getImageElementClassName(resolvedPreset, resolvedFitMode);
+  const preservesNativeHeight = resolvedPreset === "native";
+  const imageFrameClassName = preservesNativeHeight ? "w-full" : "h-full w-full";
   const visibleTitle = typeof title === "string" && title.trim().length > 0 ? title : alt;
   const sliderDescriptionId = useId();
 
@@ -209,13 +207,15 @@ export default function ImageSlider({
             <div className={resolvedPreset === "native" ? "relative w-full" : "absolute inset-0"}>
               <div className="absolute inset-0 bg-neutral-900" />
               {litSrc ? (
-                <div className={`${canvasClassName} relative z-10`}>
-                  <OptimizedImage
+                <div className="relative z-10 h-full w-full">
+                  <PresetImage
                     src={litSrc}
                     alt={rightLabel ? `${alt} ${rightLabel}` : alt}
-                    width={1920}
-                    height={1080}
-                    className={`${imageClassName} select-none`}
+                    preset={resolvedPreset}
+                    fitMode={resolvedFitMode}
+                    lockFrame={preservesNativeHeight}
+                    frameClassName={imageFrameClassName}
+                    imageClassName="select-none"
                     draggable={false}
                   />
                 </div>
@@ -228,13 +228,15 @@ export default function ImageSlider({
             >
               <div className="absolute inset-0 bg-neutral-800" />
               {unlitSrc ? (
-                <div className={`${canvasClassName} relative z-10`}>
-                  <OptimizedImage
+                <div className="relative z-10 h-full w-full">
+                  <PresetImage
                     src={unlitSrc}
                     alt={leftLabel ? `${alt} ${leftLabel}` : alt}
-                    width={1920}
-                    height={1080}
-                    className={`${imageClassName} select-none`}
+                    preset={resolvedPreset}
+                    fitMode={resolvedFitMode}
+                    lockFrame={preservesNativeHeight}
+                    frameClassName={imageFrameClassName}
+                    imageClassName="select-none"
                     draggable={false}
                   />
                 </div>

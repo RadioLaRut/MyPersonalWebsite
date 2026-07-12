@@ -117,7 +117,7 @@ export default function LightingProjectCard({
   );
 
   return (
-    <section className="w-full py-8">
+    <section className="w-full py-4 md:py-6 lg:py-8">
       <div className="grid-container">
         {href ? (
           <MotionLink

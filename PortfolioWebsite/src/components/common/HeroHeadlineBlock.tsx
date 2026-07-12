@@ -55,6 +55,10 @@ export default function HeroHeadlineBlock({
             alt={heroImageAlt}
             preset={heroImagePreset}
             fitMode={heroImageFitMode}
+            fitModeByBreakpoint={{
+              base: heroImagePreset === "native" ? "x" : "cover",
+              lg: heroImageFitMode ?? "x",
+            }}
             sizes="100vw"
             priority
             lockFrame={false}
@@ -135,7 +139,8 @@ export default function HeroHeadlineBlock({
             fitModeByBreakpoint={{ base: "cover", lg: heroImageFitMode ?? "x" }}
             sizes="100vw"
             priority
-            frameClassName="w-full opacity-70"
+            lockFrame={false}
+            frameClassName="h-full w-full opacity-70"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,1)_140%)]" />

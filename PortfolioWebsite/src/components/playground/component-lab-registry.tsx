@@ -1365,6 +1365,15 @@ export const COMPONENT_LAB_REGISTRY: Record<
         fields: [
           {
             type: "select",
+            label: "标题字号档位",
+            options: createTypographyOptions(STACK_HEADING_OPTIONS),
+            getValue: (document) => document.components.ProjectSection.titleSize,
+            setValue: (document, value) => {
+              document.components.ProjectSection.titleSize = value as TypographySize;
+            },
+          },
+          {
+            type: "select",
             label: "锁组间距",
             options: SPACING_OPTIONS,
             getValue: (document) => document.components.ProjectSection.lockupGap,
@@ -1550,6 +1559,15 @@ export const COMPONENT_LAB_REGISTRY: Record<
       {
         title: "布局与节奏",
         fields: [
+          {
+            type: "select",
+            label: "标题字号档位",
+            options: createTypographyOptions(STACK_HEADING_OPTIONS),
+            getValue: (document) => document.components.HomeEndcapSection.titleSize,
+            setValue: (document, value) => {
+              document.components.HomeEndcapSection.titleSize = value as TypographySize;
+            },
+          },
           {
             type: "bounds",
             label: "内容区边界",

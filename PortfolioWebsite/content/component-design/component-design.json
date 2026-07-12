@@ -124,7 +124,8 @@
         "leftCol": 3,
         "rightCol": 10
       },
-      "descriptionTopSpacing": "32"
+      "descriptionTopSpacing": "32",
+      "titleSize": "display"
     },
     "ImagePanel": {
       "contentBounds": {
@@ -264,6 +265,7 @@
     },
     "ProjectSection": {
       "lockupGap": "12",
+      "titleSize": "display",
       "titleUnderlineOpticalPull": "56",
       "textLeftBounds": {
         "base": {

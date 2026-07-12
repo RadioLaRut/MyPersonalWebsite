@@ -36,19 +36,24 @@ export default function ImagePanel({
   if (variant === "fullscreen") {
     return (
       <div className="relative h-full min-h-[100svh] w-full bg-black">
-        <div className="grid h-full w-full place-items-center">
+        <div className="absolute inset-0">
           <PresetImage
             src={src}
             alt={imageAlt}
             preset={preset}
             fitMode={fitMode}
+            fitModeByBreakpoint={{
+              base: preset === "native" ? "x" : "cover",
+              lg: fitMode ?? "x",
+            }}
             priority
             sizes="100vw"
-            frameClassName="w-full pointer-events-none"
+            lockFrame={false}
+            frameClassName="h-full w-full pointer-events-none"
           />
         </div>
         {caption ? (
-          <div className="absolute bottom-8 right-8 bg-black/65 border border-white/15 px-4 py-2">
+          <div className="absolute bottom-5 right-5 bg-black/65 border border-white/15 px-4 py-2 md:bottom-8 md:right-8">
             <Typography preset="sans-body" size="label" weight="semantic" wrapPolicy="label" className="text-textPrimary">
               {caption}
             </Typography>

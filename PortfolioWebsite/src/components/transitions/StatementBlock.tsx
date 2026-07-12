@@ -34,9 +34,9 @@ export default function StatementBlock({
   }[backgroundColor];
 
   const heightClass = {
-    small: "min-h-[20vh]",
-    medium: "min-h-[35vh]",
-    large: "min-h-[50vh]",
+    small: "min-h-[16svh] md:min-h-[20vh]",
+    medium: "min-h-[24svh] md:min-h-[35vh]",
+    large: "min-h-[36svh] md:min-h-[50vh]",
   }[minHeight];
   const rhythmClass = {
     small: "rhythm-section-compact",

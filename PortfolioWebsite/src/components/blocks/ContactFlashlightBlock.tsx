@@ -175,7 +175,7 @@ export default function ContactFlashlightBlock({
 
     const renderContentData = (interactive = true) => (
         <div className="grid-container w-full rhythm-section-spacious">
-            <section className={`${getGridColumnClassName(design.heroBounds)} mb-24 grid rhythm-stack-3 lg:mb-32`}>
+            <section className={`${getGridColumnClassName(design.heroBounds)} mb-16 grid rhythm-stack-3 lg:mb-32`}>
                 <motion.h1
                     initial={editMode ? false : { opacity: 0, y: 20 }}
                     animate={editMode ? undefined : { opacity: 1, y: 0 }}
@@ -227,7 +227,7 @@ export default function ContactFlashlightBlock({
                 initial={editMode ? false : { opacity: 0 }}
                 animate={editMode ? undefined : { opacity: 1 }}
                 transition={editMode ? undefined : { delay: 0.6, duration: 1 }}
-                className={`${getGridColumnClassName(design.detailBounds)} grid grid-cols-1 gap-16 border-t border-current text-left rhythm-divider-top lg:grid-cols-2`}
+                className={`${getGridColumnClassName(design.detailBounds)} grid grid-cols-1 gap-10 border-t border-current text-left rhythm-divider-top lg:grid-cols-2 lg:gap-16`}
             >
                 <div className="rhythm-stack-4">
                     <Typography
@@ -320,7 +320,7 @@ export default function ContactFlashlightBlock({
                 initial={editMode ? false : { opacity: 0 }}
                 animate={editMode ? undefined : { opacity: 1 }}
                 transition={editMode ? undefined : { delay: 0.9, duration: 1 }}
-                className={`${getGridColumnClassName(design.contactBounds)} mt-24 grid grid-cols-1 items-start gap-12 border-t border-current text-left rhythm-divider-top lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-20`}
+                className={`${getGridColumnClassName(design.contactBounds)} mt-16 grid grid-cols-1 items-start gap-12 border-t border-current text-left rhythm-divider-top lg:mt-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-20`}
             >
                 <div className="rhythm-stack-3">
                     <Typography

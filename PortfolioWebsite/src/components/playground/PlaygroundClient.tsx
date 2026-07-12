@@ -49,25 +49,25 @@ const RHYTHM_PROFILES = [
   {
     label: "Compact",
     utility: "rhythm-section-compact",
-    spacing: "64 / 64",
+    spacing: "48 / 48 -> 64 / 64",
     description: "用于紧凑型信息块、元数据区和较短的收束段。",
   },
   {
     label: "Normal",
     utility: "rhythm-section-normal",
-    spacing: "96 / 96",
+    spacing: "64 / 64 -> 96 / 96",
     description: "用于常规正文区块、列表页和大多数标准 section。",
   },
   {
     label: "Spacious",
     utility: "rhythm-section-spacious",
-    spacing: "96 / 96 -> 128 / 128",
+    spacing: "80 / 80 -> 128 / 128",
     description: "用于首页收束、关于页大区块和需要更强呼吸感的内容段。",
   },
   {
     label: "Hero",
     utility: "rhythm-section-hero",
-    spacing: "128 / 96 -> 160 / 128",
+    spacing: "96 / 64 -> 160 / 128",
     description: "用于首页 Hero 和作品页头图这类首屏落版区块。",
   },
 ] as const;

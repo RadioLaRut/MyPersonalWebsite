@@ -181,6 +181,7 @@ export type ParameterGridDesign = {
 
 export type ProjectSectionDesign = {
   lockupGap: ComponentDesignSpacingToken;
+  titleSize: TypographySize;
   titleUnderlineOpticalPull: ComponentDesignSpacingToken;
   textLeftBounds: ComponentResponsiveGridBounds;
   textRightBounds: ComponentResponsiveGridBounds;
@@ -196,6 +197,7 @@ export type HomeEndcapSectionDesign = {
   buttonTopSpacing: ComponentDesignSpacingToken;
   contentBounds: ComponentGridBounds;
   descriptionTopSpacing: ComponentDesignSpacingToken;
+  titleSize: TypographySize;
 };
 
 export type PortfolioHeroHeaderDesign = {
@@ -745,6 +747,7 @@ function normalizeProjectSectionDesign(value: unknown): ProjectSectionDesign {
       value.lockupGap,
       defaults.lockupGap,
     ),
+    titleSize: normalizeTypographySize(value.titleSize, defaults.titleSize),
     titleUnderlineOpticalPull: normalizeSpacingToken(
       value.titleUnderlineOpticalPull,
       defaults.titleUnderlineOpticalPull,
@@ -802,6 +805,7 @@ function normalizeHomeEndcapSectionDesign(
       value.descriptionTopSpacing,
       defaults.descriptionTopSpacing,
     ),
+    titleSize: normalizeTypographySize(value.titleSize, defaults.titleSize),
   };
 }
 
@@ -1023,6 +1027,7 @@ export function createDefaultComponentDesignDocument(): ComponentDesignDocument 
         buttonTopSpacing: "48",
         contentBounds: createDefaultBounds(4, 9),
         descriptionTopSpacing: "32",
+        titleSize: "display",
       },
       ImagePanel: {
         contentBounds: createDefaultBounds(2, 11),
@@ -1063,6 +1068,7 @@ export function createDefaultComponentDesignDocument(): ComponentDesignDocument 
       },
       ProjectSection: {
         lockupGap: "12",
+        titleSize: "display",
         titleUnderlineOpticalPull: "56",
         textLeftBounds: createDefaultResponsiveBounds(1, 11, 1, 10, 2, 9),
         textRightBounds: createDefaultResponsiveBounds(2, 12, 3, 12, 5, 12),

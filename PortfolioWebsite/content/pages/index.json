@@ -43,6 +43,7 @@
         "imageSrc": "/images/penguin/CyberRestaurant.webp",
         "link": "/works/penguin",
         "index": 1,
+        "align": "left",
         "mobileImageFocalX": 50,
         "mobileImageFocalY": 50
       }
