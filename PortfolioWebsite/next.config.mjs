@@ -14,6 +14,14 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60,
   },
+  experimental: {
+    outputFileTracingIncludes: {
+      "/*": [
+        "./content/component-design/**/*",
+        "./content/font-lab/**/*",
+      ],
+    },
+  },
   webpack: (config, { dev }) => {
     if (dev) {
       const ignorePattern = "**/content/pages/**";
