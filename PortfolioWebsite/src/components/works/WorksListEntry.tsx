@@ -83,7 +83,7 @@ export default function WorksListEntry({
       disabled={!isLinkEnabled}
       disabledElement="div"
       interactionPreset="blockLink"
-      className={`group relative grid min-h-[32svh] w-full content-center border-b border-white/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-2px] focus-visible:outline-white/70 ${cursorClass} sm:min-h-[36svh] lg:min-h-[42vh]`}
+      className={`group relative grid min-h-[26svh] w-full content-center border-b border-white/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-2px] focus-visible:outline-white/70 ${cursorClass} sm:min-h-[30svh] md:min-h-[34svh] lg:min-h-[42vh]`}
       data-active={active ? "true" : "false"}
       aria-label={
         typeof title === "string"
@@ -128,7 +128,7 @@ export default function WorksListEntry({
         ) : null}
       </AnimatePresence>
 
-      <div className={`grid-container relative z-10 items-center py-10 md:py-12 lg:py-16 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
+      <div className={`grid-container relative z-10 items-center py-8 md:py-12 lg:py-16 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
         <div className="col-start-1 col-span-2 grid content-start pt-5 md:hidden">
           <Typography
             preset="sans-body"
