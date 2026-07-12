@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const denied = assertLocalEditorAccess("api");
+  const denied = assertLocalEditorAccess("api", request, { requireToken: true });
   if (denied) {
     return denied;
   }

@@ -45,7 +45,7 @@ function resolveUploadDestination(outputName: string) {
 }
 
 export async function POST(request: Request) {
-  const denied = assertLocalEditorAccess("api");
+  const denied = assertLocalEditorAccess("api", request, { requireToken: true });
   if (denied) {
     return denied;
   }

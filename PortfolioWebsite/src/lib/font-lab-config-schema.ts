@@ -84,35 +84,72 @@ function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
 
-function parseRemFontSize(value: string) {
-  const match = value.trim().match(/^(-?\d*\.?\d+)rem$/i);
+const MAX_FONT_SIZE_VALUE_LENGTH = 96;
+const CSS_NUMBER_PATTERN = /^-?(?:\d+(?:\.\d+)?|\.\d+)$/;
+const CONTROL_CHARACTER_PATTERN = /[\u0000-\u001f\u007f]/;
 
-  if (!match) {
+function normalizeFontSizeInput(value: string) {
+  const trimmed = value.trim();
+  if (
+    !trimmed ||
+    trimmed.length > MAX_FONT_SIZE_VALUE_LENGTH ||
+    CONTROL_CHARACTER_PATTERN.test(trimmed)
+  ) {
     return null;
   }
 
-  const parsed = Number(match[1]);
+  return trimmed;
+}
+
+function parseCssNumber(value: string) {
+  if (!CSS_NUMBER_PATTERN.test(value)) {
+    return null;
+  }
+
+  const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-function parseClampFontSizeParts(value: string) {
-  const match = value.trim().match(
-    /^clamp\(\s*(-?\d*\.?\d+)rem\s*,\s*(-?\d*\.?\d+)vw\s*,\s*(-?\d*\.?\d+)rem\s*\)$/i,
-  );
-
-  if (!match) {
+function parseCssUnitValue(value: string, unit: "rem" | "vw") {
+  const trimmed = value.trim();
+  if (!trimmed.toLowerCase().endsWith(unit)) {
     return null;
   }
 
-  const minRem = Number(match[1]);
-  const viewportVw = Number(match[2]);
-  const maxRem = Number(match[3]);
+  const numberText = trimmed.slice(0, -unit.length);
+  if (!numberText || /\s/.test(numberText)) {
+    return null;
+  }
 
-  if (
-    !Number.isFinite(minRem) ||
-    !Number.isFinite(viewportVw) ||
-    !Number.isFinite(maxRem)
-  ) {
+  return parseCssNumber(numberText);
+}
+
+function parseRemFontSize(value: string) {
+  const normalized = normalizeFontSizeInput(value);
+  return normalized ? parseCssUnitValue(normalized, "rem") : null;
+}
+
+function parseClampFontSizeParts(value: string) {
+  const normalized = normalizeFontSizeInput(value);
+  if (!normalized) {
+    return null;
+  }
+
+  const lower = normalized.toLowerCase();
+  if (!lower.startsWith("clamp(") || !lower.endsWith(")")) {
+    return null;
+  }
+
+  const parts = normalized.slice("clamp(".length, -1).split(",");
+  if (parts.length !== 3) {
+    return null;
+  }
+
+  const minRem = parseCssUnitValue(parts[0], "rem");
+  const viewportVw = parseCssUnitValue(parts[1], "vw");
+  const maxRem = parseCssUnitValue(parts[2], "rem");
+
+  if (minRem === null || viewportVw === null || maxRem === null) {
     return null;
   }
 

@@ -1,4 +1,3 @@
-import { toAdminPathFromPublicPath, tryNormalizePublicPath } from "@/lib/public-paths";
 import type { PuckComponentType } from "@/puck/component-manifest";
 import { isPlainRecord } from "@/lib/json-utils";
 import type { ComponentType } from "react";
@@ -69,19 +68,4 @@ export function readSlot<T>(
   };
 }
 
-export function toEditorAwareHref(href: string | undefined, editMode?: boolean): string | undefined {
-  if (!href || !href.startsWith("/")) {
-    return href;
-  }
-
-  const normalizedHref = tryNormalizePublicPath(href);
-  if (!normalizedHref) {
-    return href;
-  }
-
-  if (editMode) {
-    return toAdminPathFromPublicPath(normalizedHref);
-  }
-
-  return normalizedHref;
-}
+export { toEditorAwareHref, toSafePuckHref } from "@/lib/puck-href";

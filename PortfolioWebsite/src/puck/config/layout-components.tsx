@@ -93,6 +93,7 @@ export const layoutComponents = {
         ...heroHeadlineImageFields.fields,
         _g_link: createFieldGroup("导航链接"),
         navLink: { type: "text", label: "Nav Link" },
+        navLinkLabel: { type: "text", contentEditable: true, label: "Nav Link Label" },
       },
       defaultProps: {
         eyebrow: "PROJECT",
@@ -100,8 +101,9 @@ export const layoutComponents = {
         subtitle: "Add a short project summary.",
         ...heroHeadlineImageFields.defaults,
         navLink: "",
+        navLinkLabel: "观看视频",
       },
-      render: ({ eyebrow, title, subtitle, heroImage, heroImagePreset, heroImageFitMode, navLink, editMode }) =>
+      render: ({ eyebrow, title, subtitle, heroImage, heroImagePreset, heroImageFitMode, navLink, navLinkLabel, editMode }) =>
         (
           <HeroHeadlineBlock
             eyebrow={eyebrow}
@@ -110,7 +112,8 @@ export const layoutComponents = {
             heroImage={heroImage}
             heroImagePreset={castImagePreset(heroImagePreset)}
             heroImageFitMode={castImageFitMode(heroImageFitMode)}
-            navLink={navLink}
+            navLink={toEditorAwareHref(navLink, editMode)}
+            navLinkLabel={navLinkLabel}
             editMode={editMode}
           />
         ),

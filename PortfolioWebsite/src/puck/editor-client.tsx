@@ -10,6 +10,7 @@ import {
   DEFAULT_PREVIEW_VIEWPORT,
   PUCK_PREVIEW_VIEWPORTS,
 } from "@/lib/preview-viewports";
+import { getLocalEditorAccessHeaders } from "@/lib/local-editor-access";
 import config from "@/puck/config";
 import { normalizeEditorPathInputToSlugKey, toAdminPathFromSlugKey, toPublicPathFromSlugKey } from "@/lib/public-paths";
 import { ChineseTextInputField } from "@/puck/fields/ChineseTextField";
@@ -310,6 +311,7 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...getLocalEditorAccessHeaders(),
         },
         body: JSON.stringify({
           data: publishPayload,

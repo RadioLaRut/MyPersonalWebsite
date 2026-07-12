@@ -278,6 +278,7 @@ export const COMPONENT_LAB_REGISTRY: Record<
         heroImagePreset="ratio-21-9"
         heroImageFitMode="x"
         navLink="https://www.bilibili.com"
+        navLinkLabel={variant === "stress" ? "下载可玩版本 / PLAYABLE BUILD" : "下载可玩版本"}
         editMode
       />
     ),

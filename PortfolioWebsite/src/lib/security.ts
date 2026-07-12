@@ -1,8 +1,19 @@
+import { timingSafeEqual } from "node:crypto";
+
 import { notFound } from "next/navigation.js";
 import { NextResponse } from "next/server.js";
-import { isTestingMode } from "@/lib/site-mode";
+
+import {
+  LOCAL_EDITOR_ACCESS_HEADER,
+  LOCAL_EDITOR_ACCESS_TOKEN_ENV,
+} from "./local-editor-access.ts";
+import { isTestingMode } from "./site-mode.ts";
 
 type EditorAccessType = "page" | "api";
+
+type EditorAccessOptions = {
+  requireToken?: boolean;
+};
 
 const PRODUCTION_ENV_BLOCKLIST = [
   "VERCEL",
@@ -17,6 +28,13 @@ const UNAUTHORIZED_BODY = {
   error: {
     code: "UNAUTHORIZED",
     message: "Editor access denied",
+  },
+} as const;
+
+const TOKEN_REQUIRED_BODY = {
+  error: {
+    code: "EDITOR_TOKEN_REQUIRED",
+    message: `Set ${LOCAL_EDITOR_ACCESS_TOKEN_ENV} and send ${LOCAL_EDITOR_ACCESS_HEADER}`,
   },
 } as const;
 
@@ -36,17 +54,53 @@ function canAccessLocalEditor(): boolean {
   );
 }
 
-export function assertLocalEditorAccess(type: EditorAccessType): NextResponse | void {
+function getConfiguredLocalEditorToken() {
+  const token = process.env[LOCAL_EDITOR_ACCESS_TOKEN_ENV]?.trim();
+  return token ? token : null;
+}
+
+function hasMatchingLocalEditorToken(request: Request | undefined, expectedToken: string) {
+  const actualToken = request?.headers.get(LOCAL_EDITOR_ACCESS_HEADER)?.trim();
+  if (!actualToken) {
+    return false;
+  }
+
+  const expected = Buffer.from(expectedToken);
+  const actual = Buffer.from(actualToken);
+  return expected.length === actual.length && timingSafeEqual(expected, actual);
+}
+
+function unauthorizedResponse(body: typeof UNAUTHORIZED_BODY | typeof TOKEN_REQUIRED_BODY = UNAUTHORIZED_BODY) {
+  return NextResponse.json(body, {
+    headers: NO_STORE_HEADER,
+    status: 403,
+  });
+}
+
+export function assertLocalEditorAccess(
+  type: EditorAccessType,
+  request?: Request,
+  options: EditorAccessOptions = {},
+): NextResponse | void {
   if (canAccessLocalEditor()) {
-    return;
+    if (!options.requireToken) {
+      return;
+    }
+
+    const expectedToken = getConfiguredLocalEditorToken();
+    if (
+      expectedToken &&
+      hasMatchingLocalEditorToken(request, expectedToken)
+    ) {
+      return;
+    }
+
+    return unauthorizedResponse(TOKEN_REQUIRED_BODY);
   }
 
   if (type === "page") {
     notFound();
   }
 
-  return NextResponse.json(UNAUTHORIZED_BODY, {
-    headers: NO_STORE_HEADER,
-    status: 403,
-  });
+  return unauthorizedResponse();
 }

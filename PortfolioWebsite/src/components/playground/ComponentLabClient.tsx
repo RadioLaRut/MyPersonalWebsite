@@ -24,6 +24,7 @@ import {
   type ComponentGridBounds,
   type ComponentResponsiveGridBounds,
 } from "@/lib/component-design-schema";
+import { getLocalEditorAccessHeaders } from "@/lib/local-editor-access";
 import {
   DEFAULT_PREVIEW_VIEWPORT,
   PREVIEW_VIEWPORTS,
@@ -608,6 +609,7 @@ export default function ComponentLabClient() {
         }),
         headers: {
           "Content-Type": "application/json",
+          ...getLocalEditorAccessHeaders(),
         },
         method: "POST",
       });

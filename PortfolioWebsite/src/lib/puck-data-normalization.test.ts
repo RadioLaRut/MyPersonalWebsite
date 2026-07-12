@@ -25,6 +25,30 @@ test("normalizePuckData canonicalizes Heroheadline and hydrates hero defaults", 
   assert.equal(hero.type, "HeroHeadline");
   assert.equal(hero.props.title, "PROJECT TITLE");
   assert.equal(hero.props.heroImage, "/images/train-station/2Day.webp");
+  assert.equal(hero.props.navLinkLabel, "观看视频");
+});
+
+test("normalizePuckData preserves an explicit HeroHeadline navigation label", () => {
+  const normalized = normalizePuckData({
+    content: [
+      {
+        type: "HeroHeadline",
+        props: {
+          id: "hero-penguin",
+          title: "企鹅贸易公司",
+          navLinkLabel: "下载可玩版本",
+        },
+      },
+    ],
+    root: {
+      props: {
+        title: "企鹅贸易公司",
+      },
+    },
+  });
+
+  const hero = normalized.content[0] as { props: Record<string, unknown> };
+  assert.equal(hero.props.navLinkLabel, "下载可玩版本");
 });
 
 test("normalizePuckData migrates LightingCollectionItem to ImagePanel.large", () => {
@@ -77,6 +101,7 @@ test("normalizePuckData hydrates blank HeroHeadline props", () => {
   const header = normalized.content[0] as { props: Record<string, unknown> };
   assert.equal(header.props.title, "PROJECT TITLE");
   assert.equal(header.props.heroImage, "/images/train-station/2Day.webp");
+  assert.equal(header.props.navLinkLabel, "观看视频");
 });
 
 test("normalizePuckData migrates ImageSlider left/right image aliases", () => {

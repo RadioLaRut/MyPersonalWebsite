@@ -15,6 +15,7 @@ const ITEM_DEFAULT_PROPS: Record<string, Record<string, unknown>> = {
     heroImagePreset: "ratio-21-9",
     heroImageFitMode: "x",
     navLink: "",
+    navLinkLabel: "观看视频",
   },
 };
 

@@ -15,6 +15,7 @@ import Typography from "@/components/common/Typography";
 import { FONT_LAB_UPDATED_EVENT } from "@/components/layout/FontLabGlobalVars";
 import { MotionButton } from "@/components/motion";
 import { buildFontLabDocumentCssVars } from "@/lib/font-lab-css-vars";
+import { getLocalEditorAccessHeaders } from "@/lib/local-editor-access";
 import {
   createDefaultFontLabDocument,
   parseFontLabDocument,
@@ -1036,6 +1037,7 @@ export default function FontLabClient() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...getLocalEditorAccessHeaders(),
         },
         body: JSON.stringify({
           activePreset,

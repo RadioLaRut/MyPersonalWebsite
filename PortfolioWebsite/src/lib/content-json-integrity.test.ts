@@ -13,20 +13,42 @@ import {
   validatePuckContentData,
   walkJsonFiles,
 } from "./puck-content-validation.ts";
+import { toSafePuckHref } from "./puck-href.ts";
 
 const projectRoot = path.resolve(process.cwd());
 const contentRoot = path.join(projectRoot, "content/pages");
 const publicRoot = path.join(projectRoot, "public");
 const editorEmptyStatePath = path.join(projectRoot, "content/component-design/editor-empty-state.json");
 const lightingCollectionsRoot = path.join(contentRoot, "works/lighting-portfolio");
+const penguinCaseStudyPath = path.join(contentRoot, "works/penguin.json");
 const editorEmptyStateData = JSON.parse(fs.readFileSync(editorEmptyStatePath, "utf8")) as {
   content: Array<{ props: Record<string, unknown>; type: string }>;
   root: { props: Record<string, unknown> };
+};
+const penguinCaseStudyData = JSON.parse(fs.readFileSync(penguinCaseStudyPath, "utf8")) as {
+  content: Array<{ props: Record<string, unknown>; type: string }>;
 };
 
 test("content pages satisfy the normalized Puck data contract", () => {
   const issues = validateContentPages({ contentRoot, publicRoot });
   assert.deepEqual(formatContentValidationIssues(issues), []);
+});
+
+test("penguin case study preserves playable CTAs and truthful contribution boundaries", () => {
+  const shareHref = "https://pan.baidu.com/s/1FSpd75VGEuJpnZHLOnEWHw?pwd=aavq";
+  const hero = penguinCaseStudyData.content.find((node) => node.type === "HeroHeadline");
+  const endcap = penguinCaseStudyData.content.find((node) => node.type === "HomeEndcapSection");
+  const serialized = JSON.stringify(penguinCaseStudyData);
+  const ids = penguinCaseStudyData.content.map((node) => node.props.id);
+
+  assert.equal(hero?.props.navLink, shareHref);
+  assert.equal(hero?.props.navLinkLabel, "下载可玩版本");
+  assert.equal(endcap?.props.buttonHref, shareHref);
+  assert.equal(endcap?.props.buttonLabel, "下载可玩版本");
+  assert.equal(toSafePuckHref(shareHref), shareHref);
+  assert.equal(new Set(ids).size, ids.length);
+  assert.match(serialized, /具体技术架构均由 AI 生成/);
+  assert.doesNotMatch(serialized, /8\s*人|半年|已完成并结项|大大提高|我实现了|我编写/);
 });
 
 test("editor empty-state fixture is valid neutral starter content", () => {
