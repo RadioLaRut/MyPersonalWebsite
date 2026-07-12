@@ -3,8 +3,8 @@ export const motionDurations = {
   deliberate: 1.1,
   fast: 0.3,
   heroSupporting: 0.95,
+  interactive: 0.4,
   navigationFooter: 0.45,
-  navigationHeader: 0.4,
   reveal: 0.82,
   slow: 0.65,
   standard: 0.52,
@@ -95,7 +95,7 @@ export const motionTransitions = {
     ease: motionEasings.standard,
   },
   hover: {
-    duration: motionDurations.navigationHeader,
+    duration: motionDurations.interactive,
     ease: motionEasings.standard,
   },
   navigationFooter: {
@@ -104,7 +104,7 @@ export const motionTransitions = {
     ease: "easeOut",
   },
   navigationHeader: {
-    duration: motionDurations.navigationHeader,
+    duration: motionDurations.interactive,
     ease: "easeOut",
   },
   navigationItem: {

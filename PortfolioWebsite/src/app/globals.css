@@ -230,9 +230,8 @@ html[data-site-mode="normal"] {
   background: linear-gradient(
     180deg,
     rgba(0, 0, 0, 0.28) 0%,
-    transparent 14%,
-    transparent 86%,
-    rgba(0, 0, 0, 0.52) 100%
+    transparent 16%,
+    transparent 100%
   );
 }
 

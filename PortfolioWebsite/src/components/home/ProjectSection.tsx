@@ -50,7 +50,7 @@ export default function ProjectSection({
   const isLinkEnabled = !editMode && Boolean(link);
   const cursorClass = isLinkEnabled ? "cursor-pointer" : "cursor-default";
   const sectionClassName = `relative m-0 grid min-h-[100svh] w-full place-items-center overflow-hidden p-0 mix-blend-normal group ${cursorClass}`;
-  const mediaLayerClassName = "absolute inset-0 grid place-items-center px-0";
+  const mediaLayerClassName = "absolute inset-x-0 -inset-y-[10%] grid place-items-center px-0 lg:inset-0";
 
   const { scrollYProgress } = useScroll({
     target: containerRef,

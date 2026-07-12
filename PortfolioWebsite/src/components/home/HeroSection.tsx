@@ -139,7 +139,7 @@ export default function HeroSection({
     >
       <div className={viewportWrapperClassName}>
         <motion.div
-          className="absolute inset-0 overflow-hidden"
+          className="absolute inset-x-0 -inset-y-[12%] overflow-hidden lg:inset-0"
           style={editMode ? undefined : { y, scale }}
         >
           <PresetImage
