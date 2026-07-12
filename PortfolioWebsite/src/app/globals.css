@@ -369,7 +369,8 @@ html[data-site-mode="normal"] svg {
   z-index: 9999;
 
   /* 居中定位 */
-  transform: translate(-50%, -50%);
+  transform: translate3d(0, 0, 0) translate(-50%, -50%);
+  will-change: transform;
 
   /* 平滑过渡：当切换各种 Hover 状态时，大小和颜色的拉伸效果 */
   transition: width 0.22s ease-out, height 0.22s ease-out, background-color 0.22s ease-out, border 0.22s ease-out, opacity 0.22s ease-out, box-shadow 0.22s ease-out, filter 0.22s ease-out;

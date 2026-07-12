@@ -8,6 +8,8 @@ type MediaMatchLike = {
 
 type MediaMatcher = (query: string) => MediaMatchLike;
 
+const DESKTOP_LAYOUT_MIN_WIDTH = 1024;
+
 export type InputCapabilitySource = {
   hasTouchStart?: boolean;
   innerWidth?: number;
@@ -54,7 +56,7 @@ export function resolveInputCapabilities(
   const maxTouchPoints = source.maxTouchPoints ?? 0;
   const innerWidth = source.innerWidth ?? 0;
   const hasTouchInput = Boolean(source.hasTouchStart) || maxTouchPoints > 0 || hasCoarsePointer;
-  const isSmallScreen = innerWidth > 0 && innerWidth < 1024;
+  const isSmallScreen = innerWidth > 0 && innerWidth < DESKTOP_LAYOUT_MIN_WIDTH;
   const isTouchLike = hasTouchInput && (!hasFinePointer || isSmallScreen || !canHover);
   const supportsHoverIntent = hasFinePointer && canHover && !isTouchLike;
 
@@ -66,6 +68,19 @@ export function resolveInputCapabilities(
     prefersReducedMotion,
     supportsHoverIntent,
   };
+}
+
+export function supportsDesktopCustomCursor(
+  source: InputCapabilitySource = getWindowCapabilitySource(),
+) {
+  const capabilities = resolveInputCapabilities(source);
+  const innerWidth = source.innerWidth ?? 0;
+
+  return (
+    innerWidth >= DESKTOP_LAYOUT_MIN_WIDTH &&
+    capabilities.supportsHoverIntent &&
+    !capabilities.prefersReducedMotion
+  );
 }
 
 function addMediaChangeListener(query: MediaQueryList, handler: () => void) {

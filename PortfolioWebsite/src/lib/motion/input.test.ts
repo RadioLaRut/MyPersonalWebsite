@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { resolveInputCapabilities } from "./input.ts";
+import {
+  resolveInputCapabilities,
+  supportsDesktopCustomCursor,
+} from "./input.ts";
 
 function createMatchMedia(matches: Record<string, boolean>) {
   return (query: string) => ({
@@ -63,4 +66,34 @@ test("resolveInputCapabilities keeps hybrid large screens hover-capable", () => 
 
   assert.equal(capabilities.isTouchLike, false);
   assert.equal(capabilities.supportsHoverIntent, true);
+});
+
+test("supportsDesktopCustomCursor enables a fine mouse on the desktop layout", () => {
+  const enabled = supportsDesktopCustomCursor({
+    innerWidth: 1440,
+    matchMedia: createMatchMedia({
+      "(hover: hover)": true,
+      "(pointer: fine)": true,
+      "(pointer: coarse)": false,
+      "(prefers-reduced-motion: reduce)": false,
+    }),
+    maxTouchPoints: 0,
+  });
+
+  assert.equal(enabled, true);
+});
+
+test("supportsDesktopCustomCursor never enables the custom cursor on mobile layouts", () => {
+  const enabled = supportsDesktopCustomCursor({
+    innerWidth: 390,
+    matchMedia: createMatchMedia({
+      "(hover: hover)": true,
+      "(pointer: fine)": true,
+      "(pointer: coarse)": false,
+      "(prefers-reduced-motion: reduce)": false,
+    }),
+    maxTouchPoints: 0,
+  });
+
+  assert.equal(enabled, false);
 });

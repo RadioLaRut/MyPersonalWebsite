@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ADMIN_MODE_ATTRIBUTE } from "@/lib/admin-attributes";
-import { resolveInputCapabilities } from "@/lib/motion";
+import { supportsDesktopCustomCursor } from "@/lib/motion";
 
 type CustomCursorProps = {
   isWithinIframe?: boolean;
@@ -58,17 +58,17 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
 
     const win = targetDocument?.defaultView || window;
     const pointerQuery = win.matchMedia("(pointer: fine)");
+    const hoverQuery = win.matchMedia("(hover: hover)");
     const reducedMotionQuery = win.matchMedia("(prefers-reduced-motion: reduce)");
 
     const updateCursorAvailability = () => {
-      const capabilities = resolveInputCapabilities({
-        hasTouchStart: "ontouchstart" in win,
-        innerWidth: win.innerWidth,
-        matchMedia: win.matchMedia.bind(win),
-        maxTouchPoints: win.navigator.maxTouchPoints,
-      });
       setIsCursorEnabled(
-        capabilities.supportsHoverIntent && !capabilities.prefersReducedMotion,
+        supportsDesktopCustomCursor({
+          hasTouchStart: "ontouchstart" in win,
+          innerWidth: win.innerWidth,
+          matchMedia: win.matchMedia.bind(win),
+          maxTouchPoints: win.navigator.maxTouchPoints,
+        }),
       );
     };
 
@@ -84,11 +84,15 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
 
     updateCursorAvailability();
     const removePointerListener = addMediaListener(pointerQuery, updateCursorAvailability);
+    const removeHoverListener = addMediaListener(hoverQuery, updateCursorAvailability);
     const removeMotionListener = addMediaListener(reducedMotionQuery, updateCursorAvailability);
+    win.addEventListener("resize", updateCursorAvailability);
 
     return () => {
       removePointerListener();
+      removeHoverListener();
       removeMotionListener();
+      win.removeEventListener("resize", updateCursorAvailability);
     };
   }, [isWithinIframe, pathname, targetDocument]);
 
@@ -128,10 +132,14 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
       }
     };
 
-    const onMouseMove = (e: MouseEvent) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      const target = e.target as Element;
+    const updatePointerTarget = (
+      clientX: number,
+      clientY: number,
+      eventTarget: EventTarget | null,
+    ) => {
+      mouseX = clientX;
+      mouseY = clientY;
+      const target = eventTarget as Element | null;
 
       const isInteractive = target?.closest?.(
         "a, button, input, [role='button'], .interactive",
@@ -145,7 +153,7 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
           const rect = magnetElement.getBoundingClientRect();
           const centerX = rect.left + rect.width / 2;
           const centerY = rect.top + rect.height / 2;
-          const distance = Math.hypot(centerX - e.clientX, centerY - e.clientY);
+          const distance = Math.hypot(centerX - clientX, centerY - clientY);
 
           if (distance < nearestDistance) {
             nearestDistance = distance;
@@ -189,6 +197,18 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
       }
     };
 
+    const onPointerMove = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") {
+        return;
+      }
+
+      updatePointerTarget(event.clientX, event.clientY, event.target);
+    };
+
+    const onMouseMove = (event: MouseEvent) => {
+      updatePointerTarget(event.clientX, event.clientY, event.target);
+    };
+
     const updateCursor = () => {
       const targetX = mouseX + (magnetX - mouseX) * magnetStrength;
       const targetY = mouseY + (magnetY - mouseY) * magnetStrength;
@@ -199,29 +219,67 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
 
       if (cursor) {
         const scale = isPressed ? 0.85 : 1;
-        cursor.style.transform = `translate(${currentX}px, ${currentY}px) translate(-50%, -50%) scale(${scale})`;
+        cursor.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%) scale(${scale})`;
       }
       rafId = requestAnimationFrame(updateCursor);
     };
 
-    win.addEventListener("mousemove", onMouseMove);
+    const supportsPointerEvents = "PointerEvent" in win;
+    if (supportsPointerEvents) {
+      activeDocument.addEventListener("pointermove", onPointerMove, {
+        capture: true,
+        passive: true,
+      });
+    } else {
+      activeDocument.addEventListener("mousemove", onMouseMove, {
+        capture: true,
+        passive: true,
+      });
+    }
     updateCursor();
 
-    const onMouseDown = () => {
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.pointerType === "mouse" && event.button === 0) {
+        isPressed = true;
+      }
+    };
+    const onPointerUp = (event: PointerEvent) => {
+      if (event.pointerType === "mouse") {
+        isPressed = false;
+      }
+    };
+    const onMouseDown = (event: MouseEvent) => {
+      if (event.button !== 0) {
+        return;
+      }
+
       isPressed = true;
     };
     const onMouseUp = () => {
       isPressed = false;
     };
 
-    win.addEventListener("mousedown", onMouseDown);
-    win.addEventListener("mouseup", onMouseUp);
+    if (supportsPointerEvents) {
+      activeDocument.addEventListener("pointerdown", onPointerDown, true);
+      activeDocument.addEventListener("pointerup", onPointerUp, true);
+      activeDocument.addEventListener("pointercancel", onPointerUp, true);
+    } else {
+      activeDocument.addEventListener("mousedown", onMouseDown, true);
+      activeDocument.addEventListener("mouseup", onMouseUp, true);
+    }
 
     return () => {
       clearMagnet();
-      win.removeEventListener("mousemove", onMouseMove);
-      win.removeEventListener("mousedown", onMouseDown);
-      win.removeEventListener("mouseup", onMouseUp);
+      if (supportsPointerEvents) {
+        activeDocument.removeEventListener("pointermove", onPointerMove, true);
+        activeDocument.removeEventListener("pointerdown", onPointerDown, true);
+        activeDocument.removeEventListener("pointerup", onPointerUp, true);
+        activeDocument.removeEventListener("pointercancel", onPointerUp, true);
+      } else {
+        activeDocument.removeEventListener("mousemove", onMouseMove, true);
+        activeDocument.removeEventListener("mousedown", onMouseDown, true);
+        activeDocument.removeEventListener("mouseup", onMouseUp, true);
+      }
       cancelAnimationFrame(rafId);
     };
   }, [isCursorEnabled, pathname, targetDocument]);
