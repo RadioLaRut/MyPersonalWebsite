@@ -77,10 +77,7 @@
       "type": "NextProjectBlock",
       "props": {
         "id": "next-1",
-        "nextId": "holy-tank",
-        "href": "/works/holy-tank",
-        "nextName": "HOLY TANK (帅油桶)",
-        "nextBg": "/images/holy-tank/HostileArchitecture.webp"
+        "nextId": "wow-otto"
       }
     }
   ],

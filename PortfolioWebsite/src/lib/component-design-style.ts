@@ -66,6 +66,38 @@ const GRID_LG_START_CLASS_BY_COL = [
   "lg:col-start-12",
 ] as const;
 
+const GRID_MD_START_CLASS_BY_COL = [
+  "",
+  "md:col-start-1",
+  "md:col-start-2",
+  "md:col-start-3",
+  "md:col-start-4",
+  "md:col-start-5",
+  "md:col-start-6",
+  "md:col-start-7",
+  "md:col-start-8",
+  "md:col-start-9",
+  "md:col-start-10",
+  "md:col-start-11",
+  "md:col-start-12",
+] as const;
+
+const GRID_MD_SPAN_CLASS_BY_SPAN = [
+  "",
+  "md:col-span-1",
+  "md:col-span-2",
+  "md:col-span-3",
+  "md:col-span-4",
+  "md:col-span-5",
+  "md:col-span-6",
+  "md:col-span-7",
+  "md:col-span-8",
+  "md:col-span-9",
+  "md:col-span-10",
+  "md:col-span-11",
+  "md:col-span-12",
+] as const;
+
 const GRID_LG_SPAN_CLASS_BY_SPAN = [
   "",
   "lg:col-span-1",
@@ -103,11 +135,20 @@ export function getGridColumnClassName(bounds: ComponentGridBounds): string {
   return `${GRID_START_CLASS_BY_COL[bounds.leftCol]} ${GRID_SPAN_CLASS_BY_SPAN[span]}`;
 }
 
+export function createResponsiveGridBounds(
+  base: ComponentGridBounds,
+  md: ComponentGridBounds = base,
+  lg: ComponentGridBounds = md,
+): ComponentResponsiveGridBounds {
+  return { base, md, lg };
+}
+
 export function getResponsiveGridColumnClassName(
   bounds: ComponentResponsiveGridBounds,
 ): string {
+  const mdSpan = getGridSpan(bounds.md);
   const lgSpan = getGridSpan(bounds.lg);
-  return `${getGridColumnClassName(bounds.base)} ${GRID_LG_START_CLASS_BY_COL[bounds.lg.leftCol]} ${GRID_LG_SPAN_CLASS_BY_SPAN[lgSpan]}`;
+  return `${getGridColumnClassName(bounds.base)} ${GRID_MD_START_CLASS_BY_COL[bounds.md.leftCol]} ${GRID_MD_SPAN_CLASS_BY_SPAN[mdSpan]} ${GRID_LG_START_CLASS_BY_COL[bounds.lg.leftCol]} ${GRID_LG_SPAN_CLASS_BY_SPAN[lgSpan]}`;
 }
 
 export function getGridSpanClassName(span: number): string {

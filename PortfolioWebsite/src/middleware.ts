@@ -47,7 +47,7 @@ export function middleware(request: NextRequest) {
     if (result.kind === "redirect") {
       const redirectUrl = request.nextUrl.clone();
       redirectUrl.pathname = result.to;
-      return NextResponse.redirect(redirectUrl, 307);
+      return NextResponse.redirect(redirectUrl, 308);
     }
   }
 

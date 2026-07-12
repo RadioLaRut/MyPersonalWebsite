@@ -2,6 +2,27 @@ import { toAdminPathFromPublicPath, tryNormalizePublicPath } from "./public-path
 
 const SAFE_EXTERNAL_HREF_PROTOCOLS = new Set(["http:", "https:", "mailto:", "tel:"]);
 const HREF_CONTROL_CHARACTER_PATTERN = /[\u0000-\u001f\u007f]/;
+const LOCAL_HREF_ORIGIN = "https://portfolio.local";
+
+function parseSafeLocalHref(href: string) {
+  if (!href.startsWith("/") || href.startsWith("//")) {
+    return null;
+  }
+
+  try {
+    const parsed = new URL(href, LOCAL_HREF_ORIGIN);
+    if (parsed.origin !== LOCAL_HREF_ORIGIN) {
+      return null;
+    }
+
+    const pathname = tryNormalizePublicPath(parsed.pathname);
+    return pathname
+      ? { hash: parsed.hash, pathname, search: parsed.search }
+      : null;
+  } catch {
+    return null;
+  }
+}
 
 export function toSafePuckHref(href: string | undefined): string | undefined {
   if (!href || HREF_CONTROL_CHARACTER_PATTERN.test(href)) {
@@ -14,7 +35,10 @@ export function toSafePuckHref(href: string | undefined): string | undefined {
   }
 
   if (trimmed.startsWith("/")) {
-    return tryNormalizePublicPath(trimmed) ?? undefined;
+    const localHref = parseSafeLocalHref(trimmed);
+    return localHref
+      ? `${localHref.pathname}${localHref.search}${localHref.hash}`
+      : undefined;
   }
 
   if (trimmed.startsWith("#")) {
@@ -36,7 +60,10 @@ export function toEditorAwareHref(href: string | undefined, editMode?: boolean):
   }
 
   if (editMode) {
-    return toAdminPathFromPublicPath(safeHref);
+    const localHref = parseSafeLocalHref(safeHref);
+    return localHref
+      ? `${toAdminPathFromPublicPath(localHref.pathname)}${localHref.search}${localHref.hash}`
+      : undefined;
   }
 
   return safeHref;

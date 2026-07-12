@@ -5,7 +5,8 @@ import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
 import {
-  getGridColumnClassName,
+  createResponsiveGridBounds,
+  getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
@@ -110,7 +111,11 @@ export default function BreakdownTriptych({
           text={col1Text}
           img={col1Img}
           alt={col1Alt}
-          boundsClassName={getGridColumnClassName(design.col1Bounds)}
+          boundsClassName={getResponsiveGridColumnClassName(createResponsiveGridBounds(
+            { leftCol: 1, rightCol: 12 },
+            { leftCol: 1, rightCol: 6 },
+            design.col1Bounds,
+          ))}
           preset={col1Preset}
           fitMode={col1FitMode}
         />
@@ -119,10 +124,14 @@ export default function BreakdownTriptych({
           text={col2Text}
           img={col2Img}
           alt={col2Alt}
-          boundsClassName={getGridColumnClassName(design.col2Bounds)}
+          boundsClassName={getResponsiveGridColumnClassName(createResponsiveGridBounds(
+            { leftCol: 1, rightCol: 12 },
+            { leftCol: 7, rightCol: 12 },
+            design.col2Bounds,
+          ))}
           preset={col2Preset}
           fitMode={col2FitMode}
-          className="mt-[var(--triptych-col-top-spacing)] lg:mt-0"
+          className="mt-[var(--triptych-col-top-spacing)] md:mt-0"
           style={col2Style}
         />
         <TriptychColumn
@@ -130,7 +139,11 @@ export default function BreakdownTriptych({
           text={col3Text}
           img={col3Img}
           alt={col3Alt}
-          boundsClassName={getGridColumnClassName(design.col3Bounds)}
+          boundsClassName={getResponsiveGridColumnClassName(createResponsiveGridBounds(
+            { leftCol: 1, rightCol: 12 },
+            { leftCol: 1, rightCol: 12 },
+            design.col3Bounds,
+          ))}
           preset={col3Preset}
           fitMode={col3FitMode}
           className="mt-[var(--triptych-col-top-spacing)] lg:mt-0"

@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   calculateHorizontalPercent,
+  calculateSliderKeyboardPercent,
   classifyDirectionalIntent,
   clampPercent,
 } from "./drag.ts";
@@ -20,6 +21,20 @@ test("calculateHorizontalPercent maps a client x coordinate into a clamped perce
   assert.equal(calculateHorizontalPercent(300, bounds), 50);
   assert.equal(calculateHorizontalPercent(500, bounds), 100);
   assert.equal(calculateHorizontalPercent(620, bounds), 100);
+});
+
+test("calculateSliderKeyboardPercent supports slider navigation keys and clamps results", () => {
+  assert.equal(calculateSliderKeyboardPercent(50, "ArrowLeft"), 49);
+  assert.equal(calculateSliderKeyboardPercent(50, "ArrowRight"), 51);
+  assert.equal(calculateSliderKeyboardPercent(50, "ArrowDown"), 49);
+  assert.equal(calculateSliderKeyboardPercent(50, "ArrowUp"), 51);
+  assert.equal(calculateSliderKeyboardPercent(50, "PageDown"), 40);
+  assert.equal(calculateSliderKeyboardPercent(50, "PageUp"), 60);
+  assert.equal(calculateSliderKeyboardPercent(50, "Home"), 0);
+  assert.equal(calculateSliderKeyboardPercent(50, "End"), 100);
+  assert.equal(calculateSliderKeyboardPercent(0, "ArrowLeft"), 0);
+  assert.equal(calculateSliderKeyboardPercent(100, "PageUp"), 100);
+  assert.equal(calculateSliderKeyboardPercent(50, "Enter"), null);
 });
 
 test("classifyDirectionalIntent waits until movement crosses the threshold", () => {

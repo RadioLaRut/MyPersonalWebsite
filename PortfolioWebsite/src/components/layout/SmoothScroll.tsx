@@ -60,22 +60,5 @@ export default function SmoothScroll({
     };
   }, [shouldDisableSmoothScroll]);
 
-  useEffect(() => {
-    if (!pathname) {
-      return;
-    }
-
-    const resetScrollPosition = () => {
-      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-    };
-
-    resetScrollPosition();
-    const frameId = requestAnimationFrame(resetScrollPosition);
-
-    return () => cancelAnimationFrame(frameId);
-  }, [pathname]);
-
   return <>{children}</>;
 }

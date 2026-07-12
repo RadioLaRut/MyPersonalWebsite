@@ -124,7 +124,7 @@ export default function HeroHeadlineBlock({
   }
 
   return (
-    <header className="relative flex h-[85vh] w-full items-center justify-center overflow-hidden bg-black">
+    <header className="relative flex min-h-[85svh] w-full items-center justify-center overflow-hidden bg-black">
       {resolvedHeroImage ? (
         <div className="absolute inset-0 flex items-center justify-center">
           <PresetImage
@@ -132,6 +132,7 @@ export default function HeroHeadlineBlock({
             alt={heroImageAlt}
             preset={heroImagePreset}
             fitMode={heroImageFitMode}
+            fitModeByBreakpoint={{ base: "cover", lg: heroImageFitMode ?? "x" }}
             sizes="100vw"
             priority
             frameClassName="w-full opacity-70"

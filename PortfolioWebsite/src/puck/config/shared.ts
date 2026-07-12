@@ -13,6 +13,7 @@ type PuckSlotComponent = ComponentType<{
 }>;
 
 type EntryFieldKey =
+  | "aliases"
   | "category"
   | "company"
   | "desc"

@@ -5,7 +5,8 @@ import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
 import {
-  getGridColumnClassName,
+  createResponsiveGridBounds,
+  getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
 } from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
@@ -34,7 +35,7 @@ export default function ImagePanel({
 
   if (variant === "fullscreen") {
     return (
-      <div className="relative h-full min-h-screen min-h-[100dvh] w-full bg-black">
+      <div className="relative h-full min-h-[100svh] w-full bg-black">
         <div className="grid h-full w-full place-items-center">
           <PresetImage
             src={src}
@@ -61,7 +62,11 @@ export default function ImagePanel({
     return (
       <section className={`w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
         <div className="grid-container">
-          <figure className={`${getGridColumnClassName(design.largeBounds)} overflow-hidden rounded-none border border-white/10 bg-white/[0.02]`}>
+          <figure className={`${getResponsiveGridColumnClassName(createResponsiveGridBounds(
+            { leftCol: 1, rightCol: 12 },
+            { leftCol: 2, rightCol: 11 },
+            design.largeBounds,
+          ))} overflow-hidden rounded-none border border-white/10 bg-white/[0.02]`}>
             <PresetImage
               alt={imageAlt}
               src={src}
@@ -88,7 +93,11 @@ export default function ImagePanel({
   return (
     <section className={`w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
       <div className="grid-container">
-        <figure className={`${getGridColumnClassName(design.contentBounds)} mx-auto w-full max-w-5xl overflow-hidden border border-white/15 bg-white/[0.03]`}>
+        <figure className={`${getResponsiveGridColumnClassName(createResponsiveGridBounds(
+          { leftCol: 1, rightCol: 12 },
+          { leftCol: 2, rightCol: 11 },
+          design.contentBounds,
+        ))} mx-auto w-full max-w-5xl overflow-hidden border border-white/15 bg-white/[0.03]`}>
           <PresetImage alt={imageAlt} src={src} preset={preset} fitMode={fitMode} />
           {caption ? (
             <figcaption className="border-t border-white/15 px-4 py-3">

@@ -6,6 +6,7 @@ import { getGridColumnClassName } from "@/lib/component-design-style";
 import { motion, useInputCapabilities } from "@/lib/motion";
 
 export interface ContactFlashlightBlockProps {
+    anchorId?: string;
     maskRadius?: number;
     maskSmoothness?: number;
     darkTextColor?: string;
@@ -15,6 +16,9 @@ export interface ContactFlashlightBlockProps {
     taglineSub?: ReactNode;
     email?: ReactNode;
     wechat?: ReactNode;
+    copyLabel?: ReactNode;
+    copySuccessMessage?: string;
+    copyErrorMessage?: string;
     experienceHistory?: { company: ReactNode; role: ReactNode }[];
     creativeDirection?: { title: ReactNode; subtitle: ReactNode }[];
     experienceContent?: ReactNode;
@@ -23,6 +27,7 @@ export interface ContactFlashlightBlockProps {
 }
 
 export default function ContactFlashlightBlock({
+    anchorId = "contact",
     maskRadius = 500,
     maskSmoothness = 40,
     darkTextColor = "rgba(255,255,255,0.4)",
@@ -32,6 +37,9 @@ export default function ContactFlashlightBlock({
     taglineSub,
     email,
     wechat,
+    copyLabel = "复制微信号",
+    copySuccessMessage = "微信号已复制",
+    copyErrorMessage = "复制失败，请手动选择微信号",
     experienceHistory = [],
     creativeDirection = [],
     experienceContent,
@@ -42,8 +50,36 @@ export default function ContactFlashlightBlock({
     const containerRef = useRef<HTMLDivElement>(null);
     const revealLayerRef = useRef<HTMLDivElement>(null);
     const [isTouchDevice, setIsTouchDevice] = useState(false);
+    const [copyStatus, setCopyStatus] = useState<"idle" | "success" | "error">("idle");
+    const copyResetTimerRef = useRef<number | null>(null);
     const { isTouchLike } = useInputCapabilities();
     const disablesFlashlight = editMode || isTouchLike || isTouchDevice;
+    const emailText = typeof email === "string" ? email.trim() : "";
+    const wechatText = typeof wechat === "string" ? wechat.trim() : "";
+
+    useEffect(() => () => {
+        if (copyResetTimerRef.current !== null) {
+            window.clearTimeout(copyResetTimerRef.current);
+        }
+    }, []);
+
+    const copyWechat = async () => {
+        if (!wechatText || !navigator.clipboard) {
+            setCopyStatus("error");
+        } else {
+            try {
+                await navigator.clipboard.writeText(wechatText);
+                setCopyStatus("success");
+            } catch {
+                setCopyStatus("error");
+            }
+        }
+
+        if (copyResetTimerRef.current !== null) {
+            window.clearTimeout(copyResetTimerRef.current);
+        }
+        copyResetTimerRef.current = window.setTimeout(() => setCopyStatus("idle"), 3000);
+    };
 
     useEffect(() => {
         if (editMode) {
@@ -137,7 +173,7 @@ export default function ContactFlashlightBlock({
         maskRepeat: "no-repeat",
     };
 
-    const renderContentData = () => (
+    const renderContentData = (interactive = true) => (
         <div className="grid-container w-full rhythm-section-spacious">
             <section className={`${getGridColumnClassName(design.heroBounds)} mb-24 grid rhythm-stack-3 lg:mb-32`}>
                 <motion.h1
@@ -297,16 +333,45 @@ export default function ContactFlashlightBlock({
                     >
                         WeChat / Social
                     </Typography>
-                    <Typography
-                        as="span"
-                        preset="gothic-editorial"
-                        size="body-lg"
-                        weight="semantic"
-                        wrapPolicy="url"
-                        className="copyable-contact block whitespace-nowrap text-left mix-blend-normal"
+                    <button
+                        type="button"
+                        onClick={copyWechat}
+                        disabled={!wechatText || editMode || !interactive}
+                        className="copyable-contact group grid w-fit max-w-full gap-2 text-left mix-blend-normal focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-current disabled:cursor-text"
+                        aria-label={wechatText ? `复制微信号 ${wechatText}` : "微信号不可复制"}
                     >
-                        {wechat}
-                    </Typography>
+                        <Typography
+                            as="span"
+                            preset="gothic-editorial"
+                            size="body-lg"
+                            weight="semantic"
+                            wrapPolicy="url"
+                            className="break-all text-inherit"
+                        >
+                            {wechat}
+                        </Typography>
+                        <Typography
+                            as="span"
+                            preset="sans-body"
+                            size="caption"
+                            weight="semantic"
+                            wrapPolicy="label"
+                            className="opacity-50 transition-opacity group-hover:opacity-80 group-focus-visible:opacity-80"
+                        >
+                            {copyStatus === "success"
+                                ? copySuccessMessage
+                                : copyStatus === "error"
+                                  ? copyErrorMessage
+                                  : copyLabel}
+                        </Typography>
+                    </button>
+                    <span className="sr-only" role="status" aria-live="polite">
+                        {copyStatus === "success"
+                            ? copySuccessMessage
+                            : copyStatus === "error"
+                              ? copyErrorMessage
+                              : ""}
+                    </span>
                 </div>
 
                 <div className="rhythm-stack-3">
@@ -320,23 +385,45 @@ export default function ContactFlashlightBlock({
                     >
                         Email / Contact
                     </Typography>
-                    <Typography
-                        as="span"
-                        preset="gothic-editorial"
-                        size="body-lg"
-                        weight="semantic"
-                        wrapPolicy="url"
-                        className="copyable-contact block whitespace-nowrap mix-blend-normal"
-                    >
-                        {email}
-                    </Typography>
+                    {emailText ? (
+                        <a
+                            href={`mailto:${emailText}`}
+                            tabIndex={interactive ? undefined : -1}
+                            className="copyable-contact block w-fit max-w-full break-all mix-blend-normal focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-current"
+                        >
+                            <Typography
+                                as="span"
+                                preset="gothic-editorial"
+                                size="body-lg"
+                                weight="semantic"
+                                wrapPolicy="url"
+                                className="text-inherit"
+                            >
+                                {email}
+                            </Typography>
+                        </a>
+                    ) : (
+                        <Typography
+                            as="span"
+                            preset="gothic-editorial"
+                            size="body-lg"
+                            weight="semantic"
+                            wrapPolicy="url"
+                            className="copyable-contact block break-all mix-blend-normal"
+                        >
+                            {email}
+                        </Typography>
+                    )}
                 </div>
             </motion.section>
         </div>
     );
 
     return (
-        <div className="relative w-full overflow-hidden selection:bg-white selection:text-black">
+        <div
+            id={anchorId || undefined}
+            className="relative w-full scroll-mt-24 overflow-hidden selection:bg-white selection:text-black"
+        >
             <div ref={containerRef} className="relative w-full mx-auto pb-16">
                 {editMode ? (
                     <div
@@ -362,7 +449,7 @@ export default function ContactFlashlightBlock({
                     aria-hidden="true"
                     style={revealLayerStyle}
                 >
-                    {renderContentData()}
+                    {renderContentData(false)}
                 </div>
                     </>
                 )}

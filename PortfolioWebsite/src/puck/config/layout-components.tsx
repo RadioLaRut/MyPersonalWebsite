@@ -217,6 +217,7 @@ export const layoutComponents = {
         _g_text: createFieldGroup("文本内容"),
         eyebrow: { type: "text", contentEditable: true, label: "Eyebrow" },
         title: { type: "text", contentEditable: true, label: "Title" },
+        positioning: { type: "text", contentEditable: true, label: "定位文案" },
         subtitle: { type: "text", contentEditable: true, label: "Subtitle" },
         description: { type: "textarea", contentEditable: true, label: "Description" },
         _g_cta: createFieldGroup("行动按钮 (CTA)"),
@@ -229,10 +230,13 @@ export const layoutComponents = {
         imageAlt: { type: "text", label: "Image Alt" },
         imagePreset: { ...imagePresetField, label: "Image Preset" },
         imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
+        mobileImageFocalX: { type: "number", label: "移动端焦点 X (%)" },
+        mobileImageFocalY: { type: "number", label: "移动端焦点 Y (%)" },
       },
       defaultProps: {
         eyebrow: "LIGHTING / TECH ART / GAME DESIGN",
         title: "JIANG\nCHENGYAN",
+        positioning: "让氛围、系统与落地流程共同服务体验。",
         subtitle: "",
         description: "",
         primaryCtaLabel: "",
@@ -243,11 +247,14 @@ export const layoutComponents = {
         imageAlt: "Hero Background",
         imagePreset: "ratio-21-9",
         imageFitMode: "x",
+        mobileImageFocalX: 28,
+        mobileImageFocalY: 50,
       },
-      render: ({ eyebrow, title, subtitle, description, primaryCtaLabel, primaryCtaHref, secondaryCtaLabel, secondaryCtaHref, imageSrc, imageAlt, imagePreset, imageFitMode, editMode }) => (
+      render: ({ eyebrow, title, positioning, subtitle, description, primaryCtaLabel, primaryCtaHref, secondaryCtaLabel, secondaryCtaHref, imageSrc, imageAlt, imagePreset, imageFitMode, mobileImageFocalX, mobileImageFocalY, editMode }) => (
         <HeroSection
           eyebrow={eyebrow}
           title={title}
+          positioning={positioning}
           subtitle={subtitle}
           description={description}
           primaryCtaLabel={primaryCtaLabel}
@@ -258,6 +265,8 @@ export const layoutComponents = {
           imageAlt={imageAlt}
           imagePreset={castImagePreset(imagePreset)}
           imageFitMode={castImageFitMode(imageFitMode)}
+          mobileImageFocalX={mobileImageFocalX}
+          mobileImageFocalY={mobileImageFocalY}
           editMode={editMode}
         />
       )

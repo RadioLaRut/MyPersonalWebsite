@@ -85,6 +85,23 @@ test("validatePuckContentData accepts legacy component nodes after stable id nor
   assert.deepEqual(issues, []);
 });
 
+test("validatePuckContentData rejects native image presets paired with cover or y fit", () => {
+  const issues = validatePuckContentData({
+    content: [
+      {
+        type: "ImageSlider",
+        props: {
+          id: "invalid-native-fit",
+          imagePreset: "native",
+          imageFitMode: "y",
+        },
+      },
+    ],
+  });
+
+  assert.match(issueText(issues), /native image preset cannot use y fit mode/i);
+});
+
 test("validateContentPageFilePath rejects non-canonical slug file names", () => {
   const { contentRoot } = makeFixtureRoot();
   const issues = validateContentPageFilePath(path.join(contentRoot, "Works/Bad.JSON"), contentRoot);
@@ -110,6 +127,26 @@ test("validateContentPages rejects missing public image references", () => {
   const issues = validateContentPages({ contentRoot, publicRoot });
   assert.match(issueText(issues), /missing\.webp/);
   assert.match(issueText(issues), /does not exist/i);
+});
+
+test("validateContentPages rejects placeholder images in public content", () => {
+  const { contentRoot, publicRoot } = makeFixtureRoot();
+  fs.mkdirSync(path.join(publicRoot, "assets/images"), { recursive: true });
+  fs.writeFileSync(path.join(publicRoot, "assets/images/placeholder.svg"), "");
+  writeJson(path.join(contentRoot, "index.json"), {
+    content: [
+      {
+        type: "ImagePanel",
+        props: {
+          id: "placeholder-image",
+          src: "/assets/images/placeholder.svg",
+        },
+      },
+    ],
+  });
+
+  const issues = validateContentPages({ contentRoot, publicRoot });
+  assert.match(issueText(issues), /cannot use placeholder image/i);
 });
 
 test("validateContentPages rejects public image references with casing mismatches", () => {

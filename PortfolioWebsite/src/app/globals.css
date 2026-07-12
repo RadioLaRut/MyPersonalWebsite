@@ -10,6 +10,7 @@
   --surface-muted: rgba(255, 255, 255, 0.03);
   --border-subtle: rgba(255, 255, 255, 0.1);
   --grid-max-width: 1680px;
+  --grid-gap: 1rem;
   --rhythm-unit: 8px;
   --rhythm-2: calc(var(--rhythm-unit) * 2);
   --rhythm-3: calc(var(--rhythm-unit) * 3);
@@ -87,23 +88,30 @@ body::-webkit-scrollbar {
   display: grid;
   /* 统一使用 12 列布局 */
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 1rem;
-  width: 100%;
-
-  /* 安全边距：两端保留 4% 视口宽度的呼吸感 */
-  padding-left: 4vw;
-  padding-right: 4vw;
+  gap: var(--grid-gap);
+  width: min(92vw, var(--grid-max-width));
+  padding-left: 0;
+  padding-right: 0;
   margin-left: auto;
   margin-right: auto;
-  max-width: var(--grid-max-width);
-
 }
 
-/* 桌面端 (1024px+) 增加间距 */
+/* 桌面端 (1024px+) 使用规范中的 24px 列间距。 */
 @media (min-width: 1024px) {
-  .grid-container {
-    gap: 2rem;
+  :root {
+    --grid-gap: 1.5rem;
   }
+
+  .grid-container {
+    gap: var(--grid-gap);
+  }
+}
+
+.grid-subgrid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gap);
+  row-gap: var(--rhythm-4);
 }
 
 /**
@@ -197,6 +205,22 @@ html[data-site-mode="normal"] {
 .typography-run--latin,
 .typography-run--cjk {
   display: inline;
+}
+
+.responsive-preset-image {
+  object-position: var(--preset-image-position-base, 50% 50%);
+}
+
+@media (min-width: 768px) {
+  .responsive-preset-image {
+    object-position: var(--preset-image-position-md, var(--preset-image-position-base, 50% 50%));
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-preset-image {
+    object-position: var(--preset-image-position-lg, var(--preset-image-position-md, var(--preset-image-position-base, 50% 50%)));
+  }
 }
 
 .font-lab-grid {

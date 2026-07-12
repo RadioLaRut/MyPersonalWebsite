@@ -1,4 +1,5 @@
 import { trySafeNormalizeSlugSegment } from "./slug-segments.ts";
+import { getProjectAliasTarget } from "./project-catalog.ts";
 
 export const CANONICAL_PLACEHOLDER_PATH = "/assets/images/placeholder.svg";
 
@@ -149,11 +150,15 @@ export function normalizeLegacyPublicPath(pathname: string | null | undefined): 
 }
 
 export function toCanonicalWorkSlug(slug: string): string {
-  return LEGACY_WORK_SLUG_ALIASES[slug as keyof typeof LEGACY_WORK_SLUG_ALIASES] ?? slug;
+  return (
+    getProjectAliasTarget(slug) ??
+    LEGACY_WORK_SLUG_ALIASES[slug as keyof typeof LEGACY_WORK_SLUG_ALIASES] ??
+    slug
+  );
 }
 
 export function isLegacyWorkSlug(slug: string): boolean {
-  return slug in LEGACY_WORK_SLUG_ALIASES;
+  return Boolean(getProjectAliasTarget(slug)) || slug in LEGACY_WORK_SLUG_ALIASES;
 }
 
 export function toPublicPathFromSlugKey(slugKey: string): string {

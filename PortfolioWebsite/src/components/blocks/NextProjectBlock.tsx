@@ -11,36 +11,27 @@ import {
     getResponsiveGridColumnClassName,
     getSpacingRem,
 } from "@/lib/component-design-style";
-import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
-import { CANONICAL_PLACEHOLDER_PATH } from "@/lib/public-paths";
+import {
+    resolveProjectDestination,
+    WORKS_INDEX_DESTINATION,
+} from "@/lib/project-catalog";
 
 interface NextProjectBlockProps {
     nextId: string;
-    nextName: string;
-    nextBg: string;
-    href?: string;
-    imagePreset?: ImagePreset;
-    imageFitMode?: ImageFitMode;
     editMode?: boolean;
 }
 
 export default function NextProjectBlock({
     nextId,
-    nextName,
-    nextBg,
-    href,
-    imagePreset = "ratio-21-9",
-    imageFitMode = "x",
     editMode = false,
 }: NextProjectBlockProps) {
     const design = useComponentDesign("NextProjectBlock");
-    const nextHref = href ?? `/works/${nextId}`;
-    const backgroundImage = nextBg || CANONICAL_PLACEHOLDER_PATH;
+    const destination = resolveProjectDestination(nextId) ?? WORKS_INDEX_DESTINATION;
 
     return (
         <footer className="mt-0 border-t border-white/20 relative z-20">
             <MotionLink
-                href={nextHref}
+                href={destination.href}
                 disabled={editMode}
                 interactionPreset="blockLink"
                 className={`group block relative h-[40vh] md:h-[60vh] overflow-hidden w-full bg-black ${editMode ? "cursor-default" : "interactive"}`}
@@ -48,12 +39,13 @@ export default function NextProjectBlock({
                 <div className="pointer-events-none absolute inset-0 z-10 bg-black/[0.58] transition-colors duration-700 group-hover:bg-black/[0.38] group-focus-visible:bg-black/[0.38]"></div>
                 <div className="absolute inset-0 grid place-items-center">
                     <PresetImage
-                        src={backgroundImage}
-                        alt="Next Project"
-                        preset={imagePreset}
-                        fitMode={imageFitMode}
+                        src={destination.cover}
+                        alt={`${destination.name} 封面`}
+                        preset="ratio-21-9"
+                        fitMode="cover"
+                        lockFrame={false}
                         sizes="100vw"
-                        frameClassName="w-full"
+                        frameClassName="h-full w-full"
                         imageClassName="scale-100 opacity-40 transition-[filter,opacity,transform] duration-700 ease-out group-hover:scale-[1.025] group-hover:opacity-75 group-hover:contrast-[1.04] group-focus-visible:scale-[1.025] group-focus-visible:opacity-75 group-focus-visible:contrast-[1.04]"
                     />
                 </div>
@@ -81,7 +73,7 @@ export default function NextProjectBlock({
                                     align="center"
                                     className="text-white uppercase transition-all duration-700 [&_.typography-run]:transition-[letter-spacing] [&_.typography-run]:duration-700 [&_.typography-run]:ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:[&_.typography-run]:!tracking-[0.04em] group-focus-visible:[&_.typography-run]:!tracking-[0.04em]"
                                 >
-                                    {nextName}
+                                    {destination.name}
                                 </Typography>
                             </div>
                         </div>

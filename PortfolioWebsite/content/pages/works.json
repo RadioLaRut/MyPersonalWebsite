@@ -77,7 +77,12 @@
               "href": "/works/wow-otto",
               "title": "WOW, OTTO!",
               "category": "主策划 / 交互设计",
-              "imageSrc": "/assets/images/placeholder.svg",
+              "imageSrc": "/images/holy-tank/HostileArchitecture.webp",
+              "aliases": [
+                {
+                  "slug": "holy-tank"
+                }
+              ],
               "desc": "把轨迹球变成轮椅般的身体延伸，让操作阻力本身成为叙事的一部分。"
             }
           },
@@ -89,7 +94,7 @@
               "href": "/works/im-explode",
               "title": "I'M EXPLODE WITH U",
               "category": "主策划",
-              "imageSrc": "/assets/images/placeholder.svg",
+              "imageSrc": "/images/exploding/Title.webp",
               "desc": "你不是靠走位移动，而是靠每一次开枪的后坐力把自己和对手推向危险边缘。"
             }
           },
@@ -119,7 +124,8 @@
           }
         ],
         "id": "workslist-1",
-        "heading": "项目检索"
+        "heading": "作品索引",
+        "indexSummary": "01—09 / 精选项目"
       }
     },
     {
@@ -129,7 +135,7 @@
         "title": "CONTACT",
         "description": "想继续聊项目、流程或合作方式，可以从这里进入。",
         "buttonLabel": "前往 About / Contact",
-        "buttonHref": "/about",
+        "buttonHref": "/about#contact",
         "id": "HomeEndcapSection-04d186c3-f24c-4767-bf9c-533ff520fe87"
       }
     }

@@ -6,7 +6,8 @@ import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
 import {
-  getGridColumnStyle,
+  createResponsiveGridBounds,
+  getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
@@ -52,7 +53,7 @@ export default function TextSplitLayout({
           weight="semantic"
           wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"}
           align={layoutVariant === "stack" ? "center" : "left"}
-          className="text-textMuted"
+          className="text-textSecondary"
         >
           {p}
         </Typography>
@@ -67,11 +68,14 @@ export default function TextSplitLayout({
                 {layoutVariant === 'split-left' && (
                     <>
                         <div
-                            className="mb-[var(--text-split-heading-image-gap)] lg:mb-0"
-                            style={{
-                                ...splitHeadingGapStyle,
-                                ...getGridColumnStyle(design.splitLeftHeadingBounds),
-                            }}
+                            className={`mb-[var(--text-split-heading-image-gap)] md:mb-0 ${getResponsiveGridColumnClassName(
+                              createResponsiveGridBounds(
+                                { leftCol: 1, rightCol: 12 },
+                                design.splitLeftHeadingBounds,
+                                design.splitLeftHeadingBounds,
+                              ),
+                            )}`}
+                            style={splitHeadingGapStyle}
                         >
                             <Typography as="h3" preset="sans-body" size={design.splitHeadingSize} weight="light" wrapPolicy={design.headingAutoWrap ? "heading" : "nowrap"} className="mb-8 text-white uppercase">
                                 {heading}
@@ -84,8 +88,13 @@ export default function TextSplitLayout({
                             )}
                         </div>
                         <div
-                            className="grid content-center"
-                            style={getGridColumnStyle(design.splitLeftTextBounds)}
+                            className={`grid content-center ${getResponsiveGridColumnClassName(
+                              createResponsiveGridBounds(
+                                { leftCol: 1, rightCol: 12 },
+                                design.splitLeftTextBounds,
+                                design.splitLeftTextBounds,
+                              ),
+                            )}`}
                         >
                             <div className="border-l border-white/5 pl-0 lg:pl-8">
                                 {paragraphContent}
@@ -97,19 +106,27 @@ export default function TextSplitLayout({
                 {layoutVariant === 'split-right' && (
                     <>
                         <div
-                            className="order-2 mt-[var(--text-split-heading-image-gap)] grid content-center lg:order-1 lg:mb-0 lg:mt-0"
-                            style={{
-                                ...splitHeadingGapStyle,
-                                ...getGridColumnStyle(design.splitRightTextBounds),
-                            }}
+                            className={`order-2 mt-[var(--text-split-heading-image-gap)] grid content-center md:order-1 md:mb-0 md:mt-0 ${getResponsiveGridColumnClassName(
+                              createResponsiveGridBounds(
+                                { leftCol: 1, rightCol: 12 },
+                                design.splitRightTextBounds,
+                                design.splitRightTextBounds,
+                              ),
+                            )}`}
+                            style={splitHeadingGapStyle}
                         >
                             <div className="border-r border-white/5 pr-0 text-right lg:pr-8 lg:text-left">
                                 {paragraphContent}
                             </div>
                         </div>
                         <div
-                            className="order-1 lg:order-2"
-                            style={getGridColumnStyle(design.splitRightHeadingBounds)}
+                            className={`order-1 md:order-2 ${getResponsiveGridColumnClassName(
+                              createResponsiveGridBounds(
+                                { leftCol: 1, rightCol: 12 },
+                                design.splitRightHeadingBounds,
+                                design.splitRightHeadingBounds,
+                              ),
+                            )}`}
                         >
                             <Typography as="h3" preset="sans-body" size={design.splitHeadingSize} weight="light" wrapPolicy={design.headingAutoWrap ? "heading" : "nowrap"} align="right" className="mb-8 text-white uppercase">
                                 {heading}
@@ -126,8 +143,13 @@ export default function TextSplitLayout({
 
                 {layoutVariant === 'stack' && (
                     <div
-                        className="grid justify-items-center text-center"
-                        style={getGridColumnStyle(design.stackBounds)}
+                        className={`grid justify-items-center text-center ${getResponsiveGridColumnClassName(
+                          createResponsiveGridBounds(
+                            { leftCol: 1, rightCol: 12 },
+                            { leftCol: 2, rightCol: 11 },
+                            design.stackBounds,
+                          ),
+                        )}`}
                     >
                         <Typography
                             as="h3"

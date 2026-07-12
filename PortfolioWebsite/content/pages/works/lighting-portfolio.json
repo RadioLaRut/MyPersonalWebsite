@@ -25,7 +25,8 @@
         "title": "CINEMATIC SHOTS",
         "coverImage": "/images/city-2026/002.webp",
         "href": "/works/lighting-portfolio/collection-1",
-        "imagePreset": "native"
+        "imagePreset": "ratio-21-9",
+        "imageFitMode": "cover"
       }
     },
     {
@@ -36,7 +37,8 @@
         "title": "TRAIN STATION",
         "coverImage": "/images/train-station/Cut2Day.webp",
         "href": "/works/lighting-portfolio/collection-2",
-        "imagePreset": "native"
+        "imagePreset": "ratio-21-9",
+        "imageFitMode": "cover"
       }
     },
     {
@@ -59,8 +61,15 @@
         "title": "ATMOSPHERE PRACTICE",
         "coverImage": "/images/penguin/01.webp",
         "href": "/works/lighting-portfolio/collection-4",
-        "imagePreset": "native",
+        "imagePreset": "ratio-21-9",
         "imageFitMode": "cover"
+      }
+    },
+    {
+      "type": "NextProjectBlock",
+      "props": {
+        "id": "lighting-next-project",
+        "nextId": "penguin"
       }
     }
   ],

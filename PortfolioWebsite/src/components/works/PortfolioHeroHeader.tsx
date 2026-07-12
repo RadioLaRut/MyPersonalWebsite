@@ -81,7 +81,7 @@ export default function LightingCollectionHeroHeader({
         <section className="border-b border-white/10 rhythm-section-hero">
             <div className="grid-container">
                 {hasSideRail ? (
-                    <div className="col-span-12 grid grid-cols-12 gap-10 lg:items-end">
+                    <div className="grid-subgrid col-span-12 lg:items-end">
                         <div className={getResponsiveGridColumnClassName(design.titleBounds)}>
                             {titleLockup}
                         </div>

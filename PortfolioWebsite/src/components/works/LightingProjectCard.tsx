@@ -6,7 +6,10 @@ import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
 import { MotionLink } from "@/components/motion";
-import { getGridColumnClassName } from "@/lib/component-design-style";
+import {
+  createResponsiveGridBounds,
+  getResponsiveGridColumnClassName,
+} from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 export interface LightingProjectCardProps {
@@ -50,7 +53,6 @@ export default function LightingProjectCard({
   coverImage,
   href,
   imagePreset = "ratio-21-9",
-  imageFitMode = "cover",
   editMode = false,
 }: LightingProjectCardProps) {
   const design = useComponentDesign("LightingProjectCard");
@@ -64,15 +66,15 @@ export default function LightingProjectCard({
         <PresetImage
           src={coverImage}
           alt={imageAlt}
-          preset={imagePreset}
-          fitMode={imageFitMode}
+          preset={imagePreset === "native" ? "ratio-16-9" : imagePreset}
+          fitMode="cover"
           lockFrame={false}
           frameClassName="h-full w-full"
           imageClassName="transition-[filter,transform] duration-700 ease-out group-hover:scale-[1.018] group-hover:contrast-[1.04] group-focus-visible:scale-[1.018] group-focus-visible:contrast-[1.04]"
         />
       </div>
 
-      <div className="relative z-20 min-h-[22rem] md:min-h-[30rem]">
+      <div className="relative z-20 aspect-video md:aspect-[21/9]">
         <div className="absolute left-0 top-0 px-5 py-5 md:px-6 md:py-6">
           <Typography
             preset="sans-body"
@@ -115,19 +117,27 @@ export default function LightingProjectCard({
   );
 
   return (
-    <section className="w-full py-6 md:py-8">
+    <section className="w-full py-8">
       <div className="grid-container">
         {href ? (
           <MotionLink
             href={href}
             disabled={editMode}
             interactionPreset="blockLink"
-            className={`${getGridColumnClassName(design.contentBounds)} block w-full ${editMode ? "cursor-default" : "interactive"}`}
+            className={`${getResponsiveGridColumnClassName(createResponsiveGridBounds(
+              { leftCol: 1, rightCol: 12 },
+              { leftCol: 2, rightCol: 11 },
+              design.contentBounds,
+            ))} block w-full ${editMode ? "cursor-default" : "interactive"}`}
           >
             {content}
           </MotionLink>
         ) : (
-          <div className={`${getGridColumnClassName(design.contentBounds)} w-full`}>
+          <div className={`${getResponsiveGridColumnClassName(createResponsiveGridBounds(
+            { leftCol: 1, rightCol: 12 },
+            { leftCol: 2, rightCol: 11 },
+            design.contentBounds,
+          ))} w-full`}>
             {content}
           </div>
         )}

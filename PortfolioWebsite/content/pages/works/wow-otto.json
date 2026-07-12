@@ -42,10 +42,7 @@
       "type": "NextProjectBlock",
       "props": {
         "id": "next-1",
-        "nextId": "im-explode",
-        "href": "/works/im-explode",
-        "nextName": "I'M EXPLODE WITH U",
-        "nextBg": "/images/penguin/CyberRestaurant.webp"
+        "nextId": "im-explode"
       }
     }
   ]

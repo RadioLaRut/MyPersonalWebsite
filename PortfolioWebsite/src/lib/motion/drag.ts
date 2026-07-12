@@ -15,6 +15,16 @@ export type DirectionIntentOptions = {
   threshold?: number;
 };
 
+export type SliderKeyboardKey =
+  | "ArrowDown"
+  | "ArrowLeft"
+  | "ArrowRight"
+  | "ArrowUp"
+  | "End"
+  | "Home"
+  | "PageDown"
+  | "PageUp";
+
 const DEFAULT_DIRECTION_THRESHOLD = 8;
 const DEFAULT_AXIS_BIAS = 1.15;
 
@@ -32,6 +42,32 @@ export function calculateHorizontalPercent(clientX: number, bounds: DragBounds) 
   }
 
   return clampPercent(((clientX - bounds.left) / bounds.width) * 100);
+}
+
+export function calculateSliderKeyboardPercent(
+  currentPercent: number,
+  key: string,
+  step = 1,
+  pageStep = 10,
+): number | null {
+  switch (key as SliderKeyboardKey) {
+    case "Home":
+      return 0;
+    case "End":
+      return 100;
+    case "ArrowLeft":
+    case "ArrowDown":
+      return clampPercent(currentPercent - step);
+    case "ArrowRight":
+    case "ArrowUp":
+      return clampPercent(currentPercent + step);
+    case "PageDown":
+      return clampPercent(currentPercent - pageStep);
+    case "PageUp":
+      return clampPercent(currentPercent + pageStep);
+    default:
+      return null;
+  }
 }
 
 export function classifyDirectionalIntent(

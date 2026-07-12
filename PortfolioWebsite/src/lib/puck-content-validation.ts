@@ -149,6 +149,24 @@ function validatePuckNode(
   if (!isNonEmptyString(props.id)) {
     issues.push(makeIssue(`${pathName}.props.id`, "props.id must be a non-empty string", filePath));
   }
+
+  for (const [key, value] of Object.entries(props)) {
+    if (!key.endsWith("Preset") || value !== "native") {
+      continue;
+    }
+
+    const fitModeKey = key.replace(/Preset$/, "FitMode");
+    const fitMode = props[fitModeKey];
+    if (fitMode === "cover" || fitMode === "y") {
+      issues.push(
+        makeIssue(
+          `${pathName}.props.${fitModeKey}`,
+          `native image preset cannot use ${fitMode} fit mode`,
+          filePath,
+        ),
+      );
+    }
+  }
 }
 
 function validateNormalizedPuckContentData(
@@ -275,6 +293,13 @@ function validatePublicImages(
   const imagePaths = collectImageLikeReferences(normalizedData);
 
   for (const imagePath of imagePaths) {
+    if (/\/placeholder(?:[./-]|$)/i.test(imagePath.value)) {
+      issues.push(
+        makeIssue(imagePath.path, `public content cannot use placeholder image "${imagePath.value}"`, filePath),
+      );
+      continue;
+    }
+
     const relativeImagePath = imagePath.value.replace(/^\//, "");
     const pathStatus = hasExactCasePath(publicRoot, relativeImagePath, dirEntriesCache);
     if (pathStatus === "missing") {

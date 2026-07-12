@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react/dist/cjs/lucide-react.js";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 import { OptimizedImage } from "@/components/common/OptimizedImage";
 import Typography from "@/components/common/Typography";
@@ -24,6 +24,7 @@ import {
   type DragPoint,
   type GestureAxis,
   calculateHorizontalPercent,
+  calculateSliderKeyboardPercent,
   classifyDirectionalIntent,
   clampPercent,
 } from "@/lib/motion";
@@ -68,6 +69,7 @@ export default function ImageSlider({
   const canvasClassName = getImageCanvasClassName(resolvedPreset);
   const imageClassName = getImageElementClassName(resolvedPreset, resolvedFitMode);
   const visibleTitle = typeof title === "string" && title.trim().length > 0 ? title : alt;
+  const sliderDescriptionId = useId();
 
   useEffect(() => {
     setSliderPosition(clampPercent(initialPosition));
@@ -141,6 +143,20 @@ export default function ImageSlider({
     updatePosition(event.clientX);
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (editMode) {
+      return;
+    }
+
+    const nextPosition = calculateSliderKeyboardPercent(sliderPosition, event.key);
+    if (nextPosition === null) {
+      return;
+    }
+
+    event.preventDefault();
+    setSliderPosition(nextPosition);
+  };
+
   const cursorClass = editMode
     ? "cursor-default"
     : isDragging
@@ -153,14 +169,26 @@ export default function ImageSlider({
         <div className={getGridColumnClassName(design.contentBounds)}>
           <div
             ref={containerRef}
-            className={`${frameClassName} group select-none touch-pan-y ${cursorClass}`}
+            className={`${frameClassName} group select-none touch-pan-y focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80 ${cursorClass}`}
             data-dragging={isDragging ? "true" : undefined}
+            role="slider"
+            tabIndex={editMode ? -1 : 0}
+            aria-label={`${visibleTitle} 图片对比`}
+            aria-describedby={sliderDescriptionId}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.round(sliderPosition)}
+            aria-valuetext={`${leftLabel ?? "左侧图像"} ${Math.round(sliderPosition)}%，${rightLabel ?? "右侧图像"} ${Math.round(100 - sliderPosition)}%`}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={resetDrag}
             onPointerCancel={resetDrag}
             onLostPointerCapture={resetDrag}
+            onKeyDown={handleKeyDown}
           >
+            <span id={sliderDescriptionId} className="sr-only">
+              使用左右或上下方向键微调，Page Up 和 Page Down 大幅调整，Home 和 End 跳到两端。
+            </span>
             {visibleTitle ? (
               <div className="pointer-events-none absolute left-5 top-5 z-20 md:left-6 md:top-6">
                 <div className="border border-white/12 bg-black/58 px-3 py-2 backdrop-blur-sm">

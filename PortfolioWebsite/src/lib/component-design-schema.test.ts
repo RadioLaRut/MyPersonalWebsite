@@ -37,6 +37,10 @@ test("normalizeComponentDesignDocument falls back for invalid responsive grid bo
             leftCol: 12,
             rightCol: 3,
           },
+          md: {
+            leftCol: 11,
+            rightCol: 2,
+          },
           lg: {
             leftCol: 9,
             rightCol: 2,
@@ -62,6 +66,10 @@ test("normalizeComponentDesignDocument migrates legacy HeroSection title bounds"
             leftCol: 1,
             rightCol: 12,
           },
+          md: {
+            leftCol: 2,
+            rightCol: 11,
+          },
           lg: {
             leftCol: 3,
             rightCol: 8,
@@ -74,6 +82,27 @@ test("normalizeComponentDesignDocument migrates legacy HeroSection title bounds"
 
   assert.equal(normalized.components.HeroSection.contentBounds.lg.leftCol, 3);
   assert.equal(normalized.components.HeroSection.contentBounds.lg.rightCol, 8);
+  assert.equal(normalized.components.HeroSection.contentBounds.md.leftCol, 2);
+  assert.equal(normalized.components.HeroSection.contentBounds.md.rightCol, 11);
+});
+
+test("normalizeComponentDesignDocument migrates legacy responsive bounds without md", () => {
+  const normalized = normalizeComponentDesignDocument({
+    components: {
+      HeroSection: {
+        contentBounds: {
+          base: { leftCol: 1, rightCol: 12 },
+          lg: { leftCol: 8, rightCol: 12 },
+        },
+      },
+    },
+    version: 1,
+  });
+
+  assert.deepEqual(normalized.components.HeroSection.contentBounds.md, {
+    leftCol: 1,
+    rightCol: 12,
+  });
 });
 
 test("normalizeComponentDesignDocument hydrates newly added component defaults", () => {
@@ -118,7 +147,7 @@ test("parseComponentDesignDocument accepts valid component config", () => {
 
   assert.ok(parsed);
   assert.equal(parsed.components.ContentCard.titleSize, "title");
-  assert.equal(parsed.components.TextSplitLayout.stackBounds.rightCol, 10);
+  assert.equal(parsed.components.TextSplitLayout.stackBounds.rightCol, 9);
   assert.equal(parsed.components.HeroSection.contentBounds.lg.leftCol, 8);
   assert.equal(parsed.components.HeroSection.eyebrowTopSpacing, "12");
   assert.equal(parsed.components.ProjectSection.lockupGap, "12");

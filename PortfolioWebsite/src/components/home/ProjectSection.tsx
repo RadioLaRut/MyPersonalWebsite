@@ -20,6 +20,8 @@ interface ProjectSectionProps {
   align?: "auto" | "left" | "right";
   imagePreset?: ImagePreset;
   imageFitMode?: ImageFitMode;
+  mobileImageFocalX?: number;
+  mobileImageFocalY?: number;
   editMode?: boolean;
 }
 
@@ -32,6 +34,8 @@ export default function ProjectSection({
   align = "auto",
   imagePreset = "ratio-16-9",
   imageFitMode = "x",
+  mobileImageFocalX = 50,
+  mobileImageFocalY = 50,
   editMode = false,
 }: ProjectSectionProps) {
   const design = useComponentDesign("ProjectSection");
@@ -40,7 +44,7 @@ export default function ProjectSection({
   const resolvedImagePreset = normalizeImagePreset(imagePreset);
   const isLinkEnabled = !editMode && Boolean(link);
   const cursorClass = isLinkEnabled ? "cursor-pointer" : "cursor-default";
-  const sectionClassName = `relative m-0 grid min-h-screen min-h-[100dvh] w-full place-items-center overflow-hidden p-0 mix-blend-normal group ${cursorClass}`;
+  const sectionClassName = `relative m-0 grid min-h-[100svh] w-full place-items-center overflow-hidden p-0 mix-blend-normal group ${cursorClass}`;
   const mediaLayerClassName = "absolute inset-0 grid place-items-center px-0";
   const frameClassName = resolvedImagePreset === "native" ? "w-full h-full" : "w-full";
 
@@ -98,6 +102,11 @@ export default function ProjectSection({
           priority={index === 0}
           preset={imagePreset}
           fitMode={imageFitMode}
+          fitModeByBreakpoint={{ base: "cover", lg: imageFitMode }}
+          objectPositionByBreakpoint={{
+            base: { x: mobileImageFocalX, y: mobileImageFocalY },
+            lg: { x: 50, y: 50 },
+          }}
           lockFrame={resolvedImagePreset !== "native"}
           frameClassName={frameClassName}
           imageClassName="select-none"

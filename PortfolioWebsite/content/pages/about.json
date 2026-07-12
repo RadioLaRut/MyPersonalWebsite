@@ -39,6 +39,7 @@
       "type": "ContactFlashlight",
       "props": {
         "id": "about-contact-1",
+        "anchorId": "contact",
         "maskRadius": 480,
         "maskSmoothness": 42,
         "darkTextColor": "rgba(255,255,255,0.38)",

@@ -68,6 +68,10 @@ test("analyzePublicPath validates and redirects work aliases in one pass", async
     kind: "redirect",
     to: "/works/penguin",
   });
+  assert.deepEqual(analyzePublicPath("/works/holy-tank"), {
+    kind: "redirect",
+    to: "/works/wow-otto",
+  });
   assert.deepEqual(analyzePublicPath("/works/%ZZ"), { kind: "bad" });
 });
 

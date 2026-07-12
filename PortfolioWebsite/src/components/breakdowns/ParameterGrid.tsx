@@ -4,7 +4,8 @@ import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
 import {
-  getGridColumnStyle,
+  createResponsiveGridBounds,
+  getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
@@ -77,10 +78,13 @@ export default function ParameterGrid({
           {parameters.map((param, i) => (
             <div
               key={i}
-              className="group w-full border-t border-white/20 pt-6"
-              style={getGridColumnStyle(
-                getParameterGridItemBounds(design.parametersBounds, design.itemSpan, i),
-              )}
+              className={`group w-full border-t border-white/20 pt-6 ${getResponsiveGridColumnClassName(
+                createResponsiveGridBounds(
+                  getParameterGridItemBounds({ leftCol: 1, rightCol: 12 }, 12, i),
+                  getParameterGridItemBounds({ leftCol: 1, rightCol: 12 }, 6, i),
+                  getParameterGridItemBounds(design.parametersBounds, design.itemSpan, i),
+                ),
+              )}`}
             >
               <Typography
                 as="h4"
@@ -110,7 +114,7 @@ export default function ParameterGrid({
                 size="body"
                 weight="light"
                 wrapPolicy="prose"
-                className="max-w-[32ch] text-textMuted"
+                className="max-w-[32ch] text-textSecondary"
               >
                 {param.description}
               </Typography>

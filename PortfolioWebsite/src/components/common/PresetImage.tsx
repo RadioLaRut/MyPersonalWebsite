@@ -2,13 +2,17 @@
 
 import clsx from "clsx";
 import Image from "next/image";
+import type { CSSProperties } from "react";
 
 import {
+  type ImageBreakpointValue,
   type ImageFitMode,
+  type ImageObjectPosition,
   type ImagePreset,
   getImageCanvasClassName,
   getImageElementClassName,
   getImagePresetFrameClassName,
+  getResponsiveImageElementClassName,
   normalizeImageFitMode,
   normalizeImagePreset,
 } from "@/lib/image-presentation";
@@ -19,6 +23,8 @@ type PresetImageProps = {
   alt: string;
   preset?: ImagePreset | string;
   fitMode?: ImageFitMode | string;
+  fitModeByBreakpoint?: ImageBreakpointValue<ImageFitMode>;
+  objectPositionByBreakpoint?: ImageBreakpointValue<ImageObjectPosition>;
   priority?: boolean;
   loading?: "eager" | "lazy";
   sizes?: string;
@@ -42,6 +48,8 @@ export function PresetImage({
   alt,
   preset = "ratio-16-9",
   fitMode = "x",
+  fitModeByBreakpoint,
+  objectPositionByBreakpoint,
   priority = false,
   loading,
   sizes,
@@ -63,9 +71,27 @@ export function PresetImage({
   const resolvedLoading = priority ? undefined : loading;
   const resolvedSizes = sizes ?? "100vw";
   const imageClasses = clsx(
-    getImageElementClassName(resolvedPreset, resolvedFitMode),
+    fitModeByBreakpoint
+      ? getResponsiveImageElementClassName(
+          resolvedPreset,
+          resolvedFitMode,
+          fitModeByBreakpoint,
+        )
+      : getImageElementClassName(resolvedPreset, resolvedFitMode),
+    objectPositionByBreakpoint && !fitModeByBreakpoint && "responsive-preset-image",
     imageClassName,
   );
+  const normalizePosition = (position?: ImageObjectPosition) =>
+    position
+      ? `${Math.min(100, Math.max(0, position.x))}% ${Math.min(100, Math.max(0, position.y))}%`
+      : undefined;
+  const imageStyle = objectPositionByBreakpoint
+    ? ({
+        "--preset-image-position-base": normalizePosition(objectPositionByBreakpoint.base) ?? "50% 50%",
+        "--preset-image-position-md": normalizePosition(objectPositionByBreakpoint.md),
+        "--preset-image-position-lg": normalizePosition(objectPositionByBreakpoint.lg),
+      } as CSSProperties)
+    : undefined;
   const shouldUseImgFallback = resolvedPreset === "native" || isRemoteSrc;
 
   return (
@@ -89,6 +115,7 @@ export function PresetImage({
               sizes={sizes}
               draggable={draggable}
               className={imageClasses}
+              style={imageStyle}
             />
           </>
         ) : (
@@ -103,6 +130,7 @@ export function PresetImage({
             unoptimized={isSvg}
             draggable={draggable}
             className={imageClasses}
+            style={imageStyle}
           />
         )}
       </div>

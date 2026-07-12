@@ -12,6 +12,8 @@ test("toSafePuckHref rejects dangerous protocols and control characters", () => 
 
 test("toSafePuckHref preserves legitimate local, fragment, and external links", () => {
   assert.equal(toSafePuckHref("/works/penguin"), "/works/penguin");
+  assert.equal(toSafePuckHref("/about#contact"), "/about#contact");
+  assert.equal(toSafePuckHref("/works?view=index#featured"), "/works?view=index#featured");
   assert.equal(toSafePuckHref("#overview"), "#overview");
   assert.equal(toSafePuckHref("https://example.com/ok"), "https://example.com/ok");
   assert.equal(toSafePuckHref("mailto:hello@example.com"), "mailto:hello@example.com");
@@ -20,6 +22,11 @@ test("toSafePuckHref preserves legitimate local, fragment, and external links", 
 
 test("toEditorAwareHref keeps editor path rewriting only for safe local paths", () => {
   assert.equal(toEditorAwareHref("/works/penguin", true), "/admin/works/penguin");
+  assert.equal(toEditorAwareHref("/about#contact", true), "/admin/about#contact");
   assert.equal(toEditorAwareHref("javascript:alert(1)", true), undefined);
   assert.equal(toEditorAwareHref("https://example.com/ok", true), "https://example.com/ok");
+});
+
+test("toSafePuckHref rejects protocol-relative local-looking links", () => {
+  assert.equal(toSafePuckHref("//example.com/path"), undefined);
 });

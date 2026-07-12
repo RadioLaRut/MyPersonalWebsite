@@ -6,7 +6,8 @@ import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
 import {
-  getGridColumnStyle,
+  createResponsiveGridBounds,
+  getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
@@ -54,13 +55,17 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
         <div className={`w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
             <div className="grid-container border-t border-white/20 rhythm-divider-top">
 
-                <div className="pr-0 lg:pr-5 mb-12 lg:mb-0 border-r border-white/5" style={getGridColumnStyle(design.leftBounds)}>
+                <div className={`pr-0 lg:pr-5 mb-12 lg:mb-0 border-r border-white/5 ${getResponsiveGridColumnClassName(createResponsiveGridBounds(
+                  { leftCol: 1, rightCol: 12 },
+                  { leftCol: 1, rightCol: 6 },
+                  design.leftBounds,
+                ))}`}>
                     <Typography as="div" preset="sans-body" size="caption" weight="semantic" wrapPolicy="label" className="mb-4 text-textMuted">
                         {phase1Label}
                     </Typography>
                     <Typography as="h3" preset="sans-body" size={design.titleSize} weight="semantic" wrapPolicy={design.titleAutoWrap ? "heading" : "nowrap"} className="text-textPrimary" style={{ marginBottom: getSpacingRem(design.phaseTitleGap) }}>{phase1.title}</Typography>
                     {phase1.subtitle && <Typography as="h4" preset="sans-body" size={design.bodySize} weight="light" wrapPolicy={design.subtitleAutoWrap ? "prose" : "nowrap"} className="text-textMuted italic" style={{ marginBottom: getSpacingRem(design.subtitleGap) }}>{phase1.subtitle}</Typography>}
-                    <Typography as="p" preset="sans-body" size={design.bodySize} weight="medium" wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"} className="pr-0 text-textMuted lg:pr-4" style={{ marginBottom: getSpacingRem(design.titleBodyGap) }}>
+                    <Typography as="p" preset="sans-body" size={design.bodySize} weight="medium" wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"} className="pr-0 text-textSecondary lg:pr-4" style={{ marginBottom: getSpacingRem(design.titleBodyGap) }}>
                         {phase1.content}
                     </Typography>
 
@@ -84,13 +89,17 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
                     ) : null}
                 </div>
 
-                <div className="px-0 lg:px-8 mb-12 lg:mb-0 border-r border-transparent lg:border-white/5" style={getGridColumnStyle(design.middleBounds)}>
+                <div className={`px-0 lg:px-8 mb-12 lg:mb-0 border-r border-transparent lg:border-white/5 ${getResponsiveGridColumnClassName(createResponsiveGridBounds(
+                  { leftCol: 1, rightCol: 12 },
+                  { leftCol: 7, rightCol: 12 },
+                  design.middleBounds,
+                ))}`}>
                     <Typography as="div" preset="sans-body" size="caption" weight="semantic" wrapPolicy="label" className="mb-4 text-textMuted">
                         {phase2Label}
                     </Typography>
                     <Typography as="h3" preset="sans-body" size={design.titleSize} weight="semantic" wrapPolicy={design.titleAutoWrap ? "heading" : "nowrap"} className="text-textPrimary" style={{ marginBottom: getSpacingRem(design.phaseTitleGap) }}>{phase2.title}</Typography>
                     {phase2.subtitle && <Typography as="h4" preset="sans-body" size={design.bodySize} weight="light" wrapPolicy={design.subtitleAutoWrap ? "prose" : "nowrap"} className="text-textMuted italic" style={{ marginBottom: getSpacingRem(design.subtitleGap) }}>{phase2.subtitle}</Typography>}
-                    <Typography as="p" preset="sans-body" size={design.bodySize} weight="medium" wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"} className="text-textMuted" style={{ marginBottom: getSpacingRem(design.titleBodyGap) }}>
+                    <Typography as="p" preset="sans-body" size={design.bodySize} weight="medium" wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"} className="text-textSecondary" style={{ marginBottom: getSpacingRem(design.titleBodyGap) }}>
                         {phase2.content}
                     </Typography>
 
@@ -114,13 +123,17 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
                     ) : null}
                 </div>
 
-                <div className="pl-0 lg:pl-8" style={getGridColumnStyle(design.rightBounds)}>
+                <div className={`pl-0 lg:pl-8 ${getResponsiveGridColumnClassName(createResponsiveGridBounds(
+                  { leftCol: 1, rightCol: 12 },
+                  { leftCol: 1, rightCol: 12 },
+                  design.rightBounds,
+                ))}`}>
                     <Typography as="div" preset="sans-body" size="caption" weight="semantic" wrapPolicy="label" className="mb-4 text-textMuted">
                         {phase3Label}
                     </Typography>
                     <Typography as="h3" preset="sans-body" size={design.titleSize} weight="semantic" wrapPolicy={design.titleAutoWrap ? "heading" : "nowrap"} className="text-textPrimary" style={{ marginBottom: getSpacingRem(design.phaseTitleGap) }}>{phase3.title}</Typography>
                     {phase3.subtitle && <Typography as="h4" preset="sans-body" size={design.bodySize} weight="light" wrapPolicy={design.subtitleAutoWrap ? "prose" : "nowrap"} className="text-textMuted italic" style={{ marginBottom: getSpacingRem(design.subtitleGap) }}>{phase3.subtitle}</Typography>}
-                    <Typography as="p" preset="sans-body" size={design.bodySize} weight="medium" wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"} className="text-textMuted" style={{ marginBottom: getSpacingRem(design.titleBodyGap) }}>
+                    <Typography as="p" preset="sans-body" size={design.bodySize} weight="medium" wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"} className="text-textSecondary" style={{ marginBottom: getSpacingRem(design.titleBodyGap) }}>
                         {phase3.content}
                     </Typography>
 

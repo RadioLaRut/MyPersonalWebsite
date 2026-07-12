@@ -42,6 +42,7 @@ function getPosterTitleLines(title: ReactNode) {
 
 export interface HeroSectionProps {
   eyebrow?: ReactNode;
+  positioning?: ReactNode;
   title: ReactNode;
   subtitle: ReactNode;
   description: ReactNode;
@@ -53,11 +54,14 @@ export interface HeroSectionProps {
   imageAlt: string;
   imagePreset?: ImagePreset;
   imageFitMode?: ImageFitMode;
+  mobileImageFocalX?: number;
+  mobileImageFocalY?: number;
   editMode?: boolean;
 }
 
 export default function HeroSection({
   eyebrow,
+  positioning,
   title,
   subtitle,
   description,
@@ -69,12 +73,15 @@ export default function HeroSection({
   imageAlt,
   imagePreset = "ratio-21-9",
   imageFitMode = "x",
+  mobileImageFocalX = 28,
+  mobileImageFocalY = 50,
   editMode = false,
 }: HeroSectionProps) {
   const design = useComponentDesign("HeroSection");
   const containerRef = useRef<HTMLDivElement>(null);
   const contentBoundsClassName = getResponsiveGridColumnClassName(design.contentBounds);
   const hasSubtitle = hasNodeContent(subtitle);
+  const hasPositioning = hasNodeContent(positioning);
   const hasDescription = hasNodeContent(description);
   const hasPrimaryCta = hasNodeContent(primaryCtaLabel) && Boolean(primaryCtaHref);
   const hasSecondaryCta = hasNodeContent(secondaryCtaLabel) && Boolean(secondaryCtaHref);
@@ -93,10 +100,10 @@ export default function HeroSection({
   const eyebrowTopSpacing = getSpacingRem(design.eyebrowTopSpacing);
   const ctaTopSpacing = getSpacingRem(hasDescription ? design.ctaTopSpacing : "32");
 
-  const baseOuterClasses = "relative min-h-[100dvh] w-full overflow-hidden bg-black px-0";
+  const baseOuterClasses = "relative min-h-[100svh] w-full overflow-hidden bg-black px-0";
   const outerSectionClassName = editMode ? `${baseOuterClasses} lg:min-h-[720px]` : baseOuterClasses;
 
-  const baseViewportClasses = "relative min-h-[100dvh] w-full overflow-hidden bg-black";
+  const baseViewportClasses = "relative min-h-[100svh] w-full overflow-hidden bg-black";
   const viewportWrapperClassName = editMode
     ? `${baseViewportClasses} border-y border-white/5 lg:min-h-[720px]`
     : `${baseViewportClasses} lg:border-y lg:border-white/5`;
@@ -125,6 +132,11 @@ export default function HeroSection({
             priority
             preset={imagePreset}
             fitMode={imageFitMode}
+            fitModeByBreakpoint={{ base: "cover", lg: imageFitMode }}
+            objectPositionByBreakpoint={{
+              base: { x: mobileImageFocalX, y: mobileImageFocalY },
+              lg: { x: 50, y: 50 },
+            }}
             lockFrame={false}
             frameClassName="h-full w-full"
             imageClassName="select-none"
@@ -133,10 +145,10 @@ export default function HeroSection({
         </motion.div>
 
         <div className={`absolute inset-0 z-20 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
-          <div className="grid-container relative h-full items-center rhythm-section-hero">
+          <div className="grid-container relative h-full items-end rhythm-section-hero lg:items-center">
             {posterMode ? (
               <motion.div
-                className={`${contentBoundsClassName} min-w-0 self-center grid auto-rows-max justify-items-end text-right text-edge-shadow lg:ml-auto`}
+                className={`${contentBoundsClassName} min-w-0 self-end grid auto-rows-max justify-items-end text-right text-edge-shadow lg:ml-auto lg:self-center`}
                 initial={editMode ? false : { opacity: 0, y: 28 }}
                 animate={editMode ? undefined : { opacity: 1, y: 0 }}
                 transition={editMode ? undefined : { duration: 1.1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
@@ -194,6 +206,21 @@ export default function HeroSection({
                   </Typography>
                 )}
 
+                {hasPositioning ? (
+                  <Typography
+                    as="p"
+                    preset="sans-body"
+                    size="body-sm"
+                    weight="semantic"
+                    wrapPolicy="prose"
+                    className="max-w-[26rem] text-white/76"
+                    align="right"
+                    style={{ marginTop: eyebrowTopSpacing }}
+                  >
+                    {positioning}
+                  </Typography>
+                ) : null}
+
                 {eyebrow ? (
                   <Typography
                     as="p"
@@ -203,7 +230,7 @@ export default function HeroSection({
                     wrapPolicy="prose"
                     className={`${hasStackedPosterTitle ? "max-w-[20rem]" : hasLongPosterTitle ? "max-w-[24rem]" : "max-w-[28rem]"} text-white/58`}
                     align="right"
-                    style={{ marginTop: eyebrowTopSpacing }}
+                    style={{ marginTop: hasPositioning ? getSpacingRem("12") : eyebrowTopSpacing }}
                   >
                     {eyebrow}
                   </Typography>

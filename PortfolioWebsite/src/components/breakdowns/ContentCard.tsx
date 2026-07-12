@@ -7,7 +7,8 @@ import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
 import { toParagraphNodes } from "@/lib/editable-text";
 import {
-  getGridColumnStyle,
+  createResponsiveGridBounds,
+  getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
@@ -51,8 +52,7 @@ export default function ContentCard({
         size={design.titleSize}
         weight="display"
         wrapPolicy={design.titleAutoWrap ? "heading" : "nowrap"}
-        className="text-white leading-none"
-        style={{ lineHeight: 1 }}
+        className="text-white"
       >
         {title}
       </Typography>
@@ -69,7 +69,7 @@ export default function ContentCard({
             size={design.bodySize}
             weight="medium"
             wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"}
-            className="text-textMuted"
+            className="text-textSecondary"
           >
             {paragraph}
           </Typography>
@@ -96,7 +96,13 @@ export default function ContentCard({
   if (!hasImage) {
     return (
       <div className={`grid-container w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
-        <div className="w-full" style={getGridColumnStyle(design.textOnlyBounds)}>
+        <div
+          className={`w-full ${getResponsiveGridColumnClassName(createResponsiveGridBounds(
+            { leftCol: 1, rightCol: 12 },
+            { leftCol: 2, rightCol: 11 },
+            design.textOnlyBounds,
+          ))}`}
+        >
           {textContent}
         </div>
       </div>
@@ -104,25 +110,33 @@ export default function ContentCard({
   }
 
   const isImageLeft = imagePosition === "left";
-  const textOrder = isImageLeft ? "order-1 lg:order-2" : "";
-  const imageOrder = isImageLeft ? "order-2 lg:order-1" : "";
+  const textOrder = isImageLeft ? "order-1 md:order-2" : "";
+  const imageOrder = isImageLeft ? "order-2 md:order-1" : "";
   const textBounds = isImageLeft ? design.imageLeftTextBounds : design.imageRightTextBounds;
   const imageBounds = isImageLeft ? design.imageLeftMediaBounds : design.imageRightMediaBounds;
 
   return (
     <div className={`grid-container w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
       <div
-        className={`w-full self-start ${textOrder}`}
-        style={getGridColumnStyle(textBounds)}
+        className={`w-full self-start ${textOrder} ${getResponsiveGridColumnClassName(
+          createResponsiveGridBounds(
+            { leftCol: 1, rightCol: 12 },
+            textBounds,
+            textBounds,
+          ),
+        )}`}
       >
         {textContent}
       </div>
       <div
-        className={`w-full self-start mt-[var(--content-card-mobile-media-top-spacing)] lg:mt-0 ${imageOrder}`}
-        style={{
-          ...mobileMediaOffsetStyle,
-          ...getGridColumnStyle(imageBounds),
-        }}
+        className={`w-full self-start mt-[var(--content-card-mobile-media-top-spacing)] md:mt-0 ${imageOrder} ${getResponsiveGridColumnClassName(
+          createResponsiveGridBounds(
+            { leftCol: 1, rightCol: 12 },
+            imageBounds,
+            imageBounds,
+          ),
+        )}`}
+        style={mobileMediaOffsetStyle}
       >
         {imageContent}
       </div>

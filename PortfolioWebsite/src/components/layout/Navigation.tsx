@@ -13,6 +13,29 @@ import {
 } from "@/lib/motion";
 import { isTestingMode } from "@/lib/site-mode";
 
+function isNavigationItemActive(pathname: string | null, href: string) {
+  if (!pathname) {
+    return false;
+  }
+
+  if (href === "/") {
+    return pathname === "/";
+  }
+
+  if (href === "/works/lighting-portfolio") {
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
+
+  if (href === "/works") {
+    return (
+      (pathname === href || pathname.startsWith(`${href}/`)) &&
+      !pathname.startsWith("/works/lighting-portfolio")
+    );
+  }
+
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [isOverlayActive, setIsOverlayActive] = useState(false);
@@ -71,6 +94,12 @@ export default function Navigation() {
       document.body.style.paddingRight = previousPaddingRight;
     };
   }, [isInternalLabRoute, isOpen, pathname]);
+
+  useLayoutEffect(() => {
+    if (menuPanelRef.current) {
+      menuPanelRef.current.inert = !isOpen;
+    }
+  }, [isOpen, isOverlayActive]);
 
   useEffect(() => {
     if (pathname?.startsWith("/admin") || isInternalLabRoute || !isOpen) {
@@ -203,7 +232,7 @@ export default function Navigation() {
       <div
         className={`fixed inset-0 z-[99] grid justify-items-end ${isOverlayActive ? "pointer-events-auto" : "pointer-events-none"}`}
         data-lenis-prevent="true"
-        aria-hidden={!isOverlayActive}
+        aria-hidden={!isOpen}
       >
         <motion.div
           initial={false}
@@ -234,6 +263,7 @@ export default function Navigation() {
               role="dialog"
               aria-modal="true"
               aria-label="Main navigation"
+              aria-hidden={!isOpen}
               tabIndex={-1}
               ref={menuPanelRef}
               data-lenis-prevent="true"
@@ -245,7 +275,7 @@ export default function Navigation() {
                 <div className="absolute right-5 top-6 grid justify-items-end text-edge-shadow md:right-8 md:top-8">
                   <MotionButton
                     onClick={closeMenu}
-                    className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 outline-none transition-colors duration-300 focus:outline-none focus-visible:outline-none"
+                    className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 transition-colors duration-300 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-8 focus-visible:outline-white/80"
                     aria-label="Close menu"
                   >
                     <Typography
@@ -274,9 +304,9 @@ export default function Navigation() {
                 </div>
 
                 <div className="grid w-full content-center justify-items-start">
-                  <nav className="grid justify-items-start gap-0.5 md:gap-1">
+                  <nav aria-label="主导航" className="grid justify-items-start gap-0.5 md:gap-1">
                     {menuItems.map((item, i) => {
-                      const isActive = pathname === item.href;
+                      const isActive = isNavigationItemActive(pathname, item.href);
                       return (
                         <motion.div
                           key={item.label}
@@ -291,7 +321,8 @@ export default function Navigation() {
                         >
                           <MotionLink
                             href={item.href}
-                            className={`group relative grid items-center transition-all duration-300 ${isActive ? "text-white" : "text-white/20"} hover:text-white`}
+                            className={`group relative grid items-center transition-all duration-300 focus-visible:text-white focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-white/80 ${isActive ? "text-white" : "text-white/20"} hover:text-white`}
+                            aria-current={isActive ? "page" : undefined}
                             onClick={closeMenu}
                           >
                             <motion.div 

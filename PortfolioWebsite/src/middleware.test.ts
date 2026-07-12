@@ -12,8 +12,15 @@ function makeRequest(pathname: string) {
 test("middleware redirects legacy work aliases to canonical paths", () => {
   const response = middleware(makeRequest("/works/penguin-trading-company"));
 
-  assert.equal(response.status, 307);
+  assert.equal(response.status, 308);
   assert.equal(response.headers.get("location"), "https://example.test/works/penguin");
+});
+
+test("middleware permanently redirects the legacy holy-tank work alias", () => {
+  const response = middleware(makeRequest("/works/holy-tank"));
+
+  assert.equal(response.status, 308);
+  assert.equal(response.headers.get("location"), "https://example.test/works/wow-otto");
 });
 
 test("middleware rejects invalid works paths before routing", async () => {

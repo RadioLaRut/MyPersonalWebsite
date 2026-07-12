@@ -17,7 +17,12 @@ import {
   useInputCapabilities,
 } from "@/lib/motion";
 
+export type WorksListEntryAlias = {
+  slug: string;
+};
+
 interface WorksListEntryProps {
+  aliases?: WorksListEntryAlias[];
   id: string;
   number?: string;
   href?: string;
@@ -43,13 +48,14 @@ export default function WorksListEntry({
 }: WorksListEntryProps) {
   const design = useComponentDesign("WorksListEntry");
   const [isHovered, setIsHovered] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const entryRef = useRef<HTMLElement>(null);
   const { supportsHoverIntent } = useInputCapabilities();
   const isInsideCenterZone = useCenterZoneActivation(entryRef, {
     enabled: !supportsHoverIntent && !editMode,
   });
   const isLinkEnabled = !editMode && Boolean(href);
-  const active = editMode || isHovered || isInsideCenterZone;
+  const active = editMode || isHovered || isFocused || isInsideCenterZone;
   const cursorClass = isLinkEnabled ? "cursor-pointer" : "cursor-default";
   const numberBoundsClassName = getResponsiveGridColumnClassName(design.numberBounds);
   const titleBoundsClassName = getResponsiveGridColumnClassName(design.titleBounds);
@@ -62,10 +68,16 @@ export default function WorksListEntry({
       disabled={!isLinkEnabled}
       disabledElement="div"
       interactionPreset="blockLink"
-      className={`group relative grid min-h-[34vh] w-full content-center border-b border-white/10 ${cursorClass} sm:min-h-[42vh]`}
-      aria-label={typeof title === "string" ? `Open ${title}` : "Open work"}
+      className={`group relative grid min-h-[34vh] w-full content-center border-b border-white/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-2px] focus-visible:outline-white/70 ${cursorClass} sm:min-h-[42vh]`}
+      aria-label={
+        typeof title === "string"
+          ? `打开作品 ${title}${typeof category === "string" ? `，${category}` : ""}`
+          : "打开作品"
+      }
       onMouseEnter={() => supportsHoverIntent && !editMode && setIsHovered(true)}
       onMouseLeave={() => supportsHoverIntent && !editMode && setIsHovered(false)}
+      onFocus={() => !editMode && setIsFocused(true)}
+      onBlur={() => !editMode && setIsFocused(false)}
     >
       <AnimatePresence>
         {active ? (
@@ -119,26 +131,18 @@ export default function WorksListEntry({
           <Typography
             as="h2"
             preset="luna-editorial"
-            size="title"
+            size="display"
             weight="display"
             wrapPolicy="heading"
-            className={`py-2 uppercase transition-all duration-700 ease-out ${active
-              ? "text-white/[0.92]"
-              : "text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.42)]"}`}
+            className={`break-words py-2 uppercase transition-colors duration-700 ease-out ${active
+              ? "text-white/[0.94]"
+              : "text-white/[0.56]"}`}
           >
             {title}
           </Typography>
         </div>
 
-        <motion.div
-          initial={false}
-          animate={{
-            opacity: active ? 1 : 0,
-            x: active ? 0 : -10,
-          }}
-          transition={motionTransitions.fade}
-          className={`${sidebarBoundsClassName} mt-6 grid content-center lg:mt-0 lg:pl-8`}
-        >
+        <div className={`${sidebarBoundsClassName} mt-6 grid content-center lg:mt-0 lg:pl-8`}>
           <div className="grid gap-1">
             <Typography
               as="p"
@@ -146,22 +150,29 @@ export default function WorksListEntry({
               size="label"
               weight="semantic"
               wrapPolicy="label"
-              className="text-textPrimary"
+              className={`transition-colors duration-700 ease-out ${active ? "text-textPrimary" : "text-textSecondary"}`}
             >
               {category}
             </Typography>
-            <Typography
-              as="p"
-              preset="sans-body"
-              size="body"
-              weight="light"
-              wrapPolicy="prose"
-              className="mt-4 text-textMuted"
+            <motion.div
+              initial={false}
+              animate={{ opacity: active ? 1 : 0, x: active ? 0 : -10 }}
+              transition={motionTransitions.fade}
+              aria-hidden={!active}
             >
-              {desc}
-            </Typography>
+              <Typography
+                as="p"
+                preset="sans-body"
+                size="body"
+                weight="light"
+                wrapPolicy="prose"
+                className="mt-4 text-textSecondary"
+              >
+                {desc}
+              </Typography>
+            </motion.div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </MotionLink>
   );

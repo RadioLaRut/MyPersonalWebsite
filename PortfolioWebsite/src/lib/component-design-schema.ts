@@ -73,6 +73,7 @@ export type ComponentGridBounds = {
 
 export type ComponentResponsiveGridBounds = {
   base: ComponentGridBounds;
+  md: ComponentGridBounds;
   lg: ComponentGridBounds;
 };
 
@@ -326,11 +327,14 @@ function createDefaultBounds(
 function createDefaultResponsiveBounds(
   baseLeftCol: number,
   baseRightCol: number,
-  lgLeftCol = baseLeftCol,
-  lgRightCol = baseRightCol,
+  mdLeftCol = baseLeftCol,
+  mdRightCol = baseRightCol,
+  lgLeftCol = mdLeftCol,
+  lgRightCol = mdRightCol,
 ): ComponentResponsiveGridBounds {
   return {
     base: createDefaultBounds(baseLeftCol, baseRightCol),
+    md: createDefaultBounds(mdLeftCol, mdRightCol),
     lg: createDefaultBounds(lgLeftCol, lgRightCol),
   };
 }
@@ -374,12 +378,16 @@ function normalizeResponsiveBounds(
     const normalized = normalizeBounds(value, fallback.base);
     return {
       base: normalized,
+      md: normalized,
       lg: normalized,
     };
   }
 
+  const normalizedBase = normalizeBounds(value.base, fallback.base);
+
   return {
-    base: normalizeBounds(value.base, fallback.base),
+    base: normalizedBase,
+    md: normalizeBounds(value.md, normalizedBase),
     lg: normalizeBounds(value.lg, fallback.lg),
   };
 }
@@ -982,7 +990,7 @@ export function createDefaultComponentDesignDocument(): ComponentDesignDocument 
         mobileMediaTopSpacing: "48",
         paragraphGap: "20",
         sectionSpacing: "block-compact",
-        textOnlyBounds: createDefaultBounds(3, 10),
+        textOnlyBounds: createDefaultBounds(4, 9),
         titleAutoWrap: true,
         titleBodyGap: "32",
         titleSize: "title",
@@ -992,7 +1000,7 @@ export function createDefaultComponentDesignDocument(): ComponentDesignDocument 
       },
       HeroSection: {
         ctaTopSpacing: "48",
-        contentBounds: createDefaultResponsiveBounds(1, 12, 8, 12),
+        contentBounds: createDefaultResponsiveBounds(1, 12, 1, 12, 8, 12),
         eyebrowTopSpacing: "12",
       },
       HighDensityInfoBlock: {
@@ -1013,7 +1021,7 @@ export function createDefaultComponentDesignDocument(): ComponentDesignDocument 
       },
       HomeEndcapSection: {
         buttonTopSpacing: "48",
-        contentBounds: createDefaultBounds(3, 10),
+        contentBounds: createDefaultBounds(4, 9),
         descriptionTopSpacing: "32",
       },
       ImagePanel: {
@@ -1027,16 +1035,16 @@ export function createDefaultComponentDesignDocument(): ComponentDesignDocument 
         sectionSpacing: "block-compact",
       },
       LightingCollectionHeader: {
-        descriptionBounds: createDefaultResponsiveBounds(1, 12, 10, 12),
-        titleBounds: createDefaultResponsiveBounds(1, 12, 2, 9),
+        descriptionBounds: createDefaultResponsiveBounds(1, 12, 1, 12, 10, 12),
+        titleBounds: createDefaultResponsiveBounds(1, 12, 1, 12, 2, 9),
         titleTopSpacing: "20",
       },
       LightingProjectCard: {
         contentBounds: createDefaultBounds(2, 11),
       },
       NextProjectBlock: {
-        footerLeftBounds: createDefaultResponsiveBounds(1, 12, 2, 6),
-        footerRightBounds: createDefaultResponsiveBounds(1, 12, 8, 11),
+        footerLeftBounds: createDefaultResponsiveBounds(1, 12, 1, 12, 2, 6),
+        footerRightBounds: createDefaultResponsiveBounds(1, 12, 1, 12, 8, 11),
         footerTopSpacing: "32",
         overlayBounds: createDefaultBounds(3, 10),
       },
@@ -1049,15 +1057,15 @@ export function createDefaultComponentDesignDocument(): ComponentDesignDocument 
       PortfolioHeroHeader: {
         ctaTopSpacing: "48",
         descriptionTopSpacing: "24",
-        sideBounds: createDefaultResponsiveBounds(1, 12, 10, 12),
+        sideBounds: createDefaultResponsiveBounds(1, 12, 1, 12, 10, 12),
         singleColumnBounds: createDefaultBounds(2, 11),
-        titleBounds: createDefaultResponsiveBounds(1, 12, 2, 8),
+        titleBounds: createDefaultResponsiveBounds(1, 12, 1, 12, 2, 8),
       },
       ProjectSection: {
         lockupGap: "12",
         titleUnderlineOpticalPull: "56",
-        textLeftBounds: createDefaultResponsiveBounds(1, 4, 2, 9),
-        textRightBounds: createDefaultResponsiveBounds(1, 4, 5, 12),
+        textLeftBounds: createDefaultResponsiveBounds(1, 11, 1, 10, 2, 9),
+        textRightBounds: createDefaultResponsiveBounds(2, 12, 3, 12, 5, 12),
       },
       RichParagraph: {
         bodyAutoWrap: true,
@@ -1082,7 +1090,7 @@ export function createDefaultComponentDesignDocument(): ComponentDesignDocument 
         splitLeftTextBounds: createDefaultBounds(6, 12),
         splitRightHeadingBounds: createDefaultBounds(6, 12),
         splitRightTextBounds: createDefaultBounds(1, 5),
-        stackBounds: createDefaultBounds(3, 10),
+        stackBounds: createDefaultBounds(4, 9),
         stackHeadingSize: "display",
         stackImageTopSpacing: "64",
         stackTextTopSpacing: "48",
@@ -1093,9 +1101,9 @@ export function createDefaultComponentDesignDocument(): ComponentDesignDocument 
         sectionSpacing: "section-normal",
       },
       WorksListEntry: {
-        numberBounds: createDefaultResponsiveBounds(1, 1, 1, 1),
-        sidebarBounds: createDefaultResponsiveBounds(9, 12, 9, 12),
-        titleBounds: createDefaultResponsiveBounds(2, 11, 2, 8),
+        numberBounds: createDefaultResponsiveBounds(1, 1, 1, 1, 1, 1),
+        sidebarBounds: createDefaultResponsiveBounds(1, 12, 9, 12, 9, 12),
+        titleBounds: createDefaultResponsiveBounds(1, 12, 1, 8, 2, 8),
       },
     },
     version: COMPONENT_DESIGN_SCHEMA_VERSION,

@@ -30,7 +30,7 @@ export default function LightingCollectionHeader({
   return (
     <section className="border-b border-white/10 rhythm-section-hero">
       <div className="grid-container">
-        <div className="col-span-12 grid grid-cols-12 gap-10 lg:[align-items:last_baseline]">
+        <div className="grid-subgrid col-span-12 lg:[align-items:last_baseline]">
           <div className={getResponsiveGridColumnClassName(design.titleBounds)}>
             <div className="mb-10">
               <MotionLink

@@ -320,6 +320,16 @@ function ResponsiveBoundsField({
         }}
       />
       <BoundsField
+        label="平板端边界 (`md`)"
+        value={value.md}
+        onChange={(nextValue) => {
+          onChange({
+            ...value,
+            md: nextValue,
+          });
+        }}
+      />
+      <BoundsField
         label="桌面端边界 (`lg`)"
         value={value.lg}
         onChange={(nextValue) => {

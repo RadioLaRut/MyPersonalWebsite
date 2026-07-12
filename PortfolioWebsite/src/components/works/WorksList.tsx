@@ -4,14 +4,18 @@ import React, { type ReactNode } from "react";
 import Typography from "@/components/common/Typography";
 import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
 import {
-    getGridColumnClassName,
+    createResponsiveGridBounds,
+    getResponsiveGridColumnClassName,
     getSectionSpacingClassName,
     getSpacingRem,
 } from "@/lib/component-design-style";
-import WorksListEntry from "@/components/works/WorksListEntry";
+import WorksListEntry, {
+    type WorksListEntryAlias,
+} from "@/components/works/WorksListEntry";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 interface WorkItem {
+    aliases?: WorksListEntryAlias[];
     number?: string;
     id: string;
     href?: string;
@@ -25,12 +29,13 @@ interface WorkItem {
 
 export interface WorksListProps {
     heading?: ReactNode;
+    indexSummary?: ReactNode;
     works?: WorkItem[];
     entriesContent?: ReactNode;
     editMode?: boolean;
 }
 
-export default function WorksList({ heading = "All Selected Works", works = [], entriesContent, editMode = false }: WorksListProps) {
+export default function WorksList({ heading = "All Selected Works", indexSummary, works = [], entriesContent, editMode = false }: WorksListProps) {
     const design = useComponentDesign("WorksList");
     const hasLegacyWorks = works && works.length > 0;
     const hasEntriesContent = Boolean(entriesContent);
@@ -59,17 +64,33 @@ export default function WorksList({ heading = "All Selected Works", works = [], 
                 className={`grid-container relative z-20 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}
                 style={{ marginBottom: getSpacingRem(design.headingBottomSpacing) }}
             >
-                <div className={`${getGridColumnClassName(design.headingBounds)} border-b border-white/10 pb-8`}>
+                <div className={`${getResponsiveGridColumnClassName(createResponsiveGridBounds(
+                  { leftCol: 1, rightCol: 12 },
+                  { leftCol: 2, rightCol: 11 },
+                  design.headingBounds,
+                ))} grid gap-4 border-b border-white/10 pb-8 md:grid-cols-[1fr_auto] md:items-end`}>
                     <Typography
                         as="h1"
+                        preset="sans-body"
+                        size="title-sm"
+                        weight="semantic"
+                        wrapPolicy="heading"
+                        className="text-white"
+                    >
+                        {heading}
+                    </Typography>
+                    {indexSummary ? (
+                      <Typography
+                        as="p"
                         preset="sans-body"
                         size="caption"
                         weight="semantic"
                         wrapPolicy="label"
-                        className="text-textMuted"
-                    >
-                        {heading}
-                    </Typography>
+                        className="text-textMuted md:text-right"
+                      >
+                        {indexSummary}
+                      </Typography>
+                    ) : null}
                 </div>
             </div>
 
@@ -81,6 +102,7 @@ export default function WorksList({ heading = "All Selected Works", works = [], 
                         <WorksListEntry
                             key={work.id || index}
                             id={work.id}
+                            aliases={work.aliases}
                             number={work.number ?? `0${index + 1}`}
                             href={work.href ?? `/works/${work.id}`}
                             title={work.title}

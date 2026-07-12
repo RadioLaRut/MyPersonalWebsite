@@ -45,15 +45,9 @@ const projectSectionImageFields = buildImageFieldTriple("imageSrc");
 const worksListEntryImageFields = buildImageFieldTriple("imageSrc", {
   defaultPreset: "ratio-21-9",
 });
-const nextProjectImageFields = buildImageFieldTriple("nextBg", {
-  defaultPreset: "ratio-21-9",
-  defaultSrc: "/images/penguin/CyberRestaurant.webp",
-  fitModeKey: "imageFitMode",
-  presetKey: "imagePreset",
-  srcLabel: "Next Background",
-});
 const CONTENT_CARD_IMAGE_POSITION_VALUES = ["left", "right"] as const;
 const PROJECT_SECTION_ALIGN_VALUES = ["auto", "left", "right"] as const;
+const BREAKDOWN_HEADLINE_VARIANT_VALUES = ["chapter", "section"] as const;
 const BOOLEAN_SELECT_VALUES = [false, true] as const;
 type ParameterGridParameters = ComponentProps<typeof ParameterGrid>["parameters"];
 
@@ -115,21 +109,33 @@ function readTriptychColumnFields(props: Record<string, unknown>, column: 1 | 2 
   };
 }
 
-function resolveNextWorkHref(href: string | undefined, nextId: string | undefined) {
-  return href || `/works/${nextId ?? ""}`;
-}
-
 // TODO(component-lab): defaultProps 中的字面量文案与图片路径需迁移到 ComponentLab 预设链路，当前为兼容历史 JSON 暂留。
-// NextProjectBlock 字段名固化在历史 JSON，统一收敛需要内容校验升级与 JSON migration，不在本轮改 schema。
 export const worksComponents = {
     BreakdownHeadline: {
       fields: {
-        title: { type: "text", contentEditable: true, label: "Title" }
+        title: { type: "text", contentEditable: true, label: "Title" },
+        variant: {
+          type: "select",
+          label: "层级",
+          options: [
+            { label: "章标题", value: "chapter" },
+            { label: "子节标题", value: "section" },
+          ],
+        },
+        indexLabel: { type: "text", contentEditable: true, label: "章节序号" },
       },
       defaultProps: {
-        title: ""
+        title: "",
+        variant: "section",
+        indexLabel: "",
       },
-      render: ({ title }) => <BreakdownSectionHeadline title={title} />
+      render: ({ title, variant, indexLabel }) => (
+        <BreakdownSectionHeadline
+          title={title}
+          variant={castSelectValue(variant, BREAKDOWN_HEADLINE_VARIANT_VALUES, "section")}
+          indexLabel={indexLabel}
+        />
+      ),
     },
 
     ImageSlider: {
@@ -353,6 +359,8 @@ export const worksComponents = {
         subtitle: { type: "text", contentEditable: true, label: "Subtitle" },
         _g_image: createFieldGroup("图片配置"),
         ...projectSectionImageFields.fields,
+        mobileImageFocalX: { type: "number", label: "移动端焦点 X (%)" },
+        mobileImageFocalY: { type: "number", label: "移动端焦点 Y (%)" },
         _g_link: createFieldGroup("链接与布局"),
         link: { type: "text", label: "Link" },
         index: { type: "number", label: "Index" },
@@ -370,17 +378,21 @@ export const worksComponents = {
         title: "Project Name",
         subtitle: "Project Category",
         ...projectSectionImageFields.defaults,
+        mobileImageFocalX: 50,
+        mobileImageFocalY: 50,
         link: "",
         index: 0,
         align: "auto",
       },
-      render: ({ title, subtitle, imageSrc, imagePreset, imageFitMode, link, index, align, editMode }) => (
+      render: ({ title, subtitle, imageSrc, imagePreset, imageFitMode, mobileImageFocalX, mobileImageFocalY, link, index, align, editMode }) => (
         <ProjectSection
           title={title}
           subtitle={subtitle}
           imageSrc={imageSrc}
           imagePreset={castImagePreset(imagePreset)}
           imageFitMode={castImageFitMode(imageFitMode)}
+          mobileImageFocalX={mobileImageFocalX}
+          mobileImageFocalY={mobileImageFocalY}
           link={toEditorAwareHref(link, editMode)}
           index={index}
           align={castSelectValue(align, PROJECT_SECTION_ALIGN_VALUES, "auto")}
@@ -424,13 +436,15 @@ export const worksComponents = {
     WorksList: {
       fields: {
         heading: { type: "text", contentEditable: true, label: "Heading" },
+        indexSummary: { type: "text", contentEditable: true, label: "索引说明" },
         entries: { type: "slot", label: "Entries" }
       },
       defaultProps: {
         heading: "",
+        indexSummary: "",
         entries: []
       },
-      render: ({ heading, entries, editMode }) => {
+      render: ({ heading, indexSummary, entries, editMode }) => {
         const { items: fallbackWorks = [], SlotComponent: EntriesSlot } = readSlot(
           entries,
           (entry) => ({
@@ -447,12 +461,14 @@ export const worksComponents = {
               pickEntryField(entry, "imageFitMode") ?? worksListEntryImageFields.defaults.imageFitMode,
             ),
             desc: pickEntryField<string>(entry, "desc") ?? "",
+            aliases: pickEntryField<{ slug: string }[]>(entry, "aliases") ?? [],
           }),
         );
 
         return (
           <WorksList
             heading={heading}
+            indexSummary={indexSummary}
             works={fallbackWorks}
             entriesContent={EntriesSlot ? <EntriesSlot allow={ALLOW_WORKS_LIST_ENTRY} className="flex flex-col w-full" minEmptyHeight={48} /> : undefined}
             editMode={editMode}
@@ -469,6 +485,14 @@ export const worksComponents = {
         title: { type: "text", contentEditable: true, label: "Title" },
         category: { type: "text", label: "Category" },
         desc: { type: "textarea", label: "Description" },
+        aliases: {
+          type: "array",
+          label: "历史别名",
+          getItemSummary: (item) => item.slug || "未命名别名",
+          arrayFields: {
+            slug: { type: "text", label: "路径别名" },
+          },
+        },
         _g_image: createFieldGroup("图片配置"),
         ...worksListEntryImageFields.fields,
       },
@@ -479,10 +503,12 @@ export const worksComponents = {
         category: "",
         ...worksListEntryImageFields.defaults,
         desc: "",
+        aliases: [],
       },
-      render: ({ id, number, href, title, category, imageSrc, imagePreset, imageFitMode, desc, editMode }) => (
+      render: ({ id, number, href, title, category, imageSrc, imagePreset, imageFitMode, desc, aliases, editMode }) => (
         <WorksListEntry
           id={id}
+          aliases={aliases}
           number={number}
           href={toEditorAwareHref(href, editMode)}
           title={title}
@@ -498,27 +524,14 @@ export const worksComponents = {
 
     NextProjectBlock: {
       fields: {
-        _g_info: createFieldGroup("项目信息"),
-        nextId: { type: "text", label: "Next ID" },
-        nextName: { type: "text", label: "Next Name" },
-        href: { type: "text", label: "Href" },
-        _g_image: createFieldGroup("图片配置"),
-        ...nextProjectImageFields.fields,
+        nextId: { type: "text", label: "下一项目 ID" },
       },
       defaultProps: {
         nextId: "penguin",
-        nextName: "PENGUIN TRADING CO.",
-        href: "/works/penguin",
-        ...nextProjectImageFields.defaults,
       },
-      render: ({ nextId, nextName, href, nextBg, imagePreset, imageFitMode, editMode }) => (
+      render: ({ nextId, editMode }) => (
         <NextProjectBlock
           nextId={nextId}
-          nextName={nextName}
-          nextBg={nextBg}
-          imagePreset={castImagePreset(imagePreset)}
-          imageFitMode={castImageFitMode(imageFitMode)}
-          href={toEditorAwareHref(resolveNextWorkHref(href, nextId), editMode)}
           editMode={editMode}
         />
       )

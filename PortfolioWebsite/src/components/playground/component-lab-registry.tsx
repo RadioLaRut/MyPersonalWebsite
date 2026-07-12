@@ -181,46 +181,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
           },
         ],
       },
-      {
-        title: "节奏",
-        fields: [
-          {
-            type: "select",
-            label: "锁组间距",
-            options: SPACING_OPTIONS,
-            getValue: (document) => document.components.ProjectSection.lockupGap,
-            setValue: (document, value) => {
-              document.components.ProjectSection.lockupGap =
-                value as ComponentDesignDocument["components"]["ProjectSection"]["lockupGap"];
-            },
-          },
-        ],
-      },
-      {
-        title: "节奏",
-        fields: [
-          {
-            type: "select",
-            label: "锁组间距",
-            options: SPACING_OPTIONS,
-            getValue: (document) => document.components.ProjectSection.lockupGap,
-            setValue: (document, value) => {
-              document.components.ProjectSection.lockupGap =
-                value as ComponentDesignDocument["components"]["ProjectSection"]["lockupGap"];
-            },
-          },
-          {
-            type: "select",
-            label: "底线光学上提",
-            options: SPACING_OPTIONS,
-            getValue: (document) => document.components.ProjectSection.titleUnderlineOpticalPull,
-            setValue: (document, value) => {
-              document.components.ProjectSection.titleUnderlineOpticalPull =
-                value as ComponentDesignDocument["components"]["ProjectSection"]["titleUnderlineOpticalPull"];
-            },
-          },
-        ],
-      },
     ],
     renderPreview: (variant) => (
       <HeroSection
@@ -229,6 +189,7 @@ export const COMPONENT_LAB_REGISTRY: Record<
             ? "LIGHTING / TECH ART / SYSTEM DESIGN / INTERACTIVE NARRATIVE"
             : "LIGHTING / TECH ART / GAME DESIGN"
         }
+        positioning="让氛围、系统与落地流程共同服务体验。"
         title={"JIANG\nCHENGYAN"}
         subtitle=""
         description={
@@ -242,6 +203,8 @@ export const COMPONENT_LAB_REGISTRY: Record<
         imageAlt="Hero Background"
         imagePreset="ratio-21-9"
         imageFitMode="x"
+        mobileImageFocalX={28}
+        mobileImageFocalY={50}
         editMode
       />
     ),
@@ -1209,6 +1172,8 @@ export const COMPONENT_LAB_REGISTRY: Record<
     renderPreview: (variant) => (
       <BreakdownSectionHeadline
         title={variant === "stress" ? "SECTION TITLE / LONGER SECTION HEADLINE" : "SECTION TITLE"}
+        variant={variant === "stress" ? "chapter" : "section"}
+        indexLabel={variant === "stress" ? "03" : undefined}
       />
     ),
   },
@@ -1395,6 +1360,31 @@ export const COMPONENT_LAB_REGISTRY: Record<
           },
         ],
       },
+      {
+        title: "节奏",
+        fields: [
+          {
+            type: "select",
+            label: "锁组间距",
+            options: SPACING_OPTIONS,
+            getValue: (document) => document.components.ProjectSection.lockupGap,
+            setValue: (document, value) => {
+              document.components.ProjectSection.lockupGap =
+                value as ComponentDesignDocument["components"]["ProjectSection"]["lockupGap"];
+            },
+          },
+          {
+            type: "select",
+            label: "底线光学上提",
+            options: SPACING_OPTIONS,
+            getValue: (document) => document.components.ProjectSection.titleUnderlineOpticalPull,
+            setValue: (document, value) => {
+              document.components.ProjectSection.titleUnderlineOpticalPull =
+                value as ComponentDesignDocument["components"]["ProjectSection"]["titleUnderlineOpticalPull"];
+            },
+          },
+        ],
+      },
     ],
     renderPreview: (variant) => (
       <ProjectSection
@@ -1403,6 +1393,8 @@ export const COMPONENT_LAB_REGISTRY: Record<
         imageSrc="/images/penguin/CyberRestaurant.webp"
         imagePreset="ratio-16-9"
         imageFitMode="x"
+        mobileImageFocalX={variant === "stress" ? 82 : 50}
+        mobileImageFocalY={50}
         link="/works/penguin"
         index={variant === "stress" ? 2 : 1}
         align={variant === "stress" ? "right" : "left"}
@@ -1452,6 +1444,7 @@ export const COMPONENT_LAB_REGISTRY: Record<
     renderPreview: (variant) => (
       <WorksList
         heading={variant === "stress" ? "WORKS / CASES / EXPERIMENTS / FULL INDEX" : "WORKS / CASES / EXPERIMENTS"}
+        indexSummary="01—09 / 精选项目"
         works={[
           {
             id: "playground-work-1",
@@ -1472,7 +1465,7 @@ export const COMPONENT_LAB_REGISTRY: Record<
             href: "/works/penguin",
             title: "PENGUIN TRADING CO.",
             category: "Lead Designer / PM / Tech Art",
-            imageSrc: CANONICAL_PLACEHOLDER_PATH,
+            imageSrc: "/images/penguin/CyberRestaurant.webp",
             imagePreset: "ratio-21-9",
             imageFitMode: "x",
             desc: "在外星冰川经营一座企鹅血汗工厂，把繁育、压榨与消耗做成黑色幽默系统。",
@@ -1650,12 +1643,7 @@ export const COMPONENT_LAB_REGISTRY: Record<
     ],
     renderPreview: (variant) => (
       <NextProjectBlock
-        nextId="insight"
-        nextName={variant === "stress" ? "INSIGHT / LONGER NEXT PROJECT NAME" : "INSIGHT"}
-        nextBg="/images/insight/InsightOnlyCover.webp"
-        href="/works/insight"
-        imagePreset="ratio-21-9"
-        imageFitMode="x"
+        nextId={variant === "stress" ? "penguin" : "insight"}
         editMode
       />
     ),
@@ -1697,6 +1685,7 @@ export const COMPONENT_LAB_REGISTRY: Record<
     ],
     renderPreview: (variant) => (
       <ContactFlashlightBlock
+        anchorId="contact"
         maskRadius={500}
         maskSmoothness={40}
         darkTextColor="rgba(255,255,255,0.4)"
@@ -1710,6 +1699,9 @@ export const COMPONENT_LAB_REGISTRY: Record<
         taglineSub="CUC '2028"
         email="hello@example.com"
         wechat="wechat_id"
+        copyLabel="复制微信号"
+        copySuccessMessage="微信号已复制"
+        copyErrorMessage="复制失败，请手动选择微信号"
         experienceHistory={[
           { company: "Tencent / Lightspeed", role: "Lighting / Tech Art Intern" },
           { company: "Independent Projects", role: "Interaction Narrative / Systems" },

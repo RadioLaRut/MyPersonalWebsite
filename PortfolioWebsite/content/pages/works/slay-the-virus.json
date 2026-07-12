@@ -98,7 +98,7 @@
         "leftLabel": "ORIGINAL",
         "rightLabel": "OPTIMIZED",
         "initialPosition": 50,
-        "imagePreset": "native",
+        "imagePreset": "ratio-16-9",
         "imageFitMode": "y"
       }
     },
@@ -124,10 +124,7 @@
       "type": "NextProjectBlock",
       "props": {
         "id": "next-1",
-        "nextId": "prometheus",
-        "href": "/works/prometheus",
-        "nextName": "PROMETHEUS PROJECT",
-        "nextBg": "/images/prometheus/PrometheusTitle.webp"
+        "nextId": "prometheus"
       }
     }
   ],

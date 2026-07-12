@@ -12,7 +12,7 @@
         "title": "I'm explode with u",
         "subtitle": "",
         "heroImage": "/images/exploding/Title.webp",
-        "heroImagePreset": "native",
+        "heroImagePreset": "ratio-21-9",
         "heroImageFitMode": "cover",
         "navLink": "https://www.bilibili.com/video/BV1DNwUeDEos/",
         "id": "HeroHeadline-4ede4ba8-b50f-4be0-affe-eaef3806a4a3"
@@ -75,10 +75,7 @@
       "type": "NextProjectBlock",
       "props": {
         "id": "next-1",
-        "nextId": "insight",
-        "href": "/works/insight",
-        "nextName": "INSIGHT",
-        "nextBg": "/images/insight/InsightOnlyCover.webp"
+        "nextId": "houdini-pcg"
       }
     }
   ],

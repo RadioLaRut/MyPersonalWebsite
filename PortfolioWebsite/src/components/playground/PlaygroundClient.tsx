@@ -4,7 +4,6 @@ import React from "react";
 import { MotionLink } from "@/components/motion";
 import { motion, motionTransitions } from "@/lib/motion";
 import puckConfig from "@/puck/config";
-import { CANONICAL_PLACEHOLDER_PATH } from "@/lib/public-paths";
 import Typography from "@/components/common/Typography";
 
 const EXCLUDED_COMPONENT_KEYS = new Set(["ContactFlashlight"]);
@@ -91,6 +90,8 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
 
   BreakdownHeadline: {
     title: "SECTION TITLE",
+    variant: "section",
+    indexLabel: "",
   },
   PortfolioHeroHeader: {
     title: "ALL WORKS",
@@ -192,6 +193,7 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
   HeroSection: {
     eyebrow: "LIGHTING / TECH ART / GAME DESIGN",
     title: "JIANG\nCHENGYAN",
+    positioning: "让氛围、系统与落地流程共同服务体验。",
     subtitle: "",
     description: "",
     primaryCtaLabel: "",
@@ -202,6 +204,8 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     imageAlt: "Hero Background",
     imagePreset: "ratio-21-9",
     imageFitMode: "x",
+    mobileImageFocalX: 28,
+    mobileImageFocalY: 50,
   },
   ProjectSection: {
     title: "PENGUIN TRADING CO.",
@@ -209,6 +213,8 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     imageSrc: "/images/penguin/CyberRestaurant.webp",
     imagePreset: "ratio-16-9",
     imageFitMode: "x",
+    mobileImageFocalX: 50,
+    mobileImageFocalY: 50,
     link: "/works/penguin",
     index: 1,
     align: "auto",
@@ -221,7 +227,8 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     buttonHref: "/works",
   },
   WorksList: {
-    heading: "WORKS / CASES / EXPERIMENTS",
+    heading: "作品索引",
+    indexSummary: "01—09 / 精选项目",
     entries: [
       {
         type: "WorksListEntry",
@@ -245,7 +252,7 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
           href: "/works/penguin",
           title: "PENGUIN TRADING CO.",
           category: "Lead Designer / PM / Tech Art",
-          imageSrc: CANONICAL_PLACEHOLDER_PATH,
+          imageSrc: "/images/penguin/CyberRestaurant.webp",
           imagePreset: "ratio-21-9",
           imageFitMode: "x",
           desc: "在外星冰川经营一座企鹅血汗工厂，把繁育、压榨与消耗做成黑色幽默系统。",
@@ -255,10 +262,6 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
   },
   NextProjectBlock: {
     nextId: "insight",
-    nextName: "INSIGHT",
-    nextBg: "/images/insight/InsightOnlyCover.webp",
-    imagePreset: "ratio-21-9",
-    imageFitMode: "x",
   },
   LightingCollectionHeader: {
     title: "CITY ADD",
