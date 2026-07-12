@@ -9,7 +9,13 @@ import {
   getSpacingRem,
 } from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
-import { motion, useScroll, useTransform } from "@/lib/motion";
+import {
+  motion,
+  motionClassNames,
+  motionScrollTokens,
+  useScroll,
+  useTransform,
+} from "@/lib/motion";
 
 interface ProjectSectionProps {
   title: ReactNode;
@@ -51,9 +57,21 @@ export default function ProjectSection({
     offset: ["start end", "end start"],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1.01, 1.04]);
-  const opacity = useTransform(scrollYProgress, [0, 0.32, 0.72, 1], [0.34, 1, 1, 0.34]);
+  const y = useTransform(
+    scrollYProgress,
+    motionScrollTokens.projectMedia.input,
+    motionScrollTokens.projectMedia.y,
+  );
+  const scale = useTransform(
+    scrollYProgress,
+    motionScrollTokens.projectMedia.input,
+    motionScrollTokens.projectMedia.scale,
+  );
+  const opacity = useTransform(
+    scrollYProgress,
+    motionScrollTokens.projectContent.input,
+    motionScrollTokens.projectContent.opacity,
+  );
   const shouldAlignRight = align === "right" || (align === "auto" && index % 2 !== 0);
   const textColumnClassName = shouldAlignRight
     ? "justify-items-end text-right"
@@ -67,7 +85,7 @@ export default function ProjectSection({
 
   const underlineTrackClassName = shouldAlignRight ? "justify-end" : "justify-start";
   const underlineFillClassName =
-    "w-[18%] bg-white/[0.45] transition-[width,background-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:w-full group-hover:bg-white/[0.82] group-focus-visible:w-full group-focus-visible:bg-white/[0.82]";
+    `w-[18%] bg-white/[0.45] ${motionClassNames.projectUnderline} group-hover:w-full group-hover:bg-white/[0.82] group-focus-visible:w-full group-focus-visible:bg-white/[0.82]`;
   const textBoundsClassName = getResponsiveGridColumnClassName(
     shouldAlignRight ? design.textRightBounds : design.textLeftBounds,
   );
@@ -90,9 +108,9 @@ export default function ProjectSection({
         style={editMode ? undefined : { y, scale }}
       >
         {/* Environment ambient gradient/shadow to improve contrast */}
-        <div className="absolute inset-0 z-10 bg-black/[0.32] custom-blend transition-colors duration-1000 group-hover:bg-black/[0.24] group-focus-visible:bg-black/[0.24]" />
+        <div className={`absolute inset-0 z-10 bg-black/[0.32] custom-blend ${motionClassNames.projectBackdrop} group-hover:bg-black/[0.24] group-focus-visible:bg-black/[0.24]`} />
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40 z-10" />
+        <div className="project-section-edge-shade absolute inset-0 z-10" />
 
         <PresetImage
           src={imageSrc}

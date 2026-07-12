@@ -11,7 +11,15 @@ import {
 } from "@/lib/component-design-style";
 import { toPlainText } from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
-import { motion, useScroll, useTransform } from "@/lib/motion";
+import {
+  heroLeadVariants,
+  heroSupportingVariants,
+  motion,
+  motionClassNames,
+  motionScrollTokens,
+  useScroll,
+  useTransform,
+} from "@/lib/motion";
 
 function hasNodeContent(value: ReactNode) {
   if (value === null || value === undefined || value === false) {
@@ -113,8 +121,16 @@ export default function HeroSection({
     offset: ["start start", "end start"],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
+  const y = useTransform(
+    scrollYProgress,
+    motionScrollTokens.heroMedia.input,
+    motionScrollTokens.heroMedia.y,
+  );
+  const scale = useTransform(
+    scrollYProgress,
+    motionScrollTokens.heroMedia.input,
+    motionScrollTokens.heroMedia.scale,
+  );
 
   return (
     <section
@@ -149,9 +165,9 @@ export default function HeroSection({
             {posterMode ? (
               <motion.div
                 className={`${contentBoundsClassName} min-w-0 self-end grid auto-rows-max justify-items-end text-right text-edge-shadow lg:ml-auto lg:self-center`}
-                initial={editMode ? false : { opacity: 0, y: 28 }}
-                animate={editMode ? undefined : { opacity: 1, y: 0 }}
-                transition={editMode ? undefined : { duration: 1.1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                initial={editMode ? false : "hidden"}
+                animate={editMode ? undefined : "visible"}
+                variants={heroLeadVariants}
               >
                 {hasSubtitle ? (
                   <div className="relative w-fit">
@@ -239,9 +255,9 @@ export default function HeroSection({
             ) : (
               <motion.div
                 className={`${contentBoundsClassName} self-center grid max-w-[28rem] auto-rows-max justify-items-start text-edge-shadow sm:max-w-[31rem] lg:ml-auto lg:max-w-[36rem]`}
-                initial={editMode ? false : { opacity: 0, y: 28 }}
-                animate={editMode ? undefined : { opacity: 1, y: 0 }}
-                transition={editMode ? undefined : { duration: 1.1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                initial={editMode ? false : "hidden"}
+                animate={editMode ? undefined : "visible"}
+                variants={heroLeadVariants}
               >
                 {eyebrow ? (
                   <Typography
@@ -285,9 +301,9 @@ export default function HeroSection({
 
                 <motion.div
                   className="grid auto-rows-max justify-items-start"
-                  initial={editMode ? false : { opacity: 0, x: 24 }}
-                  animate={editMode ? undefined : { opacity: 1, x: 0 }}
-                  transition={editMode ? undefined : { duration: 0.95, delay: 0.38, ease: [0.22, 1, 0.36, 1] }}
+                  initial={editMode ? false : "hidden"}
+                  animate={editMode ? undefined : "visible"}
+                  variants={heroSupportingVariants}
                 >
                   <div className="grid content-start justify-items-start">
                     {hasDescription ? (
@@ -312,9 +328,9 @@ export default function HeroSection({
                           <MotionLink
                             href={primaryCtaHref!}
                             disabled={editMode}
-                            className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 text-white/92 transition-colors duration-300 hover:text-white"
+                            className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 text-white/92 hover:text-white"
                           >
-                            <span className="h-px w-7 bg-white/52 transition-all duration-300 group-hover:w-11 group-hover:bg-white" />
+                            <span className={`h-px w-7 bg-white/52 ${motionClassNames.fastAll} group-hover:w-11 group-hover:bg-white`} />
                             <Typography
                               preset="sans-body"
                               size="label"
@@ -331,9 +347,9 @@ export default function HeroSection({
                           <MotionLink
                             href={secondaryCtaHref!}
                             disabled={editMode}
-                            className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 text-white/48 transition-colors duration-300 hover:text-white"
+                            className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 text-white/48 hover:text-white"
                           >
-                            <span className="h-px w-7 bg-white/18 transition-all duration-300 group-hover:w-11 group-hover:bg-white" />
+                            <span className={`h-px w-7 bg-white/18 ${motionClassNames.fastAll} group-hover:w-11 group-hover:bg-white`} />
                             <Typography
                               preset="sans-body"
                               size="label"

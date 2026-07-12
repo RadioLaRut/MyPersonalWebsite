@@ -6,10 +6,15 @@ import { MotionButton, MotionLink } from "@/components/motion";
 import {
   menuItemVariants,
   motion,
-  motionDurations,
-  motionEasings,
-  motionStagger,
+  motionClassNames,
+  motionSprings,
   motionTransitions,
+  navigationFooterVariants,
+  navigationHeaderVariants,
+  navigationIndicatorVariants,
+  navigationLabelVariants,
+  navigationOverlayVariants,
+  navigationPanelVariants,
 } from "@/lib/motion";
 import { isTestingMode } from "@/lib/site-mode";
 
@@ -48,15 +53,6 @@ export default function Navigation() {
     pathname?.startsWith("/playground/font-lab") ||
     pathname?.startsWith("/playground/component-lab");
   const keepsSpotlightVisible = pathname === "/about";
-  const headerDuration = 0.4;
-  const overlayDuration = motionDurations.slow;
-  const panelDuration = motionDurations.reveal;
-  const menuItemDuration = motionDurations.standard;
-  const menuItemDelayStep = motionStagger.itemDelay;
-  const menuItemInitialDelay = motionStagger.itemInitialDelay;
-  const footerDelay = 0.66;
-  const overlayTransition = { duration: overlayDuration, ease: motionEasings.standard };
-  const panelTransition = { duration: panelDuration, ease: motionEasings.standard };
 
   useEffect(() => {
     if (pathname?.startsWith("/admin") || isInternalLabRoute) return;
@@ -70,10 +66,10 @@ export default function Navigation() {
 
     const overlayTeardownTimer = window.setTimeout(() => {
       setIsOverlayActive(false);
-    }, panelDuration * 1000);
+    }, motionTransitions.navigationPanel.duration * 1000);
 
     return () => window.clearTimeout(overlayTeardownTimer);
-  }, [isOpen, isOverlayActive, panelDuration]);
+  }, [isOpen, isOverlayActive]);
 
   useLayoutEffect(() => {
     if (pathname?.startsWith("/admin") || isInternalLabRoute || !isOpen) {
@@ -197,15 +193,15 @@ export default function Navigation() {
     <>
       <motion.header
         initial={false}
-        animate={{ opacity: isOpen ? 0 : 1 }}
-        transition={{ duration: headerDuration, ease: "easeOut" }}
+        animate={isOpen ? "hidden" : "visible"}
+        variants={navigationHeaderVariants}
         className="pointer-events-none fixed left-0 top-0 z-40 w-full px-5 py-6 md:px-8 md:py-8"
       >
         <div className="grid items-center justify-items-end">
           <MotionButton
             onClick={openMenu}
             ref={menuButtonRef}
-            className="group interactive pointer-events-auto relative inline-grid grid-flow-col auto-cols-max items-center gap-3 transition-colors duration-300 text-edge-shadow"
+            className="group interactive pointer-events-auto relative inline-grid grid-flow-col auto-cols-max items-center gap-3 text-edge-shadow"
             aria-label="Menu"
             aria-expanded={isOpen}
             aria-controls="site-navigation-drawer"
@@ -217,13 +213,13 @@ export default function Navigation() {
               size="body-sm"
               weight="semantic"
               wrapPolicy="label"
-              className="relative z-10 text-white/80 transition-colors duration-300 group-hover:text-white"
+              className={`relative z-10 text-white/80 ${motionClassNames.fastColors} group-hover:text-white`}
             >
               MENU
             </Typography>
             <span className="relative z-10 grid justify-items-end gap-[7px] drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">
-              <span className="h-[1.5px] w-10 bg-white/90 transition-all duration-300 group-hover:w-14 group-hover:bg-white md:w-12"></span>
-              <span className="h-[1.5px] w-6 bg-white/90 transition-all duration-300 group-hover:w-14 group-hover:bg-white md:w-8"></span>
+              <span className={`h-[1.5px] w-10 bg-white/90 ${motionClassNames.fastAll} group-hover:w-14 group-hover:bg-white md:w-12`}></span>
+              <span className={`h-[1.5px] w-6 bg-white/90 ${motionClassNames.fastAll} group-hover:w-14 group-hover:bg-white md:w-8`}></span>
             </span>
           </MotionButton>
         </div>
@@ -236,15 +232,15 @@ export default function Navigation() {
       >
         <motion.div
           initial={false}
-          animate={{ opacity: isOpen ? 1 : 0 }}
-          transition={overlayTransition}
+          animate={isOpen ? "visible" : "hidden"}
+          variants={navigationOverlayVariants}
           className={`absolute inset-0 ${keepsSpotlightVisible ? "bg-black/5" : "bg-black/18 backdrop-blur-md"}`}
         />
 
         <motion.div
           initial={false}
-          animate={{ opacity: isOpen ? 1 : 0 }}
-          transition={overlayTransition}
+          animate={isOpen ? "visible" : "hidden"}
+          variants={navigationOverlayVariants}
           className="absolute inset-0 cursor-pointer"
           onClick={closeMenu}
           onWheel={(e) => e.stopPropagation()}
@@ -254,9 +250,9 @@ export default function Navigation() {
 
         {isOverlayActive && (
           <motion.div
-              initial={{ x: "100%", opacity: 1 }}
-              animate={{ x: isOpen ? 0 : "100%", opacity: 1 }}
-              transition={panelTransition}
+              initial="closed"
+              animate={isOpen ? "open" : "closed"}
+              variants={navigationPanelVariants}
               style={{ willChange: "transform" }}
               className="relative min-h-[100dvh] w-full overflow-y-auto overscroll-contain border-l border-white/10 bg-[linear-gradient(180deg,rgba(8,8,8,0.98)_0%,rgba(5,5,5,0.94)_100%)] shadow-[-24px_0_80px_rgba(0,0,0,0.4)] backdrop-blur-2xl sm:w-[40vw] sm:min-w-[400px]"
               id="site-navigation-drawer"
@@ -275,7 +271,7 @@ export default function Navigation() {
                 <div className="absolute right-5 top-6 grid justify-items-end text-edge-shadow md:right-8 md:top-8">
                   <MotionButton
                     onClick={closeMenu}
-                    className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 transition-colors duration-300 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-8 focus-visible:outline-white/80"
+                    className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-8 focus-visible:outline-white/80"
                     aria-label="Close menu"
                   >
                     <Typography
@@ -284,14 +280,14 @@ export default function Navigation() {
                       size="body-sm"
                       weight="semantic"
                       wrapPolicy="label"
-                      className="text-white/50 transition-colors duration-300 group-hover:text-white"
+                      className={`text-white/50 ${motionClassNames.fastColors} group-hover:text-white`}
                     >
                       CLOSE
                     </Typography>
                     <svg
                       aria-hidden="true"
                       viewBox="0 0 24 24"
-                      className="h-5 w-5 text-white/50 transition-colors duration-300 group-hover:text-white md:h-6 md:w-6"
+                      className={`h-5 w-5 text-white/50 ${motionClassNames.fastColors} group-hover:text-white md:h-6 md:w-6`}
                     >
                       <path
                         d="M6 6L18 18M18 6L6 18"
@@ -310,18 +306,15 @@ export default function Navigation() {
                       return (
                         <motion.div
                           key={item.label}
+                          custom={i}
                           initial="hidden"
                           animate="visible"
                           exit="exit"
                           variants={menuItemVariants}
-                          transition={{
-                            delay: menuItemInitialDelay + i * menuItemDelayStep,
-                            duration: menuItemDuration,
-                          }}
                         >
                           <MotionLink
                             href={item.href}
-                            className={`group relative grid items-center transition-all duration-300 focus-visible:text-white focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-white/80 ${isActive ? "text-white" : "text-white/20"} hover:text-white`}
+                            className={`group relative grid items-center ${motionClassNames.fastAll} focus-visible:text-white focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-white/80 ${isActive ? "text-white" : "text-white/20"} hover:text-white`}
                             aria-current={isActive ? "page" : undefined}
                             onClick={closeMenu}
                           >
@@ -335,29 +328,14 @@ export default function Navigation() {
                                 {isActive && (
                                   <motion.div
                                     layoutId="active-indicator"
-                                    variants={{
-                                      initial: { scaleY: 1, x: 0, opacity: 0.8 },
-                                      hover: { 
-                                        scaleY: 1.5, 
-                                        x: 8,
-                                        opacity: 1,
-                                        transition: motionTransitions.hover
-                                      }
-                                    }}
+                                    variants={navigationIndicatorVariants}
                                     className="h-8 w-[0.5px] shrink-0 bg-gradient-to-b from-transparent via-white to-transparent origin-center"
-                                    transition={{
-                                      type: "spring",
-                                      stiffness: 300,
-                                      damping: 30,
-                                    }}
+                                    transition={motionSprings.navigationIndicator}
                                   />
                                 )}
                               </div>
                               <motion.div
-                                variants={{
-                                  initial: { x: 0 },
-                                  hover: { x: 8, transition: motionTransitions.hover }
-                                }}
+                                variants={navigationLabelVariants}
                               >
                                 <Typography
                                   as="span"
@@ -365,7 +343,7 @@ export default function Navigation() {
                                   size="menu"
                                   weight="semantic"
                                   wrapPolicy="heading"
-                                  className={`inline-block text-inherit transition-all duration-500 ease-[0.22,1,0.36,1] ${isActive ? "tracking-widest" : "tracking-normal"}`}
+                                  className={`inline-block text-inherit ${motionClassNames.navigationLabel} ${isActive ? "tracking-widest" : "tracking-normal"}`}
                                 >
                                   {item.label}
                                 </Typography>
@@ -379,9 +357,9 @@ export default function Navigation() {
                 </div>
 
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: footerDelay, duration: 0.45 }}
+                  initial="hidden"
+                  animate="visible"
+                  variants={navigationFooterVariants}
                   className="pt-16"
                 >
                   <Typography

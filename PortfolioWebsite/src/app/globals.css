@@ -226,6 +226,16 @@ html[data-site-mode="normal"] {
   object-position: var(--preset-image-position-base, 50% 50%);
 }
 
+.project-section-edge-shade {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.28) 0%,
+    transparent 14%,
+    transparent 86%,
+    rgba(0, 0, 0, 0.52) 100%
+  );
+}
+
 .image-loading-indicator {
   position: absolute;
   inset: 0;
@@ -297,6 +307,15 @@ html[data-site-mode="normal"] {
 }
 
 @media (min-width: 1024px) {
+  .project-section-edge-shade {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.4) 0%,
+      transparent 50%,
+      rgba(0, 0, 0, 1) 100%
+    );
+  }
+
   .responsive-preset-image {
     object-position: var(--preset-image-position-lg, var(--preset-image-position-md, var(--preset-image-position-base, 50% 50%)));
   }
