@@ -1,9 +1,4 @@
 {
-  "root": {
-    "props": {
-      "title": "帅油桶 (HOLY TANK)"
-    }
-  },
   "content": [
     {
       "type": "HeroHeadline",
@@ -13,7 +8,10 @@
         "title": "帅油桶 (HOLY TANK)",
         "subtitle": "交互叙事游戏",
         "heroImage": "/images/holy-tank/HostileArchitecture.webp",
-        "navLink": "https://www.bilibili.com/video/BV1GqkRYxEWM/"
+        "navLink": "https://www.bilibili.com/video/BV1GqkRYxEWM/",
+        "heroImagePreset": "ratio-21-9",
+        "heroImageFitMode": "x",
+        "navLinkLabel": "观看视频"
       }
     },
     {
@@ -23,7 +21,6 @@
         "title": "敌意建筑",
         "description": "敌意建筑是在建筑环境中故意用一些设计要素来引导或限制某些行为，例如阻止人们躺下或坐下、玩滑板、乱丢垃圾、游荡和随地小便。受影响的大多是时常使用或依赖公共空间的人，例如年轻人、穷人、和露宿者。\n\n最典型的敌意建筑即“反游民尖刺”——嵌在平坦表面上的螺柱等结构会使之变得粗糙，无法在上面睡觉。",
         "imageSrc": "/images/holy-tank/HostileArchitecture.webp",
-        "tags": [],
         "imagePreset": "native"
       }
     },
@@ -61,8 +58,7 @@
         "id": "holytank-card-1",
         "title": "轨迹球交互设计",
         "description": "游戏抛弃了传统的键鼠操作，完全使用实体轨迹球进行控制。轨迹球最大的交互优势在于：用户可以用手握住轨迹球，像是拧一颗球一样进行操作。轨迹球移动鼠标时本身是固定的，将其放在座椅扶手后进行操作，这种操作与角色形成了强烈的通感，让玩家能够切身体验到残疾人的日常困难。",
-        "imageSrc": "/images/holy-tank/GameScreenshot.webp",
-        "tags": []
+        "imageSrc": "/images/holy-tank/GameScreenshot.webp"
       }
     },
     {
@@ -73,5 +69,14 @@
       }
     }
   ],
+  "root": {
+    "props": {
+      "description": "以敌意建筑为议题的交互叙事游戏，探索空间规则、社会排斥与玩家选择。",
+      "image": "/images/holy-tank/HostileArchitecture.webp",
+      "noIndex": false,
+      "title": "帅油桶 (HOLY TANK)"
+    }
+  },
+  "version": 1,
   "zones": {}
 }

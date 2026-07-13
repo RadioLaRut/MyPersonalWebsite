@@ -1,18 +1,19 @@
-"use client";
-
 import { type ReactNode } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
-import { MotionLink } from "@/components/motion";
+import {
+  type ComponentDesignOverride,
+  resolveComponentDesign,
+} from "@/lib/component-design-runtime";
+import { MotionLink } from "@/components/motion/MotionLink";
 import {
   createResponsiveGridBounds,
   getResponsiveGridColumnClassName,
 } from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
-export interface LightingProjectCardProps {
+export type LightingProjectCardProps = {
   number: string;
   title: ReactNode;
   coverImage: string;
@@ -20,7 +21,7 @@ export interface LightingProjectCardProps {
   imagePreset?: ImagePreset;
   imageFitMode?: ImageFitMode;
   editMode?: boolean;
-}
+} & ComponentDesignOverride<"LightingProjectCard">;
 
 function hasNodeContent(value: ReactNode) {
   if (value === null || value === undefined || value === false) {
@@ -54,8 +55,9 @@ export default function LightingProjectCard({
   href,
   imagePreset = "ratio-21-9",
   editMode = false,
+  design,
 }: LightingProjectCardProps) {
-  const design = useComponentDesign("LightingProjectCard");
+  const resolvedDesign = resolveComponentDesign("LightingProjectCard", design);
   const hasTitle = hasNodeContent(title);
   const imageAlt = getNodeAltText(title) ?? `Lighting collection ${number}`;
 
@@ -127,7 +129,7 @@ export default function LightingProjectCard({
             className={`${getResponsiveGridColumnClassName(createResponsiveGridBounds(
               { leftCol: 1, rightCol: 12 },
               { leftCol: 2, rightCol: 11 },
-              design.contentBounds,
+              resolvedDesign.contentBounds,
             ))} block w-full ${editMode ? "cursor-default" : "interactive"}`}
           >
             {content}
@@ -136,7 +138,7 @@ export default function LightingProjectCard({
           <div className={`${getResponsiveGridColumnClassName(createResponsiveGridBounds(
             { leftCol: 1, rightCol: 12 },
             { leftCol: 2, rightCol: 11 },
-            design.contentBounds,
+            resolvedDesign.contentBounds,
           ))} w-full`}>
             {content}
           </div>

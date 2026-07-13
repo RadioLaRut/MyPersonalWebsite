@@ -1,8 +1,8 @@
-"use client";
-
 import clsx from "clsx";
 import Image from "next/image";
-import { useCallback, useState, type CSSProperties } from "react";
+import type { CSSProperties } from "react";
+
+import ImageLoadObserver from "./ImageLoadObserver";
 
 import {
   type ImageBreakpointValue,
@@ -33,13 +33,6 @@ type PresetImageProps = {
   frameClassName?: string;
   canvasClassName?: string;
   imageClassName?: string;
-};
-
-type ImageLoadStatus = "loading" | "loaded" | "error";
-
-type ImageLoadState = {
-  src: string;
-  status: ImageLoadStatus;
 };
 
 function getPresetDimensions(preset: ImagePreset) {
@@ -100,34 +93,10 @@ export function PresetImage({
       } as CSSProperties)
     : undefined;
   const shouldUseImgFallback = resolvedPreset === "native" || isRemoteSrc;
-  const [loadState, setLoadState] = useState<ImageLoadState>({
-    src: normalizedSrc,
-    status: "loading",
-  });
-  const currentLoadStatus = loadState.src === normalizedSrc
-    ? loadState.status
-    : "loading";
-  const updateLoadStatus = useCallback((status: ImageLoadStatus) => {
-    setLoadState((current) => {
-      if (current.src === normalizedSrc && current.status === status) {
-        return current;
-      }
-
-      return { src: normalizedSrc, status };
-    });
-  }, [normalizedSrc]);
-  const handleImageRef = useCallback((element: HTMLImageElement | null) => {
-    if (!element?.complete) {
-      return;
-    }
-
-    updateLoadStatus(element.naturalWidth > 0 ? "loaded" : "error");
-  }, [updateLoadStatus]);
-
   return (
     <div
       className={clsx("preset-image-frame", frameClasses, frameClassName)}
-      data-image-state={currentLoadStatus}
+      data-image-state="loading"
     >
       <div
         className={clsx(
@@ -140,7 +109,6 @@ export function PresetImage({
             {/* native 预设与远程 URL 仍走 img 兜底，避免原始比例失真和 next/image 外链白名单报错 */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              ref={handleImageRef}
               src={normalizedSrc}
               alt={alt}
               loading={loading ?? (priority ? "eager" : "lazy")}
@@ -150,13 +118,10 @@ export function PresetImage({
               draggable={draggable}
               className={imageClasses}
               style={imageStyle}
-              onLoad={() => updateLoadStatus("loaded")}
-              onError={() => updateLoadStatus("error")}
             />
           </>
         ) : (
           <Image
-            ref={handleImageRef}
             src={normalizedSrc}
             alt={alt}
             width={imageProps.width}
@@ -168,11 +133,10 @@ export function PresetImage({
             draggable={draggable}
             className={imageClasses}
             style={imageStyle}
-            onLoad={() => updateLoadStatus("loaded")}
-            onError={() => updateLoadStatus("error")}
           />
         )}
       </div>
+      <ImageLoadObserver />
       <div className="image-loading-indicator" aria-hidden="true">
         <span className="image-loading-track">
           <span className="image-loading-progress" />

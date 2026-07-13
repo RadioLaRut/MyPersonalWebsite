@@ -1,6 +1,7 @@
 import { toAdminPathFromPublicPath, tryNormalizePublicPath } from "./public-paths.ts";
 
 const SAFE_EXTERNAL_HREF_PROTOCOLS = new Set(["http:", "https:", "mailto:", "tel:"]);
+const EXTERNAL_WEB_HREF_PROTOCOLS = new Set(["http:", "https:"]);
 const HREF_CONTROL_CHARACTER_PATTERN = /[\u0000-\u001f\u007f]/;
 const LOCAL_HREF_ORIGIN = "https://portfolio.local";
 
@@ -50,6 +51,19 @@ export function toSafePuckHref(href: string | undefined): string | undefined {
     return SAFE_EXTERNAL_HREF_PROTOCOLS.has(parsed.protocol) ? trimmed : undefined;
   } catch {
     return undefined;
+  }
+}
+
+export function isExternalWebHref(href: string | undefined): boolean {
+  const safeHref = toSafePuckHref(href);
+  if (!safeHref || safeHref.startsWith("/") || safeHref.startsWith("#")) {
+    return false;
+  }
+
+  try {
+    return EXTERNAL_WEB_HREF_PROTOCOLS.has(new URL(safeHref).protocol);
+  } catch {
+    return false;
   }
 }
 

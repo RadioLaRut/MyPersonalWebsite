@@ -10,12 +10,11 @@ import {
   normalizePuckSlugInput,
   normalizePuckSlugSegment,
   toPuckRouteSegments,
-} from "./puck-slug";
+} from "./puck-slug.ts";
 
 export type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue };
 
 declare global {
-  // eslint-disable-next-line no-var
   var __puckWriteQueue: Map<string, Promise<void>> | undefined;
 }
 
@@ -214,7 +213,6 @@ export async function listStaticPuckRouteParams() {
 }
 
 export async function listPageSlugs() {
-  await ensureContentPagesRoot();
   const allSlugs = await walkJsonFiles(CONTENT_PAGES_ROOT);
   return Array.from(new Set(allSlugs)).sort();
 }

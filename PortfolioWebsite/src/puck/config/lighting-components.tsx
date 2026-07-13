@@ -1,4 +1,4 @@
-import type { Config } from "@measured/puck";
+import type { Config } from "@puckeditor/core";
 import LightingCollectionHeader from "@/components/works/LightingCollectionHeader";
 import LightingProjectCard from "@/components/works/LightingProjectCard";
 import { CANONICAL_PLACEHOLDER_PATH } from "@/lib/public-paths";

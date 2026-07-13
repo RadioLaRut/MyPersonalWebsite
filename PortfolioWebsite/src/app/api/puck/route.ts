@@ -1,141 +1,15 @@
 import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
 
-import {
-  type JsonValue,
-  listPageSlugs,
-  readPageDataByNormalizedSlug,
-  writePageDataByNormalizedSlug,
-} from "@/lib/puck-content";
-import { isJsonValue, isPlainRecord } from "@/lib/json-utils";
-import { normalizePuckData } from "@/lib/puck-data-normalization";
-import { publishPuckPage } from "@/lib/puck-publish";
-import { normalizePuckSlugInput, SlugValidationError } from "@/lib/puck-slug";
-import { assertLocalEditorAccess } from "@/lib/security";
+import { contentRepository } from "@/lib/content-repository";
+import { handlePuckGet, handlePuckPost } from "@/lib/puck-api-handler";
 
-const NO_STORE_HEADER = {
-  "Cache-Control": "no-store",
-} as const;
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
-const INTERNAL_ERROR = {
-  error: {
-    code: "INTERNAL_ERROR",
-    message: "Unexpected server error",
-  },
-} as const;
-
-function jsonResponse(body: unknown, status = 200) {
-  return NextResponse.json(body, {
-    headers: NO_STORE_HEADER,
-    status,
-  });
+export function GET(request: NextRequest) {
+  return handlePuckGet(request, contentRepository);
 }
 
-function errorResponse(status: number, code: string, message: string) {
-  return jsonResponse(
-    {
-      error: {
-        code,
-        message,
-      },
-    },
-    status,
-  );
-}
-
-function normalizeSlugOrError(rawSlug: string | null) {
-  try {
-    return normalizePuckSlugInput(rawSlug ?? "");
-  } catch (error) {
-    if (error instanceof SlugValidationError) {
-      return errorResponse(error.status, error.code, error.message);
-    }
-
-    throw error;
-  }
-}
-
-export async function GET(request: NextRequest) {
-  const denied = assertLocalEditorAccess("api");
-  if (denied) {
-    return denied;
-  }
-
-  try {
-    if (request.nextUrl.searchParams.get("list") === "1") {
-      const slugs = await listPageSlugs();
-      return jsonResponse({ slugs });
-    }
-
-    const normalizedOrError = normalizeSlugOrError(request.nextUrl.searchParams.get("slug"));
-    if (normalizedOrError instanceof NextResponse) {
-      return normalizedOrError;
-    }
-
-    const data = normalizePuckData(await readPageDataByNormalizedSlug(normalizedOrError));
-    return jsonResponse({
-      data,
-      slug: normalizedOrError.slugKey,
-    });
-  } catch (error) {
-    const errno = error as NodeJS.ErrnoException;
-    if (errno.code === "ENOENT") {
-      return errorResponse(404, "NOT_FOUND", "Puck page data does not exist");
-    }
-
-    if (error instanceof SyntaxError) {
-      return errorResponse(500, "INVALID_JSON", "Stored Puck JSON is invalid");
-    }
-
-    return jsonResponse(INTERNAL_ERROR, 500);
-  }
-}
-
-export async function POST(request: NextRequest) {
-  const denied = assertLocalEditorAccess("api", request, { requireToken: true });
-  if (denied) {
-    return denied;
-  }
-
-  let payload: unknown;
-  try {
-    payload = await request.json();
-  } catch {
-    return errorResponse(400, "BAD_REQUEST", "Request body must be valid JSON");
-  }
-
-  if (!isPlainRecord(payload)) {
-    return errorResponse(400, "BAD_REQUEST", "Request body must be an object");
-  }
-
-  const slugValue = "slug" in payload ? payload.slug : null;
-  if (slugValue !== null && typeof slugValue !== "string") {
-    return errorResponse(400, "BAD_REQUEST", "Request body.slug must be a string");
-  }
-
-  const dataValue = "data" in payload ? payload.data : undefined;
-
-  if (!isPlainRecord(dataValue)) {
-    return errorResponse(400, "BAD_REQUEST", "Request body.data must be an object");
-  }
-
-  if (!isJsonValue(dataValue)) {
-    return errorResponse(400, "BAD_REQUEST", "Request body.data must be JSON-serializable");
-  }
-
-  const normalizedOrError = normalizeSlugOrError(slugValue ?? "");
-  if (normalizedOrError instanceof NextResponse) {
-    return normalizedOrError;
-  }
-
-  try {
-    return jsonResponse(await publishPuckPage({
-      data: normalizePuckData(dataValue) as JsonValue,
-      listPageSlugs,
-      normalizedSlug: normalizedOrError,
-      writePageData: writePageDataByNormalizedSlug,
-    }));
-  } catch {
-    return jsonResponse(INTERNAL_ERROR, 500);
-  }
+export function POST(request: NextRequest) {
+  return handlePuckPost(request, contentRepository);
 }

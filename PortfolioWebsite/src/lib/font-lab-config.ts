@@ -6,6 +6,7 @@ import path from "node:path";
 import {
   createDefaultFontLabDocument,
   normalizeFontLabDocument,
+  parseCurrentFontLabDocument,
   parseFontLabDocument,
   type FontLabDocument,
   type FontLabPresetConfig,
@@ -118,9 +119,14 @@ export async function writeFontLabConfig(
   document: FontLabDocument,
   filePath = FONT_LAB_CONFIG_FILE,
 ) {
+  const strictDocument = parseCurrentFontLabDocument(document);
+  if (!strictDocument) {
+    throw new TypeError("Invalid current Font Lab document");
+  }
+
   const lineEnding = await resolvePreferredLineEnding(filePath);
   await writeJsonAtomically(
     filePath,
-    `${JSON.stringify(normalizeFontLabDocument(document), null, 2).replace(/\n/g, lineEnding)}${lineEnding}`,
+    `${JSON.stringify(strictDocument, null, 2).replace(/\n/g, lineEnding)}${lineEnding}`,
   );
 }

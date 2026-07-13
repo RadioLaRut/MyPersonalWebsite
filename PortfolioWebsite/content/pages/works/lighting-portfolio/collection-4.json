@@ -1,9 +1,4 @@
 {
-  "root": {
-    "props": {
-      "title": "ATMOSPHERE PRACTICE"
-    }
-  },
   "content": [
     {
       "type": "LightingCollectionHeader",
@@ -16,33 +11,36 @@
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "collection-4-image-1",
         "src": "/images/penguin/01.webp",
-        "caption": "",
+        "caption": "IMAGE",
         "preset": "ratio-16-9",
-        "fitMode": "x"
+        "fitMode": "x",
+        "variant": "large"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "collection-4-image-2",
         "src": "/images/penguin/02.webp",
-        "caption": "",
+        "caption": "IMAGE",
         "preset": "native",
-        "fitMode": "x"
+        "fitMode": "x",
+        "variant": "large"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "collection-4-image-3",
         "src": "/images/penguin/CyberRestaurant.webp",
-        "caption": "",
+        "caption": "IMAGE",
         "preset": "ratio-16-9",
-        "fitMode": "x"
+        "fitMode": "x",
+        "variant": "large"
       }
     },
     {
@@ -57,5 +55,14 @@
       }
     }
   ],
+  "root": {
+    "props": {
+      "description": "日常的 Unreal Engine 写实环境、氛围塑造与打光专项练习。",
+      "image": "/images/penguin/01.webp",
+      "noIndex": false,
+      "title": "ATMOSPHERE PRACTICE"
+    }
+  },
+  "version": 1,
   "zones": {}
 }

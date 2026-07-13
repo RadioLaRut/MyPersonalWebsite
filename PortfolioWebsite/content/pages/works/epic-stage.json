@@ -1,9 +1,4 @@
 {
-  "root": {
-    "props": {
-      "title": "舞台灯光叙事概念设计"
-    }
-  },
   "content": [
     {
       "type": "HeroHeadline",
@@ -13,7 +8,10 @@
         "title": "舞台灯光叙事概念设计",
         "subtitle": "",
         "heroImage": "/images/penguin/Epic.webp",
-        "navLink": "https://www.bilibili.com/video/BV1oSDTYJEi2/"
+        "navLink": "https://www.bilibili.com/video/BV1oSDTYJEi2/",
+        "heroImagePreset": "ratio-21-9",
+        "heroImageFitMode": "x",
+        "navLinkLabel": "观看视频"
       }
     },
     {
@@ -22,8 +20,20 @@
         "id": "tsl-1",
         "heading": "叙事概念构建",
         "paragraphs": [
-          "基于音乐剧《Epic》的概念舞台灯光设计项目。我独立完成舞台搭建、调度和灯光，核心思路是为希腊诸神建立性格化的色彩语言：每位神祇对应一种高饱和冷暖色，当剧情中神的影响介入时，后方的希腊石像就会被对应的颜色打亮。",
-          "选择 UE 作为制作栈的原因是即时演算可以快速验证灯光角度和色彩对撞效果，比传统灯光软件的离线渲染更适合概念阶段的反复试错。"
+          {
+            "props": {
+              "id": "tsl-1-paragraph-1",
+              "text": "基于音乐剧《Epic》的概念舞台灯光设计项目。我独立完成舞台搭建、调度和灯光，核心思路是为希腊诸神建立性格化的色彩语言：每位神祇对应一种高饱和冷暖色，当剧情中神的影响介入时，后方的希腊石像就会被对应的颜色打亮。"
+            },
+            "type": "TextParagraphBlock"
+          },
+          {
+            "props": {
+              "id": "tsl-1-paragraph-2",
+              "text": "选择 UE 作为制作栈的原因是即时演算可以快速验证灯光角度和色彩对撞效果，比传统灯光软件的离线渲染更适合概念阶段的反复试错。"
+            },
+            "type": "TextParagraphBlock"
+          }
         ],
         "imageSrc": "/images/train-station/2Day.webp",
         "imagePreset": "ratio-16-9",
@@ -65,5 +75,14 @@
       }
     }
   ],
+  "root": {
+    "props": {
+      "description": "围绕舞台空间、角色关系与即时演算展开的灯光叙事概念设计。",
+      "image": "/images/penguin/Epic.webp",
+      "noIndex": false,
+      "title": "舞台灯光叙事概念设计"
+    }
+  },
+  "version": 1,
   "zones": {}
 }

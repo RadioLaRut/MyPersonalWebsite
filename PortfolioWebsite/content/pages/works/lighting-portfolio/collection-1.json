@@ -1,9 +1,4 @@
 {
-  "root": {
-    "props": {
-      "title": "CITY ADD"
-    }
-  },
   "content": [
     {
       "type": "LightingCollectionHeader",
@@ -87,5 +82,14 @@
       }
     }
   ],
+  "root": {
+    "props": {
+      "description": "基于现有资产独立完成构图、镜头推进与电影化灯光塑形的系列练习。",
+      "image": "/images/city-2026/001.webp",
+      "noIndex": false,
+      "title": "CITY ADD"
+    }
+  },
+  "version": 1,
   "zones": {}
 }

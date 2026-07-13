@@ -1,5 +1,5 @@
 import type { TypographySize } from "@/lib/typography-tokens";
-import { isPlainRecord } from "./json-utils.ts";
+import { areJsonStructuresEqual, isPlainRecord } from "./json-utils.ts";
 
 export const COMPONENT_DESIGN_SCHEMA_VERSION = 1 as const;
 
@@ -1187,7 +1187,10 @@ export function parseComponentDesignDocument(
   }
 
   const normalized = normalizeComponentDesignDocument(value);
-  return normalized.version === COMPONENT_DESIGN_SCHEMA_VERSION ? normalized : null;
+  return normalized.version === COMPONENT_DESIGN_SCHEMA_VERSION &&
+    areJsonStructuresEqual(value, normalized)
+    ? normalized
+    : null;
 }
 
 export const COMPONENT_DESIGN_SPACING_LABELS: Record<

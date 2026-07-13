@@ -10,6 +10,14 @@ import {
   tryNormalizePublicPath,
 } from "./public-paths.ts";
 
+const WORK_ALIASES = new Map([
+  ["holy-tank", "wow-otto"],
+  ["im-explod-with-u", "im-explode"],
+  ["penguin-trading-company", "penguin"],
+  ["pcg-town", "houdini-pcg"],
+]);
+const resolveWorkAlias = (slug: string) => WORK_ALIASES.get(slug);
+
 test("splitPublicPathSegments keeps exact casing while normalizing slashes", () => {
   assert.deepEqual(splitPublicPathSegments("/Images//Gallery/CaseImage.webp/"), [
     "Images",
@@ -29,7 +37,10 @@ test("splitPublicPathSegments rejects backslash-separated paths", () => {
 
 test("tryNormalizeLegacyPublicRedirectPath maps /p legacy paths to canonical public paths", () => {
   assert.equal(tryNormalizeLegacyPublicRedirectPath("/p"), "/");
-  assert.equal(tryNormalizeLegacyPublicRedirectPath("/p/works/im-explod-with-u"), "/works/im-explode");
+  assert.equal(
+    tryNormalizeLegacyPublicRedirectPath("/p/works/im-explod-with-u", resolveWorkAlias),
+    "/works/im-explode",
+  );
 });
 
 test("normalizeLegacyPublicPath keeps a safe homepage fallback for nullish inputs", () => {
@@ -53,7 +64,10 @@ test("normalizeEditorPathInputToSlugKey absorbs public, legacy, and admin prefix
   assert.equal(normalizeEditorPathInputToSlugKey(""), "index");
   assert.equal(normalizeEditorPathInputToSlugKey("/admin"), "index");
   assert.equal(normalizeEditorPathInputToSlugKey("/admin/works/Penguin"), "works/penguin");
-  assert.equal(normalizeEditorPathInputToSlugKey("/p/works/im-explod-with-u"), "works/im-explode");
+  assert.equal(
+    normalizeEditorPathInputToSlugKey("/p/works/im-explod-with-u"),
+    "works/im-explod-with-u",
+  );
 });
 
 test("analyzePublicPath validates and redirects work aliases in one pass", async () => {
@@ -64,11 +78,11 @@ test("analyzePublicPath validates and redirects work aliases in one pass", async
     kind: "ok",
     segments: ["works", "penguin"],
   });
-  assert.deepEqual(analyzePublicPath("/works/penguin-trading-company"), {
+  assert.deepEqual(analyzePublicPath("/works/penguin-trading-company", resolveWorkAlias), {
     kind: "redirect",
     to: "/works/penguin",
   });
-  assert.deepEqual(analyzePublicPath("/works/holy-tank"), {
+  assert.deepEqual(analyzePublicPath("/works/holy-tank", resolveWorkAlias), {
     kind: "redirect",
     to: "/works/wow-otto",
   });

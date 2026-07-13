@@ -1,9 +1,4 @@
 {
-  "root": {
-    "props": {
-      "title": "WEST - DOUBLE COMPOSITION"
-    }
-  },
   "content": [
     {
       "type": "LightingCollectionHeader",
@@ -16,33 +11,36 @@
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "collection-3-image-5",
         "src": "/images/west/CDay.webp",
         "caption": "DAY",
         "preset": "ratio-21-9",
-        "fitMode": "x"
+        "fitMode": "x",
+        "variant": "large"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "collection-3-image-6",
         "src": "/images/west/CDust.webp",
         "caption": "DUSK",
         "preset": "ratio-21-9",
-        "fitMode": "x"
+        "fitMode": "x",
+        "variant": "large"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "collection-3-image-7",
         "src": "/images/west/CNight.webp",
         "caption": "NIGHT",
         "preset": "ratio-21-9",
-        "fitMode": "x"
+        "fitMode": "x",
+        "variant": "large"
       }
     },
     {
@@ -61,33 +59,36 @@
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "collection-3-image-1",
         "src": "/images/west/Day.webp",
         "caption": "DAY",
         "preset": "ratio-21-9",
-        "fitMode": "x"
+        "fitMode": "x",
+        "variant": "large"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "collection-3-image-2",
         "src": "/images/west/Dust.webp",
         "caption": "DUSK",
         "preset": "ratio-21-9",
-        "fitMode": "x"
+        "fitMode": "x",
+        "variant": "large"
       }
     },
     {
-      "type": "LightingCollectionItem",
+      "type": "ImagePanel",
       "props": {
         "id": "collection-3-image-3",
         "src": "/images/west/Night.webp",
         "caption": "NIGHT",
         "preset": "ratio-21-9",
-        "fitMode": "x"
+        "fitMode": "x",
+        "variant": "large"
       }
     },
     {
@@ -117,5 +118,14 @@
       }
     }
   ],
+  "root": {
+    "props": {
+      "description": "以西部场景为基础，测试双重构图下的景深关系、天气层次与远景照明。",
+      "image": "/images/west/CDay.webp",
+      "noIndex": false,
+      "title": "WEST - DOUBLE COMPOSITION"
+    }
+  },
+  "version": 1,
   "zones": {}
 }

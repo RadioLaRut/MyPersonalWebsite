@@ -175,11 +175,16 @@ function EditorHeaderChrome({
   onSelectPagePath: (nextPath: string) => void;
   onCreatePage: (rawValue: string) => void;
 }) {
-  const [newPageInputValue, setNewPageInputValue] = useState("");
-
-  useEffect(() => {
-    setNewPageInputValue("");
-  }, [selectedPagePath]);
+  const [newPageInputState, setNewPageInputState] = useState(() => ({
+    selectedPagePath,
+    value: "",
+  }));
+  const newPageInputValue = newPageInputState.selectedPagePath === selectedPagePath
+    ? newPageInputState.value
+    : "";
+  const setNewPageInputValue = (value: string) => {
+    setNewPageInputState({ selectedPagePath, value });
+  };
 
   return (
     <div className="editor-header-shell">

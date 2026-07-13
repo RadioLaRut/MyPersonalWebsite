@@ -1,9 +1,4 @@
 {
-  "root": {
-    "props": {
-      "title": "PROMETHEUS"
-    }
-  },
   "content": [
     {
       "type": "HeroHeadline",
@@ -15,7 +10,8 @@
         "heroImage": "/images/prometheus/PrometheusTitle.webp",
         "navLink": "https://www.bilibili.com/video/BV1GSGmzBEx8",
         "heroImagePreset": "ratio-21-9",
-        "heroImageFitMode": "x"
+        "heroImageFitMode": "x",
+        "navLinkLabel": "观看视频"
       }
     },
     {
@@ -58,8 +54,7 @@
         "id": "prometheus-card-1",
         "title": "资源管理与策略规划",
         "description": "玩家携带有限数量的胶卷，每次拍摄都需要权衡：是拍摄当前目标，还是保留胶卷等待更高价值的目标？不同目标人物具有不同的分数权重，这要求玩家在探索过程中识别优先级，做出策略性决策。",
-        "imageSrc": "/images/prometheus/Shot03.webp",
-        "tags": []
+        "imageSrc": "/images/prometheus/Shot03.webp"
       }
     },
     {
@@ -69,7 +64,6 @@
         "title": "场景机关与环境交互",
         "description": "玩家可以操纵场景中的机关来改变环境状态，创造拍摄机会或规避巡逻敌人。这种类似 RTT 的机制增加了游戏的策略深度，玩家需要观察环境、规划行动路线，而不仅仅是简单的躲避。",
         "imageSrc": "/images/prometheus/Shot05.webp",
-        "tags": [],
         "imagePosition": "left"
       }
     },
@@ -81,5 +75,14 @@
       }
     }
   ],
+  "root": {
+    "props": {
+      "description": "以潜行拍摄为核心机制的游戏设计、关卡节奏与视觉引导实践。",
+      "image": "/images/prometheus/PrometheusTitle.webp",
+      "noIndex": false,
+      "title": "PROMETHEUS"
+    }
+  },
+  "version": 1,
   "zones": {}
 }

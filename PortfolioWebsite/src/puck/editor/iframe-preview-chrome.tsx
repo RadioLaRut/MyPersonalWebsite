@@ -94,20 +94,10 @@ function collectParentPreviewVars() {
   return nextVars;
 }
 
-function IframePreviewChrome({
-  children,
-  document: frameDocument,
-}: {
-  children: ReactNode;
-  document?: Document;
-}) {
-  const lastClonedHeadSignatureRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    if (!frameDocument) {
-      return;
-    }
-
+function setupIframePreviewChrome(
+  frameDocument: Document,
+  lastClonedHeadSignatureRef: { current: string | null },
+) {
     lastClonedHeadSignatureRef.current = null;
     const appliedVarKeys = new Set<string>();
     const htmlElement = frameDocument.documentElement;
@@ -163,6 +153,23 @@ function IframePreviewChrome({
       lastClonedHeadSignatureRef.current = null;
       applyFontLabCssVars(htmlElement, {}, appliedVarKeys);
     };
+}
+
+function IframePreviewChrome({
+  children,
+  document: frameDocument,
+}: {
+  children: ReactNode;
+  document?: Document;
+}) {
+  const lastClonedHeadSignatureRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!frameDocument) {
+      return;
+    }
+
+    return setupIframePreviewChrome(frameDocument, lastClonedHeadSignatureRef);
   }, [frameDocument]);
 
   return <>{children}</>;

@@ -32,6 +32,7 @@
 }
 
 html {
+  position: relative;
   font-size: 16px;
   background:
     radial-gradient(circle at top, rgba(146, 146, 146, 0.1), transparent 28%),
@@ -204,7 +205,7 @@ html[data-site-mode="normal"] {
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.95);
 }
 
-.typography-root {
+:where(.typography-root) {
   margin: 0;
 }
 

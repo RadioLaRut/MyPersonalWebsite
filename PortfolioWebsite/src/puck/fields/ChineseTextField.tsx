@@ -1,5 +1,5 @@
-import React, { useState, useRef, useCallback, useEffect, type ComponentType, type ReactNode } from "react";
-import { FieldLabel, type CustomFieldRender } from "@measured/puck";
+import React, { useState, useRef, useCallback, type ComponentType, type ReactNode } from "react";
+import { FieldLabel, type CustomFieldRender } from "@puckeditor/core";
 
 interface ChineseTextInputProps {
   value?: string;
@@ -33,13 +33,17 @@ function ChineseTextInput({
   readOnly,
   placeholder,
 }: ChineseTextInputProps) {
-  const [localValue, setLocalValue] = useState(value || "");
+  const sourceValue = value || "";
+  const [localState, setLocalState] = useState(() => ({
+    source: sourceValue,
+    value: sourceValue,
+  }));
+  const localValue = localState.source === sourceValue ? localState.value : sourceValue;
+  const setLocalValue = useCallback((nextValue: string) => {
+    setLocalState({ source: sourceValue, value: nextValue });
+  }, [sourceValue]);
   const [isComposing, setIsComposing] = useState(false);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    setLocalValue(value || "");
-  }, [value]);
 
   const handleCompositionStart = useCallback(() => {
     setIsComposing(true);
@@ -52,7 +56,7 @@ function ChineseTextInput({
       setLocalValue(newValue);
       onChange(newValue);
     },
-    [onChange]
+    [onChange, setLocalValue]
   );
 
   const handleChange = useCallback(
@@ -63,7 +67,7 @@ function ChineseTextInput({
         onChange(newValue);
       }
     },
-    [isComposing, onChange]
+    [isComposing, onChange, setLocalValue]
   );
 
   const handleBlur = useCallback(() => {

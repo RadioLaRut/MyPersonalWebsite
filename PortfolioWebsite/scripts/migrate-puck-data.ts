@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { type Data } from "@measured/puck";
+import { type Data } from "@puckeditor/core";
 
 /**
  * Migration specific updates
@@ -14,7 +14,7 @@ function migratePuckData(data: Data): Data {
     let hasChanges = false;
     const newData = JSON.parse(JSON.stringify(data)) as Data; // Deep copy
 
-    const migrateItem = (item: any) => {
+    const migrateItem = (item: { props: Record<string, unknown>; type: string }) => {
         // 1. LightingProjectCard -> WorksListEntry
         if (item.type === "LightingProjectCard") {
             item.type = "WorksListEntry";

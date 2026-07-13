@@ -1,8 +1,9 @@
 "use client";
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
+import React, { useCallback, useState, useEffect, useLayoutEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Typography from "@/components/common/Typography";
-import { MotionButton, MotionLink } from "@/components/motion";
+import { MotionButton } from "@/components/motion/MotionButton";
+import { MotionLink } from "@/components/motion/MotionLink";
 import {
   menuItemVariants,
   motion,
@@ -42,7 +43,7 @@ function isNavigationItemActive(pathname: string | null, href: string) {
 }
 
 export default function Navigation() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [openPathname, setOpenPathname] = useState<string | null>(null);
   const [isOverlayActive, setIsOverlayActive] = useState(false);
   const menuPanelRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -53,11 +54,10 @@ export default function Navigation() {
     pathname?.startsWith("/playground/font-lab") ||
     pathname?.startsWith("/playground/component-lab");
   const keepsSpotlightVisible = pathname === "/about";
-
-  useEffect(() => {
-    if (pathname?.startsWith("/admin") || isInternalLabRoute) return;
-    setIsOpen(false);
-  }, [isInternalLabRoute, pathname]);
+  const isOpen = openPathname !== null && openPathname === pathname;
+  const setIsOpen = useCallback((nextValue: boolean) => {
+    setOpenPathname(nextValue ? pathname ?? "/" : null);
+  }, [pathname]);
 
   useEffect(() => {
     if (isOpen || !isOverlayActive) {
@@ -89,7 +89,7 @@ export default function Navigation() {
       document.body.style.overflow = previousOverflow;
       document.body.style.paddingRight = previousPaddingRight;
     };
-  }, [isInternalLabRoute, isOpen, pathname]);
+  }, [isInternalLabRoute, isOpen, pathname, setIsOpen]);
 
   useLayoutEffect(() => {
     if (menuPanelRef.current) {
@@ -168,7 +168,7 @@ export default function Navigation() {
         menuButtonElement.focus();
       }
     };
-  }, [isInternalLabRoute, isOpen, pathname]);
+  }, [isInternalLabRoute, isOpen, pathname, setIsOpen]);
 
   if (pathname?.startsWith("/admin") || isInternalLabRoute) return null;
 

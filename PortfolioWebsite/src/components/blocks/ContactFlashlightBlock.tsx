@@ -1,11 +1,14 @@
 "use client";
 import React, { type CSSProperties, type ReactNode, useEffect, useRef, useState } from "react";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
 import { getGridColumnClassName } from "@/lib/component-design-style";
+import {
+    type ComponentDesignOverride,
+    resolveComponentDesign,
+} from "@/lib/component-design-runtime";
 import { motion, useInputCapabilities } from "@/lib/motion";
 
-export interface ContactFlashlightBlockProps {
+export interface ContactFlashlightBlockProps extends ComponentDesignOverride<"ContactFlashlight"> {
     anchorId?: string;
     maskRadius?: number;
     maskSmoothness?: number;
@@ -45,15 +48,16 @@ export default function ContactFlashlightBlock({
     experienceContent,
     creativeContent,
     editMode = false,
+    design: designOverride,
 }: ContactFlashlightBlockProps) {
-    const design = useComponentDesign("ContactFlashlight");
+    const design = resolveComponentDesign("ContactFlashlight", designOverride);
     const containerRef = useRef<HTMLDivElement>(null);
     const revealLayerRef = useRef<HTMLDivElement>(null);
-    const [isTouchDevice, setIsTouchDevice] = useState(false);
+    const [detectedTouchDevice, setDetectedTouchDevice] = useState(false);
     const [copyStatus, setCopyStatus] = useState<"idle" | "success" | "error">("idle");
     const copyResetTimerRef = useRef<number | null>(null);
     const { isTouchLike } = useInputCapabilities();
-    const disablesFlashlight = editMode || isTouchLike || isTouchDevice;
+    const disablesFlashlight = editMode || isTouchLike || detectedTouchDevice;
     const emailText = typeof email === "string" ? email.trim() : "";
     const wechatText = typeof wechat === "string" ? wechat.trim() : "";
 
@@ -83,7 +87,6 @@ export default function ContactFlashlightBlock({
 
     useEffect(() => {
         if (editMode) {
-            setIsTouchDevice(true);
             return;
         }
 
@@ -91,7 +94,7 @@ export default function ContactFlashlightBlock({
             const isCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
             const isSmallScreen = window.innerWidth < 1024;
             // 双保险策略：触摸设备或小屏幕都禁用探视灯效果
-            setIsTouchDevice(isCoarsePointer || isSmallScreen);
+            setDetectedTouchDevice(isCoarsePointer || isSmallScreen);
         };
         checkTouchDevice();
         window.addEventListener("resize", checkTouchDevice);

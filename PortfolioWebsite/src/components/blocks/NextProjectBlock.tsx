@@ -1,37 +1,38 @@
-"use client";
-
-import React from "react";
-
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
-import { MotionLink } from "@/components/motion";
+import {
+    type ComponentDesignOverride,
+    resolveComponentDesign,
+} from "@/lib/component-design-runtime";
+import { MotionLink } from "@/components/motion/MotionLink";
 import {
     getGridColumnClassName,
     getResponsiveGridColumnClassName,
     getSpacingRem,
 } from "@/lib/component-design-style";
-import {
-    resolveProjectDestination,
-    WORKS_INDEX_DESTINATION,
-} from "@/lib/project-catalog";
-
-interface NextProjectBlockProps {
+type NextProjectBlockProps = {
     nextId: string;
+    href?: string;
+    nextBg?: string;
+    nextName?: string;
     editMode?: boolean;
-}
+} & ComponentDesignOverride<"NextProjectBlock">;
 
 export default function NextProjectBlock({
     nextId,
+    href = "/works",
+    nextBg = "",
+    nextName,
     editMode = false,
+    design,
 }: NextProjectBlockProps) {
-    const design = useComponentDesign("NextProjectBlock");
-    const destination = resolveProjectDestination(nextId) ?? WORKS_INDEX_DESTINATION;
+    const resolvedDesign = resolveComponentDesign("NextProjectBlock", design);
+    const destinationName = nextName?.trim() || nextId;
 
     return (
         <footer className="mt-0 border-t border-white/20 relative z-20">
             <MotionLink
-                href={destination.href}
+                href={href}
                 disabled={editMode}
                 interactionPreset="blockLink"
                 className={`group block relative h-[40vh] md:h-[60vh] overflow-hidden w-full bg-black ${editMode ? "cursor-default" : "interactive"}`}
@@ -39,8 +40,8 @@ export default function NextProjectBlock({
                 <div className="pointer-events-none absolute inset-0 z-10 bg-black/[0.58] transition-colors duration-700 group-hover:bg-black/[0.38] group-focus-visible:bg-black/[0.38]"></div>
                 <div className="absolute inset-0 grid place-items-center">
                     <PresetImage
-                        src={destination.cover}
-                        alt={`${destination.name} 封面`}
+                        src={nextBg}
+                        alt={`${destinationName} 封面`}
                         preset="ratio-21-9"
                         fitMode="cover"
                         lockFrame={false}
@@ -52,7 +53,7 @@ export default function NextProjectBlock({
 
                 <div className="pointer-events-none absolute inset-0 z-20">
                     <div className="grid-container h-full">
-                        <div className={`${getGridColumnClassName(design.overlayBounds)} grid h-full place-items-center text-center mix-blend-difference`}>
+                        <div className={`${getGridColumnClassName(resolvedDesign.overlayBounds)} grid h-full place-items-center text-center mix-blend-difference`}>
                             <div className="rhythm-stack-4">
                                 <Typography
                                     preset="sans-body"
@@ -73,7 +74,7 @@ export default function NextProjectBlock({
                                     align="center"
                                     className="text-white uppercase transition-all duration-700 [&_.typography-run]:transition-[letter-spacing] [&_.typography-run]:duration-700 [&_.typography-run]:ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:[&_.typography-run]:!tracking-[0.04em] group-focus-visible:[&_.typography-run]:!tracking-[0.04em]"
                                 >
-                                    {destination.name}
+                                    {destinationName}
                                 </Typography>
                             </div>
                         </div>
@@ -83,7 +84,7 @@ export default function NextProjectBlock({
             <div className="border-t border-white/10 bg-black">
                 <div
                     className="grid-container gap-y-2 py-8 text-center md:text-left"
-                    style={{ paddingTop: getSpacingRem(design.footerTopSpacing), paddingBottom: getSpacingRem(design.footerTopSpacing) }}
+                    style={{ paddingTop: getSpacingRem(resolvedDesign.footerTopSpacing), paddingBottom: getSpacingRem(resolvedDesign.footerTopSpacing) }}
                 >
                     <div className="col-span-12 grid grid-cols-12 gap-y-2 text-center lg:items-center lg:text-left">
                         <Typography
@@ -92,7 +93,7 @@ export default function NextProjectBlock({
                             size="caption"
                             weight="semantic"
                             wrapPolicy="label"
-                            className={`${getResponsiveGridColumnClassName(design.footerLeftBounds)} text-textMuted`}
+                            className={`${getResponsiveGridColumnClassName(resolvedDesign.footerLeftBounds)} text-textMuted`}
                         >
                             © 2026 江承彦 / JIANG CHENGYAN
                         </Typography>
@@ -102,7 +103,7 @@ export default function NextProjectBlock({
                             size="caption"
                             weight="semantic"
                             wrapPolicy="label"
-                            className={`${getResponsiveGridColumnClassName(design.footerRightBounds)} text-textMuted lg:text-right lg:justify-self-end`}
+                            className={`${getResponsiveGridColumnClassName(resolvedDesign.footerRightBounds)} text-textMuted lg:text-right lg:justify-self-end`}
                         >
                             Designed for Darkness
                         </Typography>

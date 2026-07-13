@@ -108,6 +108,18 @@ test("readFontLabConfig falls back to defaults when file is missing", async () =
   await fs.rm(tempDir, { force: true, recursive: true });
 });
 
+test("readFontLabConfig rejects an invalid current-version document instead of repairing it", async () => {
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "font-lab-config-"));
+  const configFile = path.join(tempDir, "invalid-current.json");
+  const invalid = createDefaultFontLabDocument();
+  invalid.presets["sans-body"].latinFontScale = 0;
+  await fs.writeFile(configFile, `${JSON.stringify(invalid, null, 2)}\n`, "utf8");
+
+  await assert.rejects(readFontLabConfig(configFile), TypeError);
+
+  await fs.rm(tempDir, { force: true, recursive: true });
+});
+
 test("createDefaultFontLabDocument stores clamp-based sizes as editable base rem values", () => {
   const document = createDefaultFontLabDocument();
 
@@ -212,7 +224,7 @@ test("writeFontLabConfig preserves the existing file line endings", async () => 
   await fs.rm(tempDir, { force: true, recursive: true });
 });
 
-test("parseFontLabSavePayload clamps unsupported template-level latin weight offsets", () => {
+test("parseFontLabSavePayload rejects unsupported template-level values", () => {
   const source = createDefaultFontLabDocument();
   const parsed = parseFontLabSavePayload({
     activePreset: "luna-editorial",
@@ -226,14 +238,10 @@ test("parseFontLabSavePayload clamps unsupported template-level latin weight off
     },
   });
 
-  assert.notEqual(parsed, null);
-  assert.equal(parsed?.sizeConfig.lineHeight, 1.78);
-  assert.equal(parsed?.latinFontScale, 99);
-  assert.equal(parsed?.latinWeightOffsetSteps, 1);
-  assert.equal(parsed?.sizeConfig.semanticWeight, "regular");
+  assert.equal(parsed, null);
 });
 
-test("parseFontLabSavePayload can collapse legacy semantic weight mappings into one preset bias", () => {
+test("parseFontLabSavePayload rejects legacy semantic weight mappings", () => {
   const parsed = parseFontLabSavePayload({
     activePreset: "gothic-editorial",
     activeSize: "body",
@@ -248,12 +256,10 @@ test("parseFontLabSavePayload can collapse legacy semantic weight mappings into 
     },
   });
 
-  assert.notEqual(parsed, null);
-  assert.equal(parsed?.latinWeightOffsetSteps, 1);
-  assert.equal(parsed?.latinFontScale, 1);
+  assert.equal(parsed, null);
 });
 
-test("parseFontLabSavePayload normalizes invalid latin font scale back to 1", () => {
+test("parseFontLabSavePayload rejects invalid latin font scale", () => {
   const parsed = parseFontLabSavePayload({
     activePreset: "sans-body",
     activeSize: "body",
@@ -263,6 +269,5 @@ test("parseFontLabSavePayload normalizes invalid latin font scale back to 1", ()
     sizeConfig: createDefaultFontLabDocument().presets["sans-body"].sizes.body,
   });
 
-  assert.notEqual(parsed, null);
-  assert.equal(parsed?.latinFontScale, 1);
+  assert.equal(parsed, null);
 });

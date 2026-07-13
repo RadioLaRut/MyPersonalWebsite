@@ -19,9 +19,9 @@ type ValidateContentPagesOptions = {
 };
 
 export const IMAGE_LIKE_PROP_PATTERN =
-  /(src|imageSrc|heroImage|coverImage|nextBg|mediaSrc|litSrc|unlitSrc|leftImage|rightImage|lit|unlit)$/i;
+  /(src|imageSrc|heroImage|coverImage|nextBg|mediaSrc|litSrc|unlitSrc|leftImage|rightImage|col[1-3]Img|lit|unlit)$/i;
 
-export const PUBLIC_IMAGE_PATH_PREFIXES = ["/images/", "/assets/images/"] as const;
+export const PUBLIC_IMAGE_PATH_PREFIXES = ["/images/", "/uploads/", "/assets/images/"] as const;
 
 export type ExactCasePathStatus = "missing" | "case-mismatch" | "ok";
 export type ImageLikeReference = {

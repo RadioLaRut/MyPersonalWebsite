@@ -1,5 +1,4 @@
 import { trySafeNormalizeSlugSegment } from "./slug-segments.ts";
-import { getProjectAliasTarget } from "./project-catalog.ts";
 
 export const CANONICAL_PLACEHOLDER_PATH = "/assets/images/placeholder.svg";
 
@@ -8,11 +7,7 @@ const LEGACY_PLACEHOLDER_PATHS = new Set([
   "/assets/images/placeholder-21-9.jpg",
 ]);
 
-const LEGACY_WORK_SLUG_ALIASES = {
-  "im-explod-with-u": "im-explode",
-  "penguin-trading-company": "penguin",
-  "pcg-town": "houdini-pcg",
-} as const;
+export type WorkAliasResolver = (slug: string) => string | null | undefined;
 
 const ADMIN_PATH_PREFIX_PATTERN = /^\/?admin(?:\/|$)/i;
 const LEGACY_PUBLIC_PREFIX_PATTERN = /^\/?p(?:\/|$)/i;
@@ -25,9 +20,12 @@ function toPublicPathFromSegments(segments: string[]) {
   return `/${segments.join("/")}`;
 }
 
-function canonicalizeWorkSegments(segments: string[]) {
+function canonicalizeWorkSegments(
+  segments: string[],
+  resolveWorkAlias?: WorkAliasResolver,
+) {
   if (segments[0] === "works" && segments.length === 2) {
-    return ["works", toCanonicalWorkSlug(segments[1])];
+    return ["works", toCanonicalWorkSlug(segments[1], resolveWorkAlias)];
   }
 
   return segments;
@@ -81,7 +79,10 @@ function stripAdminPathPrefix(pathname: string) {
   return normalizedInput.replace(/^\/admin/i, "") || "/";
 }
 
-export function tryNormalizePublicPath(pathname: string): string | null {
+export function tryNormalizePublicPath(
+  pathname: string,
+  resolveWorkAlias?: WorkAliasResolver,
+): string | null {
   const parsedSegments = parsePublicPathSegments(pathname);
   if (parsedSegments === null) {
     return null;
@@ -92,17 +93,20 @@ export function tryNormalizePublicPath(pathname: string): string | null {
     return null;
   }
 
-  return toPublicPathFromSegments(canonicalizeWorkSegments(segments));
+  return toPublicPathFromSegments(canonicalizeWorkSegments(segments, resolveWorkAlias));
 }
 
-export function tryNormalizeLegacyPublicRedirectPath(pathname: string): string | null {
+export function tryNormalizeLegacyPublicRedirectPath(
+  pathname: string,
+  resolveWorkAlias?: WorkAliasResolver,
+): string | null {
   const trimmed = pathname.trim();
   const normalizedInput = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
   if (!LEGACY_PUBLIC_PREFIX_PATTERN.test(normalizedInput)) {
     return null;
   }
 
-  return tryNormalizePublicPath(normalizedInput);
+  return tryNormalizePublicPath(normalizedInput, resolveWorkAlias);
 }
 
 export type PublicPathAnalysis =
@@ -110,7 +114,10 @@ export type PublicPathAnalysis =
   | { canonical: string; kind: "ok"; segments: string[] }
   | { kind: "redirect"; to: string };
 
-export function analyzePublicPath(pathname: string): PublicPathAnalysis {
+export function analyzePublicPath(
+  pathname: string,
+  resolveWorkAlias?: WorkAliasResolver,
+): PublicPathAnalysis {
   const parsedSegments = parsePublicPathSegments(pathname);
   if (parsedSegments === null) {
     return { kind: "bad" };
@@ -121,7 +128,7 @@ export function analyzePublicPath(pathname: string): PublicPathAnalysis {
     return { kind: "bad" };
   }
 
-  const canonicalSegments = canonicalizeWorkSegments(segments);
+  const canonicalSegments = canonicalizeWorkSegments(segments, resolveWorkAlias);
   const canonical = toPublicPathFromSegments(canonicalSegments);
 
   if (
@@ -149,16 +156,18 @@ export function normalizeLegacyPublicPath(pathname: string | null | undefined): 
   return tryNormalizePublicPath(pathname ?? "") ?? "/";
 }
 
-export function toCanonicalWorkSlug(slug: string): string {
-  return (
-    getProjectAliasTarget(slug) ??
-    LEGACY_WORK_SLUG_ALIASES[slug as keyof typeof LEGACY_WORK_SLUG_ALIASES] ??
-    slug
-  );
+export function toCanonicalWorkSlug(
+  slug: string,
+  resolveWorkAlias?: WorkAliasResolver,
+): string {
+  return resolveWorkAlias?.(slug) ?? slug;
 }
 
-export function isLegacyWorkSlug(slug: string): boolean {
-  return Boolean(getProjectAliasTarget(slug)) || slug in LEGACY_WORK_SLUG_ALIASES;
+export function isLegacyWorkSlug(
+  slug: string,
+  resolveWorkAlias?: WorkAliasResolver,
+): boolean {
+  return Boolean(resolveWorkAlias?.(slug));
 }
 
 export function toPublicPathFromSlugKey(slugKey: string): string {

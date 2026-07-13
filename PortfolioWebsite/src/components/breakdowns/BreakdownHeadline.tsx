@@ -1,34 +1,36 @@
-"use client";
-
 import type { ReactNode } from "react";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+  type ComponentDesignOverride,
+  resolveComponentDesign,
+} from "@/lib/component-design-runtime";
 import {
   createResponsiveGridBounds,
   getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
 } from "@/lib/component-design-style";
 
-interface SectionHeadlineProps {
+type SectionHeadlineProps = {
   indexLabel?: ReactNode;
   title: ReactNode;
   variant?: "chapter" | "section";
-}
+} & ComponentDesignOverride<"BreakdownHeadline">;
 
 export default function BreakdownSectionHeadline({
   indexLabel,
   title,
   variant = "section",
+  design,
 }: SectionHeadlineProps) {
-  const design = useComponentDesign("BreakdownHeadline");
+  const resolvedDesign = resolveComponentDesign("BreakdownHeadline", design);
   const isChapter = variant === "chapter";
 
   return (
-    <div className={`w-full ${getSectionSpacingClassName(design.sectionSpacing)} grid-container`}>
+    <div className={`w-full ${getSectionSpacingClassName(resolvedDesign.sectionSpacing)} grid-container`}>
       <div className={getResponsiveGridColumnClassName(createResponsiveGridBounds(
         { leftCol: 1, rightCol: 12 },
         { leftCol: 1, rightCol: 12 },
-        design.contentBounds,
+        resolvedDesign.contentBounds,
       ))}>
         {indexLabel ? (
           <Typography
@@ -45,8 +47,8 @@ export default function BreakdownSectionHeadline({
         <Typography
           as="h2"
           preset={isChapter ? "luna-editorial" : "sans-body"}
-          size={isChapter ? "display" : design.titleSize}
-          weight="display"
+          size={isChapter ? "display" : resolvedDesign.titleSize}
+          weight={isChapter ? "semantic" : "display"}
           wrapPolicy="heading"
           className="text-white"
         >

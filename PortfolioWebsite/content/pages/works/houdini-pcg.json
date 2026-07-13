@@ -1,9 +1,4 @@
 {
-  "root": {
-    "props": {
-      "title": "HOUDINI 驱动的小镇生成管线"
-    }
-  },
   "content": [
     {
       "type": "HeroHeadline",
@@ -15,7 +10,8 @@
         "heroImage": "/images/penguin/PCG/PCG01.webp",
         "navLink": "",
         "heroImagePreset": "ratio-21-9",
-        "heroImageFitMode": "x"
+        "heroImageFitMode": "x",
+        "navLinkLabel": "观看视频"
       }
     },
     {
@@ -26,7 +22,6 @@
         "imageSrc": "/images/penguin/PCG/PCG02.webp",
         "imagePreset": "ratio-16-9",
         "imageFitMode": "x",
-        "tags": [],
         "id": "ContentCard-a16bc3c3-d496-431a-a0b7-4b598924ec6b"
       }
     },
@@ -57,5 +52,14 @@
       }
     }
   ],
+  "root": {
+    "props": {
+      "description": "基于 Houdini 与 Unreal Engine 的程序化小镇生成管线及生产工具设计。",
+      "image": "/images/penguin/PCG/PCG01.webp",
+      "noIndex": false,
+      "title": "HOUDINI 驱动的小镇生成管线"
+    }
+  },
+  "version": 1,
   "zones": {}
 }

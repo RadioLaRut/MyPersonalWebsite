@@ -5,7 +5,6 @@ import path from "node:path";
 
 import {
   createDefaultComponentDesignDocument,
-  normalizeComponentDesignDocument,
   parseComponentDesignDocument,
   type ComponentDesignDocument,
 } from "./component-design-schema.ts";
@@ -76,7 +75,7 @@ export async function readComponentDesignConfig(
       throw new TypeError("Invalid component design config file");
     }
 
-    return normalizeComponentDesignDocument(parsed);
+    return parsed;
   } catch (error) {
     const errno = error as NodeJS.ErrnoException;
     if (errno.code === "ENOENT") {
@@ -91,9 +90,14 @@ export async function writeComponentDesignConfig(
   document: ComponentDesignDocument,
   filePath = COMPONENT_DESIGN_CONFIG_FILE,
 ) {
+  const strictDocument = parseComponentDesignDocument(document);
+  if (!strictDocument) {
+    throw new TypeError("Invalid current component design document");
+  }
+
   const lineEnding = await resolvePreferredLineEnding(filePath);
   await writeJsonAtomically(
     filePath,
-    `${JSON.stringify(normalizeComponentDesignDocument(document), null, 2).replace(/\n/g, lineEnding)}${lineEnding}`,
+    `${JSON.stringify(strictDocument, null, 2).replace(/\n/g, lineEnding)}${lineEnding}`,
   );
 }

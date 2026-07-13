@@ -1,4 +1,4 @@
-import type { Config } from "@measured/puck";
+import type { Config } from "@puckeditor/core";
 import ContactFlashlightBlock from "@/components/blocks/ContactFlashlightBlock";
 import MetadataListItem from "@/components/common/MetadataListItem";
 import TextParagraphBlock from "@/components/common/TextParagraphBlock";

@@ -1,8 +1,9 @@
-"use client";
-
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+  type ComponentDesignOverride,
+  resolveComponentDesign,
+} from "@/lib/component-design-runtime";
 import {
   createResponsiveGridBounds,
   getResponsiveGridColumnClassName,
@@ -18,28 +19,29 @@ interface Parameter {
   description: string;
 }
 
-interface ParameterGridProps {
+type ParameterGridProps = {
   mediaSrc: string;
   isVideo?: boolean;
   imagePreset?: ImagePreset;
   imageFitMode?: ImageFitMode;
   parameters?: Parameter[];
-}
+} & ComponentDesignOverride<"ParameterGrid">;
 
 export default function ParameterGrid({
   mediaSrc,
   isVideo = false,
   imagePreset = "ratio-21-9",
   imageFitMode = "x",
-  parameters
+  parameters,
+  design,
 }: ParameterGridProps) {
-  const design = useComponentDesign("ParameterGrid");
+  const resolvedDesign = resolveComponentDesign("ParameterGrid", design);
 
   return (
-    <div className={`w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
+    <div className={`w-full ${getSectionSpacingClassName(resolvedDesign.sectionSpacing)}`}>
       <div
         className="relative w-full overflow-hidden bg-[#050505]"
-        style={{ marginBottom: getSpacingRem(design.mediaBottomSpacing) }}
+        style={{ marginBottom: getSpacingRem(resolvedDesign.mediaBottomSpacing) }}
       >
         {isVideo ? (
           <video
@@ -82,7 +84,7 @@ export default function ParameterGrid({
                 createResponsiveGridBounds(
                   getParameterGridItemBounds({ leftCol: 1, rightCol: 12 }, 12, i),
                   getParameterGridItemBounds({ leftCol: 1, rightCol: 12 }, 6, i),
-                  getParameterGridItemBounds(design.parametersBounds, design.itemSpan, i),
+                  getParameterGridItemBounds(resolvedDesign.parametersBounds, resolvedDesign.itemSpan, i),
                 ),
               )}`}
             >

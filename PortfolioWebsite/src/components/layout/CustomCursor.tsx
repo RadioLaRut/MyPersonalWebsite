@@ -12,19 +12,18 @@ type CustomCursorProps = {
 export default function CustomCursor({ isWithinIframe, targetDocument }: CustomCursorProps = {}) {
   const cursorRef = useRef<HTMLDivElement>(null);
   const [isCursorEnabled, setIsCursorEnabled] = useState(false);
-  const [isCursorBlockedByRoute, setIsCursorBlockedByRoute] = useState(false);
   const pathname = usePathname();
+  const currentPathname = isWithinIframe
+    ? targetDocument?.defaultView?.location.pathname ?? ""
+    : pathname ?? "";
+  const adminShell = !isWithinIframe && currentPathname.startsWith("/admin");
+  const fontLabMode = !isWithinIframe && currentPathname.startsWith("/playground/font-lab");
+  const componentLabMode = !isWithinIframe && currentPathname.startsWith("/playground/component-lab");
+  const isCursorBlockedByRoute = adminShell || fontLabMode || componentLabMode;
 
   useEffect(() => {
     const activeDocument = targetDocument ?? document;
     const htmlElement = activeDocument.documentElement;
-    const currentPathname = isWithinIframe
-      ? targetDocument?.defaultView?.location.pathname ?? ""
-      : pathname ?? "";
-    const adminShell = !isWithinIframe && currentPathname.startsWith("/admin");
-    const fontLabMode = !isWithinIframe && currentPathname.startsWith("/playground/font-lab");
-    const componentLabMode = !isWithinIframe && currentPathname.startsWith("/playground/component-lab");
-    setIsCursorBlockedByRoute(adminShell || fontLabMode || componentLabMode);
 
     // Disable outer custom cursor in the admin dashboard completely
     if (adminShell || fontLabMode || componentLabMode) {
@@ -44,7 +43,6 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
         htmlElement.setAttribute("data-font-lab-mode", "true");
       }
 
-      setIsCursorEnabled(false);
       return () => {
         htmlElement.removeAttribute(ADMIN_MODE_ATTRIBUTE);
         htmlElement.removeAttribute("data-font-lab-mode");
@@ -94,10 +92,10 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
       removeMotionListener();
       win.removeEventListener("resize", updateCursorAvailability);
     };
-  }, [isWithinIframe, pathname, targetDocument]);
+  }, [adminShell, componentLabMode, fontLabMode, isCursorBlockedByRoute, isWithinIframe, targetDocument]);
 
   useEffect(() => {
-    if (!isCursorEnabled) {
+    if (!isCursorEnabled || isCursorBlockedByRoute) {
       return;
     }
 
@@ -282,7 +280,7 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
       }
       cancelAnimationFrame(rafId);
     };
-  }, [isCursorEnabled, pathname, targetDocument]);
+  }, [isCursorBlockedByRoute, isCursorEnabled, pathname, targetDocument]);
 
   if (isCursorBlockedByRoute) {
     return null;

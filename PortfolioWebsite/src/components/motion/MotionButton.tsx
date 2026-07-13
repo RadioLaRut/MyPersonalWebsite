@@ -2,7 +2,7 @@
 
 import { type ButtonHTMLAttributes, forwardRef } from "react";
 
-import { composeInteractionClassName } from "@/lib/motion";
+import { composeInteractionClassName } from "@/lib/motion/classes";
 
 type MotionButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   interactionPreset?: Parameters<typeof composeInteractionClassName>[1];

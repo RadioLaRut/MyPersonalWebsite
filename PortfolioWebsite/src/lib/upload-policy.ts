@@ -11,6 +11,14 @@ const ALLOWED_MIME_TYPES = new Set([
   "image/gif",
   "image/avif",
 ]);
+const MIME_TYPES_BY_EXTENSION: Readonly<Record<string, readonly string[]>> = {
+  ".avif": ["image/avif"],
+  ".gif": ["image/gif"],
+  ".jpeg": ["image/jpeg"],
+  ".jpg": ["image/jpeg"],
+  ".png": ["image/png"],
+  ".webp": ["image/webp"],
+};
 const ENCODED_TRAVERSAL_PATTERN = /%2e%2e|%2f|%5c/i;
 
 export class UploadValidationError extends Error {
@@ -77,6 +85,18 @@ export function createUploadFileName(originalName: string, mimeType: string, siz
     throw new UploadValidationError("Unsupported media type", 415, "UNSUPPORTED_MEDIA_TYPE");
   }
 
+  if (!MIME_TYPES_BY_EXTENSION[extension]?.includes(mimeType)) {
+    throw new UploadValidationError(
+      "File extension does not match its media type",
+      415,
+      "UNSUPPORTED_MEDIA_TYPE",
+    );
+  }
+
+  if (!Number.isSafeInteger(size) || size <= 0) {
+    throw new UploadValidationError("File must not be empty", 400, "BAD_REQUEST");
+  }
+
   if (size > MAX_UPLOAD_BYTES) {
     throw new UploadValidationError(
       `File is too large. Maximum size is ${MAX_UPLOAD_BYTES} bytes`,
@@ -87,4 +107,24 @@ export function createUploadFileName(originalName: string, mimeType: string, siz
 
   const stem = makeSafeStem(path.basename(safeName, extension));
   return `${stem}-${Date.now()}-${randomUUID().slice(0, 8)}${extension}`;
+}
+
+export function validateUploadBytes(bytes: Uint8Array, mimeType: string) {
+  const ascii = (start: number, end: number) => String.fromCharCode(...bytes.slice(start, end));
+  const matches =
+    (mimeType === "image/jpeg" && bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) ||
+    (mimeType === "image/png" && bytes.length >= 8 && bytes.slice(0, 8).every((value, index) => (
+      value === [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a][index]
+    ))) ||
+    (mimeType === "image/webp" && bytes.length >= 12 && ascii(0, 4) === "RIFF" && ascii(8, 12) === "WEBP") ||
+    (mimeType === "image/gif" && bytes.length >= 6 && ["GIF87a", "GIF89a"].includes(ascii(0, 6))) ||
+    (mimeType === "image/avif" && bytes.length >= 12 && ascii(4, 8) === "ftyp" && ["avif", "avis"].includes(ascii(8, 12)));
+
+  if (!matches) {
+    throw new UploadValidationError(
+      "File signature does not match its media type",
+      415,
+      "UNSUPPORTED_MEDIA_TYPE",
+    );
+  }
 }

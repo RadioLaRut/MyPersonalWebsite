@@ -1,4 +1,4 @@
-import { Data } from "@measured/puck";
+import { Data } from "@puckeditor/core";
 
 export function ensurePuckDataIds(data: Data): Data {
   if (!data?.content) return data;

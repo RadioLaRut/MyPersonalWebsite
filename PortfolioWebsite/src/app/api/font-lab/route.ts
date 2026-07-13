@@ -13,6 +13,9 @@ import {
 import { parseFontLabSavePayload } from "@/lib/font-lab-config-schema";
 import { assertLocalEditorAccess } from "@/lib/security";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 const NO_STORE_HEADER = {
   "Cache-Control": "no-store",
 } as const;

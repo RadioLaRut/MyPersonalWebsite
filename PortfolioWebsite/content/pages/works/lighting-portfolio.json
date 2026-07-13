@@ -1,9 +1,4 @@
 {
-  "root": {
-    "props": {
-      "title": "Lighting Portfolio"
-    }
-  },
   "content": [
     {
       "type": "PortfolioHeroHeader",
@@ -73,5 +68,14 @@
       }
     }
   ],
+  "root": {
+    "props": {
+      "description": "围绕镜头构图、时间变化与空间情绪展开的电影化灯光研究归档。",
+      "image": "/images/city-2026/002.webp",
+      "noIndex": false,
+      "title": "Lighting Portfolio"
+    }
+  },
+  "version": 1,
   "zones": {}
 }

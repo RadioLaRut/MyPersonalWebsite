@@ -1,9 +1,9 @@
-"use client";
-
-import React from "react";
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+  type ComponentDesignOverride,
+  resolveComponentDesign,
+} from "@/lib/component-design-runtime";
 import {
   createResponsiveGridBounds,
   getResponsiveGridColumnClassName,
@@ -11,14 +11,14 @@ import {
 } from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
-export interface ImagePanelProps {
+export type ImagePanelProps = {
   src: string;
   alt?: string;
   caption?: string;
   preset?: ImagePreset;
   fitMode?: ImageFitMode;
   variant?: "content" | "large" | "fullscreen";
-}
+} & ComponentDesignOverride<"ImagePanel">;
 
 export default function ImagePanel({
   src,
@@ -27,8 +27,9 @@ export default function ImagePanel({
   preset,
   fitMode,
   variant = "content",
+  design,
 }: ImagePanelProps) {
-  const design = useComponentDesign("ImagePanel");
+  const resolvedDesign = resolveComponentDesign("ImagePanel", design);
   if (!src) return null;
 
   const imageAlt = alt || caption || "Image";
@@ -65,12 +66,12 @@ export default function ImagePanel({
 
   if (variant === "large") {
     return (
-      <section className={`w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
+      <section className={`w-full ${getSectionSpacingClassName(resolvedDesign.sectionSpacing)}`}>
         <div className="grid-container">
           <figure className={`${getResponsiveGridColumnClassName(createResponsiveGridBounds(
             { leftCol: 1, rightCol: 12 },
             { leftCol: 2, rightCol: 11 },
-            design.largeBounds,
+            resolvedDesign.largeBounds,
           ))} overflow-hidden rounded-none border border-white/10 bg-white/[0.02]`}>
             <PresetImage
               alt={imageAlt}
@@ -96,12 +97,12 @@ export default function ImagePanel({
   }
 
   return (
-    <section className={`w-full ${getSectionSpacingClassName(design.sectionSpacing)}`}>
+    <section className={`w-full ${getSectionSpacingClassName(resolvedDesign.sectionSpacing)}`}>
       <div className="grid-container">
         <figure className={`${getResponsiveGridColumnClassName(createResponsiveGridBounds(
           { leftCol: 1, rightCol: 12 },
           { leftCol: 2, rightCol: 11 },
-          design.contentBounds,
+          resolvedDesign.contentBounds,
         ))} mx-auto w-full max-w-5xl overflow-hidden border border-white/15 bg-white/[0.03]`}>
           <PresetImage alt={imageAlt} src={src} preset={preset} fitMode={fitMode} />
           {caption ? (

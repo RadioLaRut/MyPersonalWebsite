@@ -1,4 +1,4 @@
-import type { Config } from "@measured/puck";
+import type { Config } from "@puckeditor/core";
 
 import { PUCK_COMPONENT_CATEGORIES, PUCK_COMPONENT_TYPES } from "@/puck/component-manifest";
 import { contactCommonComponents } from "@/puck/config/contact-common-components";
@@ -13,6 +13,27 @@ export const config: Config = {
     ...worksComponents,
     ...lightingComponents,
     ...contactCommonComponents,
+  },
+  root: {
+    fields: {
+      title: { type: "text", label: "SEO Title" },
+      description: { type: "textarea", label: "SEO Description" },
+      image: { type: "text", label: "SEO Image" },
+      noIndex: {
+        type: "radio",
+        label: "Search Indexing",
+        options: [
+          { label: "Allow indexing", value: false },
+          { label: "No index", value: true },
+        ],
+      },
+    },
+    defaultProps: {
+      description: "",
+      image: "",
+      noIndex: false,
+      title: "",
+    },
   },
 };
 

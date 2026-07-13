@@ -1,5 +1,5 @@
 import type { ComponentProps } from "react";
-import type { Config } from "@measured/puck";
+import type { Config } from "@puckeditor/core";
 import NextProjectBlock from "@/components/blocks/NextProjectBlock";
 import BreakdownSectionHeadline from "@/components/breakdowns/BreakdownHeadline";
 import BreakdownTriptych from "@/components/breakdowns/BreakdownTriptych";
@@ -529,9 +529,12 @@ export const worksComponents = {
       defaultProps: {
         nextId: "penguin",
       },
-      render: ({ nextId, editMode }) => (
+      render: ({ nextId, href, nextBg, nextName, editMode }) => (
         <NextProjectBlock
           nextId={nextId}
+          href={href}
+          nextBg={nextBg}
+          nextName={nextName}
           editMode={editMode}
         />
       )

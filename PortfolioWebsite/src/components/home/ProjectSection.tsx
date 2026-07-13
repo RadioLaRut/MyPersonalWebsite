@@ -2,8 +2,11 @@
 import React, { type ReactNode, useRef } from "react";
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
-import { MotionLink } from "@/components/motion";
+import { MotionLink } from "@/components/motion/MotionLink";
+import {
+  type ComponentDesignOverride,
+  resolveComponentDesign,
+} from "@/lib/component-design-runtime";
 import {
   getResponsiveGridColumnClassName,
   getSpacingRem,
@@ -17,7 +20,7 @@ import {
   useTransform,
 } from "@/lib/motion";
 
-interface ProjectSectionProps {
+interface ProjectSectionProps extends ComponentDesignOverride<"ProjectSection"> {
   title: ReactNode;
   imageSrc: string;
   subtitle?: ReactNode;
@@ -43,8 +46,9 @@ export default function ProjectSection({
   mobileImageFocalX = 50,
   mobileImageFocalY = 50,
   editMode = false,
+  design: designOverride,
 }: ProjectSectionProps) {
-  const design = useComponentDesign("ProjectSection");
+  const design = resolveComponentDesign("ProjectSection", designOverride);
   const containerRef = useRef<HTMLElement>(null);
   const imageAlt = typeof title === "string" ? title : "Project cover";
   const isLinkEnabled = !editMode && Boolean(link);

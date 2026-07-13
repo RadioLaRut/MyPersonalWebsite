@@ -1,5 +1,3 @@
-import worksPageData from "../../content/pages/works.json" with { type: "json" };
-
 export type ProjectCatalogEntry = {
   aliases: string[];
   cover: string;
@@ -16,131 +14,175 @@ export type ProjectDestination = {
   name: string;
 };
 
+const PROJECT_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function readString(value: unknown) {
-  return typeof value === "string" ? value.trim() : "";
-}
-
-function readAliasSlugs(value: unknown) {
-  if (!Array.isArray(value)) {
-    return [];
+function readRequiredString(value: unknown, pathName: string) {
+  if (typeof value !== "string" || value.trim().length === 0) {
+    throw new Error(`${pathName} must be a non-empty string`);
   }
 
-  return value
-    .map((alias) => (isRecord(alias) ? readString(alias.slug) : readString(alias)))
-    .filter(Boolean);
+  return value.trim();
 }
 
-function readProjectId(href: string) {
+function readAliasSlugs(value: unknown, pathName: string) {
+  if (value === undefined) return [];
+  if (!Array.isArray(value)) {
+    throw new Error(`${pathName} must be an array`);
+  }
+
+  return value.map((alias, index) => {
+    const slug = isRecord(alias) ? alias.slug : alias;
+    const normalizedSlug = readRequiredString(slug, `${pathName}[${index}].slug`);
+    if (!PROJECT_SLUG_PATTERN.test(normalizedSlug)) {
+      throw new Error(`${pathName}[${index}].slug must be a canonical lowercase slug`);
+    }
+    return normalizedSlug;
+  });
+}
+
+function readProjectId(href: string, pathName: string) {
   const match = /^\/works\/([^/]+)$/.exec(href);
-  return match?.[1] ?? "";
+  if (!match) {
+    throw new Error(`${pathName} must match /works/<slug>`);
+  }
+
+  if (!PROJECT_SLUG_PATTERN.test(match[1])) {
+    throw new Error(`${pathName} must contain a canonical lowercase slug`);
+  }
+
+  return match[1];
 }
 
 export function createProjectCatalog(data: unknown): ProjectCatalogEntry[] {
   if (!isRecord(data) || !Array.isArray(data.content)) {
-    return [];
+    throw new Error("works page must contain a content array");
   }
 
-  const worksList = data.content.find(
+  const worksLists = data.content.filter(
     (item) => isRecord(item) && item.type === "WorksList" && isRecord(item.props),
   );
+  if (worksLists.length !== 1) {
+    throw new Error("works page must contain exactly one WorksList");
+  }
+  const [worksList] = worksLists;
   if (!isRecord(worksList) || !isRecord(worksList.props) || !Array.isArray(worksList.props.entries)) {
-    return [];
+    throw new Error("works page must contain one WorksList with entries");
   }
 
-  return worksList.props.entries.flatMap((entry) => {
+  const entries = worksList.props.entries.map((entry, index) => {
+    const pathName = `content.WorksList.entries[${index}]`;
     if (!isRecord(entry) || entry.type !== "WorksListEntry" || !isRecord(entry.props)) {
-      return [];
+      throw new Error(`${pathName} must be a WorksListEntry node`);
     }
 
-    const href = readString(entry.props.href);
-    const id = readProjectId(href);
-    const name = readString(entry.props.title);
-    const cover = readString(entry.props.imageSrc);
-    const number = readString(entry.props.number);
-    if (!id || !name || !cover || !number) {
-      return [];
-    }
-
-    return [{
-      aliases: readAliasSlugs(entry.props.aliases),
-      cover,
+    const href = readRequiredString(entry.props.href, `${pathName}.props.href`);
+    return {
+      aliases: readAliasSlugs(entry.props.aliases, `${pathName}.props.aliases`),
+      cover: readRequiredString(entry.props.imageSrc, `${pathName}.props.imageSrc`),
       href,
-      id,
-      name,
-      number,
-    }];
+      id: readProjectId(href, `${pathName}.props.href`),
+      name: readRequiredString(entry.props.title, `${pathName}.props.title`),
+      number: readRequiredString(entry.props.number, `${pathName}.props.number`),
+    };
   });
-}
 
-export const PROJECT_CATALOG = createProjectCatalog(worksPageData);
-
-const firstProject = PROJECT_CATALOG[0];
-if (!firstProject) {
-  throw new Error("作品目录不能为空");
-}
-
-const projectById = new Map(PROJECT_CATALOG.map((project) => [project.id, project]));
-const canonicalIdByAlias = new Map(
-  PROJECT_CATALOG.flatMap((project) => project.aliases.map((alias) => [alias, project.id] as const)),
-);
-
-export const WORKS_INDEX_DESTINATION: ProjectDestination = {
-  id: "works",
-  name: "返回作品索引",
-  href: "/works",
-  cover: firstProject.cover,
-};
-
-export function getCanonicalProjectId(id: string) {
-  return canonicalIdByAlias.get(id) ?? id;
-}
-
-export function getProjectAliasTarget(id: string) {
-  return canonicalIdByAlias.get(id) ?? null;
-}
-
-export function resolveProjectDestination(id: string): ProjectDestination | null {
-  if (id === WORKS_INDEX_DESTINATION.id) {
-    return WORKS_INDEX_DESTINATION;
+  if (entries.length === 0) {
+    throw new Error("作品目录不能为空");
   }
 
-  const project = projectById.get(getCanonicalProjectId(id));
-  return project
-    ? { id: project.id, name: project.name, href: project.href, cover: project.cover }
-    : null;
-}
-
-export function getNextProjectDestination(currentId: string): ProjectDestination | null {
-  const canonicalId = getCanonicalProjectId(currentId);
-  const currentIndex = PROJECT_CATALOG.findIndex((project) => project.id === canonicalId);
-  if (currentIndex < 0) {
-    return null;
+  const allIds = new Set<string>();
+  const allNumbers = new Set<string>();
+  for (const entry of entries) {
+    if (allIds.has(entry.id)) throw new Error(`duplicate project id "${entry.id}"`);
+    allIds.add(entry.id);
+    if (allNumbers.has(entry.number)) throw new Error(`duplicate project number "${entry.number}"`);
+    allNumbers.add(entry.number);
   }
 
-  const nextProject = PROJECT_CATALOG[currentIndex + 1];
-  return nextProject
-    ? { id: nextProject.id, name: nextProject.name, href: nextProject.href, cover: nextProject.cover }
-    : WORKS_INDEX_DESTINATION;
+  const allAliases = new Set<string>();
+  for (const entry of entries) {
+    for (const alias of entry.aliases) {
+      if (allIds.has(alias) || allAliases.has(alias)) {
+        throw new Error(`duplicate project alias "${alias}"`);
+      }
+      allAliases.add(alias);
+    }
+  }
+
+  return entries;
 }
 
-export function synchronizeNextProjectBlocks<T>(data: T, currentId: string): T {
-  const nextProject = getNextProjectDestination(currentId);
-  if (!nextProject) {
-    return data;
+export class ProjectCatalog {
+  readonly entries: readonly ProjectCatalogEntry[];
+  readonly worksIndexDestination: ProjectDestination;
+  private readonly canonicalIdByAlias: ReadonlyMap<string, string>;
+  private readonly projectById: ReadonlyMap<string, ProjectCatalogEntry>;
+
+  constructor(entries: readonly ProjectCatalogEntry[]) {
+    const firstProject = entries[0];
+    if (!firstProject) throw new Error("作品目录不能为空");
+
+    this.entries = entries;
+    this.projectById = new Map(entries.map((project) => [project.id, project]));
+    this.canonicalIdByAlias = new Map(
+      entries.flatMap((project) => project.aliases.map((alias) => [alias, project.id] as const)),
+    );
+    this.worksIndexDestination = {
+      cover: firstProject.cover,
+      href: "/works",
+      id: "works",
+      name: "返回作品索引",
+    };
   }
+
+  getCanonicalId(id: string) {
+    return this.canonicalIdByAlias.get(id) ?? id;
+  }
+
+  getAliasTarget(id: string) {
+    return this.canonicalIdByAlias.get(id) ?? null;
+  }
+
+  resolveDestination(id: string): ProjectDestination | null {
+    if (id === this.worksIndexDestination.id) return this.worksIndexDestination;
+
+    const project = this.projectById.get(this.getCanonicalId(id));
+    return project
+      ? { cover: project.cover, href: project.href, id: project.id, name: project.name }
+      : null;
+  }
+
+  getNextDestination(currentId: string): ProjectDestination | null {
+    const canonicalId = this.getCanonicalId(currentId);
+    const currentIndex = this.entries.findIndex((project) => project.id === canonicalId);
+    if (currentIndex < 0) return null;
+
+    const nextProject = this.entries[currentIndex + 1];
+    return nextProject
+      ? { cover: nextProject.cover, href: nextProject.href, id: nextProject.id, name: nextProject.name }
+      : this.worksIndexDestination;
+  }
+}
+
+export function createProjectCatalogProjection(data: unknown) {
+  return new ProjectCatalog(createProjectCatalog(data));
+}
+
+export function synchronizeNextProjectBlocks<T>(
+  data: T,
+  currentId: string,
+  catalog: ProjectCatalog,
+): T {
+  const nextProject = catalog.getNextDestination(currentId);
+  if (!nextProject) return data;
 
   const visit = (value: unknown): unknown => {
-    if (Array.isArray(value)) {
-      return value.map(visit);
-    }
-
-    if (!isRecord(value)) {
-      return value;
-    }
+    if (Array.isArray(value)) return value.map(visit);
+    if (!isRecord(value)) return value;
 
     const nextValue = Object.fromEntries(
       Object.entries(value).map(([key, entry]) => [key, visit(entry)]),
@@ -149,7 +191,10 @@ export function synchronizeNextProjectBlocks<T>(data: T, currentId: string): T {
     if (nextValue.type === "NextProjectBlock" && isRecord(nextValue.props)) {
       nextValue.props = {
         ...nextValue.props,
+        href: nextProject.href,
+        nextBg: nextProject.cover,
         nextId: nextProject.id,
+        nextName: nextProject.name,
       };
     }
 

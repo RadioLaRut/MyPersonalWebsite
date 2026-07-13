@@ -4,8 +4,11 @@ import React, { type ReactNode, useRef, useState } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
-import { MotionLink } from "@/components/motion";
+import { MotionLink } from "@/components/motion/MotionLink";
+import {
+  type ComponentDesignOverride,
+  resolveComponentDesign,
+} from "@/lib/component-design-runtime";
 import {
   createResponsiveGridBounds,
   getResponsiveGridColumnClassName,
@@ -24,7 +27,7 @@ export type WorksListEntryAlias = {
   slug: string;
 };
 
-interface WorksListEntryProps {
+interface WorksListEntryProps extends ComponentDesignOverride<"WorksListEntry"> {
   aliases?: WorksListEntryAlias[];
   id: string;
   number?: string;
@@ -48,8 +51,9 @@ export default function WorksListEntry({
   imageFitMode = "x",
   desc,
   editMode = false,
+  design: designOverride,
 }: WorksListEntryProps) {
-  const design = useComponentDesign("WorksListEntry");
+  const design = resolveComponentDesign("WorksListEntry", designOverride);
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const entryRef = useRef<HTMLElement>(null);
@@ -128,25 +132,27 @@ export default function WorksListEntry({
         ) : null}
       </AnimatePresence>
 
-      <div className={`grid-container relative z-10 items-center py-8 md:py-12 lg:py-16 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
-        <div className="col-start-1 col-span-2 grid content-start pt-5 md:hidden">
-          <Typography
-            preset="sans-body"
-            size="label"
-            weight="semantic"
-            wrapPolicy="label"
-            className={`transition-colors duration-700 ease-out ${active ? "text-white/[0.76]" : "text-textMuted"}`}
-          >
-            {number ?? "00"}
-          </Typography>
-          <span
-            className={`mt-3 h-px bg-white/60 transition-[width,opacity] duration-700 ease-out ${active ? "w-4 opacity-100" : "w-2 opacity-40"}`}
-            aria-hidden="true"
-          />
+      <div className={`grid-container relative z-10 items-baseline py-8 md:py-12 lg:py-16 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
+        <div className="col-start-1 col-span-2 self-baseline md:hidden">
+          <div className="relative grid w-fit">
+            <Typography
+              preset="sans-body"
+              size="label"
+              weight="semantic"
+              wrapPolicy="label"
+              className={`transition-colors duration-700 ease-out ${active ? "text-white/[0.76]" : "text-textMuted"}`}
+            >
+              {number ?? "00"}
+            </Typography>
+            <span
+              className={`absolute top-full mt-3 h-px bg-white/60 transition-[width,opacity] duration-700 ease-out ${active ? "w-4 opacity-100" : "w-2 opacity-40"}`}
+              aria-hidden="true"
+            />
+          </div>
         </div>
 
-        <div className={`hidden lg:block ${numberBoundsClassName}`}>
-          <div className="grid w-fit gap-3">
+        <div className={`hidden self-baseline lg:block ${numberBoundsClassName}`}>
+          <div className="relative grid w-fit content-center">
             <Typography
               preset="sans-body"
               size="title-sm"
@@ -157,28 +163,28 @@ export default function WorksListEntry({
               {number ?? "00"}
             </Typography>
             <span
-              className={`h-px bg-white/60 transition-[width,opacity] duration-700 ease-out ${active ? "w-4 opacity-100" : "w-0 opacity-0"}`}
+              className={`absolute top-full mt-3 h-px bg-white/60 transition-[width,opacity] duration-700 ease-out ${active ? "w-4 opacity-100" : "w-0 opacity-0"}`}
               aria-hidden="true"
             />
           </div>
         </div>
 
-        <div className={`${titleBoundsClassName} grid content-center py-4`}>
+        <div className={`${titleBoundsClassName} grid self-baseline content-center py-4`}>
           <Typography
             as="h2"
             preset="luna-editorial"
             size="title"
             weight="display"
             wrapPolicy="heading"
-            className={`break-words py-2 uppercase transition-colors duration-700 ease-out ${active
-              ? "text-white/[0.94]"
-              : "text-white/[0.56]"}`}
+            className={`break-words py-2 uppercase transition-all duration-700 ease-out ${active
+              ? "text-white/[0.92]"
+              : "text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.42)]"}`}
           >
             {title}
           </Typography>
         </div>
 
-        <div className={`${sidebarBoundsClassName} mt-4 grid content-center md:mt-0 md:pl-6 lg:pl-8`}>
+        <div className={`${sidebarBoundsClassName} mt-4 grid self-center content-center md:mt-0 md:pl-6 lg:pl-8`}>
           <div className="grid gap-1">
             <Typography
               as="p"

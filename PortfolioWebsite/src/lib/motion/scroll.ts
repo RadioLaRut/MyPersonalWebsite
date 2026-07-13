@@ -27,7 +27,7 @@ export function isElementCenterInsideViewportZone(
 }
 
 export function useCenterZoneActivation(
-  elementRef: RefObject<HTMLElement>,
+  elementRef: RefObject<HTMLElement | null>,
   options: {
     enabled?: boolean;
     zoneRatio?: number;
@@ -38,7 +38,6 @@ export function useCenterZoneActivation(
 
   useEffect(() => {
     if (!enabled || typeof window === "undefined") {
-      setIsInsideZone(false);
       return;
     }
 
@@ -85,5 +84,5 @@ export function useCenterZoneActivation(
     };
   }, [elementRef, enabled, zoneRatio]);
 
-  return isInsideZone;
+  return enabled ? isInsideZone : false;
 }

@@ -1,9 +1,4 @@
 {
-  "root": {
-    "props": {
-      "title": "SLAY THE VIRUS"
-    }
-  },
   "content": [
     {
       "type": "HeroHeadline",
@@ -15,7 +10,8 @@
         "heroImage": "/images/slay-the-virus/STVTitle.webp",
         "navLink": "https://www.bilibili.com/video/BV1QfgzzrE3J/",
         "heroImagePreset": "ratio-21-9",
-        "heroImageFitMode": "x"
+        "heroImageFitMode": "x",
+        "navLinkLabel": "观看视频"
       }
     },
     {
@@ -56,8 +52,7 @@
         "id": "stv-card-1",
         "title": "创新的卡牌机制",
         "description": "将卡牌战斗与俄罗斯方块机制融合，每张卡牌都是一个俄罗斯方块形状。玩家需要在有限的空间内拼放卡牌，每回合能打出的卡牌数量取决于空间利用效率。这种机制增加了策略深度，玩家需要同时考虑卡牌效果和空间布局。",
-        "imageSrc": "/images/slay-the-virus/05.webp",
-        "tags": []
+        "imageSrc": "/images/slay-the-virus/05.webp"
       }
     },
     {
@@ -128,5 +123,14 @@
       }
     }
   ],
+  "root": {
+    "props": {
+      "description": "将卡牌构筑与有限空间排布结合的 Roguelike 卡牌游戏设计。",
+      "image": "/images/slay-the-virus/STVTitle.webp",
+      "noIndex": false,
+      "title": "SLAY THE VIRUS"
+    }
+  },
+  "version": 1,
   "zones": {}
 }

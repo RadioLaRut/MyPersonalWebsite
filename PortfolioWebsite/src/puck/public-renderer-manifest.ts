@@ -1,0 +1,27 @@
+import type { PuckComponentType } from "./component-manifest.ts";
+
+export const PUBLIC_RENDERER_MODULE_NAMES = {
+  BreakdownHeadline: "breakdown-headline",
+  BreakdownTriptych: "breakdown-triptych",
+  ContactFlashlight: "contact-flashlight",
+  ContentCard: "content-card",
+  HeroHeadline: "hero-headline",
+  HeroSection: "hero-section",
+  HighDensityInfoBlock: "high-density-info-block",
+  HomeEndcapSection: "home-endcap-section",
+  ImagePanel: "image-panel",
+  ImageSlider: "image-slider",
+  LightingCollectionHeader: "lighting-collection-header",
+  LightingProjectCard: "lighting-project-card",
+  MetadataListItem: "metadata-list-item",
+  NextProjectBlock: "next-project-block",
+  ParameterGrid: "parameter-grid",
+  PortfolioHeroHeader: "portfolio-hero-header",
+  ProjectSection: "project-section",
+  RichParagraph: "rich-paragraph",
+  StatementBlock: "statement-block",
+  TextParagraphBlock: "text-paragraph-block",
+  TextSplitLayout: "text-split-layout",
+  WorksList: "works-list",
+  WorksListEntry: "works-list-entry",
+} as const satisfies Record<PuckComponentType, string>;

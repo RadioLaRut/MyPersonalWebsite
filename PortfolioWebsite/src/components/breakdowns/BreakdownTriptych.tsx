@@ -1,9 +1,10 @@
-"use client";
-
 import type { CSSProperties, ReactNode } from "react";
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+  type ComponentDesignOverride,
+  resolveComponentDesign,
+} from "@/lib/component-design-runtime";
 import {
   createResponsiveGridBounds,
   getResponsiveGridColumnClassName,
@@ -13,7 +14,7 @@ import {
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 import { toPlainText } from "@/lib/editable-text";
 
-interface BreakdownTriptychProps {
+type BreakdownTriptychProps = {
   col1Title: ReactNode;
   col1Text: ReactNode;
   col1Img: string;
@@ -29,7 +30,7 @@ interface BreakdownTriptychProps {
   col3Img: string;
   col3Preset?: ImagePreset;
   col3FitMode?: ImageFitMode;
-}
+} & ComponentDesignOverride<"BreakdownTriptych">;
 
 function TriptychColumn({
   title,
@@ -91,20 +92,21 @@ export default function BreakdownTriptych({
   col3Img,
   col3Preset = "ratio-16-9",
   col3FitMode = "x",
+  design,
 }: BreakdownTriptychProps) {
-  const design = useComponentDesign("BreakdownTriptych");
+  const resolvedDesign = resolveComponentDesign("BreakdownTriptych", design);
   const col1Alt = toPlainText(col1Title) ?? "Breakdown image 1";
   const col2Alt = toPlainText(col2Title) ?? "Breakdown image 2";
   const col3Alt = toPlainText(col3Title) ?? "Breakdown image 3";
   const col2Style = {
-    "--triptych-col-top-spacing": getSpacingRem(design.col2TopSpacing),
+    "--triptych-col-top-spacing": getSpacingRem(resolvedDesign.col2TopSpacing),
   } as CSSProperties;
   const col3Style = {
-    "--triptych-col-top-spacing": getSpacingRem(design.col3TopSpacing),
+    "--triptych-col-top-spacing": getSpacingRem(resolvedDesign.col3TopSpacing),
   } as CSSProperties;
 
   return (
-    <section className={`relative z-20 w-full bg-black ${getSectionSpacingClassName(design.sectionSpacing)}`}>
+    <section className={`relative z-20 w-full bg-black ${getSectionSpacingClassName(resolvedDesign.sectionSpacing)}`}>
       <div className="grid-container w-full border-t border-white/10 rhythm-divider-top">
         <TriptychColumn
           title={col1Title}
@@ -114,7 +116,7 @@ export default function BreakdownTriptych({
           boundsClassName={getResponsiveGridColumnClassName(createResponsiveGridBounds(
             { leftCol: 1, rightCol: 12 },
             { leftCol: 1, rightCol: 6 },
-            design.col1Bounds,
+            resolvedDesign.col1Bounds,
           ))}
           preset={col1Preset}
           fitMode={col1FitMode}
@@ -127,7 +129,7 @@ export default function BreakdownTriptych({
           boundsClassName={getResponsiveGridColumnClassName(createResponsiveGridBounds(
             { leftCol: 1, rightCol: 12 },
             { leftCol: 7, rightCol: 12 },
-            design.col2Bounds,
+            resolvedDesign.col2Bounds,
           ))}
           preset={col2Preset}
           fitMode={col2FitMode}
@@ -142,7 +144,7 @@ export default function BreakdownTriptych({
           boundsClassName={getResponsiveGridColumnClassName(createResponsiveGridBounds(
             { leftCol: 1, rightCol: 12 },
             { leftCol: 1, rightCol: 12 },
-            design.col3Bounds,
+            resolvedDesign.col3Bounds,
           ))}
           preset={col3Preset}
           fitMode={col3FitMode}

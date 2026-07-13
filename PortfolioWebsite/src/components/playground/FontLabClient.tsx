@@ -548,24 +548,26 @@ function ToggleField({
   );
 }
 
-function NumberField({
-  helperText,
-  label,
-  onCommit,
-  step = FIELD_STEP,
-  value,
-}: {
+type NumberFieldProps = {
   helperText?: ReactNode;
   label: string;
   onCommit: (value: number) => void;
   step?: string;
   value: number;
-}) {
-  const [draft, setDraft] = useState(String(value));
+};
 
-  useEffect(() => {
-    setDraft(String(value));
-  }, [value]);
+function NumberField(props: NumberFieldProps) {
+  return <NumberFieldDraft key={String(props.value)} {...props} />;
+}
+
+function NumberFieldDraft({
+  helperText,
+  label,
+  onCommit,
+  step = FIELD_STEP,
+  value,
+}: NumberFieldProps) {
+  const [draft, setDraft] = useState(String(value));
 
   const commitDraft = () => {
     const nextValue = draft.trim();
@@ -619,25 +621,26 @@ function NumberField({
   );
 }
 
-function FontSizeField({
-  label,
-  onCommit,
-  value,
-}: {
+type FontSizeFieldProps = {
   label: string;
   onCommit: (value: string) => void;
   value: string;
-}) {
+};
+
+function FontSizeField(props: FontSizeFieldProps) {
+  return <FontSizeFieldDraft key={props.value} {...props} />;
+}
+
+function FontSizeFieldDraft({
+  label,
+  onCommit,
+  value,
+}: FontSizeFieldProps) {
   const [draft, setDraft] = useState(() => {
     const fixedRem = getFixedFontSizeRem(value);
 
     return fixedRem === null ? "1" : formatFontSizeNumber(fixedRem);
   });
-
-  useEffect(() => {
-    const fixedRem = getFixedFontSizeRem(value);
-    setDraft(fixedRem === null ? "1" : formatFontSizeNumber(fixedRem));
-  }, [value]);
 
   const commitFixed = () => {
     const nextValue = buildFixedFontSize(draft);

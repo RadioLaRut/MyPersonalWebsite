@@ -1,10 +1,11 @@
-"use client";
-
 import type { ReactNode } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+  type ComponentDesignOverride,
+  resolveComponentDesign,
+} from "@/lib/component-design-runtime";
 import { resolveEditableText, toPlainText } from "@/lib/editable-text";
 import {
   type ImageFitMode,
@@ -12,7 +13,7 @@ import {
 } from "@/lib/image-presentation";
 import { getGridColumnClassName } from "@/lib/component-design-style";
 
-interface HeroHeadlineBlockProps {
+type HeroHeadlineBlockProps = {
   eyebrow?: ReactNode;
   title?: ReactNode;
   subtitle?: ReactNode;
@@ -22,7 +23,7 @@ interface HeroHeadlineBlockProps {
   navLink?: string;
   navLinkLabel?: string;
   editMode?: boolean;
-}
+} & ComponentDesignOverride<"HeroHeadline">;
 
 export default function HeroHeadlineBlock({
   eyebrow,
@@ -34,8 +35,9 @@ export default function HeroHeadlineBlock({
   navLink,
   navLinkLabel = "观看视频",
   editMode = false,
+  design,
 }: HeroHeadlineBlockProps) {
-  const design = useComponentDesign("HeroHeadline");
+  const resolvedDesign = resolveComponentDesign("HeroHeadline", design);
   const resolvedEyebrow = resolveEditableText(eyebrow, "PROJECT");
   const resolvedTitle = resolveEditableText(title, "PROJECT TITLE");
   const resolvedSubtitle = resolveEditableText(
@@ -44,7 +46,7 @@ export default function HeroHeadlineBlock({
   );
   const resolvedHeroImage = typeof heroImage === "string" ? heroImage.trim() : "";
   const heroImageAlt = toPlainText(title) ?? "PROJECT TITLE";
-  const contentBoundsClassName = getGridColumnClassName(design.contentBounds);
+  const contentBoundsClassName = getGridColumnClassName(resolvedDesign.contentBounds);
 
   if (editMode) {
     return (

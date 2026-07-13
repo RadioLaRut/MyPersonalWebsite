@@ -1,9 +1,4 @@
 {
-  "root": {
-    "props": {
-      "title": "企鹅贸易公司"
-    }
-  },
   "content": [
     {
       "type": "HeroHeadline",
@@ -246,12 +241,18 @@
       "type": "NextProjectBlock",
       "props": {
         "id": "penguin-next-project",
-        "nextId": "lighting-portfolio",
-        "href": "/works/lighting-portfolio",
-        "nextName": "LIGHTING PORTFOLIO",
-        "nextBg": "/images/train-station/2Day.webp"
+        "nextId": "lighting-portfolio"
       }
     }
   ],
+  "root": {
+    "props": {
+      "description": "从核心循环、跨专业协作到 Unreal Engine 生产工作流的完整游戏项目实践。",
+      "image": "/images/penguin/CyberRestaurantWithBlur.webp",
+      "noIndex": false,
+      "title": "企鹅贸易公司"
+    }
+  },
+  "version": 1,
   "zones": {}
 }

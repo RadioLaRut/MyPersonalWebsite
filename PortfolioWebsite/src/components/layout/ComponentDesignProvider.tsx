@@ -36,10 +36,6 @@ export default function ComponentDesignProvider({
   );
 
   useEffect(() => {
-    setDocumentState(normalizeComponentDesignDocument(initialDocument));
-  }, [initialDocument]);
-
-  useEffect(() => {
     if (!listenToGlobalUpdates) {
       return;
     }

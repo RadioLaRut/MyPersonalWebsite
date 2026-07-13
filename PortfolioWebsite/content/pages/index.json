@@ -1,9 +1,4 @@
 {
-  "root": {
-    "props": {
-      "title": "Home"
-    }
-  },
   "content": [
     {
       "type": "HeroSection",
@@ -73,5 +68,14 @@
       }
     }
   ],
+  "root": {
+    "props": {
+      "description": "让氛围、系统与落地流程共同服务体验，汇集灯光、技术美术与游戏设计作品。",
+      "image": "/images/covers/2026/ShotForCrewWithoutWord.0004.webp",
+      "noIndex": false,
+      "title": "Home"
+    }
+  },
+  "version": 1,
   "zones": {}
 }

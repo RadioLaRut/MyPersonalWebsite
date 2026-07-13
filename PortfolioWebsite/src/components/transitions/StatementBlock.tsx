@@ -1,18 +1,18 @@
-"use client";
-
-import React from "react";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
-import { Reveal } from "@/components/motion";
+import {
+  type ComponentDesignOverride,
+  resolveComponentDesign,
+} from "@/lib/component-design-runtime";
+import { Reveal } from "@/components/motion/Reveal";
 import { getGridColumnClassName } from "@/lib/component-design-style";
 
-interface StatementBlockProps {
+type StatementBlockProps = {
   content: string;
   align?: "left" | "center" | "right";
   backgroundColor?: "black" | "dark-gray";
   minHeight?: "small" | "medium" | "large";
   editMode?: boolean;
-}
+} & ComponentDesignOverride<"StatementBlock">;
 
 export default function StatementBlock({
   content,
@@ -20,8 +20,9 @@ export default function StatementBlock({
   backgroundColor = "black",
   minHeight = "medium",
   editMode = false,
+  design,
 }: StatementBlockProps) {
-  const design = useComponentDesign("StatementBlock");
+  const resolvedDesign = resolveComponentDesign("StatementBlock", design);
   const alignClass = {
     left: "justify-items-start text-left",
     center: "justify-items-center text-center",
@@ -48,15 +49,15 @@ export default function StatementBlock({
     <section className={`relative z-20 grid w-full ${heightClass} ${bgClass} ${rhythmClass} content-center`}>
       <div className="grid-container w-full">
         <Reveal
-          className={`${getGridColumnClassName(design.contentBounds)} grid ${alignClass} ${editMode ? "pointer-events-auto" : ""}`}
+          className={`${getGridColumnClassName(resolvedDesign.contentBounds)} grid ${alignClass} ${editMode ? "pointer-events-auto" : ""}`}
           disabled={editMode}
         >
           <Typography
             as="p"
             preset="sans-body"
-            size={design.bodySize}
+            size={resolvedDesign.bodySize}
             weight="light"
-            wrapPolicy={design.bodyAutoWrap ? "prose" : "nowrap"}
+            wrapPolicy={resolvedDesign.bodyAutoWrap ? "prose" : "nowrap"}
             className="max-w-4xl text-textPrimary"
             align={align}
           >

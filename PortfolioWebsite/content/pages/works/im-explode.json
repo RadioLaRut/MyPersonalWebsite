@@ -1,9 +1,4 @@
 {
-  "root": {
-    "props": {
-      "title": "我跟你爆了"
-    }
-  },
   "content": [
     {
       "type": "HeroHeadline",
@@ -15,7 +10,8 @@
         "heroImagePreset": "ratio-21-9",
         "heroImageFitMode": "cover",
         "navLink": "https://www.bilibili.com/video/BV1DNwUeDEos/",
-        "id": "HeroHeadline-4ede4ba8-b50f-4be0-affe-eaef3806a4a3"
+        "id": "HeroHeadline-4ede4ba8-b50f-4be0-affe-eaef3806a4a3",
+        "navLinkLabel": "观看视频"
       }
     },
     {
@@ -56,8 +52,7 @@
         "id": "explod-card-1",
         "title": "后坐力移动机制",
         "description": "游戏最核心的创新是将射击后坐力作为唯一的移动方式。玩家无法直接控制角色移动，必须通过射击方向和力度来间接控制位移。这种设计创造了独特的操作手感：每次射击都是一次策略决策，既要考虑攻击对手，又要规划自己的移动路径。物理系统的平衡调整是关键挑战，需要让后坐力既有足够的推力感，又不至于失控。",
-        "imageSrc": "/images/exploding/Game01.webp",
-        "tags": []
+        "imageSrc": "/images/exploding/Game01.webp"
       }
     },
     {
@@ -67,7 +62,6 @@
         "title": "环境击杀与关卡设计",
         "description": "游戏的胜利条件不是直接击杀对手，而是将对手推向地图上的尖刺物体。这种环境击杀机制改变了传统射击游戏的对战逻辑，玩家需要时刻关注场地布局和对手位置。关卡设计需要合理布置尖刺的位置和密度，既要创造紧张感，又要给玩家留出操作空间。48 小时的开发时间内，通过快速迭代找到了平衡点。",
         "imageSrc": "/images/exploding/Game02.webp",
-        "tags": [],
         "imagePosition": "left"
       }
     },
@@ -79,5 +73,14 @@
       }
     }
   ],
+  "root": {
+    "props": {
+      "description": "以射击后坐力作为唯一移动方式的多人对抗游戏与物理系统设计。",
+      "image": "/images/exploding/Title.webp",
+      "noIndex": false,
+      "title": "我跟你爆了"
+    }
+  },
+  "version": 1,
   "zones": {}
 }

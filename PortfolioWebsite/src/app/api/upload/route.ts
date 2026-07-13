@@ -7,7 +7,11 @@ import { assertLocalEditorAccess } from "@/lib/security";
 import {
   createUploadFileName,
   UploadValidationError,
+  validateUploadBytes,
 } from "@/lib/upload-policy";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 const NO_STORE_HEADER = {
   "Cache-Control": "no-store",
@@ -81,6 +85,7 @@ export async function POST(request: Request) {
   try {
     await fs.mkdir(UPLOAD_DIRECTORY, { recursive: true });
     const fileBuffer = Buffer.from(await file.arrayBuffer());
+    validateUploadBytes(fileBuffer, file.type);
     const destination = resolveUploadDestination(outputName);
     await fs.writeFile(destination, fileBuffer);
   } catch (error) {

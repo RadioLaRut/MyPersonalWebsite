@@ -1,5 +1,3 @@
-"use client";
-
 import clsx from "clsx";
 import React, {
   Children,
@@ -235,7 +233,7 @@ export default function Typography<T extends ElementType = "span">({
     lineHeight: `var(--typography-${preset}-${resolvedSize}-line-height, var(--typography-size-${resolvedSize}-line-height, ${sizeToken.lineHeight}))`,
     overflowWrap: wrapToken.overflowWrap,
     textAlign: align,
-    textWrap: getTextWrap(),
+    textWrapStyle: getTextWrap(),
     transform: translateX === "0em" ? undefined : `translateX(${translateX})`,
     whiteSpace: wrapToken.whiteSpace,
     wordBreak: wrapToken.wordBreak,

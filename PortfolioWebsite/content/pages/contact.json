@@ -1,9 +1,4 @@
 {
-  "root": {
-    "props": {
-      "title": "Contact Page"
-    }
-  },
   "content": [
     {
       "type": "ContactFlashlight",
@@ -88,5 +83,15 @@
         ]
       }
     }
-  ]
+  ],
+  "root": {
+    "props": {
+      "description": "江承彦的联系信息与创作方向。",
+      "image": "",
+      "noIndex": true,
+      "title": "Contact Page"
+    }
+  },
+  "version": 1,
+  "zones": {}
 }

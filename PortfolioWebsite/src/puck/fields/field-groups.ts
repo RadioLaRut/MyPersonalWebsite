@@ -3,7 +3,7 @@
  * 提供标准化的字段分组和字段类型工厂函数
  */
 
-import type { CustomField } from "@measured/puck";
+import type { CustomField } from "@puckeditor/core";
 import React from "react";
 
 /**

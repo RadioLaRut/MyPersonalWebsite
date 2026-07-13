@@ -1,4 +1,4 @@
-import type { Config } from "@measured/puck";
+import type { Config } from "@puckeditor/core";
 import HeroHeadlineBlock from "@/components/common/HeroHeadlineBlock";
 import ImagePanel from "@/components/breakdowns/ImagePanel";
 import TextSplitLayout from "@/components/breakdowns/TextSplitLayout";

@@ -17,7 +17,7 @@ import {
   isTypographyWeight,
 } from "./typography.ts";
 import { PREVIEW_REFERENCE_VIEWPORT_PX } from "./preview-viewports.ts";
-import { isPlainRecord } from "./json-utils.ts";
+import { areJsonStructuresEqual, isPlainRecord } from "./json-utils.ts";
 
 export const FONT_LAB_SCHEMA_VERSION = 6 as const;
 
@@ -566,6 +566,10 @@ export function parseFontLabDocument(value: unknown): FontLabDocument | null {
     return null;
   }
 
+  if (value.version === FONT_LAB_SCHEMA_VERSION) {
+    return parseCurrentFontLabDocument(value);
+  }
+
   if (
     isSupportedFontLabDocumentVersion(value.version) &&
     isTypographyPreset(String(value.activePreset)) &&
@@ -640,7 +644,7 @@ export function parseFontLabSavePayload(
     },
   );
 
-  return {
+  const payload: FontLabSavePayload = {
     activePreset: activePreset as TypographyPreset,
     activeSize: activeSize as TypographySize,
     labelZh: normalizedPresetConfig.labelZh,
@@ -652,4 +656,15 @@ export function parseFontLabSavePayload(
       sizeConfig,
     ),
   };
+
+  return areJsonStructuresEqual(value, payload) ? payload : null;
+}
+
+export function parseCurrentFontLabDocument(value: unknown): FontLabDocument | null {
+  if (!isPlainRecord(value) || value.version !== FONT_LAB_SCHEMA_VERSION) {
+    return null;
+  }
+
+  const normalized = normalizeFontLabDocument(value as FontLabDocument);
+  return areJsonStructuresEqual(value, normalized) ? normalized : null;
 }

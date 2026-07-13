@@ -1,21 +1,22 @@
-"use client";
-
 import { ChevronLeft } from "lucide-react/dist/cjs/lucide-react.js";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
-import { MotionLink } from "@/components/motion";
+import {
+  type ComponentDesignOverride,
+  resolveComponentDesign,
+} from "@/lib/component-design-runtime";
+import { MotionLink } from "@/components/motion/MotionLink";
 import {
   getResponsiveGridColumnClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
 
-export interface LightingCollectionHeaderProps {
+export type LightingCollectionHeaderProps = {
   title: string;
   number: string;
   description?: string;
   backHref?: string;
   editMode?: boolean;
-}
+} & ComponentDesignOverride<"LightingCollectionHeader">;
 
 export default function LightingCollectionHeader({
   title,
@@ -23,15 +24,16 @@ export default function LightingCollectionHeader({
   description,
   backHref = "/works/lighting-portfolio",
   editMode = false,
+  design,
 }: LightingCollectionHeaderProps) {
-  const design = useComponentDesign("LightingCollectionHeader");
+  const resolvedDesign = resolveComponentDesign("LightingCollectionHeader", design);
   const hasDescription = typeof description === "string" && description.trim().length > 0;
 
   return (
     <section className="border-b border-white/10 rhythm-section-hero">
       <div className="grid-container">
         <div className="grid-subgrid col-span-12 lg:[align-items:last_baseline]">
-          <div className={getResponsiveGridColumnClassName(design.titleBounds)}>
+          <div className={getResponsiveGridColumnClassName(resolvedDesign.titleBounds)}>
             <div className="mb-10">
               <MotionLink
                 href={backHref}
@@ -72,14 +74,14 @@ export default function LightingCollectionHeader({
               weight="display"
               wrapPolicy="heading"
               className="text-white"
-              style={{ marginTop: getSpacingRem(design.titleTopSpacing) }}
+              style={{ marginTop: getSpacingRem(resolvedDesign.titleTopSpacing) }}
             >
               {title}
             </Typography>
           </div>
 
           {hasDescription ? (
-            <div className={`${getResponsiveGridColumnClassName(design.descriptionBounds)} lg:pb-[0.12rem]`}>
+            <div className={`${getResponsiveGridColumnClassName(resolvedDesign.descriptionBounds)} lg:pb-[0.12rem]`}>
               <Typography
                 as="p"
                 preset="sans-body"

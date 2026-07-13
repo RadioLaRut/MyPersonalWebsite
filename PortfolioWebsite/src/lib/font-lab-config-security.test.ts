@@ -8,6 +8,7 @@ import {
 } from "./font-lab-config-schema.ts";
 
 function basePayload(fontSize: string) {
+  const defaultSize = createDefaultFontLabDocument().presets["sans-body"].sizes.body;
   return {
     activePreset: "sans-body",
     activeSize: "body",
@@ -15,34 +16,31 @@ function basePayload(fontSize: string) {
     latinFontScale: 1,
     latinWeightOffsetSteps: 0,
     sizeConfig: {
+      ...defaultSize,
       fontSize,
     },
   };
 }
 
-function defaultBodyFontSize() {
-  return createDefaultFontLabDocument().presets["sans-body"].sizes.body?.fontSize;
-}
-
-test("parseFontLabSavePayload falls back quickly for pathological rem fontSize", () => {
+test("parseFontLabSavePayload quickly rejects pathological rem fontSize", () => {
   const started = performance.now();
   const parsed = parseFontLabSavePayload(basePayload(`${"1".repeat(40000)}xrem`));
   const elapsedMs = performance.now() - started;
 
-  assert.equal(parsed?.sizeConfig.fontSize, defaultBodyFontSize());
+  assert.equal(parsed, null);
   assert.ok(elapsedMs < 100, `expected bounded parser time, got ${elapsedMs}ms`);
 });
 
-test("parseFontLabSavePayload falls back quickly for pathological clamp fontSize", () => {
+test("parseFontLabSavePayload quickly rejects pathological clamp fontSize", () => {
   const started = performance.now();
   const parsed = parseFontLabSavePayload(basePayload(`clamp(${"1".repeat(40000)}xrem,1vw,2rem)`));
   const elapsedMs = performance.now() - started;
 
-  assert.equal(parsed?.sizeConfig.fontSize, defaultBodyFontSize());
+  assert.equal(parsed, null);
   assert.ok(elapsedMs < 100, `expected bounded parser time, got ${elapsedMs}ms`);
 });
 
-test("parseFontLabSavePayload still accepts legitimate rem and clamp fontSize values", () => {
+test("parseFontLabSavePayload accepts canonical rem and rejects non-canonical clamp values", () => {
   assert.equal(parseFontLabSavePayload(basePayload("1.25rem"))?.sizeConfig.fontSize, "1.25rem");
-  assert.equal(parseFontLabSavePayload(basePayload("clamp(1rem,2vw,3rem)"))?.sizeConfig.fontSize, "1.8rem");
+  assert.equal(parseFontLabSavePayload(basePayload("clamp(1rem,2vw,3rem)")), null);
 });

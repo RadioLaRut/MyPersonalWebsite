@@ -1,11 +1,13 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react/dist/cjs/lucide-react.js";
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+  type ComponentDesignOverride,
+  resolveComponentDesign,
+} from "@/lib/component-design-runtime";
 import {
   getGridColumnClassName,
   getSectionSpacingClassName,
@@ -25,9 +27,26 @@ import {
   calculateSliderKeyboardPercent,
   classifyDirectionalIntent,
   clampPercent,
-} from "@/lib/motion";
+} from "@/lib/motion/drag";
 
-interface ImageSliderProps {
+function ChevronIcon({ direction }: { direction: "left" | "right" }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="h-3.5 w-3.5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d={direction === "left" ? "m15 18-6-6 6-6" : "m9 18 6-6-6-6"} />
+    </svg>
+  );
+}
+
+interface ImageSliderProps extends ComponentDesignOverride<"ImageSlider"> {
   title?: string;
   unlitSrc: string;
   litSrc: string;
@@ -53,9 +72,20 @@ export default function ImageSlider({
   rightLabel,
   initialPosition = 50,
   editMode = false,
+  design: designOverride,
 }: ImageSliderProps) {
-  const design = useComponentDesign("ImageSlider");
-  const [sliderPosition, setSliderPosition] = useState(() => clampPercent(initialPosition));
+  const design = resolveComponentDesign("ImageSlider", designOverride);
+  const normalizedInitialPosition = clampPercent(initialPosition);
+  const [sliderState, setSliderState] = useState(() => ({
+    initialPosition: normalizedInitialPosition,
+    position: normalizedInitialPosition,
+  }));
+  const sliderPosition = sliderState.initialPosition === normalizedInitialPosition
+    ? sliderState.position
+    : normalizedInitialPosition;
+  const setSliderPosition = (position: number) => {
+    setSliderState({ initialPosition: normalizedInitialPosition, position });
+  };
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const activePointerIdRef = useRef<number | null>(null);
@@ -68,10 +98,6 @@ export default function ImageSlider({
   const imageFrameClassName = preservesNativeHeight ? "w-full" : "h-full w-full";
   const visibleTitle = typeof title === "string" && title.trim().length > 0 ? title : alt;
   const sliderDescriptionId = useId();
-
-  useEffect(() => {
-    setSliderPosition(clampPercent(initialPosition));
-  }, [initialPosition]);
 
   const updatePosition = (clientX: number) => {
     const container = containerRef.current;
@@ -253,8 +279,8 @@ export default function ImageSlider({
                 data-cursor-magnet-size="32"
                 aria-hidden="true"
               >
-                <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2} />
-                <ChevronRight className="h-3.5 w-3.5" strokeWidth={2} />
+                <ChevronIcon direction="left" />
+                <ChevronIcon direction="right" />
               </div>
             </div>
           </div>

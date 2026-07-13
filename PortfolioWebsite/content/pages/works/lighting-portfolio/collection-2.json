@@ -1,9 +1,4 @@
 {
-  "root": {
-    "props": {
-      "title": "TRAIN STATION"
-    }
-  },
   "content": [
     {
       "type": "LightingCollectionHeader",
@@ -134,5 +129,14 @@
       }
     }
   ],
+  "root": {
+    "props": {
+      "description": "围绕同一站台场景在白昼、黄昏与夜晚之间的色温、可读性与情绪切换练习。",
+      "image": "/images/train-station/Cut2Day.webp",
+      "noIndex": false,
+      "title": "TRAIN STATION"
+    }
+  },
+  "version": 1,
   "zones": {}
 }

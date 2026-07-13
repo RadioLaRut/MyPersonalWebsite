@@ -1,22 +1,24 @@
-"use client";
-
 import type { ReactNode } from "react";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
-import { MotionLink } from "@/components/motion";
+import {
+  type ComponentDesignOverride,
+  resolveComponentDesign,
+} from "@/lib/component-design-runtime";
+import { MotionLink } from "@/components/motion/MotionLink";
 import {
   getGridColumnClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
+import { isExternalWebHref } from "@/lib/puck-href";
 
-interface HomeEndcapSectionProps {
+type HomeEndcapSectionProps = {
   eyebrow?: ReactNode;
   title: ReactNode;
   description?: ReactNode;
   buttonLabel: ReactNode;
   buttonHref: string;
   editMode?: boolean;
-}
+} & ComponentDesignOverride<"HomeEndcapSection">;
 
 function isContentEmpty(content: ReactNode): boolean {
   if (content === null || content === undefined) return true;
@@ -33,19 +35,21 @@ export default function HomeEndcapSection({
   buttonLabel,
   buttonHref,
   editMode = false,
+  design,
 }: HomeEndcapSectionProps) {
-  const design = useComponentDesign("HomeEndcapSection");
+  const resolvedDesign = resolveComponentDesign("HomeEndcapSection", design);
   const hasDescription = !isContentEmpty(description);
   const buttonTopSpacing = getSpacingRem(
-    hasDescription ? design.buttonTopSpacing : "32",
+    hasDescription ? resolvedDesign.buttonTopSpacing : "32",
   );
+  const opensInNewTab = !editMode && isExternalWebHref(buttonHref);
 
   return (
     <section className="relative isolate grid min-h-[54svh] w-full items-center overflow-hidden border-t border-white/10 bg-black rhythm-section-spacious md:min-h-[60vh] lg:min-h-[68vh]">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_45%)]" />
 
       <div className="grid-container relative z-10">
-        <div className={`${getGridColumnClassName(design.contentBounds)} text-center`}>
+        <div className={`${getGridColumnClassName(resolvedDesign.contentBounds)} text-center`}>
           {eyebrow ? (
             <Typography
               as="p"
@@ -63,7 +67,7 @@ export default function HomeEndcapSection({
           <Typography
             as="h2"
             preset="luna-editorial"
-            size={design.titleSize}
+            size={resolvedDesign.titleSize}
             weight="semantic"
             wrapPolicy="heading"
             align="center"
@@ -80,8 +84,8 @@ export default function HomeEndcapSection({
               weight="medium"
               wrapPolicy="prose"
               align="center"
-              className="mx-auto max-w-3xl text-white/55 uppercase"
-              style={{ marginTop: getSpacingRem(design.descriptionTopSpacing) }}
+              className="mx-auto w-full max-w-3xl text-white/55 uppercase"
+              style={{ marginTop: getSpacingRem(resolvedDesign.descriptionTopSpacing) }}
             >
               {description}
             </Typography>
@@ -92,6 +96,8 @@ export default function HomeEndcapSection({
               href={buttonHref}
               scroll
               disabled={editMode}
+              target={opensInNewTab ? "_blank" : undefined}
+              rel={opensInNewTab ? "noopener noreferrer" : undefined}
               className="interactive inline-grid grid-flow-col auto-cols-max items-center gap-4 border border-white/20 px-6 py-4 text-white transition-colors duration-300 hover:bg-white hover:text-black"
             >
               <Typography

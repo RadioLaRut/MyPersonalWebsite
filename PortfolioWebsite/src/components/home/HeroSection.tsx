@@ -3,8 +3,11 @@ import React, { type ReactNode, useRef } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
-import { MotionLink } from "@/components/motion";
+import { MotionLink } from "@/components/motion/MotionLink";
+import {
+  type ComponentDesignOverride,
+  resolveComponentDesign,
+} from "@/lib/component-design-runtime";
 import {
   getResponsiveGridColumnClassName,
   getSpacingRem,
@@ -48,7 +51,7 @@ function getPosterTitleLines(title: ReactNode) {
   return lines.length > 1 ? lines : null;
 }
 
-export interface HeroSectionProps {
+export interface HeroSectionProps extends ComponentDesignOverride<"HeroSection"> {
   eyebrow?: ReactNode;
   positioning?: ReactNode;
   title: ReactNode;
@@ -84,8 +87,9 @@ export default function HeroSection({
   mobileImageFocalX = 28,
   mobileImageFocalY = 50,
   editMode = false,
+  design: designOverride,
 }: HeroSectionProps) {
-  const design = useComponentDesign("HeroSection");
+  const design = resolveComponentDesign("HeroSection", designOverride);
   const containerRef = useRef<HTMLDivElement>(null);
   const contentBoundsClassName = getResponsiveGridColumnClassName(design.contentBounds);
   const hasSubtitle = hasNodeContent(subtitle);

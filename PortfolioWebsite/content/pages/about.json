@@ -1,9 +1,4 @@
 {
-  "root": {
-    "props": {
-      "title": "About"
-    }
-  },
   "content": [
     {
       "type": "PortfolioHeroHeader",
@@ -115,5 +110,14 @@
       }
     }
   ],
+  "root": {
+    "props": {
+      "description": "灯光、技术美术与游戏设计方向的个人介绍、实践重点和联系方式。",
+      "image": "/images/train-station/2Night.webp",
+      "noIndex": false,
+      "title": "About"
+    }
+  },
+  "version": 1,
   "zones": {}
 }

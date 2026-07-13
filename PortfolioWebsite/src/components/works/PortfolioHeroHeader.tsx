@@ -1,16 +1,17 @@
-"use client";
-
-import React, { type ReactNode } from "react";
+import { type ReactNode } from "react";
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
-import { MotionLink } from "@/components/motion";
+import {
+    type ComponentDesignOverride,
+    resolveComponentDesign,
+} from "@/lib/component-design-runtime";
+import { MotionLink } from "@/components/motion/MotionLink";
 import {
     getGridColumnClassName,
     getResponsiveGridColumnClassName,
     getSpacingRem,
 } from "@/lib/component-design-style";
 
-interface LightingCollectionHeroHeaderProps {
+type LightingCollectionHeroHeaderProps = {
     title: ReactNode;
     subtitle: ReactNode;
     descriptionLine1: ReactNode;
@@ -18,7 +19,7 @@ interface LightingCollectionHeroHeaderProps {
     ctaLabel?: string;
     ctaHref?: string;
     editMode?: boolean;
-}
+} & ComponentDesignOverride<"PortfolioHeroHeader">;
 
 function hasNodeContent(value: ReactNode) {
     if (value === null || value === undefined || value === false) {
@@ -40,8 +41,9 @@ export default function LightingCollectionHeroHeader({
     ctaLabel,
     ctaHref,
     editMode = false,
+    design,
 }: LightingCollectionHeroHeaderProps) {
-    const design = useComponentDesign("PortfolioHeroHeader");
+    const resolvedDesign = resolveComponentDesign("PortfolioHeroHeader", design);
     const hasSubtitle = hasNodeContent(subtitle);
     const hasDescriptionLine1 = hasNodeContent(descriptionLine1);
     const hasDescriptionLine2 = hasNodeContent(descriptionLine2);
@@ -82,11 +84,11 @@ export default function LightingCollectionHeroHeader({
             <div className="grid-container">
                 {hasSideRail ? (
                     <div className="grid-subgrid col-span-12 lg:items-end">
-                        <div className={getResponsiveGridColumnClassName(design.titleBounds)}>
+                        <div className={getResponsiveGridColumnClassName(resolvedDesign.titleBounds)}>
                             {titleLockup}
                         </div>
 
-                        <div className={getResponsiveGridColumnClassName(design.sideBounds)}>
+                        <div className={getResponsiveGridColumnClassName(resolvedDesign.sideBounds)}>
                             <div className="grid content-start justify-items-start lg:pl-4">
                                 {hasDescriptionLine1 ? (
                                     <Typography
@@ -108,7 +110,7 @@ export default function LightingCollectionHeroHeader({
                                         weight="semantic"
                                         wrapPolicy="prose"
                                         className="text-textPrimary/90"
-                                        style={{ marginTop: getSpacingRem(design.descriptionTopSpacing) }}
+                                        style={{ marginTop: getSpacingRem(resolvedDesign.descriptionTopSpacing) }}
                                     >
                                         {descriptionLine2}
                                     </Typography>
@@ -118,7 +120,7 @@ export default function LightingCollectionHeroHeader({
                                         href={ctaHref}
                                         disabled={editMode}
                                         className="group interactive inline-grid grid-flow-col auto-cols-max items-center gap-3 text-textMuted transition-colors duration-300 hover:text-white"
-                                        style={{ marginTop: getSpacingRem(design.ctaTopSpacing) }}
+                                        style={{ marginTop: getSpacingRem(resolvedDesign.ctaTopSpacing) }}
                                     >
                                         <span className="h-px w-6 bg-white/30 transition-all duration-300 group-hover:w-10 group-hover:bg-white"></span>
                                         <Typography
@@ -136,7 +138,7 @@ export default function LightingCollectionHeroHeader({
                         </div>
                     </div>
                 ) : (
-                    <div className={getGridColumnClassName(design.singleColumnBounds)}>
+                    <div className={getGridColumnClassName(resolvedDesign.singleColumnBounds)}>
                         {titleLockup}
                     </div>
                 )}

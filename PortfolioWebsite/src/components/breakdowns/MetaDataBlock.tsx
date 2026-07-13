@@ -1,5 +1,3 @@
-"use client";
-
 import Typography from "@/components/common/Typography";
 
 interface MetaDataBlockProps {

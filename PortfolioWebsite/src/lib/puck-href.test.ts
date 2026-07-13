@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { toEditorAwareHref, toSafePuckHref } from "./puck-href.ts";
+import {
+  isExternalWebHref,
+  toEditorAwareHref,
+  toSafePuckHref,
+} from "./puck-href.ts";
 
 test("toSafePuckHref rejects dangerous protocols and control characters", () => {
   assert.equal(toSafePuckHref("javascript:alert(1)"), undefined);
@@ -29,4 +33,14 @@ test("toEditorAwareHref keeps editor path rewriting only for safe local paths", 
 
 test("toSafePuckHref rejects protocol-relative local-looking links", () => {
   assert.equal(toSafePuckHref("//example.com/path"), undefined);
+});
+
+test("isExternalWebHref only marks safe HTTP links for a new browser tab", () => {
+  assert.equal(isExternalWebHref("https://example.com/download"), true);
+  assert.equal(isExternalWebHref("http://example.com/download"), true);
+  assert.equal(isExternalWebHref("/works/penguin"), false);
+  assert.equal(isExternalWebHref("#overview"), false);
+  assert.equal(isExternalWebHref("mailto:hello@example.com"), false);
+  assert.equal(isExternalWebHref("tel:+123456789"), false);
+  assert.equal(isExternalWebHref("javascript:alert(1)"), false);
 });

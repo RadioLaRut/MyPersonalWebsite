@@ -1,9 +1,4 @@
 {
-  "root": {
-    "props": {
-      "title": "WOW, OTTO!"
-    }
-  },
   "content": [
     {
       "type": "HeroHeadline",
@@ -13,7 +8,10 @@
         "title": "WOW, OTTO!",
         "subtitle": "帅油桶 — Trackball Narrative Experience",
         "heroImage": "/images/holy-tank/HostileArchitecture.webp",
-        "navLink": ""
+        "navLink": "",
+        "heroImagePreset": "ratio-21-9",
+        "heroImageFitMode": "x",
+        "navLinkLabel": "观看视频"
       }
     },
     {
@@ -45,5 +43,15 @@
         "nextId": "im-explode"
       }
     }
-  ]
+  ],
+  "root": {
+    "props": {
+      "description": "围绕敌意建筑议题展开的轨迹球交互叙事体验。",
+      "image": "/images/holy-tank/HostileArchitecture.webp",
+      "noIndex": false,
+      "title": "WOW, OTTO!"
+    }
+  },
+  "version": 1,
+  "zones": {}
 }

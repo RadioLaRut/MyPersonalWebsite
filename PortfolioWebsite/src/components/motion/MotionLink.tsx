@@ -1,5 +1,3 @@
-"use client";
-
 import Link, { type LinkProps } from "next/link";
 import {
   type ComponentPropsWithoutRef,
@@ -9,7 +7,7 @@ import {
   forwardRef,
 } from "react";
 
-import { composeInteractionClassName } from "@/lib/motion";
+import { composeInteractionClassName } from "@/lib/motion/classes";
 
 type MotionLinkProps = Omit<ComponentPropsWithoutRef<typeof Link>, keyof LinkProps | "href"> &
   LinkProps & {

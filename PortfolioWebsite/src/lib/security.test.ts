@@ -5,16 +5,10 @@ import {
   LOCAL_EDITOR_ACCESS_HEADER,
   LOCAL_EDITOR_ACCESS_TOKEN_ENV,
 } from "./local-editor-access.ts";
-import { assertLocalEditorAccess } from "./security.ts";
-
-const BLOCKED_ENV_NAMES = [
-  "VERCEL",
-  "VERCEL_ENV",
-  "VERCEL_URL",
-  "VERCEL_GIT_PROVIDER",
-  "VERCEL_GIT_COMMIT_SHA",
-  "CI",
-] as const;
+import {
+  evaluateLocalEditorAccess,
+  PRODUCTION_ENV_BLOCKLIST as BLOCKED_ENV_NAMES,
+} from "./local-editor-policy.ts";
 
 function setEnvValue(name: string, value: string | undefined) {
   const env = process.env as Record<string, string | undefined>;
@@ -61,26 +55,28 @@ function requestWithToken(token?: string) {
 
 test("local editor read access preserves existing testing-mode behavior", () => {
   withLocalEditorEnv(undefined, () => {
-    assert.equal(assertLocalEditorAccess("api"), undefined);
+    assert.equal(evaluateLocalEditorAccess(), "allowed");
   });
 });
 
 test("local editor writes require a configured token", () => {
   withLocalEditorEnv(undefined, () => {
-    const denied = assertLocalEditorAccess("api", requestWithToken(), { requireToken: true });
-    assert.equal(denied?.status, 403);
+    assert.equal(
+      evaluateLocalEditorAccess(requestWithToken(), { requireToken: true }),
+      "token-required",
+    );
   });
 });
 
 test("local editor writes reject missing or mismatched token", () => {
   withLocalEditorEnv("expected-token", () => {
     assert.equal(
-      assertLocalEditorAccess("api", requestWithToken(), { requireToken: true })?.status,
-      403,
+      evaluateLocalEditorAccess(requestWithToken(), { requireToken: true }),
+      "token-required",
     );
     assert.equal(
-      assertLocalEditorAccess("api", requestWithToken("wrong-token"), { requireToken: true })?.status,
-      403,
+      evaluateLocalEditorAccess(requestWithToken("wrong-token"), { requireToken: true }),
+      "token-required",
     );
   });
 });
@@ -88,8 +84,8 @@ test("local editor writes reject missing or mismatched token", () => {
 test("local editor writes accept matching token", () => {
   withLocalEditorEnv("expected-token", () => {
     assert.equal(
-      assertLocalEditorAccess("api", requestWithToken("expected-token"), { requireToken: true }),
-      undefined,
+      evaluateLocalEditorAccess(requestWithToken("expected-token"), { requireToken: true }),
+      "allowed",
     );
   });
 });

@@ -1,8 +1,11 @@
-"use client";
-import React, { type ReactNode } from "react";
+import { type ReactNode } from "react";
 
 import Typography from "@/components/common/Typography";
-import { useComponentDesign } from "@/components/layout/ComponentDesignProvider";
+import {
+    type ComponentDesignOverride,
+    resolveComponentDesign,
+} from "@/lib/component-design-runtime";
+import { type ComponentDesignDocument } from "@/lib/component-design-schema";
 import {
     createResponsiveGridBounds,
     getResponsiveGridColumnClassName,
@@ -27,16 +30,25 @@ interface WorkItem {
     desc: ReactNode;
 }
 
-export interface WorksListProps {
+export type WorksListProps = {
     heading?: ReactNode;
     indexSummary?: ReactNode;
     works?: WorkItem[];
     entriesContent?: ReactNode;
+    entryDesign?: ComponentDesignDocument["components"]["WorksListEntry"];
     editMode?: boolean;
-}
+} & ComponentDesignOverride<"WorksList">;
 
-export default function WorksList({ heading = "All Selected Works", indexSummary, works = [], entriesContent, editMode = false }: WorksListProps) {
-    const design = useComponentDesign("WorksList");
+export default function WorksList({
+    heading = "All Selected Works",
+    indexSummary,
+    works = [],
+    entriesContent,
+    entryDesign,
+    editMode = false,
+    design,
+}: WorksListProps) {
+    const resolvedDesign = resolveComponentDesign("WorksList", design);
     const hasLegacyWorks = works && works.length > 0;
     const hasEntriesContent = Boolean(entriesContent);
 
@@ -59,15 +71,15 @@ export default function WorksList({ heading = "All Selected Works", indexSummary
     }
 
     return (
-        <div className={`grid w-full content-center text-white ${getSectionSpacingClassName(design.sectionSpacing)}`}>
+        <div className={`grid w-full content-center text-white ${getSectionSpacingClassName(resolvedDesign.sectionSpacing)}`}>
             <div
                 className={`grid-container relative z-20 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}
-                style={{ marginBottom: getSpacingRem(design.headingBottomSpacing) }}
+                style={{ marginBottom: getSpacingRem(resolvedDesign.headingBottomSpacing) }}
             >
                 <div className={`${getResponsiveGridColumnClassName(createResponsiveGridBounds(
                   { leftCol: 1, rightCol: 12 },
                   { leftCol: 2, rightCol: 11 },
-                  design.headingBounds,
+                  resolvedDesign.headingBounds,
                 ))} grid gap-4 border-b border-white/10 pb-8 md:grid-cols-[1fr_auto] md:items-end`}>
                     <Typography
                         as="h1"
@@ -112,6 +124,7 @@ export default function WorksList({ heading = "All Selected Works", indexSummary
                             imageFitMode={work.imageFitMode}
                             desc={work.desc}
                             editMode={editMode}
+                            design={entryDesign}
                         />
                     ))}
                 </div>

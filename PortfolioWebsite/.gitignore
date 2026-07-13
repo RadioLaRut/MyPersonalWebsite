@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/node_modules.pnpm-backup/
 /.pnp
 .pnp.js
 .yarn/install-state.gz
@@ -13,6 +14,8 @@ venv/
 
 # next.js
 /.next/
+/.next.pre-next16/
+/.next.failed-*/
 /.next-dev-*/
 /out/
 

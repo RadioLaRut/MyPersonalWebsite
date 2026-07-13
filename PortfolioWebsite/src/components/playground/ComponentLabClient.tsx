@@ -1,18 +1,22 @@
 "use client";
 
 import {
+  cloneElement,
+  isValidElement,
   useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type ReactNode,
+  type ReactElement,
+  type SetStateAction,
 } from "react";
 import { useRouter } from "next/navigation";
 
 import Typography from "@/components/common/Typography";
 import { MotionButton } from "@/components/motion";
-import ComponentDesignProvider, {
+import {
   dispatchComponentDesignUpdated,
   useComponentDesignDocument,
 } from "@/components/layout/ComponentDesignProvider";
@@ -444,9 +448,28 @@ export default function ComponentLabClient() {
   const componentDesignDocument = useComponentDesignDocument();
   const previewViewportFrameRef = useRef<HTMLDivElement>(null);
   const previewStageContentRef = useRef<HTMLDivElement>(null);
-  const [draftDocument, setDraftDocument] = useState<ComponentDesignDocument>(
-    normalizeComponentDesignDocument(componentDesignDocument),
+  const normalizedSourceDocument = useMemo(
+    () => normalizeComponentDesignDocument(componentDesignDocument),
+    [componentDesignDocument],
   );
+  const [draftState, setDraftState] = useState(() => ({
+    document: normalizedSourceDocument,
+    source: componentDesignDocument,
+  }));
+  const draftDocument = draftState.source === componentDesignDocument
+    ? draftState.document
+    : normalizedSourceDocument;
+  const setDraftDocument = (action: SetStateAction<ComponentDesignDocument>) => {
+    setDraftState((current) => {
+      const currentDocument = current.source === componentDesignDocument
+        ? current.document
+        : normalizedSourceDocument;
+      return {
+        document: typeof action === "function" ? action(currentDocument) : action,
+        source: componentDesignDocument,
+      };
+    });
+  };
   const [selectedComponent, setSelectedComponent] =
     useState<ComponentDesignComponentKey>(COMPONENT_LAB_COMPONENT_KEYS[0]);
   const [selectedViewport, setSelectedViewport] =
@@ -469,10 +492,6 @@ export default function ComponentLabClient() {
       document.documentElement.removeAttribute("data-font-lab-mode");
     };
   }, [router]);
-
-  useEffect(() => {
-    setDraftDocument(normalizeComponentDesignDocument(componentDesignDocument));
-  }, [componentDesignDocument]);
 
   useEffect(() => {
     let isMounted = true;
@@ -836,12 +855,15 @@ export default function ComponentLabClient() {
                       className="relative z-10 overflow-x-hidden"
                       style={{ minHeight: `${stageHeight}px` }}
                     >
-                      <ComponentDesignProvider
-                        initialDocument={draftDocument}
-                        listenToGlobalUpdates={false}
-                      >
-                        {selectedDefinition.renderPreview(selectedVariant)}
-                      </ComponentDesignProvider>
+                      {(() => {
+                        const preview = selectedDefinition.renderPreview(selectedVariant);
+                        return isValidElement(preview)
+                          ? cloneElement(
+                            preview as ReactElement<{ design?: unknown }>,
+                            { design: draftDocument.components[selectedDefinition.key] },
+                          )
+                          : preview;
+                      })()}
                     </div>
                   </div>
                 </div>

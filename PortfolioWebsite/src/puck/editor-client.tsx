@@ -1,8 +1,8 @@
 "use client";
 
 import { type ComponentProps, type ReactNode, useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
-import { Puck, type Data } from "@measured/puck";
-import "@measured/puck/puck.css";
+import { Puck, type Data } from "@puckeditor/core";
+import "@puckeditor/core/puck.css";
 import { useRouter } from "next/navigation";
 
 import ComponentDesignProvider, { useComponentDesignDocument } from "@/components/layout/ComponentDesignProvider";
@@ -12,6 +12,7 @@ import {
 } from "@/lib/preview-viewports";
 import { getLocalEditorAccessHeaders } from "@/lib/local-editor-access";
 import config from "@/puck/config";
+import { createDesignAwareEditorConfig } from "@/puck/editor/design-aware-config";
 import { normalizeEditorPathInputToSlugKey, toAdminPathFromSlugKey, toPublicPathFromSlugKey } from "@/lib/public-paths";
 import { ChineseTextInputField } from "@/puck/fields/ChineseTextField";
 import { EditorHeaderChrome, HeaderActionsWithOpenPage } from "@/puck/editor/editor-header-chrome";
@@ -31,6 +32,7 @@ type PuckApiPayload = {
 };
 
 const initialData = editorEmptyStateData as Data;
+const editorConfig = createDesignAwareEditorConfig(config);
 
 type PuckEditorClientProps = {
   initialSlug: string;
@@ -92,29 +94,34 @@ function slugQueryValue(slugKey: string) {
 export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps) {
   const componentDesignDocument = useComponentDesignDocument();
   const router = useRouter();
+  const slugValue = slugQueryValue(initialSlug);
+  const headerPath = slugValue ? `/${slugValue}` : "/";
   const [data, setData] = useState<Data>(initialData);
   const [pageSlugs, setPageSlugs] = useState<string[]>([]);
   const [loadState, setLoadState] = useState<"idle" | "loading" | "error">("loading");
   const [publishState, setPublishState] = useState<"idle" | "publishing" | "published" | "error">("idle");
-  const [selectedPagePath, setSelectedPagePath] = useState("/");
+  const [selectedPageState, setSelectedPageState] = useState(() => ({
+    path: headerPath,
+    slug: initialSlug,
+  }));
+  const selectedPagePath = selectedPageState.slug === initialSlug
+    ? selectedPageState.path
+    : headerPath;
+  const setSelectedPagePath = useCallback((path: string) => {
+    setSelectedPageState({ path, slug: initialSlug });
+  }, [initialSlug]);
   const [isSwitchingPage, startPageSwitchTransition] = useTransition();
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [fontLabSyncState, setFontLabSyncState] = useState<FontLabSyncState>("idle");
   const currentDataRef = useRef<Data>(initialData);
   const hasUnsavedChangesRef = useRef(false);
   const prefetchedSlugsRef = useRef<Set<string>>(new Set());
-  const slugValue = slugQueryValue(initialSlug);
-  const headerPath = slugValue ? `/${slugValue}` : "/";
   const publicPath = toPublicPathFromSlugKey(initialSlug);
   const availablePages = useMemo(() => {
     const merged = new Set<string>(["index", ...pageSlugs, initialSlug]);
     return Array.from(merged).sort((a, b) => a.localeCompare(b));
   }, [pageSlugs, initialSlug]);
   const availablePublicPaths = useMemo(() => availablePages.map((slug) => toPublicPathFromSlugKey(slug)), [availablePages]);
-
-  useEffect(() => {
-    setSelectedPagePath(headerPath);
-  }, [headerPath]);
 
   const currentAdminPath = toAdminPathFromSlugKey(initialSlug);
 
@@ -299,6 +306,7 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
     openAdminPath,
     openPublicPage,
     selectedPagePath,
+    setSelectedPagePath,
   ]);
 
   async function handlePublish(nextData?: Data) {
@@ -352,7 +360,7 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
         ) : (
           <Puck
             key={initialSlug}
-            config={config}
+            config={editorConfig}
             data={data}
             headerTitle="Puck Local Editor"
             headerPath={headerPath}

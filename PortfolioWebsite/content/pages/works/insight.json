@@ -1,9 +1,4 @@
 {
-  "root": {
-    "props": {
-      "title": "INSIGHT"
-    }
-  },
   "content": [
     {
       "type": "HeroHeadline",
@@ -15,7 +10,8 @@
         "heroImage": "/images/insight/InsightOnlyCover.webp",
         "navLink": "https://www.bilibili.com/video/BV1gQbDzQEUL",
         "heroImagePreset": "ratio-21-9",
-        "heroImageFitMode": "x"
+        "heroImageFitMode": "x",
+        "navLinkLabel": "观看视频"
       }
     },
     {
@@ -68,21 +64,7 @@
         "id": "insight-card-1",
         "title": "多分支叙事与题材表现",
         "description": "设计多分支剧情时面临两个核心挑战：如何保持不同分支的叙事连贯性，以及如何表现网络舆情监管员这一特殊角色的内心活动。由于一般人不会在互联网上表露真实想法，设计真实可信的私密对话和心理活动成为难点。最终通过 Articy Draft 的节点系统实现了清晰的剧情流程管理。",
-        "imageSrc": "",
-        "tags": [
-          {
-            "tag": "多分支叙事",
-            "_arrayItem": {
-              "id": "tag-1"
-            }
-          },
-          {
-            "tag": "角色心理",
-            "_arrayItem": {
-              "id": "tag-2"
-            }
-          }
-        ]
+        "imageSrc": ""
       }
     },
     {
@@ -91,21 +73,7 @@
         "id": "insight-card-2",
         "title": "技术集成与边学边做",
         "description": "这是我第一次使用 Articy Draft 和深度使用 UE 蓝图系统。在蓝图基础不牢固的情况下，边学习边开发，最终实现了 Articy Draft 对话树与 Unreal Engine 的完整集成，搭建了可扩展的对话系统框架。",
-        "imageSrc": "",
-        "tags": [
-          {
-            "tag": "Articy Draft",
-            "_arrayItem": {
-              "id": "tag-3"
-            }
-          },
-          {
-            "tag": "UE 蓝图",
-            "_arrayItem": {
-              "id": "tag-4"
-            }
-          }
-        ]
+        "imageSrc": ""
       }
     },
     {
@@ -158,5 +126,14 @@
       }
     }
   ],
+  "root": {
+    "props": {
+      "description": "围绕舆情监管、信息操控与个人伦理选择展开的互动叙事游戏。",
+      "image": "/images/insight/InsightOnlyCover.webp",
+      "noIndex": false,
+      "title": "INSIGHT"
+    }
+  },
+  "version": 1,
   "zones": {}
 }
