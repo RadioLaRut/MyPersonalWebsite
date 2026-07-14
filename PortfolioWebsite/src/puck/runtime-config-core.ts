@@ -1,9 +1,9 @@
 import type { ComponentConfig, Config } from "@puckeditor/core";
-import { cloneElement, type ReactElement } from "react";
 
 import type { ComponentDesignDocument } from "../lib/component-design-schema.ts";
 import type { PageDocument } from "../lib/page-document-contract.ts";
 import type { PuckComponentType } from "./component-manifest.ts";
+import { renderWithAdapter } from "./render-adapter.ts";
 import { collectPuckComponentTypes } from "./runtime-component-types.ts";
 
 export type PublicRendererLoader = (
@@ -36,33 +36,18 @@ async function resolvePublicRendererLoader(routeLoader: PublicRendererLoader) {
   return loadPublicRenderer;
 }
 
-function resolveComponentDesignProps(
+function createPublicAdapter(
   type: PuckComponentType,
-  designDocument: ComponentDesignDocument | undefined,
-) {
-  if (!designDocument || !(type in designDocument.components)) return undefined;
-  const design = designDocument.components[
-    type as keyof ComponentDesignDocument["components"]
-  ];
-
-  if (type === "WorksList") {
-    return {
-      design,
-      entryDesign: designDocument.components.WorksListEntry,
-    };
-  }
-
-  return { design };
-}
-
-function injectComponentDesign(
   renderer: ComponentConfig["render"],
-  designProps: Record<string, unknown>,
+  designDocument?: ComponentDesignDocument,
 ): ComponentConfig["render"] {
-  return (props) => cloneElement(
-    renderer(props) as ReactElement<Record<string, unknown>>,
-    designProps,
-  );
+  return (props) => renderWithAdapter({
+    designDocument,
+    props,
+    render: renderer,
+    surface: "public",
+    type,
+  });
 }
 
 export async function createPublicRuntimeConfig(
@@ -78,10 +63,7 @@ export async function createPublicRuntimeConfig(
         throw new Error(`Missing public renderer for Puck component "${type}"`);
       }
 
-      const designProps = resolveComponentDesignProps(type, designDocument);
-      const render = designProps
-        ? injectComponentDesign(loadedRenderer, designProps)
-        : loadedRenderer;
+      const render = createPublicAdapter(type, loadedRenderer, designDocument);
       return [type, { render }] as const;
     })),
   );

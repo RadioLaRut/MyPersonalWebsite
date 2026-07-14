@@ -1,33 +1,13 @@
-import type { ComponentProps } from "react";
-import type { Config } from "@puckeditor/core";
-import NextProjectBlock from "@/components/blocks/NextProjectBlock";
-import BreakdownSectionHeadline from "@/components/breakdowns/BreakdownHeadline";
-import BreakdownTriptych from "@/components/breakdowns/BreakdownTriptych";
-import ContentCard from "@/components/breakdowns/ContentCard";
-import HighDensityInfoBlock from "@/components/breakdowns/HighDensityInfoBlock";
-import ImageSlider from "@/components/breakdowns/ImageSlider";
-import ParameterGrid from "@/components/breakdowns/ParameterGrid";
-import ProjectSection from "@/components/home/ProjectSection";
-import PortfolioHeroHeader from "@/components/works/PortfolioHeroHeader";
-import WorksList from "@/components/works/WorksList";
-import WorksListEntry from "@/components/works/WorksListEntry";
-import { normalizeImageSrc } from "@/lib/public-paths";
+import type {
+  ComponentDefinition,
+  ComponentDefinitionRegistry,
+} from "./component-definition";
 import { createFieldGroup } from "@/puck/fields/field-groups";
 import {
   buildImageFieldTriple,
-  castImageFitMode,
-  castImagePreset,
   imageFitModeField,
   imagePresetField,
 } from "@/puck/fields/image-fields";
-import { castSelectValue, coerceLegacyBooleanSelectValue } from "@/puck/fields/select-fields";
-import {
-  ALLOW_METADATA_LIST_ITEM,
-  ALLOW_WORKS_LIST_ENTRY,
-  pickEntryField,
-  readSlot,
-  toEditorAwareHref,
-} from "./shared";
 
 const contentCardImageFields = buildImageFieldTriple("imageSrc");
 const parameterGridImageFields = buildImageFieldTriple("mediaSrc", {
@@ -45,17 +25,13 @@ const projectSectionImageFields = buildImageFieldTriple("imageSrc");
 const worksListEntryImageFields = buildImageFieldTriple("imageSrc", {
   defaultPreset: "ratio-21-9",
 });
-const CONTENT_CARD_IMAGE_POSITION_VALUES = ["left", "right"] as const;
-const PROJECT_SECTION_ALIGN_VALUES = ["auto", "left", "right"] as const;
-const BREAKDOWN_HEADLINE_VARIANT_VALUES = ["chapter", "section"] as const;
-const BOOLEAN_SELECT_VALUES = [false, true] as const;
-type ParameterGridParameters = ComponentProps<typeof ParameterGrid>["parameters"];
-
-function buildTriptychColumnFields(column: 1 | 2 | 3) {
+function buildTriptychColumnFields(
+  column: 1 | 2 | 3,
+): NonNullable<ComponentDefinition["fields"]> {
   return {
     [`_g_col${column}`]: createFieldGroup(`列 ${column}`),
-    [`col${column}Title`]: { type: "text", contentEditable: true, label: `Column ${column} Title` },
-    [`col${column}Text`]: { type: "textarea", contentEditable: true, label: `Column ${column} Text` },
+    [`col${column}Title`]: { type: "text", label: `Column ${column} Title` },
+    [`col${column}Text`]: { type: "textarea", label: `Column ${column} Text` },
     [`col${column}Img`]: { type: "text", label: `Column ${column} Image` },
     [`col${column}Preset`]: { ...imagePresetField, label: `Column ${column} Preset` },
     [`col${column}FitMode`]: { ...imageFitModeField, label: `Column ${column} Fit Mode` },
@@ -72,12 +48,14 @@ function buildTriptychColumnDefaults(column: 1 | 2 | 3) {
   };
 }
 
-function buildPhaseTextFields(phase: 1 | 2 | 3) {
+function buildPhaseTextFields(
+  phase: 1 | 2 | 3,
+): NonNullable<ComponentDefinition["fields"]> {
   return {
-    [`phase${phase}Label`]: { type: "text", contentEditable: true, label: `Phase ${phase} Label` },
-    [`phase${phase}Title`]: { type: "text", contentEditable: true, label: `Phase ${phase} Title` },
-    [`phase${phase}Subtitle`]: { type: "text", contentEditable: true, label: `Phase ${phase} Subtitle` },
-    [`phase${phase}Content`]: { type: "textarea", contentEditable: true, label: `Phase ${phase} Content` },
+    [`phase${phase}Label`]: { type: "text", label: `Phase ${phase} Label` },
+    [`phase${phase}Title`]: { type: "text", label: `Phase ${phase} Title` },
+    [`phase${phase}Subtitle`]: { type: "text", label: `Phase ${phase} Subtitle` },
+    [`phase${phase}Content`]: { type: "textarea", label: `Phase ${phase} Content` },
   };
 }
 
@@ -90,30 +68,11 @@ function buildPhaseDefaults(phase: 1 | 2 | 3) {
   };
 }
 
-function readPhaseTextFields(props: Record<string, unknown>, phase: 1 | 2 | 3) {
-  return {
-    content: props[`phase${phase}Content`] as string,
-    label: props[`phase${phase}Label`] as string,
-    subtitle: props[`phase${phase}Subtitle`] as string,
-    title: props[`phase${phase}Title`] as string,
-  };
-}
-
-function readTriptychColumnFields(props: Record<string, unknown>, column: 1 | 2 | 3) {
-  return {
-    fitMode: castImageFitMode(props[`col${column}FitMode`]),
-    img: props[`col${column}Img`] as string,
-    preset: castImagePreset(props[`col${column}Preset`]),
-    text: props[`col${column}Text`] as string,
-    title: props[`col${column}Title`] as string,
-  };
-}
-
-// TODO(component-lab): defaultProps 中的字面量文案与图片路径需迁移到 ComponentLab 预设链路，当前为兼容历史 JSON 暂留。
+// defaultProps 仅服务 Admin 新建节点；ComponentLab 的演示内容统一来自页面实例与预设文件。
 export const worksComponents = {
     BreakdownHeadline: {
       fields: {
-        title: { type: "text", contentEditable: true, label: "Title" },
+        title: { type: "text", label: "Title" },
         variant: {
           type: "select",
           label: "层级",
@@ -122,20 +81,13 @@ export const worksComponents = {
             { label: "子节标题", value: "section" },
           ],
         },
-        indexLabel: { type: "text", contentEditable: true, label: "章节序号" },
+        indexLabel: { type: "text", label: "章节序号" },
       },
       defaultProps: {
         title: "",
         variant: "section",
         indexLabel: "",
       },
-      render: ({ title, variant, indexLabel }) => (
-        <BreakdownSectionHeadline
-          title={title}
-          variant={castSelectValue(variant, BREAKDOWN_HEADLINE_VARIANT_VALUES, "section")}
-          indexLabel={indexLabel}
-        />
-      ),
     },
 
     ImageSlider: {
@@ -162,27 +114,13 @@ export const worksComponents = {
         imageFitMode: "x",
         initialPosition: 50,
       },
-      render: ({ title, unlitSrc, litSrc, alt, imagePreset, imageFitMode, initialPosition, leftLabel, rightLabel, editMode }) => (
-        <ImageSlider
-          title={title}
-          unlitSrc={unlitSrc}
-          litSrc={litSrc}
-          alt={alt}
-          imagePreset={castImagePreset(imagePreset)}
-          imageFitMode={castImageFitMode(imageFitMode)}
-          initialPosition={typeof initialPosition === "number" ? initialPosition : 50}
-          leftLabel={leftLabel}
-          rightLabel={rightLabel}
-          editMode={editMode}
-        />
-      )
     },
 
     ContentCard: {
       fields: {
         _g_text: createFieldGroup("文本内容"),
-        title: { type: "text", contentEditable: true, label: "Title" },
-        description: { type: "textarea", contentEditable: true, label: "Description" },
+        title: { type: "text", label: "Title" },
+        description: { type: "textarea", label: "Description" },
         _g_image: createFieldGroup("图片配置"),
         ...contentCardImageFields.fields,
         _g_layout: createFieldGroup("布局"),
@@ -201,16 +139,6 @@ export const worksComponents = {
         ...contentCardImageFields.defaults,
         imagePosition: "right",
       },
-      render: ({ title, description, imageSrc, imagePreset, imageFitMode, imagePosition }) => (
-        <ContentCard
-          title={title}
-          description={description}
-          imageSrc={imageSrc}
-          imagePreset={castImagePreset(imagePreset)}
-          imageFitMode={castImageFitMode(imageFitMode)}
-          imagePosition={castSelectValue(imagePosition, CONTENT_CARD_IMAGE_POSITION_VALUES, "right")}
-        />
-      )
     },
     BreakdownTriptych: {
       fields: {
@@ -223,31 +151,6 @@ export const worksComponents = {
         ...buildTriptychColumnDefaults(2),
         ...buildTriptychColumnDefaults(3),
       },
-      render: (props) => {
-        const col1 = readTriptychColumnFields(props, 1);
-        const col2 = readTriptychColumnFields(props, 2);
-        const col3 = readTriptychColumnFields(props, 3);
-
-        return (
-          <BreakdownTriptych
-            col1Title={col1.title}
-            col1Text={col1.text}
-            col1Img={col1.img}
-            col1Preset={col1.preset}
-            col1FitMode={col1.fitMode}
-            col2Title={col2.title}
-            col2Text={col2.text}
-            col2Img={col2.img}
-            col2Preset={col2.preset}
-            col2FitMode={col2.fitMode}
-            col3Title={col3.title}
-            col3Text={col3.text}
-            col3Img={col3.img}
-            col3Preset={col3.preset}
-            col3FitMode={col3.fitMode}
-          />
-        );
-      }
     },
 
     ParameterGrid: {
@@ -266,7 +169,7 @@ export const worksComponents = {
         parameters: {
           type: "array",
           label: "Parameters",
-          getItemSummary: (item) => item.name || "Unnamed Parameter",
+          getItemSummary: (item: { name?: string }) => item.name || "Unnamed Parameter",
           arrayFields: {
             name: { type: "text", label: "Name" },
             value: { type: "text", label: "Value" },
@@ -279,15 +182,6 @@ export const worksComponents = {
         isVideo: false,
         parameters: []
       },
-      render: ({ mediaSrc, imagePreset, imageFitMode, isVideo, parameters }) => (
-        <ParameterGrid
-          mediaSrc={mediaSrc}
-          imagePreset={castImagePreset(imagePreset)}
-          imageFitMode={castImageFitMode(imageFitMode)}
-          isVideo={castSelectValue(coerceLegacyBooleanSelectValue(isVideo), BOOLEAN_SELECT_VALUES, false)}
-          parameters={parameters as ParameterGridParameters}
-        />
-      )
     },
 
     HighDensityInfoBlock: {
@@ -310,53 +204,13 @@ export const worksComponents = {
         ...buildPhaseDefaults(3),
         ...highDensityPhase3ImageFields.defaults,
       },
-      render: (props) => {
-        const { items: phase1FallbackItems, SlotComponent: Phase1ItemsSlot } = readSlot(
-          props.phase1Items,
-          (item) => ({
-            label: pickEntryField(item, "label") ?? "",
-            value: pickEntryField(item, "value") ?? "",
-          }),
-        );
-        const { items: phase2FallbackItems, SlotComponent: Phase2ItemsSlot } = readSlot(
-          props.phase2Items,
-          (item) => ({
-            label: pickEntryField(item, "label") ?? "",
-            value: pickEntryField(item, "value") ?? "",
-          }),
-        );
-
-        const phase1 = {
-          ...readPhaseTextFields(props, 1),
-          items: phase1FallbackItems,
-        };
-        const phase2 = {
-          ...readPhaseTextFields(props, 2),
-          items: phase2FallbackItems,
-        };
-        const phase3 = {
-          ...readPhaseTextFields(props, 3),
-          imageSrc: props.phase3ImageSrc,
-          imagePreset: castImagePreset(props.phase3ImagePreset),
-          imageFitMode: castImageFitMode(props.phase3ImageFitMode),
-        };
-        return (
-          <HighDensityInfoBlock
-            phase1={phase1}
-            phase2={phase2}
-            phase3={phase3}
-            phase1ItemsContent={Phase1ItemsSlot ? <Phase1ItemsSlot allow={ALLOW_METADATA_LIST_ITEM} className="space-y-3" minEmptyHeight={20} /> : undefined}
-            phase2ItemsContent={Phase2ItemsSlot ? <Phase2ItemsSlot allow={ALLOW_METADATA_LIST_ITEM} className="space-y-3" minEmptyHeight={20} /> : undefined}
-          />
-        );
-      }
     },
 
     ProjectSection: {
       fields: {
         _g_text: createFieldGroup("文本内容"),
-        title: { type: "text", contentEditable: true, label: "Title" },
-        subtitle: { type: "text", contentEditable: true, label: "Subtitle" },
+        title: { type: "text", label: "Title" },
+        subtitle: { type: "text", label: "Subtitle" },
         _g_image: createFieldGroup("图片配置"),
         ...projectSectionImageFields.fields,
         mobileImageFocalX: { type: "number", label: "移动端焦点 X (%)" },
@@ -384,30 +238,15 @@ export const worksComponents = {
         index: 0,
         align: "auto",
       },
-      render: ({ title, subtitle, imageSrc, imagePreset, imageFitMode, mobileImageFocalX, mobileImageFocalY, link, index, align, editMode }) => (
-        <ProjectSection
-          title={title}
-          subtitle={subtitle}
-          imageSrc={imageSrc}
-          imagePreset={castImagePreset(imagePreset)}
-          imageFitMode={castImageFitMode(imageFitMode)}
-          mobileImageFocalX={mobileImageFocalX}
-          mobileImageFocalY={mobileImageFocalY}
-          link={toEditorAwareHref(link, editMode)}
-          index={index}
-          align={castSelectValue(align, PROJECT_SECTION_ALIGN_VALUES, "auto")}
-          editMode={editMode}
-        />
-      )
     },
 
     PortfolioHeroHeader: {
       fields: {
         _g_text: createFieldGroup("文本内容"),
-        title: { type: "text", contentEditable: true, label: "Title" },
-        subtitle: { type: "text", contentEditable: true, label: "Subtitle" },
-        descriptionLine1: { type: "text", contentEditable: true, label: "Description Line 1" },
-        descriptionLine2: { type: "text", contentEditable: true, label: "Description Line 2" },
+        title: { type: "text", label: "Title" },
+        subtitle: { type: "text", label: "Subtitle" },
+        descriptionLine1: { type: "text", label: "Description Line 1" },
+        descriptionLine2: { type: "text", label: "Description Line 2" },
         _g_cta: createFieldGroup("行动按钮 (CTA)"),
         ctaLabel: { type: "text", label: "CTA Label" },
         ctaHref: { type: "text", label: "CTA Href" },
@@ -420,23 +259,12 @@ export const worksComponents = {
         ctaLabel: "",
         ctaHref: "",
       },
-      render: ({ title, subtitle, descriptionLine1, descriptionLine2, ctaLabel, ctaHref, editMode }) => (
-        <PortfolioHeroHeader
-          title={title}
-          subtitle={subtitle}
-          descriptionLine1={descriptionLine1}
-          descriptionLine2={descriptionLine2}
-          ctaLabel={ctaLabel}
-          ctaHref={toEditorAwareHref(ctaHref, editMode)}
-          editMode={editMode}
-        />
-      )
     },
 
     WorksList: {
       fields: {
-        heading: { type: "text", contentEditable: true, label: "Heading" },
-        indexSummary: { type: "text", contentEditable: true, label: "索引说明" },
+        heading: { type: "text", label: "Heading" },
+        indexSummary: { type: "text", label: "索引说明" },
         entries: { type: "slot", label: "Entries" }
       },
       defaultProps: {
@@ -444,51 +272,20 @@ export const worksComponents = {
         indexSummary: "",
         entries: []
       },
-      render: ({ heading, indexSummary, entries, editMode }) => {
-        const { items: fallbackWorks = [], SlotComponent: EntriesSlot } = readSlot(
-          entries,
-          (entry) => ({
-            id: pickEntryField<string>(entry, "id") ?? "",
-            number: pickEntryField<string>(entry, "number"),
-            href: toEditorAwareHref(pickEntryField(entry, "href"), editMode),
-            title: pickEntryField<string>(entry, "title") ?? "",
-            category: pickEntryField<string>(entry, "category") ?? "",
-            imageSrc: normalizeImageSrc(pickEntryField(entry, "imageSrc")),
-            imagePreset: castImagePreset(
-              pickEntryField(entry, "imagePreset") ?? worksListEntryImageFields.defaults.imagePreset,
-            ),
-            imageFitMode: castImageFitMode(
-              pickEntryField(entry, "imageFitMode") ?? worksListEntryImageFields.defaults.imageFitMode,
-            ),
-            desc: pickEntryField<string>(entry, "desc") ?? "",
-            aliases: pickEntryField<{ slug: string }[]>(entry, "aliases") ?? [],
-          }),
-        );
-
-        return (
-          <WorksList
-            heading={heading}
-            indexSummary={indexSummary}
-            works={fallbackWorks}
-            entriesContent={EntriesSlot ? <EntriesSlot allow={ALLOW_WORKS_LIST_ENTRY} className="flex flex-col w-full" minEmptyHeight={48} /> : undefined}
-            editMode={editMode}
-          />
-        );
-      }
     },
 
     WorksListEntry: {
       fields: {
         _g_info: createFieldGroup("基本信息"),
-        number: { type: "text", contentEditable: true, label: "Number" },
+        number: { type: "text", label: "Number" },
         href: { type: "text", label: "Href" },
-        title: { type: "text", contentEditable: true, label: "Title" },
+        title: { type: "text", label: "Title" },
         category: { type: "text", label: "Category" },
         desc: { type: "textarea", label: "Description" },
         aliases: {
           type: "array",
           label: "历史别名",
-          getItemSummary: (item) => item.slug || "未命名别名",
+          getItemSummary: (item: { slug?: string }) => item.slug || "未命名别名",
           arrayFields: {
             slug: { type: "text", label: "路径别名" },
           },
@@ -505,21 +302,6 @@ export const worksComponents = {
         desc: "",
         aliases: [],
       },
-      render: ({ id, number, href, title, category, imageSrc, imagePreset, imageFitMode, desc, aliases, editMode }) => (
-        <WorksListEntry
-          id={id}
-          aliases={aliases}
-          number={number}
-          href={toEditorAwareHref(href, editMode)}
-          title={title}
-          category={category}
-          imageSrc={imageSrc}
-          imagePreset={castImagePreset(imagePreset)}
-          imageFitMode={castImageFitMode(imageFitMode)}
-          desc={desc}
-          editMode={editMode}
-        />
-      ),
     },
 
     NextProjectBlock: {
@@ -529,14 +311,5 @@ export const worksComponents = {
       defaultProps: {
         nextId: "penguin",
       },
-      render: ({ nextId, href, nextBg, nextName, editMode }) => (
-        <NextProjectBlock
-          nextId={nextId}
-          href={href}
-          nextBg={nextBg}
-          nextName={nextName}
-          editMode={editMode}
-        />
-      )
     },
-} satisfies Config["components"];
+} satisfies ComponentDefinitionRegistry;

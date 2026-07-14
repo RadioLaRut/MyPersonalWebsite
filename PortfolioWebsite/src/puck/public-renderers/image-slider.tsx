@@ -5,6 +5,7 @@ import { castImageFitMode, castImagePreset } from "./shared";
 
 export const render: ComponentConfig["render"] = ({
   alt,
+  editMode,
   imageFitMode,
   imagePreset,
   initialPosition,
@@ -16,6 +17,7 @@ export const render: ComponentConfig["render"] = ({
 }) => (
   <ImageSlider
     alt={alt}
+    editMode={editMode}
     imageFitMode={castImageFitMode(imageFitMode)}
     imagePreset={castImagePreset(imagePreset)}
     initialPosition={typeof initialPosition === "number" ? initialPosition : 50}

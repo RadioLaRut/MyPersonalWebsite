@@ -112,13 +112,8 @@ export default function HeroSection({
   const eyebrowTopSpacing = getSpacingRem(design.eyebrowTopSpacing);
   const ctaTopSpacing = getSpacingRem(hasDescription ? design.ctaTopSpacing : "32");
 
-  const baseOuterClasses = "relative min-h-[100svh] w-full overflow-hidden bg-black px-0";
-  const outerSectionClassName = editMode ? `${baseOuterClasses} lg:min-h-[720px]` : baseOuterClasses;
-
-  const baseViewportClasses = "relative min-h-[100svh] w-full overflow-hidden bg-black";
-  const viewportWrapperClassName = editMode
-    ? `${baseViewportClasses} border-y border-white/5 lg:min-h-[720px]`
-    : `${baseViewportClasses} lg:border-y lg:border-white/5`;
+  const outerSectionClassName = "relative min-h-[calc(var(--site-viewport-unit)*100)] w-full overflow-hidden bg-black px-0";
+  const viewportWrapperClassName = "relative min-h-[calc(var(--site-viewport-unit)*100)] w-full overflow-hidden bg-black lg:border-y lg:border-white/5";
 
   const { scrollYProgress } = useScroll({
     target: containerRef,

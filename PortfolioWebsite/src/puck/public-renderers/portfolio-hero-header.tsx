@@ -8,6 +8,7 @@ export const render: ComponentConfig["render"] = ({
   ctaLabel,
   descriptionLine1,
   descriptionLine2,
+  editMode,
   subtitle,
   title,
 }) => (
@@ -16,6 +17,7 @@ export const render: ComponentConfig["render"] = ({
     ctaLabel={ctaLabel}
     descriptionLine1={descriptionLine1}
     descriptionLine2={descriptionLine2}
+    editMode={editMode}
     subtitle={subtitle}
     title={title}
   />

@@ -14,6 +14,11 @@ import {
 } from "@/lib/admin-attributes";
 import { applyFontLabCssVars } from "@/lib/font-lab-css-vars";
 import { FONT_VARIABLE_NAMES } from "@/lib/typography-tokens";
+import {
+  getLogicalViewportUnit,
+  resolvePreviewViewportByWidth,
+  SITE_VIEWPORT_UNIT_CSS_VAR,
+} from "@/lib/preview-viewports";
 
 const PREVIEW_CLONED_HEAD_ATTR = "data-puck-preview-font-clone";
 
@@ -102,6 +107,10 @@ function setupIframePreviewChrome(
     const appliedVarKeys = new Set<string>();
     const htmlElement = frameDocument.documentElement;
     const bodyElement = frameDocument.body;
+    const frameWindow = frameDocument.defaultView;
+    const previousViewportUnit = htmlElement.style.getPropertyValue(
+      SITE_VIEWPORT_UNIT_CSS_VAR,
+    );
     const previousHtml = snapshotElement(htmlElement, {
       attributes: PREVIEW_HTML_ATTRIBUTES,
       includeLang: true,
@@ -124,6 +133,13 @@ function setupIframePreviewChrome(
       }
 
       htmlElement.lang = document.documentElement.lang || "zh-CN";
+
+      const viewportWidth = frameWindow?.innerWidth || htmlElement.clientWidth;
+      const viewport = resolvePreviewViewportByWidth(viewportWidth);
+      htmlElement.style.setProperty(
+        SITE_VIEWPORT_UNIT_CSS_VAR,
+        getLogicalViewportUnit(viewport),
+      );
     };
 
     const handleFontLabUpdate = (event: Event) => {
@@ -132,6 +148,7 @@ function setupIframePreviewChrome(
         detail && typeof detail === "object" ? detail : null,
       );
     };
+    const handleViewportResize = () => syncPreviewEnvironment();
 
     htmlElement.setAttribute(ADMIN_MODE_ATTRIBUTE, "true");
     htmlElement.removeAttribute(ADMIN_ROOT_ATTRIBUTE);
@@ -143,15 +160,25 @@ function setupIframePreviewChrome(
     bodyElement.style.overscrollBehavior = "";
     syncPreviewEnvironment(getLatestFontLabPreviewVarsSnapshot());
     window.addEventListener(FONT_LAB_UPDATED_EVENT, handleFontLabUpdate as EventListener);
+    frameWindow?.addEventListener("resize", handleViewportResize);
 
     return () => {
       window.removeEventListener(FONT_LAB_UPDATED_EVENT, handleFontLabUpdate as EventListener);
+      frameWindow?.removeEventListener("resize", handleViewportResize);
 
       restoreElement(htmlElement, previousHtml);
       restoreElement(bodyElement, previousBody);
       frameDocument.head.querySelectorAll(`[${PREVIEW_CLONED_HEAD_ATTR}]`).forEach((node) => node.remove());
       lastClonedHeadSignatureRef.current = null;
       applyFontLabCssVars(htmlElement, {}, appliedVarKeys);
+      if (previousViewportUnit) {
+        htmlElement.style.setProperty(
+          SITE_VIEWPORT_UNIT_CSS_VAR,
+          previousViewportUnit,
+        );
+      } else {
+        htmlElement.style.removeProperty(SITE_VIEWPORT_UNIT_CSS_VAR);
+      }
     };
 }
 

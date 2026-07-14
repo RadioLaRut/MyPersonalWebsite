@@ -36,7 +36,7 @@ export default function ImagePanel({
 
   if (variant === "fullscreen") {
     return (
-      <div className="relative h-full min-h-[100svh] w-full bg-black">
+      <div className="relative h-full min-h-[calc(var(--site-viewport-unit)*100)] w-full bg-black">
         <div className="absolute inset-0">
           <PresetImage
             src={src}

@@ -1,4 +1,5 @@
 export const PREVIEW_REFERENCE_VIEWPORT_PX = 1440;
+export const SITE_VIEWPORT_UNIT_CSS_VAR = "--site-viewport-unit";
 
 export const PREVIEW_VIEWPORTS = [
   { height: 844, icon: "Smartphone", key: "mobile", label: "Mobile", width: 390 },
@@ -17,3 +18,19 @@ export const PUCK_PREVIEW_VIEWPORTS = PREVIEW_VIEWPORTS.map((viewport) => ({
   label: viewport.label,
   width: viewport.width,
 }));
+
+export type PreviewViewport = (typeof PREVIEW_VIEWPORTS)[number];
+
+export function resolvePreviewViewportByWidth(width: number): PreviewViewport {
+  if (!Number.isFinite(width) || width <= 0) return DEFAULT_PREVIEW_VIEWPORT;
+
+  return PREVIEW_VIEWPORTS.reduce((closest, viewport) =>
+    Math.abs(viewport.width - width) < Math.abs(closest.width - width)
+      ? viewport
+      : closest,
+  );
+}
+
+export function getLogicalViewportUnit(viewport: { height: number }) {
+  return `${viewport.height / 100}px`;
+}

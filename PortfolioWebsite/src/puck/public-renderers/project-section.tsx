@@ -8,6 +8,7 @@ const ALIGN_VALUES = ["auto", "left", "right"] as const;
 
 export const render: ComponentConfig["render"] = ({
   align,
+  editMode,
   imageFitMode,
   imagePreset,
   imageSrc,
@@ -20,6 +21,7 @@ export const render: ComponentConfig["render"] = ({
 }) => (
   <ProjectSection
     align={castSelectValue(align, ALIGN_VALUES, "auto")}
+    editMode={editMode}
     imageFitMode={castImageFitMode(imageFitMode)}
     imagePreset={castImagePreset(imagePreset)}
     imageSrc={imageSrc}

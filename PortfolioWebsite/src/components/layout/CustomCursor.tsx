@@ -1,73 +1,32 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
-import { ADMIN_MODE_ATTRIBUTE } from "@/lib/admin-attributes";
 import { supportsDesktopCustomCursor } from "@/lib/motion";
 
 type CustomCursorProps = {
-  isWithinIframe?: boolean;
   targetDocument?: Document;
 };
 
-export default function CustomCursor({ isWithinIframe, targetDocument }: CustomCursorProps = {}) {
+const CUSTOM_CURSOR_ACTIVE_ATTRIBUTE = "data-custom-cursor-active";
+
+export default function CustomCursor({ targetDocument }: CustomCursorProps = {}) {
   const cursorRef = useRef<HTMLDivElement>(null);
   const [isCursorEnabled, setIsCursorEnabled] = useState(false);
-  const pathname = usePathname();
-  const currentPathname = isWithinIframe
-    ? targetDocument?.defaultView?.location.pathname ?? ""
-    : pathname ?? "";
-  const adminShell = !isWithinIframe && currentPathname.startsWith("/admin");
-  const fontLabMode = !isWithinIframe && currentPathname.startsWith("/playground/font-lab");
-  const componentLabMode = !isWithinIframe && currentPathname.startsWith("/playground/component-lab");
-  const isCursorBlockedByRoute = adminShell || fontLabMode || componentLabMode;
 
   useEffect(() => {
-    const activeDocument = targetDocument ?? document;
-    const htmlElement = activeDocument.documentElement;
-
-    // Disable outer custom cursor in the admin dashboard completely
-    if (adminShell || fontLabMode || componentLabMode) {
-      if (adminShell) {
-        htmlElement.setAttribute(ADMIN_MODE_ATTRIBUTE, "true");
-      } else {
-        htmlElement.removeAttribute(ADMIN_MODE_ATTRIBUTE);
-      }
-
-      if (fontLabMode) {
-        htmlElement.setAttribute("data-font-lab-mode", "true");
-      } else {
-        htmlElement.removeAttribute("data-font-lab-mode");
-      }
-
-      if (componentLabMode) {
-        htmlElement.setAttribute("data-font-lab-mode", "true");
-      }
-
-      return () => {
-        htmlElement.removeAttribute(ADMIN_MODE_ATTRIBUTE);
-        htmlElement.removeAttribute("data-font-lab-mode");
-      };
-    }
-
-    if (!isWithinIframe) {
-      htmlElement.removeAttribute(ADMIN_MODE_ATTRIBUTE);
-      htmlElement.removeAttribute("data-font-lab-mode");
-    }
-
     const win = targetDocument?.defaultView || window;
     const pointerQuery = win.matchMedia("(pointer: fine)");
     const hoverQuery = win.matchMedia("(hover: hover)");
     const reducedMotionQuery = win.matchMedia("(prefers-reduced-motion: reduce)");
 
     const updateCursorAvailability = () => {
-      setIsCursorEnabled(
-        supportsDesktopCustomCursor({
-          hasTouchStart: "ontouchstart" in win,
-          innerWidth: win.innerWidth,
-          matchMedia: win.matchMedia.bind(win),
-          maxTouchPoints: win.navigator.maxTouchPoints,
-        }),
-      );
+      const nextEnabled = supportsDesktopCustomCursor({
+        hasTouchStart: "ontouchstart" in win,
+        innerWidth: win.innerWidth,
+        matchMedia: win.matchMedia.bind(win),
+        maxTouchPoints: win.navigator.maxTouchPoints,
+      });
+
+      setIsCursorEnabled(nextEnabled);
     };
 
     const addMediaListener = (query: MediaQueryList, handler: () => void) => {
@@ -92,10 +51,20 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
       removeMotionListener();
       win.removeEventListener("resize", updateCursorAvailability);
     };
-  }, [adminShell, componentLabMode, fontLabMode, isCursorBlockedByRoute, isWithinIframe, targetDocument]);
+  }, [targetDocument]);
 
   useEffect(() => {
-    if (!isCursorEnabled || isCursorBlockedByRoute) {
+    const htmlElement = (targetDocument ?? document).documentElement;
+    if (isCursorEnabled) {
+      htmlElement.setAttribute(CUSTOM_CURSOR_ACTIVE_ATTRIBUTE, "true");
+    } else {
+      htmlElement.removeAttribute(CUSTOM_CURSOR_ACTIVE_ATTRIBUTE);
+    }
+    return () => htmlElement.removeAttribute(CUSTOM_CURSOR_ACTIVE_ATTRIBUTE);
+  }, [isCursorEnabled, targetDocument]);
+
+  useEffect(() => {
+    if (!isCursorEnabled) {
       return;
     }
 
@@ -106,7 +75,7 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
 
     const activeDocument = targetDocument ?? document;
     const win = targetDocument?.defaultView || window;
-    const magnetElements = Array.from(
+    let magnetElements = Array.from(
       activeDocument.querySelectorAll<HTMLElement>("[data-cursor-magnet]"),
     );
     let rafId: number;
@@ -127,6 +96,18 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
       if (activeMagnet) {
         activeMagnet.removeAttribute("data-cursor-magnet-active");
         activeMagnet = null;
+      }
+    };
+
+    const refreshMagnetElements = () => {
+      magnetElements = Array.from(
+        activeDocument.querySelectorAll<HTMLElement>("[data-cursor-magnet]"),
+      );
+      if (
+        activeMagnet &&
+        (!activeMagnet.isConnected || !activeMagnet.matches("[data-cursor-magnet]"))
+      ) {
+        clearMagnet();
       }
     };
 
@@ -222,6 +203,15 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
       rafId = requestAnimationFrame(updateCursor);
     };
 
+    const magnetRoot = activeDocument.body ?? activeDocument.documentElement;
+    const magnetObserver = new win.MutationObserver(refreshMagnetElements);
+    magnetObserver.observe(magnetRoot, {
+      attributeFilter: ["data-cursor-magnet"],
+      attributes: true,
+      childList: true,
+      subtree: true,
+    });
+
     const supportsPointerEvents = "PointerEvent" in win;
     if (supportsPointerEvents) {
       activeDocument.addEventListener("pointermove", onPointerMove, {
@@ -267,6 +257,7 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
     }
 
     return () => {
+      magnetObserver.disconnect();
       clearMagnet();
       if (supportsPointerEvents) {
         activeDocument.removeEventListener("pointermove", onPointerMove, true);
@@ -280,11 +271,7 @@ export default function CustomCursor({ isWithinIframe, targetDocument }: CustomC
       }
       cancelAnimationFrame(rafId);
     };
-  }, [isCursorBlockedByRoute, isCursorEnabled, pathname, targetDocument]);
-
-  if (isCursorBlockedByRoute) {
-    return null;
-  }
+  }, [isCursorEnabled, targetDocument]);
 
   if (!isCursorEnabled) {
     return null;

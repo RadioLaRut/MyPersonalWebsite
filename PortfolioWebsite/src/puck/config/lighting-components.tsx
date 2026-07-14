@@ -1,13 +1,6 @@
-import type { Config } from "@puckeditor/core";
-import LightingCollectionHeader from "@/components/works/LightingCollectionHeader";
-import LightingProjectCard from "@/components/works/LightingProjectCard";
+import type { ComponentDefinitionRegistry } from "./component-definition";
 import { CANONICAL_PLACEHOLDER_PATH } from "@/lib/public-paths";
-import {
-  buildImageFieldTriple,
-  castImageFitMode,
-  castImagePreset,
-} from "@/puck/fields/image-fields";
-import { toEditorAwareHref } from "./shared";
+import { buildImageFieldTriple } from "@/puck/fields/image-fields";
 
 const lightingProjectImageFields = buildImageFieldTriple("coverImage", {
   defaultFitMode: "cover",
@@ -21,8 +14,8 @@ const lightingProjectImageFields = buildImageFieldTriple("coverImage", {
 export const lightingComponents = {
     LightingProjectCard: {
       fields: {
-        number: { type: "text", contentEditable: true, label: "Number" },
-        title: { type: "text", contentEditable: true, label: "Title" },
+        number: { type: "text", label: "Number" },
+        title: { type: "text", label: "Title" },
         ...lightingProjectImageFields.fields,
         href: { type: "text", label: "Href" },
       },
@@ -32,17 +25,6 @@ export const lightingComponents = {
         ...lightingProjectImageFields.defaults,
         href: "/works/lighting-portfolio/collection-1",
       },
-      render: ({ number, title, coverImage, href, imagePreset, imageFitMode, editMode }) => (
-        <LightingProjectCard
-          number={number}
-          title={title}
-          coverImage={coverImage}
-          href={toEditorAwareHref(href, editMode)}
-          imagePreset={castImagePreset(imagePreset)}
-          imageFitMode={castImageFitMode(imageFitMode)}
-          editMode={editMode}
-        />
-      ),
     },
 
     LightingCollectionHeader: {
@@ -58,14 +40,5 @@ export const lightingComponents = {
         description: "A detailed breakdown of lighting setup, mood exploration, and before/after comparisons for city add.",
         backHref: "/works/lighting-portfolio",
       },
-      render: ({ title, number, description, backHref, editMode }) => (
-        <LightingCollectionHeader
-          title={title}
-          number={number}
-          description={description}
-          backHref={toEditorAwareHref(backHref, editMode)}
-          editMode={editMode}
-        />
-      ),
     },
-} satisfies Config["components"];
+} satisfies ComponentDefinitionRegistry;

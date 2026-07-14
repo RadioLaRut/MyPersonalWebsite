@@ -15,6 +15,12 @@ import {
   type ComponentDesignDocument,
   type ComponentDesignComponentKey,
 } from "@/lib/component-design-schema";
+import {
+  COMPONENT_DESIGN_COMMIT_CHANNEL,
+  COMPONENT_DESIGN_COMMIT_MESSAGE_TYPE,
+  isCommittedComponentDesignMessage,
+  type CommittedComponentDesignMessage,
+} from "@/lib/component-design-commit";
 
 const COMPONENT_DESIGN_UPDATED_EVENT = "component-design-updated";
 
@@ -55,11 +61,22 @@ export default function ComponentDesignProvider({
       handleUpdate as EventListener,
     );
 
+    const channel = typeof BroadcastChannel === "undefined"
+      ? null
+      : new BroadcastChannel(COMPONENT_DESIGN_COMMIT_CHANNEL);
+    const handleCommittedMessage = (event: MessageEvent<unknown>) => {
+      if (!isCommittedComponentDesignMessage(event.data)) return;
+      setDocumentState(normalizeComponentDesignDocument(event.data.document));
+    };
+    channel?.addEventListener("message", handleCommittedMessage);
+
     return () => {
       window.removeEventListener(
         COMPONENT_DESIGN_UPDATED_EVENT,
         handleUpdate as EventListener,
       );
+      channel?.removeEventListener("message", handleCommittedMessage);
+      channel?.close();
     };
   }, [listenToGlobalUpdates]);
 
@@ -89,14 +106,26 @@ export function useComponentDesign<ComponentKey extends ComponentDesignComponent
 export function dispatchComponentDesignUpdated(
   nextDocument: ComponentDesignDocument,
 ) {
+  const normalizedDocument = normalizeComponentDesignDocument(nextDocument);
   window.dispatchEvent(
     new CustomEvent<ComponentDesignDocument>(
       COMPONENT_DESIGN_UPDATED_EVENT,
       {
-        detail: normalizeComponentDesignDocument(nextDocument),
+        detail: normalizedDocument,
       },
     ),
   );
+
+  if (typeof BroadcastChannel !== "undefined") {
+    const channel = new BroadcastChannel(COMPONENT_DESIGN_COMMIT_CHANNEL);
+    const message: CommittedComponentDesignMessage = {
+      document: normalizedDocument,
+      type: COMPONENT_DESIGN_COMMIT_MESSAGE_TYPE,
+      version: 1,
+    };
+    channel.postMessage(message);
+    channel.close();
+  }
 }
 
 export { COMPONENT_DESIGN_UPDATED_EVENT };

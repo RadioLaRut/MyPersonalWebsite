@@ -1,19 +1,29 @@
 import type { Config } from "@puckeditor/core";
 
+import { CANONICAL_PUCK_RENDERERS } from "@/puck/canonical-renderers";
 import { PUCK_COMPONENT_CATEGORIES, PUCK_COMPONENT_TYPES } from "@/puck/component-manifest";
 import { contactCommonComponents } from "@/puck/config/contact-common-components";
 import { layoutComponents } from "@/puck/config/layout-components";
 import { lightingComponents } from "@/puck/config/lighting-components";
 import { worksComponents } from "@/puck/config/works-components";
 
+const componentDefinitions = {
+  ...layoutComponents,
+  ...worksComponents,
+  ...lightingComponents,
+  ...contactCommonComponents,
+};
+
+const components = Object.fromEntries(
+  Object.entries(componentDefinitions).map(([rawType, definition]) => {
+    const type = rawType as keyof typeof CANONICAL_PUCK_RENDERERS;
+    return [type, { ...definition, render: CANONICAL_PUCK_RENDERERS[type] }];
+  }),
+) as Config["components"];
+
 export const config: Config = {
   categories: PUCK_COMPONENT_CATEGORIES,
-  components: {
-    ...layoutComponents,
-    ...worksComponents,
-    ...lightingComponents,
-    ...contactCommonComponents,
-  },
+  components,
   root: {
     fields: {
       title: { type: "text", label: "SEO Title" },

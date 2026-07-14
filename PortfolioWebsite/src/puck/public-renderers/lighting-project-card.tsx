@@ -6,6 +6,7 @@ import { castImageFitMode, castImagePreset } from "./shared";
 
 export const render: ComponentConfig["render"] = ({
   coverImage,
+  editMode,
   href,
   imageFitMode,
   imagePreset,
@@ -14,6 +15,7 @@ export const render: ComponentConfig["render"] = ({
 }) => (
   <LightingProjectCard
     coverImage={coverImage}
+    editMode={editMode}
     href={toSafePuckHref(href)}
     imageFitMode={castImageFitMode(imageFitMode)}
     imagePreset={castImagePreset(imagePreset)}

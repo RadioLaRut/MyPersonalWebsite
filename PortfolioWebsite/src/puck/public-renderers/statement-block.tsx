@@ -11,12 +11,14 @@ export const render: ComponentConfig["render"] = ({
   align,
   backgroundColor,
   content,
+  editMode,
   minHeight,
 }) => (
   <StatementBlock
     align={castSelectValue(align, ALIGN_VALUES, "center")}
     backgroundColor={castSelectValue(backgroundColor, BACKGROUND_VALUES, "black")}
     content={content}
+    editMode={editMode}
     minHeight={castSelectValue(minHeight, MIN_HEIGHT_VALUES, "medium")}
   />
 );

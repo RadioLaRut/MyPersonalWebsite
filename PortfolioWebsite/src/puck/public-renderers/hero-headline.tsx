@@ -6,6 +6,7 @@ import { castImageFitMode, castImagePreset } from "./shared";
 
 export const render: ComponentConfig["render"] = ({
   eyebrow,
+  editMode,
   heroImage,
   heroImageFitMode,
   heroImagePreset,
@@ -16,6 +17,7 @@ export const render: ComponentConfig["render"] = ({
 }) => (
   <HeroHeadlineBlock
     eyebrow={eyebrow}
+    editMode={editMode}
     heroImage={heroImage}
     heroImageFitMode={castImageFitMode(heroImageFitMode)}
     heroImagePreset={castImagePreset(heroImagePreset)}

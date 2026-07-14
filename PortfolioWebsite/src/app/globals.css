@@ -11,6 +11,7 @@
   --border-subtle: rgba(255, 255, 255, 0.1);
   --grid-max-width: 1680px;
   --grid-gap: 1rem;
+  --site-viewport-unit: 1svh;
   --rhythm-unit: 8px;
   --rhythm-2: calc(var(--rhythm-unit) * 2);
   --rhythm-3: calc(var(--rhythm-unit) * 3);
@@ -431,31 +432,9 @@ html[data-site-mode="normal"] svg {
     /* 隐藏 Chrome/Safari 滚动条 */
   }
 
-  /* 非管理模式且非 Font Lab 模式下隐藏系统默认鼠标 */
-  html:not([data-admin-mode]):not([data-font-lab-mode]) * {
+  html[data-custom-cursor-active="true"] * {
     cursor: none !important;
   }
-}
-
-html[data-font-lab-mode] * {
-  cursor: auto !important;
-}
-
-html[data-font-lab-mode] a,
-html[data-font-lab-mode] button,
-html[data-font-lab-mode] select,
-html[data-font-lab-mode] summary,
-html[data-font-lab-mode] [role="button"],
-html[data-font-lab-mode] .interactive,
-html[data-font-lab-mode] input[type="checkbox"],
-html[data-font-lab-mode] input[type="radio"],
-html[data-font-lab-mode] input[type="range"] {
-  cursor: pointer !important;
-}
-
-html[data-font-lab-mode] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-html[data-font-lab-mode] textarea {
-  cursor: text !important;
 }
 
 /* 移动端/触摸屏降级：隐藏自定义光标，恢复系统默认样式 */

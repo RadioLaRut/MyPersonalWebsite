@@ -35,7 +35,7 @@ export default function NextProjectBlock({
                 href={href}
                 disabled={editMode}
                 interactionPreset="blockLink"
-                className={`group block relative h-[40vh] md:h-[60vh] overflow-hidden w-full bg-black ${editMode ? "cursor-default" : "interactive"}`}
+                className={`group block relative h-[calc(var(--site-viewport-unit)*40)] md:h-[calc(var(--site-viewport-unit)*60)] overflow-hidden w-full bg-black ${editMode ? "cursor-default" : "interactive"}`}
             >
                 <div className="pointer-events-none absolute inset-0 z-10 bg-black/[0.58] transition-colors duration-700 group-hover:bg-black/[0.38] group-focus-visible:bg-black/[0.38]"></div>
                 <div className="absolute inset-0 grid place-items-center">

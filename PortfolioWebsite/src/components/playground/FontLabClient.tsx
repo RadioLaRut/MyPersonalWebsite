@@ -947,13 +947,10 @@ export default function FontLabClient() {
     : 0;
 
   const navigateToPlayground = () => {
-    document.documentElement.removeAttribute("data-font-lab-mode");
     router.push("/playground");
   };
 
   useEffect(() => {
-    const htmlElement = document.documentElement;
-    htmlElement.setAttribute("data-font-lab-mode", "true");
     void router.prefetch("/playground");
 
     let active = true;
@@ -995,7 +992,6 @@ export default function FontLabClient() {
 
     return () => {
       active = false;
-      htmlElement.removeAttribute("data-font-lab-mode");
     };
   }, [router]);
 

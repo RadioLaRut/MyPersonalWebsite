@@ -6,6 +6,7 @@ import { castImageFitMode, castImagePreset } from "./shared";
 
 export const render: ComponentConfig["render"] = ({
   description,
+  editMode,
   eyebrow,
   imageAlt,
   imageFitMode,
@@ -23,6 +24,7 @@ export const render: ComponentConfig["render"] = ({
 }) => (
   <HeroSection
     description={description}
+    editMode={editMode}
     eyebrow={eyebrow}
     imageAlt={imageAlt}
     imageFitMode={castImageFitMode(imageFitMode)}

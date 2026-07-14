@@ -14,6 +14,7 @@ export const render: ComponentConfig["render"] = ({
   copySuccessMessage,
   creativeDirection,
   darkTextColor,
+  editMode,
   email,
   experienceHistory,
   lightTextColor,
@@ -54,6 +55,7 @@ export const render: ComponentConfig["render"] = ({
       ) : undefined}
       creativeDirection={creativeItems}
       darkTextColor={darkTextColor}
+      editMode={editMode}
       email={email}
       experienceContent={ExperienceSlot ? (
         <ExperienceSlot

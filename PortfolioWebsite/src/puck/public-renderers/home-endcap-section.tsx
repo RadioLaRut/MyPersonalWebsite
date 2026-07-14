@@ -7,6 +7,7 @@ export const render: ComponentConfig["render"] = ({
   buttonHref,
   buttonLabel,
   description,
+  editMode,
   eyebrow,
   title,
 }) => (
@@ -14,6 +15,7 @@ export const render: ComponentConfig["render"] = ({
     buttonHref={toSafePuckHref(buttonHref) ?? "/works"}
     buttonLabel={buttonLabel}
     description={description}
+    editMode={editMode}
     eyebrow={eyebrow}
     title={title}
   />

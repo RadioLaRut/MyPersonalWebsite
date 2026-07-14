@@ -35,9 +35,9 @@ export default function StatementBlock({
   }[backgroundColor];
 
   const heightClass = {
-    small: "min-h-[16svh] md:min-h-[20vh]",
-    medium: "min-h-[24svh] md:min-h-[35vh]",
-    large: "min-h-[36svh] md:min-h-[50vh]",
+    small: "min-h-[calc(var(--site-viewport-unit)*16)] md:min-h-[calc(var(--site-viewport-unit)*20)]",
+    medium: "min-h-[calc(var(--site-viewport-unit)*24)] md:min-h-[calc(var(--site-viewport-unit)*35)]",
+    large: "min-h-[calc(var(--site-viewport-unit)*36)] md:min-h-[calc(var(--site-viewport-unit)*50)]",
   }[minHeight];
   const rhythmClass = {
     small: "rhythm-section-compact",

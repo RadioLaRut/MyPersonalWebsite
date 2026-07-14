@@ -62,7 +62,7 @@ export default function WorksListEntry({
     enabled: !supportsHoverIntent && !editMode,
   });
   const isLinkEnabled = !editMode && Boolean(href);
-  const active = editMode || isHovered || isFocused || isInsideCenterZone;
+  const active = isHovered || isFocused || isInsideCenterZone;
   const cursorClass = isLinkEnabled ? "cursor-pointer" : "cursor-default";
   const numberBoundsClassName = getResponsiveGridColumnClassName(design.numberBounds);
   const titleBoundsClassName = getResponsiveGridColumnClassName(
@@ -87,7 +87,7 @@ export default function WorksListEntry({
       disabled={!isLinkEnabled}
       disabledElement="div"
       interactionPreset="blockLink"
-      className={`group relative grid min-h-[26svh] w-full content-center border-b border-white/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-2px] focus-visible:outline-white/70 ${cursorClass} sm:min-h-[30svh] md:min-h-[34svh] lg:min-h-[42vh]`}
+      className={`group relative grid min-h-[calc(var(--site-viewport-unit)*26)] w-full content-center border-b border-white/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-2px] focus-visible:outline-white/70 ${cursorClass} sm:min-h-[calc(var(--site-viewport-unit)*30)] md:min-h-[calc(var(--site-viewport-unit)*34)] lg:min-h-[calc(var(--site-viewport-unit)*42)]`}
       data-active={active ? "true" : "false"}
       aria-label={
         typeof title === "string"

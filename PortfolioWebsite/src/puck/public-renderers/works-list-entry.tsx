@@ -8,6 +8,7 @@ export const render: ComponentConfig["render"] = ({
   aliases,
   category,
   desc,
+  editMode,
   href,
   id,
   imageFitMode,
@@ -20,6 +21,7 @@ export const render: ComponentConfig["render"] = ({
     aliases={aliases}
     category={category}
     desc={desc}
+    editMode={editMode}
     href={toSafePuckHref(href)}
     id={id}
     imageFitMode={castImageFitMode(imageFitMode)}

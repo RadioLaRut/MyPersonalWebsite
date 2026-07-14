@@ -1,28 +1,5 @@
 "use client";
 
-import type { ReactNode } from "react";
-
-import HeroHeadlineBlock from "@/components/common/HeroHeadlineBlock";
-import RichParagraphBlock from "@/components/common/RichParagraphBlock";
-import ContentCard from "@/components/breakdowns/ContentCard";
-import TextSplitLayout from "@/components/breakdowns/TextSplitLayout";
-import HighDensityInfoBlock from "@/components/breakdowns/HighDensityInfoBlock";
-import StatementBlock from "@/components/transitions/StatementBlock";
-import ImagePanel from "@/components/breakdowns/ImagePanel";
-import ImageSlider from "@/components/breakdowns/ImageSlider";
-import BreakdownSectionHeadline from "@/components/breakdowns/BreakdownHeadline";
-import BreakdownTriptych from "@/components/breakdowns/BreakdownTriptych";
-import ParameterGrid from "@/components/breakdowns/ParameterGrid";
-import ProjectSection from "@/components/home/ProjectSection";
-import HeroSection from "@/components/home/HeroSection";
-import HomeEndcapSection from "@/components/home/HomeEndcapSection";
-import PortfolioHeroHeader from "@/components/works/PortfolioHeroHeader";
-import LightingCollectionHeader from "@/components/works/LightingCollectionHeader";
-import LightingProjectCard from "@/components/works/LightingProjectCard";
-import WorksList from "@/components/works/WorksList";
-import WorksListEntry from "@/components/works/WorksListEntry";
-import NextProjectBlock from "@/components/blocks/NextProjectBlock";
-import ContactFlashlightBlock from "@/components/blocks/ContactFlashlightBlock";
 import {
   COMPONENT_DESIGN_COMPONENT_KEYS,
   COMPONENT_DESIGN_PARAMETER_ITEM_SPANS,
@@ -38,9 +15,6 @@ import {
   type ComponentResponsiveGridBounds,
 } from "@/lib/component-design-schema";
 import { type TypographySize } from "@/lib/typography-tokens";
-import { CANONICAL_PLACEHOLDER_PATH } from "@/lib/public-paths";
-
-export type PreviewVariantKey = "stress" | "standard";
 
 type SelectOption<TValue extends string | number> = {
   label: string;
@@ -98,7 +72,6 @@ export type ComponentLabDefinition = {
   description: string;
   key: ComponentDesignComponentKey;
   label: string;
-  renderPreview: (variant: PreviewVariantKey) => ReactNode;
   sections: ComponentLabSectionConfig[];
 };
 
@@ -182,32 +155,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <HeroSection
-        eyebrow={
-          variant === "stress"
-            ? "LIGHTING / TECH ART / SYSTEM DESIGN / INTERACTIVE NARRATIVE"
-            : "LIGHTING / TECH ART / GAME DESIGN"
-        }
-        positioning="让氛围、系统与落地流程共同服务体验。"
-        title={"JIANG\nCHENGYAN"}
-        subtitle=""
-        description={
-          ""
-        }
-        primaryCtaLabel=""
-        primaryCtaHref=""
-        secondaryCtaLabel=""
-        secondaryCtaHref=""
-        imageSrc="/images/covers/2026/ShotForCrewWithoutWord.0004.webp"
-        imageAlt="Hero Background"
-        imagePreset="ratio-21-9"
-        imageFitMode="x"
-        mobileImageFocalX={28}
-        mobileImageFocalY={50}
-        editMode
-      />
-    ),
   },
   HeroHeadline: {
     key: "HeroHeadline",
@@ -228,23 +175,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <HeroHeadlineBlock
-        eyebrow={variant === "stress" ? "SYSTEM BREAKDOWN" : "BREAKDOWN"}
-        title={variant === "stress" ? "PROJECT TITLE / LONG CASE STUDY HEADER" : "PROJECT TITLE"}
-        subtitle={
-          variant === "stress"
-            ? "这是更长的头图摘要，用来观察标题、摘要和跳转按钮在长文本下是否仍能稳定落在同一内容区内。"
-            : "这是一个项目分解页面的标题组件，用于展示项目主要信息和跳转链接。"
-        }
-        heroImage="/images/train-station/2Day.webp"
-        heroImagePreset="ratio-21-9"
-        heroImageFitMode="x"
-        navLink="https://www.bilibili.com"
-        navLinkLabel={variant === "stress" ? "下载可玩版本 / PLAYABLE BUILD" : "下载可玩版本"}
-        editMode
-      />
-    ),
   },
   PortfolioHeroHeader: {
     key: "PortfolioHeroHeader",
@@ -306,21 +236,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <PortfolioHeroHeader
-        title={variant === "stress" ? "ALL WORKS / SYSTEM INDEX" : "ALL WORKS"}
-        subtitle={variant === "stress" ? "CURATED ARCHIVE" : "ARCHIVE"}
-        descriptionLine1={variant === "stress" ? "CURATED INDEX" : undefined}
-        descriptionLine2={
-          variant === "stress"
-            ? "按灯光、技术美术、游戏设计与系统叙事线索组织全部项目，用更长文案观察右栏是否开始挤压主标题。"
-            : undefined
-        }
-        ctaLabel={variant === "stress" ? "ABOUT" : undefined}
-        ctaHref={variant === "stress" ? "/about" : undefined}
-        editMode
-      />
-    ),
   },
   LightingCollectionHeader: {
     key: "LightingCollectionHeader",
@@ -364,19 +279,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <LightingCollectionHeader
-        title={variant === "stress" ? "CITY AFTER RAIN / LONG STUDY NAME" : "CITY AFTER RAIN"}
-        number="01"
-        description={
-          variant === "stress"
-            ? "围绕城市氛围、镜头构图与照明节奏展开的长摘要样本，用来观察右侧说明列的极限宽度。"
-            : "围绕城市氛围、镜头构图与照明节奏展开的灯光练习集合。"
-        }
-        backHref="/works/lighting-portfolio"
-        editMode
-      />
-    ),
   },
   LightingProjectCard: {
     key: "LightingProjectCard",
@@ -397,17 +299,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <LightingProjectCard
-        number="01"
-        title={variant === "stress" ? "CITY AFTER RAIN / LONGER COLLECTION TITLE" : "CITY AFTER RAIN"}
-        coverImage="/images/city-2026/002.webp"
-        href="/works/lighting-portfolio/collection-1"
-        imagePreset="ratio-21-9"
-        imageFitMode="cover"
-        editMode
-      />
-    ),
   },
   StatementBlock: {
     key: "StatementBlock",
@@ -450,19 +341,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <StatementBlock
-        content={
-          variant === "stress"
-            ? "凌晨四点的工业园区不会为排版让路。长句、英文名词和信息密度会同时压进这条过渡语句，只有当它仍然稳住中心线，组件才算真正成立。"
-            : "We blur the lines between virtual and reality."
-        }
-        align="center"
-        backgroundColor="black"
-        minHeight="medium"
-        editMode
-      />
-    ),
   },
   RichParagraph: {
     key: "RichParagraph",
@@ -515,15 +393,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <RichParagraphBlock
-        content={
-          variant === "stress"
-            ? "凌晨四点的工业园区不会给排版留多少容错空间。Typography 必须同时承受中文、English、版本号 build-2026.03.13、长文件名与多重语义切换。只有当大段正文在极长句、长英文词和中英混排下仍然保持稳定左边缘、均匀阅读节奏和清晰层级时，这个组件的正文档位与边界才算真正成立。"
-            : "这是一个用于检验正文档位和内容宽度的标准样本。它需要在 Futura 与汉仪旗黑的混排中保持稳定阅读节奏，同时又不能因为内容区过宽而失去密度。"
-        }
-      />
-    ),
   },
   ContentCard: {
     key: "ContentCard",
@@ -655,20 +524,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <ContentCard
-        title={variant === "stress" ? "LAYOUT SYSTEM / 组件共享排版校准" : "CONTENT CARD TITLE"}
-        description={
-          variant === "stress"
-            ? "第一段用于观察标题与正文的关系。\n\n第二段用于观察多段内容时的组间距是否还能保持稳定。\n\nThird paragraph checks bilingual rhythm under a dense editorial layout."
-            : "这是一个用于观察纯文本分支边界的标准样本。没有图片区时，标题、正文宽度与段落组间距应该能直接在 Lab 里校准。"
-        }
-        imageSrc={variant === "stress" ? "/images/train-station/2Day.webp" : undefined}
-        imagePreset="ratio-16-9"
-        imageFitMode="x"
-        imagePosition={variant === "stress" ? "left" : "right"}
-      />
-    ),
   },
   TextSplitLayout: {
     key: "TextSplitLayout",
@@ -821,27 +676,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <TextSplitLayout
-        heading={variant === "stress" ? "SYSTEM BREAKDOWN / COMPONENT DESIGN" : "SPLIT LAYOUT HEADING"}
-        paragraphs={
-          variant === "stress"
-            ? [
-              "第一段观察极长标题下正文区域是否还保有足够的呼吸感。",
-              "第二段观察多段叙述时，右侧文本列是不是开始变得过碎，或者边界已经侵蚀到图片舞台。",
-              "Third paragraph is intentionally longer so the lab can expose whether the current paragraph stack is still controlled.",
-            ]
-            : [
-              "这是标准图文分栏样本，用于观察标题、正文和图片是否仍然共享同一套栅格边界。",
-              "如果正文列过宽或标题区太窄，这里会很快暴露问题。",
-            ]
-        }
-        imageSrc={variant === "stress" ? "/images/train-station/2Night.webp" : "/images/train-station/2Day.webp"}
-        imagePreset="ratio-16-9"
-        imageFitMode="x"
-        layoutVariant={variant === "stress" ? "stack" : "split-left"}
-      />
-    ),
   },
   HighDensityInfoBlock: {
     key: "HighDensityInfoBlock",
@@ -986,48 +820,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <HighDensityInfoBlock
-        phase1={{
-          label: "PHASE 01 / CONTEXT",
-          title: variant === "stress" ? "Context / Constraints" : "Context",
-          subtitle: "Problem framing",
-          content:
-            variant === "stress"
-              ? "高密度信息块最容易出问题的是列宽失衡和标题节奏漂移。这里用较长的第一列文本压测左列是否已经过窄。"
-              : "第一列用于承载背景和问题定义。",
-          items: [
-            { label: "Role", value: "Lighting / Tech Art" },
-            { label: "Timeline", value: "2026.03 / 3 weeks" },
-          ],
-        }}
-        phase2={{
-          label: "PHASE 02 / SYSTEM",
-          title: "Architecture",
-          subtitle: "Structure",
-          content:
-            variant === "stress"
-              ? "中列通常承担方法论说明，因此最需要稳定的标题、正文和 metadata 节奏，不然整块会显得又碎又紧。"
-              : "第二列用于解释系统结构与执行方法。",
-          items: [
-            { label: "Tools", value: "Unreal / Houdini / Puck" },
-            { label: "Focus", value: "Layout tokens / Typography" },
-          ],
-        }}
-        phase3={{
-          label: "PHASE 03 / RESULT",
-          title: "Execution",
-          subtitle: "Outcome",
-          content:
-            variant === "stress"
-              ? "第三列同时承载文案与图像时，常见问题是图片区进入太早，导致文字段落尚未收住。"
-              : "第三列用于交代结果与最终图像。",
-          imageSrc: "/images/city-2026/002.webp",
-          imagePreset: "ratio-16-9",
-          imageFitMode: "x",
-        }}
-      />
-    ),
   },
   ImagePanel: {
     key: "ImagePanel",
@@ -1066,16 +858,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <ImagePanel
-        src={variant === "stress" ? "/images/city-2026/001.webp" : "/images/train-station/2Day.webp"}
-        alt="Preview image"
-        caption={variant === "stress" ? "Larger narrative image block with caption" : "Image Panel Caption"}
-        preset="ratio-16-9"
-        fitMode="x"
-        variant={variant === "stress" ? "large" : "content"}
-      />
-    ),
   },
   ImageSlider: {
     key: "ImageSlider",
@@ -1116,20 +898,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <ImageSlider
-        title={variant === "stress" ? "LIGHTING COMPARISON / LONGER HEADER" : "LIGHTING COMPARISON"}
-        unlitSrc="/images/train-station/2Day.webp"
-        litSrc="/images/train-station/2Night.webp"
-        alt="Lighting Comparison"
-        imagePreset="ratio-16-9"
-        imageFitMode="x"
-        initialPosition={variant === "stress" ? 62 : 48}
-        leftLabel={variant === "stress" ? "UNLIT VERSION" : "DAY"}
-        rightLabel={variant === "stress" ? "LIT VERSION" : "NIGHT"}
-        editMode
-      />
-    ),
   },
   BreakdownHeadline: {
     key: "BreakdownHeadline",
@@ -1169,13 +937,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <BreakdownSectionHeadline
-        title={variant === "stress" ? "SECTION TITLE / LONGER SECTION HEADLINE" : "SECTION TITLE"}
-        variant={variant === "stress" ? "chapter" : "section"}
-        indexLabel={variant === "stress" ? "03" : undefined}
-      />
-    ),
   },
   BreakdownTriptych: {
     key: "BreakdownTriptych",
@@ -1242,25 +1003,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <BreakdownTriptych
-        col1Title="Column 1"
-        col1Text={variant === "stress" ? "First column content description with slightly denser wording." : "First column content description."}
-        col1Img="/images/train-station/2Day.webp"
-        col1Preset="ratio-16-9"
-        col1FitMode="x"
-        col2Title="Column 2"
-        col2Text={variant === "stress" ? "Second column carries a longer explanatory block for stress testing." : "Second column content description."}
-        col2Img="/images/city-2026/001.webp"
-        col2Preset="ratio-16-9"
-        col2FitMode="x"
-        col3Title="Column 3"
-        col3Text={variant === "stress" ? "Third column content description with a long bilingual footer. 中英混排压测。" : "Third column content description."}
-        col3Img="/images/city-2026/002.webp"
-        col3Preset="ratio-16-9"
-        col3FitMode="x"
-      />
-    ),
   },
   ParameterGrid: {
     key: "ParameterGrid",
@@ -1311,28 +1053,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <ParameterGrid
-        mediaSrc="/images/train-station/2Day.webp"
-        imagePreset="ratio-21-9"
-        imageFitMode="x"
-        isVideo={false}
-        parameters={
-          variant === "stress"
-            ? [
-              { name: "Role", value: "Lead", description: "Production direction and system design." },
-              { name: "Engine", value: "UE5", description: "Lumen / Niagara / Sequencer pipeline." },
-              { name: "Focus", value: "Layout", description: "Typography and content rhythm calibration." },
-              { name: "Timeline", value: "3W", description: "Three-week sprint with dense iteration." },
-            ]
-            : [
-              { name: "Parameter 1", value: "Value 1", description: "Description 1" },
-              { name: "Parameter 2", value: "Value 2", description: "Description 2" },
-              { name: "Parameter 3", value: "Value 3", description: "Description 3" },
-            ]
-        }
-      />
-    ),
   },
   ProjectSection: {
     key: "ProjectSection",
@@ -1395,21 +1115,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <ProjectSection
-        title={variant === "stress" ? "PENGUIN TRADING CO. / LONG CASE TITLE" : "PENGUIN TRADING CO."}
-        subtitle={variant === "stress" ? "黑色幽默经营 / 遗传繁育 / 资源压榨 / 系统推进" : "黑色幽默经营 / 遗传繁育 / 资源压榨"}
-        imageSrc="/images/penguin/CyberRestaurant.webp"
-        imagePreset="ratio-16-9"
-        imageFitMode="x"
-        mobileImageFocalX={variant === "stress" ? 82 : 50}
-        mobileImageFocalY={50}
-        link="/works/penguin"
-        index={variant === "stress" ? 2 : 1}
-        align={variant === "stress" ? "right" : "left"}
-        editMode
-      />
-    ),
   },
   WorksList: {
     key: "WorksList",
@@ -1450,52 +1155,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <WorksList
-        heading={variant === "stress" ? "WORKS / CASES / EXPERIMENTS / FULL INDEX" : "WORKS / CASES / EXPERIMENTS"}
-        indexSummary="01—09 / 精选项目"
-        works={[
-          {
-            id: "playground-work-1",
-            number: "01",
-            href: "/works/lighting-portfolio",
-            title: "LIGHTING PORTFOLIO",
-            category: "Lighting Art",
-            imageSrc: "/images/train-station/2Day.webp",
-            imagePreset: "ratio-21-9",
-            imageFitMode: "x",
-            desc: variant === "stress"
-              ? "从城市夜景到站台晨昏，用光线、天气与镜头节奏搭建情绪场。这条更长的文案用于测试侧栏在更高密度下是否仍稳定。"
-              : "从城市夜景到站台晨昏，用光线、天气与镜头节奏搭建情绪场。",
-          },
-          {
-            id: "playground-work-2",
-            number: "02",
-            href: "/works/penguin",
-            title: "PENGUIN TRADING CO.",
-            category: "Lead Designer / PM / Tech Art",
-            imageSrc: "/images/penguin/CyberRestaurant.webp",
-            imagePreset: "ratio-21-9",
-            imageFitMode: "x",
-            desc: "在外星冰川经营一座企鹅血汗工厂，把繁育、压榨与消耗做成黑色幽默系统。",
-          },
-          ...(variant === "stress"
-            ? [{
-              id: "playground-work-3",
-              number: "03",
-              href: "/works/insight",
-              title: "INSIGHT",
-              category: "Interactive Narrative / Systems",
-              imageSrc: "/images/city-2026/001.webp",
-              imagePreset: "ratio-21-9" as const,
-              imageFitMode: "x" as const,
-              desc: "你要删掉谁的发言、相信谁的私语，并在舆情秩序与个人伦理之间做决定。",
-            }]
-            : []),
-        ]}
-        editMode
-      />
-    ),
   },
   WorksListEntry: {
     key: "WorksListEntry",
@@ -1532,24 +1191,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <WorksListEntry
-        id="playground-work-entry"
-        number="01"
-        href="/works/penguin"
-        title={variant === "stress" ? "PENGUIN TRADING CO. / EXTENDED TITLE" : "PENGUIN TRADING CO."}
-        category={variant === "stress" ? "Lead Designer / PM / Tech Art / Systems" : "Lead Designer / PM / Tech Art"}
-        imageSrc={CANONICAL_PLACEHOLDER_PATH}
-        imagePreset="ratio-21-9"
-        imageFitMode="x"
-        desc={
-          variant === "stress"
-            ? "在外星冰川经营一座企鹅血汗工厂，把繁育、压榨与消耗做成黑色幽默系统。这条更长的文案用来检查侧栏在高密度文本下的稳定性。"
-            : "在外星冰川经营一座企鹅血汗工厂，把繁育、压榨与消耗做成黑色幽默系统。"
-        }
-        editMode
-      />
-    ),
   },
   HomeEndcapSection: {
     key: "HomeEndcapSection",
@@ -1599,20 +1240,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <HomeEndcapSection
-        eyebrow="Selected Archive"
-        title={variant === "stress" ? "ALL WORKS / FULL ARCHIVE" : "ALL WORKS"}
-        description={
-          variant === "stress"
-            ? "A full index of interactive narrative, systems, lighting studies, and production experiments. This longer copy helps expose whether the centered text block is still controlled."
-            : "A full index of interactive narrative, systems, lighting studies, and production experiments."
-        }
-        buttonLabel="ENTER ARCHIVE"
-        buttonHref="/works"
-        editMode
-      />
-    ),
   },
   NextProjectBlock: {
     key: "NextProjectBlock",
@@ -1659,12 +1286,6 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <NextProjectBlock
-        nextId={variant === "stress" ? "penguin" : "insight"}
-        editMode
-      />
-    ),
   },
   ContactFlashlight: {
     key: "ContactFlashlight",
@@ -1701,35 +1322,5 @@ export const COMPONENT_LAB_REGISTRY: Record<
         ],
       },
     ],
-    renderPreview: (variant) => (
-      <ContactFlashlightBlock
-        anchorId="contact"
-        maskRadius={500}
-        maskSmoothness={40}
-        darkTextColor="rgba(255,255,255,0.4)"
-        lightTextColor="rgba(255,255,255,1)"
-        name="JIANG CHENGYAN"
-        taglineText={
-          variant === "stress"
-            ? "艺术与科技 / 交互叙事设计 / 游戏设计 / 系统化内容结构"
-            : "艺术与科技 / 交互叙事设计 / 游戏设计"
-        }
-        taglineSub="CUC '2028"
-        email="hello@example.com"
-        wechat="wechat_id"
-        copyLabel="复制微信号"
-        copySuccessMessage="微信号已复制"
-        copyErrorMessage="复制失败，请手动选择微信号"
-        experienceHistory={[
-          { company: "Tencent / Lightspeed", role: "Lighting / Tech Art Intern" },
-          { company: "Independent Projects", role: "Interaction Narrative / Systems" },
-        ]}
-        creativeDirection={[
-          { title: "Lighting Art", subtitle: "Mood / Framing / Rhythm" },
-          { title: "System Design", subtitle: "Narrative / Layout / Interaction" },
-        ]}
-        editMode
-      />
-    ),
   },
 };

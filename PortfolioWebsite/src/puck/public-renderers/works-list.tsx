@@ -11,7 +11,7 @@ import {
   readSlot,
 } from "./shared";
 
-export const render: ComponentConfig["render"] = ({ entries, heading, indexSummary }) => {
+export const render: ComponentConfig["render"] = ({ editMode, entries, heading, indexSummary }) => {
   const { items: works = [], SlotComponent: EntriesSlot } = readSlot(
     entries,
     (entry) => ({
@@ -39,6 +39,7 @@ export const render: ComponentConfig["render"] = ({ entries, heading, indexSumma
       ) : undefined}
       heading={heading}
       indexSummary={indexSummary}
+      editMode={editMode}
       works={works}
     />
   );

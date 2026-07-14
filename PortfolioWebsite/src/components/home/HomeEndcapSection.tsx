@@ -45,7 +45,7 @@ export default function HomeEndcapSection({
   const opensInNewTab = !editMode && isExternalWebHref(buttonHref);
 
   return (
-    <section className="relative isolate grid min-h-[54svh] w-full items-center overflow-hidden border-t border-white/10 bg-black rhythm-section-spacious md:min-h-[60vh] lg:min-h-[68vh]">
+    <section className="relative isolate grid min-h-[calc(var(--site-viewport-unit)*54)] w-full items-center overflow-hidden border-t border-white/10 bg-black rhythm-section-spacious md:min-h-[calc(var(--site-viewport-unit)*60)] lg:min-h-[calc(var(--site-viewport-unit)*68)]">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_45%)]" />
 
       <div className="grid-container relative z-10">
