@@ -17,6 +17,14 @@ import { normalizeEditorPathInputToSlugKey, toAdminPathFromSlugKey, toPublicPath
 import { ChineseTextInputField } from "@/puck/fields/ChineseTextField";
 import { EditorHeaderChrome, HeaderActionsWithOpenPage } from "@/puck/editor/editor-header-chrome";
 import { useFontLabEditorSync } from "@/puck/editor/font-lab-preview-sync";
+import {
+  AUTO_SAVE_INTERVAL_MS,
+  getApiSaveErrorMessage,
+  getSaveStatusNotice,
+  getUnexpectedSaveErrorMessage,
+  type PublishState,
+  type SaveTrigger,
+} from "@/puck/editor/save-status";
 import IframePreviewChrome from "@/puck/editor/iframe-preview-chrome";
 import type { FontLabSyncState } from "@/puck/editor/types";
 import editorEmptyStateData from "../../content/component-design/editor-empty-state.json";
@@ -27,8 +35,19 @@ type PuckApiPayload = {
   slugs?: string[];
   error?: {
     code: string;
+    issues?: Array<{
+      message: string;
+      path: string;
+    }>;
     message: string;
   };
+};
+
+type SaveStatusNoticeProps = {
+  errorMessage: string | null;
+  hasUnsavedChanges: boolean;
+  publishState: PublishState;
+  saveTrigger: SaveTrigger;
 };
 
 const initialData = editorEmptyStateData as Data;
@@ -91,6 +110,42 @@ function slugQueryValue(slugKey: string) {
   return slugKey === "index" ? "" : slugKey;
 }
 
+function SaveStatusNotice({
+  errorMessage,
+  hasUnsavedChanges,
+  publishState,
+  saveTrigger,
+}: SaveStatusNoticeProps) {
+  const notice = getSaveStatusNotice({
+    errorMessage,
+    hasUnsavedChanges,
+    publishState,
+    saveTrigger,
+  });
+
+  if (!notice) {
+    return null;
+  }
+
+  const { detail, title, tone } = notice;
+
+  return (
+    <div
+      aria-atomic="true"
+      aria-live={tone === "error" ? "assertive" : "polite"}
+      className={styles.saveStatusNotice}
+      data-save-state={tone}
+      role={tone === "error" ? "alert" : "status"}
+    >
+      <span aria-hidden="true" className={styles.saveStatusIndicator} />
+      <span className={styles.saveStatusCopy}>
+        <strong>{title}</strong>
+        <span>{detail}</span>
+      </span>
+    </div>
+  );
+}
+
 export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps) {
   const componentDesignDocument = useComponentDesignDocument();
   const router = useRouter();
@@ -99,7 +154,9 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
   const [data, setData] = useState<Data>(initialData);
   const [pageSlugs, setPageSlugs] = useState<string[]>([]);
   const [loadState, setLoadState] = useState<"idle" | "loading" | "error">("loading");
-  const [publishState, setPublishState] = useState<"idle" | "publishing" | "published" | "error">("idle");
+  const [publishState, setPublishState] = useState<PublishState>("idle");
+  const [saveTrigger, setSaveTrigger] = useState<SaveTrigger>("manual");
+  const [publishErrorMessage, setPublishErrorMessage] = useState<string | null>(null);
   const [selectedPageState, setSelectedPageState] = useState(() => ({
     path: headerPath,
     slug: initialSlug,
@@ -115,6 +172,10 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
   const [fontLabSyncState, setFontLabSyncState] = useState<FontLabSyncState>("idle");
   const currentDataRef = useRef<Data>(initialData);
   const hasUnsavedChangesRef = useRef(false);
+  const dataRevisionRef = useRef(0);
+  const activeSlugRef = useRef(initialSlug);
+  const saveQueueRef = useRef<Promise<void>>(Promise.resolve());
+  const queuedAutoSaveKeyRef = useRef<string | null>(null);
   const prefetchedSlugsRef = useRef<Set<string>>(new Set());
   const publicPath = toPublicPathFromSlugKey(initialSlug);
   const availablePages = useMemo(() => {
@@ -124,6 +185,10 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
   const availablePublicPaths = useMemo(() => availablePages.map((slug) => toPublicPathFromSlugKey(slug)), [availablePages]);
 
   const currentAdminPath = toAdminPathFromSlugKey(initialSlug);
+
+  useEffect(() => {
+    activeSlugRef.current = initialSlug;
+  }, [initialSlug]);
 
   const openAdminPath = useCallback((rawValue: string) => {
     const slugKey = normalizeEditorPathInputToSlugKey(rawValue);
@@ -136,10 +201,9 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
       return;
     }
 
-    currentDataRef.current = initialData;
-    setData(initialData);
     setLoadState("loading");
     setPublishState("idle");
+    setPublishErrorMessage(null);
 
     startPageSwitchTransition(() => {
       router.replace(nextAdminPath);
@@ -225,7 +289,13 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
         }
 
         if (response.status === 404) {
+          currentDataRef.current = initialData;
+          dataRevisionRef.current = 0;
+          hasUnsavedChangesRef.current = false;
           setData(initialData);
+          setHasUnsavedChanges(false);
+          setPublishState("idle");
+          setPublishErrorMessage(null);
           setLoadState("idle");
           return;
         }
@@ -237,7 +307,12 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
         }
 
         currentDataRef.current = payload.data;
+        dataRevisionRef.current = 0;
+        hasUnsavedChangesRef.current = false;
         setData(payload.data);
+        setHasUnsavedChanges(false);
+        setPublishState("idle");
+        setPublishErrorMessage(null);
         setLoadState("idle");
       } catch {
         if (isMounted) {
@@ -253,6 +328,121 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
       controller.abort();
     };
   }, [initialSlug]);
+
+  const savePage = useCallback((trigger: SaveTrigger, nextData?: Data) => {
+    const publishPayload = nextData ?? currentDataRef.current;
+    const revision = dataRevisionRef.current;
+    const requestSlug = initialSlug;
+    const autoSaveKey = `${requestSlug}:${revision}`;
+
+    currentDataRef.current = publishPayload;
+
+    if (trigger === "auto") {
+      if (!hasUnsavedChangesRef.current || queuedAutoSaveKeyRef.current === autoSaveKey) {
+        return Promise.resolve();
+      }
+      queuedAutoSaveKeyRef.current = autoSaveKey;
+    }
+
+    const runSave = async () => {
+      const isActivePage = () => activeSlugRef.current === requestSlug;
+
+      if (isActivePage()) {
+        setSaveTrigger(trigger);
+        setPublishErrorMessage(null);
+        setPublishState("publishing");
+      }
+
+      console.info("[puck-editor] save started", {
+        revision,
+        slug: requestSlug,
+        trigger,
+      });
+
+      try {
+        const response = await fetch("/api/puck", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...getLocalEditorAccessHeaders(),
+          },
+          body: JSON.stringify({
+            data: publishPayload,
+            slug: slugQueryValue(requestSlug),
+          }),
+        });
+
+        let payload: PuckApiPayload;
+        try {
+          payload = (await response.json()) as PuckApiPayload;
+        } catch {
+          throw new Error(`保存接口返回了无法读取的响应（HTTP ${response.status}）。`);
+        }
+
+        if (!response.ok || payload.error) {
+          throw new Error(getApiSaveErrorMessage(payload, response.status));
+        }
+
+        const savedLatestRevision = isActivePage() && dataRevisionRef.current === revision;
+        if (isActivePage()) {
+          if (savedLatestRevision) {
+            hasUnsavedChangesRef.current = false;
+            setHasUnsavedChanges(false);
+            setPublishState("published");
+          } else {
+            hasUnsavedChangesRef.current = true;
+            setHasUnsavedChanges(true);
+            setPublishState("published");
+          }
+
+          if (Array.isArray(payload.slugs)) {
+            setPageSlugs(payload.slugs);
+          }
+        }
+
+        console.info("[puck-editor] save completed", {
+          hasNewerChanges: !savedLatestRevision,
+          revision,
+          slug: requestSlug,
+          trigger,
+        });
+      } catch (error) {
+        const message = getUnexpectedSaveErrorMessage(error);
+
+        console.error("[puck-editor] save failed", {
+          error: message,
+          revision,
+          slug: requestSlug,
+          trigger,
+        });
+
+        if (isActivePage()) {
+          hasUnsavedChangesRef.current = true;
+          setHasUnsavedChanges(true);
+          setPublishErrorMessage(message);
+          setPublishState("error");
+        }
+      } finally {
+        if (trigger === "auto" && queuedAutoSaveKeyRef.current === autoSaveKey) {
+          queuedAutoSaveKeyRef.current = null;
+        }
+      }
+    };
+
+    const queuedSave = saveQueueRef.current.then(runSave, runSave);
+    saveQueueRef.current = queuedSave.catch(() => undefined);
+    return queuedSave;
+  }, [initialSlug]);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      if (hasUnsavedChangesRef.current) {
+        void savePage("auto");
+      }
+    }, AUTO_SAVE_INTERVAL_MS);
+
+    return () => window.clearInterval(intervalId);
+  }, [savePage]);
 
   const uiProp = useMemo(() => ({
     viewports: {
@@ -309,39 +499,8 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
     setSelectedPagePath,
   ]);
 
-  async function handlePublish(nextData?: Data) {
-    const publishPayload = nextData ?? currentDataRef.current;
-    setPublishState("publishing");
-    currentDataRef.current = publishPayload;
-
-    try {
-      const response = await fetch("/api/puck", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...getLocalEditorAccessHeaders(),
-        },
-        body: JSON.stringify({
-          data: publishPayload,
-          slug: slugQueryValue(initialSlug),
-        }),
-      });
-
-      const payload = (await response.json()) as PuckApiPayload;
-      if (!response.ok || payload.error) {
-        setPublishState("error");
-        return;
-      }
-
-      setPublishState("published");
-      hasUnsavedChangesRef.current = false;
-      setHasUnsavedChanges(false);
-      if (Array.isArray(payload.slugs)) {
-        setPageSlugs(payload.slugs);
-      }
-    } catch {
-      setPublishState("error");
-    }
+  function handlePublish(nextData?: Data) {
+    return savePage("manual", nextData);
   }
 
   return (
@@ -369,6 +528,7 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
             viewports={PUCK_PREVIEW_VIEWPORTS}
             onChange={(nextData) => {
               currentDataRef.current = nextData;
+              dataRevisionRef.current += 1;
               if (!hasUnsavedChangesRef.current) {
                 hasUnsavedChangesRef.current = true;
                 setHasUnsavedChanges(true);
@@ -381,6 +541,12 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
             overrides={overrides}
           />
         )}
+        <SaveStatusNotice
+          errorMessage={publishErrorMessage}
+          hasUnsavedChanges={hasUnsavedChanges}
+          publishState={publishState}
+          saveTrigger={saveTrigger}
+        />
       </div>
     </main>
   );
