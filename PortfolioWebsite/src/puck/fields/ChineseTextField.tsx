@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, type ComponentType, type ReactNode } from "react";
 import { FieldLabel, type CustomFieldRender } from "@puckeditor/core";
+import { isolateEditorTextInputEvent } from "./text-input-events";
 
 interface ChineseTextInputProps {
   value?: string;
@@ -85,10 +86,17 @@ function ChineseTextInput({
     const textarea = (
       <textarea
         ref={inputRef as React.RefObject<HTMLTextAreaElement>}
+        data-puck-text-input="true"
         id={id}
         name={name}
         value={localValue}
         onChange={handleChange}
+        onKeyDown={isolateEditorTextInputEvent}
+        onCopy={isolateEditorTextInputEvent}
+        onCut={isolateEditorTextInputEvent}
+        onPaste={isolateEditorTextInputEvent}
+        onPointerDown={isolateEditorTextInputEvent}
+        onMouseDown={isolateEditorTextInputEvent}
         onCompositionStart={handleCompositionStart}
         onCompositionEnd={handleCompositionEnd}
         onBlur={handleBlur}
@@ -114,11 +122,18 @@ function ChineseTextInput({
   const input = (
     <input
       ref={inputRef as React.RefObject<HTMLInputElement>}
+      data-puck-text-input="true"
       id={id}
       type="text"
       name={name}
       value={localValue}
       onChange={handleChange}
+      onKeyDown={isolateEditorTextInputEvent}
+      onCopy={isolateEditorTextInputEvent}
+      onCut={isolateEditorTextInputEvent}
+      onPaste={isolateEditorTextInputEvent}
+      onPointerDown={isolateEditorTextInputEvent}
+      onMouseDown={isolateEditorTextInputEvent}
       onCompositionStart={handleCompositionStart}
       onCompositionEnd={handleCompositionEnd}
       onBlur={handleBlur}

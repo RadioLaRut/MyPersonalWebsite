@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
 import test from "node:test";
 
 import {
@@ -33,4 +35,20 @@ test("responsive native image rendering ignores invalid fit overrides", () => {
   });
 
   assert.equal(className, "block w-full h-auto");
+});
+
+test("ImageSlider keeps the clipped unlit image above the lit base image", () => {
+  const componentSource = fs.readFileSync(
+    path.resolve(process.cwd(), "src/components/breakdowns/ImageSlider.tsx"),
+    "utf8",
+  );
+
+  assert.match(
+    componentSource,
+    /data-image-slider-layer="lit"[\s\S]{0,180}\bz-0\b/,
+  );
+  assert.match(
+    componentSource,
+    /data-image-slider-layer="unlit"[\s\S]{0,180}\bz-10\b/,
+  );
 });

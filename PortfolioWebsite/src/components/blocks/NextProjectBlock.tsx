@@ -97,16 +97,6 @@ export default function NextProjectBlock({
                         >
                             © 2026 江承彦 / JIANG CHENGYAN
                         </Typography>
-                        <Typography
-                            as="span"
-                            preset="sans-body"
-                            size="caption"
-                            weight="semantic"
-                            wrapPolicy="label"
-                            className={`${getResponsiveGridColumnClassName(resolvedDesign.footerRightBounds)} text-textMuted lg:text-right lg:justify-self-end`}
-                        >
-                            Designed for Darkness
-                        </Typography>
                     </div>
                 </div>
             </div>

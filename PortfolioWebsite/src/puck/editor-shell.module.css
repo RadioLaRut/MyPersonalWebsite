@@ -69,6 +69,17 @@
   z-index: 40;
 }
 
+/*
+ * Puck clips its layout header whenever a sidebar is open. The page selector
+ * menu is intentionally positioned over the editor, so its layout host must
+ * remain visible outside the header row.
+ */
+.adminShell :global([class*="_PuckLayout-header_"]) {
+  position: relative;
+  z-index: 50;
+  overflow: visible !important;
+}
+
 .adminShell :global([data-puck-editor="true"]) {
   height: 100% !important;
   max-height: 100% !important;
@@ -113,6 +124,22 @@
 }
 
 .adminShell :global([class*="_Sidebar_"])::selection {
+  background-color: #1579f2;
+  color: #ffffff;
+}
+
+.adminShell :global([data-puck-text-input="true"]) {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+}
+
+.adminShell :global([data-puck-text-input="true"]::selection) {
+  background-color: #1579f2;
+  color: #ffffff;
+}
+
+.adminShell :global([data-puck-text-input="true"]::-moz-selection) {
   background-color: #1579f2;
   color: #ffffff;
 }
@@ -227,7 +254,7 @@
   outline-color: #1579f2;
 }
 
-/* Text selection styles for Puck editor sidebar inputs */
+/* Text selection styles for Puck's built-in editor sidebar inputs */
 .adminShell :global(._Input-input_bsxfo_26::selection),
 .adminShell :global(textarea._Input-input_bsxfo_26::selection),
 .adminShell :global(._ExternalInputModal-searchInput_91ls0_299::selection) {

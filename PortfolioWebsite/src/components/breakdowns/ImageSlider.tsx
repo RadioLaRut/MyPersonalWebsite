@@ -230,7 +230,10 @@ export default function ImageSlider({
               </div>
             ) : null}
 
-            <div className={resolvedPreset === "native" ? "relative w-full" : "absolute inset-0"}>
+            <div
+              data-image-slider-layer="lit"
+              className={`${resolvedPreset === "native" ? "relative w-full" : "absolute inset-0"} z-0`}
+            >
               <div className="absolute inset-0 bg-neutral-900" />
               {litSrc ? (
                 <div className="relative z-10 h-full w-full">
@@ -249,7 +252,8 @@ export default function ImageSlider({
             </div>
 
             <div
-              className="absolute inset-0"
+              data-image-slider-layer="unlit"
+              className="absolute inset-0 z-10"
               style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
             >
               <div className="absolute inset-0 bg-neutral-800" />

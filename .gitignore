@@ -3,6 +3,11 @@ node_modules/
 .pnp
 .pnp.js
 
+# 项目固定使用 npm，忽略误生成的 pnpm 文件
+.pnpm-store/
+pnpm-lock.yaml
+pnpm-workspace.yaml
+
 # Next.js build output
 .next/
 out/
