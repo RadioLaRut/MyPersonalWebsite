@@ -69,7 +69,7 @@ npm run start
 }
 ```
 
-不要另建 SEO 数据文件。`/contact` 固定重定向到 `/about`。
+不要另建 SEO 数据文件。联系内容统一维护在 About 页的 `#contact` 区块；站点不设独立联系页面。
 
 ## 路由与渲染
 

@@ -13,7 +13,6 @@ const publicRoot = path.resolve(process.cwd(), "public");
 
 const DESCRIPTION_BY_SLUG = {
   about: "灯光、技术美术与游戏设计方向的个人介绍、实践重点和联系方式。",
-  contact: "江承彦的联系信息与创作方向。",
   index: "让氛围、系统与落地流程共同服务体验，汇集灯光、技术美术与游戏设计作品。",
   works: "灯光研究、互动叙事、系统设计与技术美术项目的完整作品索引。",
   "works/epic-stage": "围绕舞台空间、角色关系与即时演算展开的灯光叙事概念设计。",
@@ -67,7 +66,6 @@ const preparedDocuments = await Promise.all(files.map(async (filePath) => {
   const slug = slugFromFile(filePath);
   const migration = preparePageDocumentMigration(parsed, {
     description: DESCRIPTION_BY_SLUG[slug],
-    noIndex: slug === "contact",
   });
   const { document } = migration;
   const referenceIssues = validatePageReferences(document, publicRoot);

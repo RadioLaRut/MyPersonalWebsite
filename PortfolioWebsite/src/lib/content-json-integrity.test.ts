@@ -20,6 +20,12 @@ const contentRoot = path.join(projectRoot, "content/pages");
 const publicRoot = path.join(projectRoot, "public");
 const editorEmptyStatePath = path.join(projectRoot, "content/component-design/editor-empty-state.json");
 const lightingCollectionsRoot = path.join(contentRoot, "works/lighting-portfolio");
+const aboutPagePath = path.join(contentRoot, "about.json");
+const legacyContactPagePath = path.join(contentRoot, "contact.json");
+const legacyContactRoutePath = path.join(
+  projectRoot,
+  "src/app/(site)/contact/page.tsx",
+);
 const penguinCaseStudyPath = path.join(contentRoot, "works/penguin.json");
 const editorEmptyStateData = JSON.parse(fs.readFileSync(editorEmptyStatePath, "utf8")) as {
   content: Array<{ props: Record<string, unknown>; type: string }>;
@@ -28,10 +34,36 @@ const editorEmptyStateData = JSON.parse(fs.readFileSync(editorEmptyStatePath, "u
 const penguinCaseStudyData = JSON.parse(fs.readFileSync(penguinCaseStudyPath, "utf8")) as {
   content: Array<{ props: Record<string, unknown>; type: string }>;
 };
+const aboutPageData = JSON.parse(fs.readFileSync(aboutPagePath, "utf8")) as {
+  content: Array<{ props: Record<string, unknown>; type: string }>;
+};
 
 test("content pages satisfy the normalized Puck data contract", () => {
   const issues = validateContentPages({ contentRoot, publicRoot });
   assert.deepEqual(formatContentValidationIssues(issues), []);
+});
+
+test("联系内容只以关于页为唯一来源", () => {
+  const contactPageSources = walkJsonFiles(contentRoot)
+    .filter((jsonFile) => collectComponentTypes(
+      JSON.parse(fs.readFileSync(jsonFile, "utf8")) as unknown,
+    ).includes("ContactFlashlight"))
+    .sort();
+  const contactBlocks = aboutPageData.content.filter(
+    (node) => node.type === "ContactFlashlight",
+  );
+  const hero = aboutPageData.content.find((node) => node.type === "PortfolioHeroHeader");
+
+  assert.equal(fs.existsSync(legacyContactPagePath), false);
+  assert.equal(fs.existsSync(legacyContactRoutePath), false);
+  assert.deepEqual(contactPageSources, [aboutPagePath]);
+  assert.equal(contactBlocks.length, 1);
+  assert.equal(contactBlocks[0]?.props.anchorId, "contact");
+  assert.equal(hero?.props.ctaHref, "#contact");
+
+  for (const jsonFile of walkJsonFiles(contentRoot)) {
+    assert.equal(fs.readFileSync(jsonFile, "utf8").includes('"/contact'), false);
+  }
 });
 
 test("penguin case study preserves playable CTAs and truthful contribution boundaries", () => {
