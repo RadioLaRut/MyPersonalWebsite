@@ -5,6 +5,13 @@ import os from "node:os";
 import path from "node:path";
 
 import {
+  assertAggregateContentQuota,
+  assertPageDocumentBudget,
+  CONTENT_BUDGET_PROFILE_V1,
+  ContentBudgetExceededError,
+} from "./content-budget.ts";
+import { withContentWriteQueue } from "./content-write-queue.ts";
+import {
   CONTENT_PAGES_ROOT,
   type NormalizedPuckSlug,
   normalizePuckSlugInput,
@@ -13,15 +20,6 @@ import {
 } from "./puck-slug.ts";
 
 export type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue };
-
-declare global {
-  var __puckWriteQueue: Map<string, Promise<void>> | undefined;
-}
-
-const writeQueue = globalThis.__puckWriteQueue ?? new Map<string, Promise<void>>();
-if (!globalThis.__puckWriteQueue) {
-  globalThis.__puckWriteQueue = writeQueue;
-}
 
 function toPosixRelativePath(relativePath: string) {
   return relativePath.replaceAll(path.sep, "/");
@@ -41,6 +39,12 @@ function canonicalizeContentSlugPath(relativePath: string) {
 
 async function resolvePreferredLineEnding(filePath: string) {
   try {
+    const stat = await fs.stat(filePath);
+    if (stat.size > CONTENT_BUDGET_PROFILE_V1.pageDocument.maxBytes) {
+      throw new ContentBudgetExceededError(
+        `Stored page exceeds ${CONTENT_BUDGET_PROFILE_V1.pageDocument.maxBytes} bytes`,
+      );
+    }
     const existingContent = await fs.readFile(filePath, "utf8");
     return existingContent.includes("\r\n") ? "\r\n" : "\n";
   } catch (error) {
@@ -140,18 +144,63 @@ async function walkJsonFiles(
   return results;
 }
 
-async function enqueueWrite(slugKey: string, task: () => Promise<void>) {
-  const previous = writeQueue.get(slugKey) ?? Promise.resolve();
-  const next = previous.catch(() => undefined).then(task);
-  writeQueue.set(slugKey, next);
+async function collectPageStorageUsage(targetPath: string) {
+  const directories = [CONTENT_PAGES_ROOT];
+  let bytes = 0;
+  let files = 0;
+  let targetBytes = 0;
+  let targetExists = false;
 
-  try {
-    await next;
-  } finally {
-    if (writeQueue.get(slugKey) === next) {
-      writeQueue.delete(slugKey);
+  while (directories.length > 0) {
+    const directory = directories.pop();
+    if (!directory) break;
+
+    let entries: Dirent[];
+    try {
+      entries = await fs.readdir(directory, { withFileTypes: true });
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") continue;
+      throw error;
+    }
+
+    for (const entry of entries) {
+      const absolutePath = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        directories.push(absolutePath);
+        continue;
+      }
+      if (!entry.isFile() || path.extname(entry.name) !== ".json") continue;
+
+      const stat = await fs.stat(absolutePath);
+      files += 1;
+      bytes += stat.size;
+      if (path.resolve(absolutePath) === path.resolve(targetPath)) {
+        targetBytes = stat.size;
+        targetExists = true;
+      }
     }
   }
+
+  return { bytes, files, targetBytes, targetExists };
+}
+
+function assertPageStorageQuota(
+  usage: Awaited<ReturnType<typeof collectPageStorageUsage>>,
+  serializedBytes: number,
+) {
+  assertAggregateContentQuota(
+    {
+      bytes: usage.bytes,
+      files: usage.files,
+      replacedBytes: usage.targetBytes,
+      replacesExisting: usage.targetExists,
+    },
+    serializedBytes,
+    {
+      maxBytes: CONTENT_BUDGET_PROFILE_V1.storage.pageBytes,
+      maxFiles: CONTENT_BUDGET_PROFILE_V1.storage.pageCount,
+    },
+  );
 }
 
 export async function ensureContentPagesRoot() {
@@ -165,6 +214,12 @@ export async function readPageData(rawSlug: string | string[] | undefined): Prom
 
 export async function readPageDataByNormalizedSlug(normalizedSlug: NormalizedPuckSlug): Promise<JsonValue> {
   await assertExactCasePathExists(CONTENT_PAGES_ROOT, normalizedSlug.relativeJsonPath);
+  const stat = await fs.stat(normalizedSlug.absoluteJsonPath);
+  if (stat.size > CONTENT_BUDGET_PROFILE_V1.pageDocument.maxBytes) {
+    throw new ContentBudgetExceededError(
+      `Stored page exceeds ${CONTENT_BUDGET_PROFILE_V1.pageDocument.maxBytes} bytes`,
+    );
+  }
   const rawFile = await fs.readFile(normalizedSlug.absoluteJsonPath, "utf8");
   return JSON.parse(rawFile) as JsonValue;
 }
@@ -176,10 +231,21 @@ export async function writePageDataAtomically(rawSlug: string | string[] | undef
 }
 
 export async function writePageDataByNormalizedSlug(normalizedSlug: NormalizedPuckSlug, data: JsonValue) {
-  await enqueueWrite(normalizedSlug.slugKey, async () => {
+  assertPageDocumentBudget(data);
+  await withContentWriteQueue(async () => {
     await assertExactCaseParentPath(normalizedSlug.relativeJsonPath);
-    await fs.mkdir(path.dirname(normalizedSlug.absoluteJsonPath), { recursive: true });
     const lineEnding = await resolvePreferredLineEnding(normalizedSlug.absoluteJsonPath);
+    const serialized = `${JSON.stringify(data, null, 2).replace(/\n/g, lineEnding)}${lineEnding}`;
+    const serializedBytes = Buffer.byteLength(serialized, "utf8");
+    if (serializedBytes > CONTENT_BUDGET_PROFILE_V1.pageDocument.maxBytes) {
+      throw new ContentBudgetExceededError(
+        `Serialized page exceeds ${CONTENT_BUDGET_PROFILE_V1.pageDocument.maxBytes} bytes`,
+      );
+    }
+    const usage = await collectPageStorageUsage(normalizedSlug.absoluteJsonPath);
+    assertPageStorageQuota(usage, serializedBytes);
+
+    await fs.mkdir(path.dirname(normalizedSlug.absoluteJsonPath), { recursive: true });
 
     const baseName = path.basename(normalizedSlug.absoluteJsonPath, ".json");
     const tmpPath = path.join(
@@ -188,7 +254,6 @@ export async function writePageDataByNormalizedSlug(normalizedSlug: NormalizedPu
     );
 
     try {
-      const serialized = `${JSON.stringify(data, null, 2).replace(/\n/g, lineEnding)}${lineEnding}`;
       await fs.writeFile(tmpPath, serialized, "utf8");
       await fs.rename(tmpPath, normalizedSlug.absoluteJsonPath);
     } finally {

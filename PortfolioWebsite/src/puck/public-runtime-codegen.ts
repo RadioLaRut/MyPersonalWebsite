@@ -24,7 +24,9 @@ export function createWorkAliasResolverSource(entries: readonly WorkAliasSourceE
     "};",
     "",
     "export function resolveGeneratedWorkAlias(slug: string): string | null {",
-    "  return WORK_ALIAS_TARGETS[slug] ?? null;",
+    "  return Object.hasOwn(WORK_ALIAS_TARGETS, slug)",
+    "    ? WORK_ALIAS_TARGETS[slug]",
+    "    : null;",
     "}",
     "",
   ].join("\n");

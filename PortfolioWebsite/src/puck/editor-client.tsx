@@ -25,6 +25,7 @@ import {
   type PublishState,
   type SaveTrigger,
 } from "@/puck/editor/save-status";
+import { openDetachedWindow } from "@/puck/editor/open-detached-window";
 import IframePreviewChrome from "@/puck/editor/iframe-preview-chrome";
 import type { FontLabSyncState } from "@/puck/editor/types";
 import editorEmptyStateData from "../../content/component-design/editor-empty-state.json";
@@ -176,7 +177,6 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
   const activeSlugRef = useRef(initialSlug);
   const saveQueueRef = useRef<Promise<void>>(Promise.resolve());
   const queuedAutoSaveKeyRef = useRef<string | null>(null);
-  const prefetchedSlugsRef = useRef<Set<string>>(new Set());
   const publicPath = toPublicPathFromSlugKey(initialSlug);
   const availablePages = useMemo(() => {
     const merged = new Set<string>(["index", ...pageSlugs, initialSlug]);
@@ -211,21 +211,10 @@ export default function PuckEditorClient({ initialSlug }: PuckEditorClientProps)
   }, [currentAdminPath, router]);
 
   const openPublicPage = useCallback(() => {
-    window.open(publicPath, "_blank");
+    openDetachedWindow(publicPath);
   }, [publicPath]);
 
   useFontLabEditorSync(setFontLabSyncState);
-
-  useEffect(() => {
-    for (const slug of availablePages) {
-      if (prefetchedSlugsRef.current.has(slug)) {
-        continue;
-      }
-
-      router.prefetch(toAdminPathFromSlugKey(slug));
-      prefetchedSlugsRef.current.add(slug);
-    }
-  }, [availablePages, router]);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {

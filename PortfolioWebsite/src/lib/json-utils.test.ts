@@ -21,6 +21,24 @@ test("isJsonValue rejects non-JSON values", () => {
   assert.equal(isJsonValue(undefined), false);
   assert.equal(isJsonValue(() => undefined), false);
   assert.equal(isJsonValue({ bad: undefined }), false);
+  assert.equal(isJsonValue(Number.NaN), false);
+  assert.equal(isJsonValue(Number.POSITIVE_INFINITY), false);
+  const cyclic: unknown[] = [];
+  cyclic.push(cyclic);
+  assert.equal(isJsonValue(cyclic), false);
+});
+
+test("isJsonValue does not depend on variadic array expansion", () => {
+  const values = [null, true, "text"];
+  Object.defineProperty(values, Symbol.iterator, {
+    configurable: true,
+    value() {
+      throw new Error("array iteration must not be used");
+    },
+  });
+
+  assert.equal(JSON.stringify(values), '[null,true,"text"]');
+  assert.equal(isJsonValue(values), true);
 });
 
 test("isNonEmptyString accepts only strings with non-whitespace content", () => {

@@ -15,24 +15,46 @@ export function isNonEmptyString(value: unknown): value is string {
 }
 
 export function isJsonValue(value: unknown): value is JsonValue {
-  if (value === null) {
-    return true;
+  const stack: unknown[] = [value];
+  const seenContainers = new WeakSet<object>();
+
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (
+      current === null ||
+      typeof current === "string" ||
+      typeof current === "boolean"
+    ) {
+      continue;
+    }
+    if (typeof current === "number") {
+      if (!Number.isFinite(current)) return false;
+      continue;
+    }
+    if (typeof current !== "object" || current === undefined) {
+      return false;
+    }
+    if (seenContainers.has(current)) {
+      return false;
+    }
+    seenContainers.add(current);
+
+    if (Array.isArray(current)) {
+      for (let index = current.length - 1; index >= 0; index -= 1) {
+        stack.push(current[index]);
+      }
+      continue;
+    }
+    if (!isPlainRecord(current)) {
+      return false;
+    }
+    const values = Object.values(current);
+    for (let index = values.length - 1; index >= 0; index -= 1) {
+      stack.push(values[index]);
+    }
   }
 
-  const valueType = typeof value;
-  if (valueType === "string" || valueType === "number" || valueType === "boolean") {
-    return true;
-  }
-
-  if (Array.isArray(value)) {
-    return value.every(isJsonValue);
-  }
-
-  if (!isPlainRecord(value)) {
-    return false;
-  }
-
-  return Object.values(value).every(isJsonValue);
+  return true;
 }
 
 export function areJsonStructuresEqual(left: unknown, right: unknown): boolean {

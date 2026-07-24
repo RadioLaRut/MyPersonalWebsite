@@ -116,7 +116,7 @@ function CustomPageSelector({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const tree = useMemo(() => buildTree(paths), [paths]);
+  const tree = useMemo(() => (isOpen ? buildTree(paths) : null), [isOpen, paths]);
   const handleSelect = useCallback((path: string) => {
     onSelect(path);
     setIsOpen(false);
@@ -149,7 +149,7 @@ function CustomPageSelector({
         />
       </MotionButton>
 
-      {isOpen && (
+      {isOpen && tree && (
         <div className="absolute top-full left-0 z-50 mt-1 flex w-full min-w-[320px] max-h-[60vh] flex-col overflow-y-auto rounded-md border border-slate-200 bg-white shadow-xl py-2">
           <TreeRender node={tree} level={0} selected={selected} onSelect={handleSelect} />
         </div>

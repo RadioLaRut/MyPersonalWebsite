@@ -119,3 +119,18 @@ test("每个 ComponentLab 预设只能声明自己的组件类型", async () => 
     }
   }
 });
+
+test("ComponentLab 超过页面实例预算时明确失败而不是静默截断", async () => {
+  const [pages, presets] = await Promise.all([
+    contentRepository.listPages(),
+    readComponentLabPresetDocument(),
+  ]);
+
+  assert.throws(
+    () => createComponentLabInstanceCatalog(pages, presets, { maxInstances: 1 }),
+    (error) => (
+      error instanceof ComponentLabPresetError &&
+      error.message.includes("页面实例超过维护上限 1")
+    ),
+  );
+});

@@ -1,5 +1,10 @@
 import type { ContentRepository } from "./content-repository.ts";
 import {
+  CONTENT_BUDGET_PROFILE_V1,
+  ContentBudgetExceededError,
+  ContentQuotaExceededError,
+} from "./content-budget.ts";
+import {
   ContentNotFoundError,
   ContentPersistenceError,
   StoredContentInvalidError,
@@ -9,14 +14,18 @@ import {
   LOCAL_EDITOR_ACCESS_HEADER,
   LOCAL_EDITOR_ACCESS_TOKEN_ENV,
 } from "./local-editor-access.ts";
-import { evaluateLocalEditorAccess } from "./local-editor-policy.ts";
+import { evaluateLocalEditorApiAccess } from "./local-editor-policy.ts";
 import { PageDocumentValidationError } from "./page-document-contract.ts";
+import {
+  readJsonWithLimit,
+  RequestBodyError,
+} from "./request-body-policy.ts";
 import { synchronizeNextProjectBlocks } from "./project-catalog.ts";
 import { normalizePuckSlugInput, SlugValidationError } from "./puck-slug.ts";
 
 type PuckApiRepository = Pick<
   ContentRepository,
-  "listPages" | "publishPage" | "readPage" | "readProjectCatalog"
+  "listPageSlugs" | "publishPage" | "readPage" | "readProjectCatalog"
 >;
 
 const NO_STORE_HEADER = { "Cache-Control": "no-store" } as const;
@@ -41,7 +50,7 @@ function errorResponse(
 }
 
 function authorize(request: Request, requireToken = false) {
-  const decision = evaluateLocalEditorAccess(request, { requireToken });
+  const decision = evaluateLocalEditorApiAccess(request, { requireToken });
   if (decision === "allowed") return null;
 
   return decision === "token-required"
@@ -74,7 +83,7 @@ export async function handlePuckGet(
   try {
     const searchParams = new URL(request.url).searchParams;
     if (searchParams.get("list") === "1") {
-      const slugs = (await repository.listPages()).map((page) => page.slug);
+      const slugs = await repository.listPageSlugs();
       return jsonResponse({ slugs });
     }
 
@@ -115,8 +124,14 @@ export async function handlePuckPost(
 
   let payload: unknown;
   try {
-    payload = await request.json();
-  } catch {
+    payload = await readJsonWithLimit(
+      request,
+      CONTENT_BUDGET_PROFILE_V1.requestBytes.puckJson,
+    );
+  } catch (error) {
+    if (error instanceof RequestBodyError) {
+      return errorResponse(error.status, error.code, error.message);
+    }
     return errorResponse(400, "BAD_REQUEST", "Request body must be valid JSON");
   }
 
@@ -144,6 +159,12 @@ export async function handlePuckPost(
       dataValue,
     ));
   } catch (error) {
+    if (error instanceof ContentBudgetExceededError) {
+      return errorResponse(error.status, error.code, error.message);
+    }
+    if (error instanceof ContentQuotaExceededError) {
+      return errorResponse(error.status, error.code, error.message);
+    }
     if (error instanceof PageDocumentValidationError) {
       return errorResponse(422, error.code, error.message, error.issues);
     }

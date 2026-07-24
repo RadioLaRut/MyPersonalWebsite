@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 type MediaMatchLike = {
   matches: boolean;
@@ -30,16 +30,18 @@ function queryMatches(matchMedia: MediaMatcher | undefined, query: string) {
   return Boolean(matchMedia?.(query).matches);
 }
 
-function getWindowCapabilitySource(): InputCapabilitySource {
-  if (typeof window === "undefined") {
+function getWindowCapabilitySource(targetWindow?: Window | null): InputCapabilitySource {
+  const activeWindow = targetWindow ??
+    (typeof window === "undefined" ? null : window);
+  if (!activeWindow) {
     return {};
   }
 
   return {
-    hasTouchStart: "ontouchstart" in window,
-    innerWidth: window.innerWidth,
-    matchMedia: window.matchMedia.bind(window),
-    maxTouchPoints: navigator.maxTouchPoints,
+    hasTouchStart: "ontouchstart" in activeWindow,
+    innerWidth: activeWindow.innerWidth,
+    matchMedia: activeWindow.matchMedia.bind(activeWindow),
+    maxTouchPoints: activeWindow.navigator.maxTouchPoints,
   };
 }
 
@@ -76,6 +78,13 @@ export function supportsDesktopCustomCursor(
   const capabilities = resolveInputCapabilities(source);
   const innerWidth = source.innerWidth ?? 0;
 
+  return supportsDesktopCustomCursorFromCapabilities(capabilities, innerWidth);
+}
+
+export function supportsDesktopCustomCursorFromCapabilities(
+  capabilities: InputCapabilities,
+  innerWidth: number,
+) {
   return (
     innerWidth >= DESKTOP_LAYOUT_MIN_WIDTH &&
     capabilities.supportsHoverIntent &&
@@ -93,33 +102,95 @@ function addMediaChangeListener(query: MediaQueryList, handler: () => void) {
   return () => query.removeListener(handler);
 }
 
-export function useInputCapabilities() {
-  const [capabilities, setCapabilities] = useState<InputCapabilities>(() =>
-    resolveInputCapabilities(),
+type InputCapabilityStore = {
+  getSnapshot: () => InputCapabilities;
+  subscribe: (listener: () => void) => () => void;
+};
+
+const SERVER_CAPABILITIES = resolveInputCapabilities({});
+const inputCapabilityStores = new WeakMap<Window, InputCapabilityStore>();
+
+function areCapabilitiesEqual(
+  left: InputCapabilities,
+  right: InputCapabilities,
+) {
+  return (
+    left.canHover === right.canHover &&
+    left.hasCoarsePointer === right.hasCoarsePointer &&
+    left.hasFinePointer === right.hasFinePointer &&
+    left.isTouchLike === right.isTouchLike &&
+    left.prefersReducedMotion === right.prefersReducedMotion &&
+    left.supportsHoverIntent === right.supportsHoverIntent
   );
+}
 
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
+function createInputCapabilityStore(targetWindow: Window): InputCapabilityStore {
+  const listeners = new Set<() => void>();
+  const queries = [
+    targetWindow.matchMedia("(pointer: fine)"),
+    targetWindow.matchMedia("(pointer: coarse)"),
+    targetWindow.matchMedia("(hover: hover)"),
+    targetWindow.matchMedia("(prefers-reduced-motion: reduce)"),
+  ];
+  let snapshot = resolveInputCapabilities(getWindowCapabilitySource(targetWindow));
+  let removeListeners: Array<() => void> = [];
 
-    const queries = [
-      window.matchMedia("(pointer: fine)"),
-      window.matchMedia("(pointer: coarse)"),
-      window.matchMedia("(hover: hover)"),
-      window.matchMedia("(prefers-reduced-motion: reduce)"),
-    ];
-    const update = () => setCapabilities(resolveInputCapabilities());
+  const update = (force = false) => {
+    const nextSnapshot = resolveInputCapabilities(getWindowCapabilitySource(targetWindow));
+    if (!force && areCapabilitiesEqual(snapshot, nextSnapshot)) return;
+    snapshot = nextSnapshot;
+    listeners.forEach((listener) => listener());
+  };
+  const handleResize = () => update(true);
 
-    update();
-    const removeListeners = queries.map((query) => addMediaChangeListener(query, update));
-    window.addEventListener("resize", update);
+  const attach = () => {
+    removeListeners = queries.map((query) => addMediaChangeListener(query, update));
+    targetWindow.addEventListener("resize", handleResize);
+  };
+  const detach = () => {
+    removeListeners.forEach((removeListener) => removeListener());
+    removeListeners = [];
+    targetWindow.removeEventListener("resize", handleResize);
+  };
 
-    return () => {
-      removeListeners.forEach((removeListener) => removeListener());
-      window.removeEventListener("resize", update);
-    };
-  }, []);
+  return {
+    getSnapshot: () => snapshot,
+    subscribe(listener) {
+      listeners.add(listener);
+      if (listeners.size === 1) {
+        attach();
+        update();
+      }
+      return () => {
+        listeners.delete(listener);
+        if (listeners.size === 0) detach();
+      };
+    },
+  };
+}
 
-  return capabilities;
+function getInputCapabilityStore(targetWindow: Window): InputCapabilityStore {
+  const existing = inputCapabilityStores.get(targetWindow);
+  if (existing) return existing;
+
+  const store = createInputCapabilityStore(targetWindow);
+  inputCapabilityStores.set(targetWindow, store);
+  return store;
+}
+
+const serverStore: InputCapabilityStore = {
+  getSnapshot: () => SERVER_CAPABILITIES,
+  subscribe: () => () => undefined,
+};
+
+export function useInputCapabilities(targetWindow?: Window | null) {
+  const activeWindow = targetWindow ??
+    (typeof window === "undefined" ? null : window);
+  const store = activeWindow ? getInputCapabilityStore(activeWindow) : serverStore;
+
+  return useSyncExternalStore(
+    store.subscribe,
+    store.getSnapshot,
+    serverStore.getSnapshot,
+  );
 }

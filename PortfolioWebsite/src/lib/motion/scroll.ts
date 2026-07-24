@@ -2,6 +2,8 @@
 
 import { type RefObject, useEffect, useState } from "react";
 
+import { subscribeViewportRaf } from "./viewport-raf.ts";
+
 export type ViewportRectLike = {
   height: number;
   top: number;
@@ -41,11 +43,7 @@ export function useCenterZoneActivation(
       return;
     }
 
-    let frameId = 0;
-    let frameQueued = false;
-
     const update = () => {
-      frameQueued = false;
       const element = elementRef.current;
 
       if (!element) {
@@ -62,26 +60,7 @@ export function useCenterZoneActivation(
       );
     };
 
-    const queueUpdate = () => {
-      if (frameQueued) {
-        return;
-      }
-
-      frameQueued = true;
-      frameId = window.requestAnimationFrame(update);
-    };
-
-    window.addEventListener("scroll", queueUpdate, { passive: true });
-    window.addEventListener("resize", queueUpdate);
-    update();
-
-    return () => {
-      window.removeEventListener("scroll", queueUpdate);
-      window.removeEventListener("resize", queueUpdate);
-      if (frameId) {
-        window.cancelAnimationFrame(frameId);
-      }
-    };
+    return subscribeViewportRaf(window, update);
   }, [elementRef, enabled, zoneRatio]);
 
   return enabled ? isInsideZone : false;

@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { NextResponse } from "next/server";
 
@@ -6,11 +7,11 @@ import {
   LOCAL_EDITOR_ACCESS_TOKEN_ENV,
 } from "./local-editor-access.ts";
 import {
+  createLocalEditorTransportContext,
   evaluateLocalEditorAccess,
+  evaluateLocalEditorApiAccess,
   type LocalEditorAccessOptions,
 } from "./local-editor-policy.ts";
-
-type EditorAccessType = "page" | "api";
 
 const UNAUTHORIZED_BODY = {
   error: { code: "UNAUTHORIZED", message: "Editor access denied" },
@@ -30,16 +31,28 @@ function unauthorizedResponse(body: typeof UNAUTHORIZED_BODY | typeof TOKEN_REQU
   });
 }
 
-export function assertLocalEditorAccess(
-  type: EditorAccessType,
-  request?: Request,
-  options: LocalEditorAccessOptions = {},
-): NextResponse | void {
-  const decision = evaluateLocalEditorAccess(request, options);
+function apiAccessResponse(decision: ReturnType<typeof evaluateLocalEditorApiAccess>) {
   if (decision === "allowed") return;
-
-  if (type === "page") notFound();
   return unauthorizedResponse(
     decision === "token-required" ? TOKEN_REQUIRED_BODY : UNAUTHORIZED_BODY,
   );
+}
+
+export async function assertLocalEditorPageAccess(): Promise<void> {
+  const requestHeaders = await headers();
+  const context = createLocalEditorTransportContext(
+    requestHeaders.get("host"),
+    requestHeaders.get("origin"),
+  );
+
+  if (evaluateLocalEditorAccess(context) !== "allowed") {
+    notFound();
+  }
+}
+
+export function assertLocalEditorApiAccess(
+  request: Request,
+  options: LocalEditorAccessOptions = {},
+): NextResponse | void {
+  return apiAccessResponse(evaluateLocalEditorApiAccess(request, options));
 }

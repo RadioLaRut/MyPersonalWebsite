@@ -45,7 +45,7 @@ npm run report:build
 npm run start
 ```
 
-`check` 会先验证按页面生成的公开 Puck 运行时和作品别名映射没有过期，再依次执行 ESLint、TypeScript、全部 Node 测试和资源完整性检查。`build` 会先重新生成这些派生产物并执行完整 `check`，再由 Next 16 的默认 Turbopack 构建生产产物；`report:build` 将公开路由类型、客户端组件与首载资源写入 `.next/build-report.json`，并阻止 Proxy 再次跟踪运行时内容文件。
+`check` 会先验证按页面生成的公开 Puck 运行时和作品别名映射没有过期，再依次执行 ESLint、TypeScript、全部 Node 测试和资源完整性检查。`build` 会先重新生成这些派生产物并执行完整 `check`，再由 Next 16 的 Webpack 路径构建生产产物；Turbopack 兼容性恢复作为独立维护任务处理。`report:build` 只读取当前 Next 16 Webpack 产物中的固定 JSON 清单和逐路由 Client Reference Manifest，将公开路由类型、客户端组件与首载资源写入 schema v2 的 `.next/build-report.json`，并阻止 Proxy 再次跟踪运行时内容文件。
 
 ## 内容架构
 

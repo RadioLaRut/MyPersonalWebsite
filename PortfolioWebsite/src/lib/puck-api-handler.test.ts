@@ -6,6 +6,10 @@ import {
   ContentPersistenceError,
   StoredContentInvalidError,
 } from "./content-repository.ts";
+import {
+  ContentBudgetExceededError,
+  ContentQuotaExceededError,
+} from "./content-budget.ts";
 import { PageDocumentValidationError, type PageDocument } from "./page-document-contract.ts";
 import { handlePuckGet, handlePuckPost } from "./puck-api-handler.ts";
 
@@ -25,7 +29,7 @@ const validDocument = {
 
 function createRepository(overrides: Record<string, unknown> = {}) {
   return {
-    listPages: async () => [{ document: validDocument, slug: "index" }],
+    listPageSlugs: async () => ["index"],
     publishPage: async () => ({
       ok: true as const,
       path: "index.json",
@@ -143,6 +147,28 @@ test("Puck POST preserves 422 issues and distinguishes persistence failures", as
     );
     assert.equal(failed.status, 500);
     assert.equal((await failed.json()).error.code, "CONTENT_PERSISTENCE_ERROR");
+
+    const overBudget = await handlePuckPost(
+      postRequest(JSON.stringify({ data: validDocument, slug: "" })),
+      createRepository({
+        publishPage: async () => {
+          throw new ContentBudgetExceededError("test budget");
+        },
+      }),
+    );
+    assert.equal(overBudget.status, 422);
+    assert.equal((await overBudget.json()).error.code, "CONTENT_BUDGET_EXCEEDED");
+
+    const overQuota = await handlePuckPost(
+      postRequest(JSON.stringify({ data: validDocument, slug: "" })),
+      createRepository({
+        publishPage: async () => {
+          throw new ContentQuotaExceededError("test quota");
+        },
+      }),
+    );
+    assert.equal(overQuota.status, 507);
+    assert.equal((await overQuota.json()).error.code, "CONTENT_QUOTA_EXCEEDED");
   });
 });
 

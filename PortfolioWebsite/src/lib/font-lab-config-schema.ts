@@ -20,6 +20,15 @@ import { PREVIEW_REFERENCE_VIEWPORT_PX } from "./preview-viewports.ts";
 import { areJsonStructuresEqual, isPlainRecord } from "./json-utils.ts";
 
 export const FONT_LAB_SCHEMA_VERSION = 6 as const;
+export const FONT_LAB_INPUT_LIMITS = {
+  labelCodePoints: 64,
+  labelUtf8Bytes: 256,
+  latinFontScale: { min: 0.5, max: 2 },
+  lineHeight: { min: 0.8, max: 3 },
+  offset: { min: -1, max: 1 },
+  letterSpacing: { min: -0.25, max: 1 },
+  referenceFontSizeRem: { min: 0.5, max: 12 },
+} as const;
 
 export type FontLabApiPayload = {
   config?: unknown;
@@ -82,6 +91,43 @@ type LegacyFontLabConfig = {
 
 function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
+}
+
+function isNumberInRange(
+  value: unknown,
+  range: Readonly<{ min: number; max: number }>,
+): value is number {
+  return isFiniteNumber(value) && value >= range.min && value <= range.max;
+}
+
+export function parseBoundedFontLabNumberInput(
+  value: string,
+  range: Readonly<{ min: number; max: number }>,
+): number | null {
+  const normalizedValue = value.trim();
+  if (!normalizedValue) return null;
+
+  const parsedValue = Number(normalizedValue);
+  return isNumberInRange(parsedValue, range) ? parsedValue : null;
+}
+
+function normalizeBoundedNumber(
+  value: unknown,
+  range: Readonly<{ min: number; max: number }>,
+  fallback: number,
+) {
+  return isNumberInRange(value, range) ? value : fallback;
+}
+
+function isValidFontLabLabel(value: unknown): value is string {
+  if (typeof value !== "string" || value.trim().length === 0) return false;
+
+  const codePointLength = Array.from(value).length;
+  return (
+    codePointLength >= 1 &&
+    codePointLength <= FONT_LAB_INPUT_LIMITS.labelCodePoints &&
+    new TextEncoder().encode(value).byteLength <= FONT_LAB_INPUT_LIMITS.labelUtf8Bytes
+  );
 }
 
 const MAX_FONT_SIZE_VALUE_LENGTH = 96;
@@ -186,7 +232,10 @@ function formatFixedFontSizeRem(value: number) {
 function normalizeReferenceFontSizeValue(value: string, fallback: string) {
   const fixedRem = parseRemFontSize(value) ?? parseClampFontSize(value);
 
-  if (fixedRem === null) {
+  if (
+    fixedRem === null ||
+    !isNumberInRange(fixedRem, FONT_LAB_INPUT_LIMITS.referenceFontSizeRem)
+  ) {
     return fallback;
   }
 
@@ -216,7 +265,10 @@ function normalizeLegacyMaxFontSizeValue(
     return fallback;
   }
 
-  return formatFixedFontSizeRem((fixedRem / tokenClamp.maxRem) * tokenReferenceRem);
+  const referenceRem = (fixedRem / tokenClamp.maxRem) * tokenReferenceRem;
+  return isNumberInRange(referenceRem, FONT_LAB_INPUT_LIMITS.referenceFontSizeRem)
+    ? formatFixedFontSizeRem(referenceRem)
+    : fallback;
 }
 
 function normalizeFixedFontSizeValue(
@@ -233,7 +285,7 @@ function normalizeFixedFontSizeValue(
 }
 
 function normalizeLatinFontScale(value: unknown) {
-  if (!isFiniteNumber(value) || value <= 0) {
+  if (!isNumberInRange(value, FONT_LAB_INPUT_LIMITS.latinFontScale)) {
     return 1;
   }
 
@@ -383,17 +435,23 @@ function normalizeSizeConfig(
   }
 
   return {
-    cjkEdgeOffset: isFiniteNumber(config.cjkEdgeOffset)
-      ? config.cjkEdgeOffset
-      : isFiniteNumber(config.cjkHorizontalOffset)
-        ? config.cjkHorizontalOffset
-        : defaults.cjkEdgeOffset,
-    cjkLetterSpacing: isFiniteNumber(config.cjkLetterSpacing)
-      ? config.cjkLetterSpacing
-      : defaults.cjkLetterSpacing,
-    cjkVerticalOffset: isFiniteNumber(config.cjkVerticalOffset)
-      ? config.cjkVerticalOffset
-      : defaults.cjkVerticalOffset,
+    cjkEdgeOffset: normalizeBoundedNumber(
+      isFiniteNumber(config.cjkEdgeOffset)
+        ? config.cjkEdgeOffset
+        : config.cjkHorizontalOffset,
+      FONT_LAB_INPUT_LIMITS.offset,
+      defaults.cjkEdgeOffset,
+    ),
+    cjkLetterSpacing: normalizeBoundedNumber(
+      config.cjkLetterSpacing,
+      FONT_LAB_INPUT_LIMITS.letterSpacing,
+      defaults.cjkLetterSpacing,
+    ),
+    cjkVerticalOffset: normalizeBoundedNumber(
+      config.cjkVerticalOffset,
+      FONT_LAB_INPUT_LIMITS.offset,
+      defaults.cjkVerticalOffset,
+    ),
     fontSize:
       typeof config.fontSize === "string"
         ? normalizeFixedFontSizeValue(
@@ -403,20 +461,28 @@ function normalizeSizeConfig(
           fontSizeMode,
         )
         : defaults.fontSize,
-    latinEdgeOffset: isFiniteNumber(config.latinEdgeOffset)
-      ? config.latinEdgeOffset
-      : isFiniteNumber(config.latinHorizontalOffset)
-        ? config.latinHorizontalOffset
-        : defaults.latinEdgeOffset,
-    latinLetterSpacing: isFiniteNumber(config.latinLetterSpacing)
-      ? config.latinLetterSpacing
-      : defaults.latinLetterSpacing,
-    latinRelativeOffset: isFiniteNumber(config.latinRelativeOffset)
-      ? config.latinRelativeOffset
-      : defaults.latinRelativeOffset,
-    lineHeight: isFiniteNumber(config.lineHeight)
-      ? config.lineHeight
-      : defaults.lineHeight,
+    latinEdgeOffset: normalizeBoundedNumber(
+      isFiniteNumber(config.latinEdgeOffset)
+        ? config.latinEdgeOffset
+        : config.latinHorizontalOffset,
+      FONT_LAB_INPUT_LIMITS.offset,
+      defaults.latinEdgeOffset,
+    ),
+    latinLetterSpacing: normalizeBoundedNumber(
+      config.latinLetterSpacing,
+      FONT_LAB_INPUT_LIMITS.letterSpacing,
+      defaults.latinLetterSpacing,
+    ),
+    latinRelativeOffset: normalizeBoundedNumber(
+      config.latinRelativeOffset,
+      FONT_LAB_INPUT_LIMITS.offset,
+      defaults.latinRelativeOffset,
+    ),
+    lineHeight: normalizeBoundedNumber(
+      config.lineHeight,
+      FONT_LAB_INPUT_LIMITS.lineHeight,
+      defaults.lineHeight,
+    ),
     semanticWeight:
       typeof config.semanticWeight === "string" &&
         isTypographyWeight(config.semanticWeight)
@@ -438,7 +504,7 @@ export function normalizeFontLabPresetConfig(
   const fontSizeMode = options.fontSizeMode ?? "reference";
 
   return {
-    labelZh: typeof source.labelZh === "string" && source.labelZh.trim()
+    labelZh: isValidFontLabLabel(source.labelZh)
       ? source.labelZh
       : defaults.labelZh,
     latinFontScale: normalizeLatinFontScale(source.latinFontScale),

@@ -1,5 +1,6 @@
 import type { Data } from "@puckeditor/core";
 
+import { assertPageDocumentBudget } from "./content-budget.ts";
 import { isPlainRecord } from "./json-utils.ts";
 import {
   collectImageLikeReferences,
@@ -706,6 +707,7 @@ function removeRuntimeProjectionProps(value: unknown): unknown {
 }
 
 export function migrateLegacyPageDocument(value: unknown): unknown {
+  assertPageDocumentBudget(value);
   if (
     !isPlainRecord(value) ||
     value.version !== undefined ||
@@ -752,6 +754,7 @@ export function migrateLegacyPageDocument(value: unknown): unknown {
 }
 
 export function normalizePageDraft(value: unknown): unknown {
+  assertPageDocumentBudget(value);
   if (isPlainRecord(value) && value.version === PAGE_DOCUMENT_VERSION) {
     return removeRuntimeProjectionProps(value);
   }
@@ -765,6 +768,7 @@ export function normalizePageDraft(value: unknown): unknown {
 
 function parseStrictPageDocument(value: unknown): PageDocument {
   const candidate = value;
+  assertPageDocumentBudget(candidate);
   const issues = validateCurrentPageDocument(candidate);
   if (issues.length > 0) {
     throw new PageDocumentValidationError(issues);

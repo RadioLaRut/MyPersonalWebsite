@@ -14,7 +14,7 @@
     "predev:test": "npm run generate:public-runtime",
     "dev:test": "node scripts/run-next-with-mode.mjs testing dev",
     "prebuild": "npm run generate:public-runtime",
-    "build": "npm run check && next build && npm run report:build",
+    "build": "npm run check && next build --webpack && npm run report:build",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --project tsconfig.typecheck.json --noEmit --incremental false",

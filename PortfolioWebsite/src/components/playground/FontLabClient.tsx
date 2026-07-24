@@ -18,6 +18,8 @@ import { buildFontLabDocumentCssVars } from "@/lib/font-lab-css-vars";
 import { getLocalEditorAccessHeaders } from "@/lib/local-editor-access";
 import {
   createDefaultFontLabDocument,
+  FONT_LAB_INPUT_LIMITS,
+  parseBoundedFontLabNumberInput,
   parseFontLabDocument,
   type FontLabApiPayload,
   type FontLabDocument,
@@ -551,6 +553,8 @@ function ToggleField({
 type NumberFieldProps = {
   helperText?: ReactNode;
   label: string;
+  max: number;
+  min: number;
   onCommit: (value: number) => void;
   step?: string;
   value: number;
@@ -563,6 +567,8 @@ function NumberField(props: NumberFieldProps) {
 function NumberFieldDraft({
   helperText,
   label,
+  max,
+  min,
   onCommit,
   step = FIELD_STEP,
   value,
@@ -570,16 +576,8 @@ function NumberFieldDraft({
   const [draft, setDraft] = useState(String(value));
 
   const commitDraft = () => {
-    const nextValue = draft.trim();
-
-    if (!nextValue) {
-      setDraft("0");
-      onCommit(0);
-      return;
-    }
-
-    const parsed = Number(nextValue);
-    if (!Number.isFinite(parsed)) {
+    const parsed = parseBoundedFontLabNumberInput(draft, { max, min });
+    if (parsed === null) {
       setDraft(String(value));
       return;
     }
@@ -594,6 +592,8 @@ function NumberFieldDraft({
       <input
         type="number"
         inputMode="decimal"
+        max={max}
+        min={min}
         step={step}
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
@@ -643,7 +643,13 @@ function FontSizeFieldDraft({
   });
 
   const commitFixed = () => {
-    const nextValue = buildFixedFontSize(draft);
+    const parsed = parseBoundedFontLabNumberInput(
+      draft,
+      FONT_LAB_INPUT_LIMITS.referenceFontSizeRem,
+    );
+    const nextValue = parsed === null
+      ? null
+      : buildFixedFontSize(String(parsed));
 
     if (!nextValue) {
       const fixedRem = getFixedFontSizeRem(value);
@@ -661,6 +667,8 @@ function FontSizeFieldDraft({
       <input
         type="number"
         inputMode="decimal"
+        max={FONT_LAB_INPUT_LIMITS.referenceFontSizeRem.max}
+        min={FONT_LAB_INPUT_LIMITS.referenceFontSizeRem.min}
         step="0.01"
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
@@ -1312,6 +1320,8 @@ export default function FontLabClient() {
 
                 <NumberField
                   label="英文字体缩放"
+                  min={FONT_LAB_INPUT_LIMITS.latinFontScale.min}
+                  max={FONT_LAB_INPUT_LIMITS.latinFontScale.max}
                   step="0.01"
                   value={activePresetConfig.latinFontScale}
                   onCommit={(latinFontScale) =>
@@ -1340,6 +1350,8 @@ export default function FontLabClient() {
 
                   <NumberField
                     label="行高"
+                    min={FONT_LAB_INPUT_LIMITS.lineHeight.min}
+                    max={FONT_LAB_INPUT_LIMITS.lineHeight.max}
                     value={activeSizeConfig.lineHeight}
                     onCommit={(lineHeight) => updateCurrentSizeConfig({ lineHeight })}
                   />
@@ -1347,6 +1359,8 @@ export default function FontLabClient() {
 
                 <NumberField
                   label="英文相对基线偏移"
+                  min={FONT_LAB_INPUT_LIMITS.offset.min}
+                  max={FONT_LAB_INPUT_LIMITS.offset.max}
                   value={activeSizeConfig.latinRelativeOffset}
                   onCommit={(latinRelativeOffset) =>
                     updateCurrentSizeConfig({ latinRelativeOffset })
@@ -1361,6 +1375,8 @@ export default function FontLabClient() {
                 <div className="grid gap-3 md:grid-cols-2">
                   <NumberField
                     label="中文基准校正（高级）"
+                    min={FONT_LAB_INPUT_LIMITS.offset.min}
+                    max={FONT_LAB_INPUT_LIMITS.offset.max}
                     value={activeSizeConfig.cjkVerticalOffset}
                     onCommit={(cjkVerticalOffset) =>
                       updateCurrentSizeConfig({ cjkVerticalOffset })
@@ -1370,6 +1386,8 @@ export default function FontLabClient() {
 
                   <NumberField
                     label="中文段落开头偏移"
+                    min={FONT_LAB_INPUT_LIMITS.offset.min}
+                    max={FONT_LAB_INPUT_LIMITS.offset.max}
                     value={activeSizeConfig.cjkEdgeOffset}
                     onCommit={(cjkEdgeOffset) =>
                       updateCurrentSizeConfig({ cjkEdgeOffset })
@@ -1381,6 +1399,8 @@ export default function FontLabClient() {
                 <div className="grid gap-3 md:grid-cols-2">
                   <NumberField
                     label="英文段落开头偏移"
+                    min={FONT_LAB_INPUT_LIMITS.offset.min}
+                    max={FONT_LAB_INPUT_LIMITS.offset.max}
                     value={activeSizeConfig.latinEdgeOffset}
                     onCommit={(latinEdgeOffset) =>
                       updateCurrentSizeConfig({ latinEdgeOffset })
@@ -1390,6 +1410,8 @@ export default function FontLabClient() {
 
                   <NumberField
                     label="中文字距"
+                    min={FONT_LAB_INPUT_LIMITS.letterSpacing.min}
+                    max={FONT_LAB_INPUT_LIMITS.letterSpacing.max}
                     value={activeSizeConfig.cjkLetterSpacing}
                     onCommit={(cjkLetterSpacing) =>
                       updateCurrentSizeConfig({ cjkLetterSpacing })
@@ -1399,6 +1421,8 @@ export default function FontLabClient() {
 
                 <NumberField
                   label="英文字距"
+                  min={FONT_LAB_INPUT_LIMITS.letterSpacing.min}
+                  max={FONT_LAB_INPUT_LIMITS.letterSpacing.max}
                   value={activeSizeConfig.latinLetterSpacing}
                   onCommit={(latinLetterSpacing) =>
                     updateCurrentSizeConfig({ latinLetterSpacing })

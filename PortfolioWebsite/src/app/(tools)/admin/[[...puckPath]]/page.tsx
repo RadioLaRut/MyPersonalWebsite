@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 
 import { normalizePuckSlugInput, SlugValidationError } from "@/lib/puck-slug";
-import { assertLocalEditorAccess } from "@/lib/security";
 import PuckEditorClient from "@/puck/editor-client";
 
 type AdminPuckPageParams = {
@@ -13,7 +12,6 @@ export default async function AdminPuckPage({
 }: {
   params: Promise<AdminPuckPageParams>;
 }) {
-  assertLocalEditorAccess("page");
   const { puckPath } = await params;
 
   let initialSlug = "index";

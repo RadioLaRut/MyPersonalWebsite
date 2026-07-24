@@ -172,3 +172,19 @@ test("normalizePuckSlugInput rejects traversal and poison slug inputs with SlugV
     );
   }
 });
+
+test("normalizePuckSlugInput enforces segment count, segment length, and total length budgets", () => {
+  assert.doesNotThrow(() => normalizePuckSlugInput(Array(8).fill("a".repeat(31))));
+  assert.throws(
+    () => normalizePuckSlugInput(Array(9).fill("a")),
+    SlugValidationError,
+  );
+  assert.throws(
+    () => normalizePuckSlugInput(["a".repeat(65)]),
+    SlugValidationError,
+  );
+  assert.throws(
+    () => normalizePuckSlugInput(Array(8).fill("a".repeat(64))),
+    SlugValidationError,
+  );
+});

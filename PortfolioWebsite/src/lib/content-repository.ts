@@ -1,6 +1,10 @@
 import path from "node:path";
 
 import {
+  ContentBudgetExceededError,
+  ContentQuotaExceededError,
+} from "./content-budget.ts";
+import {
   type JsonValue,
   listPageSlugs,
   readPageDataByNormalizedSlug,
@@ -99,6 +103,9 @@ export class ContentRepository {
       if (error instanceof SyntaxError) {
         throw new StoredContentInvalidError(normalizedSlug.slugKey, { cause: error });
       }
+      if (error instanceof ContentBudgetExceededError) {
+        throw new StoredContentInvalidError(normalizedSlug.slugKey, { cause: error });
+      }
       throw error;
     }
 
@@ -113,13 +120,17 @@ export class ContentRepository {
   }
 
   async listPages(): Promise<ContentPageEntry[]> {
-    const slugs = await this.dependencies.listSlugs();
+    const slugs = await this.listPageSlugs();
     return Promise.all(
       slugs.map(async (slug) => ({
         document: await this.readPage(slug),
         slug,
       })),
     );
+  }
+
+  async listPageSlugs(): Promise<string[]> {
+    return this.dependencies.listSlugs();
   }
 
   async publishPage(
@@ -165,6 +176,12 @@ export class ContentRepository {
     try {
       await this.dependencies.writeData(normalizedSlug, document as JsonValue);
     } catch (error) {
+      if (
+        error instanceof ContentBudgetExceededError ||
+        error instanceof ContentQuotaExceededError
+      ) {
+        throw error;
+      }
       throw new ContentPersistenceError("Failed to persist page content", { cause: error });
     }
 
@@ -183,7 +200,7 @@ export class ContentRepository {
       throw new ContentPersistenceError("Published page failed read-back verification");
     }
 
-    const slugs = knownSlugs ?? await this.dependencies.listSlugs().catch(() => []);
+    const slugs = knownSlugs ?? await this.listPageSlugs().catch(() => []);
 
     return {
       ok: true,

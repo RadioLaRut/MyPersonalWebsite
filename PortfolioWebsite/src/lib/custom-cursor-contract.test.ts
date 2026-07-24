@@ -16,8 +16,14 @@ test("系统光标只由已挂载的 CustomCursor 激活属性控制", () => {
   assert.doesNotMatch(css, /data-font-lab-mode/);
   assert.match(cursor, /setAttribute\(CUSTOM_CURSOR_ACTIVE_ATTRIBUTE, "true"\)/);
   assert.match(cursor, /removeAttribute\(CUSTOM_CURSOR_ACTIVE_ATTRIBUTE\)/);
-  assert.match(cursor, /new win\.MutationObserver\(refreshMagnetElements\)/);
+  assert.match(cursor, /new win\.MutationObserver\(markMagnetElementsDirty\)/);
   assert.match(cursor, /attributeFilter: \["data-cursor-magnet"\]/);
+  assert.match(cursor, /subscribeViewportRaf\(win, markMagnetRectsDirty\)/);
+  assert.match(cursor, /new win\.ResizeObserver\(markMagnetRectsDirty\)/);
+  assert.match(cursor, /magnetResizeObserver\?\.observe\(element\)/);
+  assert.match(cursor, /magnetResizeObserver\?\.disconnect\(\)/);
+  assert.match(cursor, /magnetRectsDirty/);
+  assert.doesNotMatch(cursor, /const onPointerMove[\s\S]*getBoundingClientRect\(\)/);
   assert.doesNotMatch(cursor, /usePathname|startsWith\("\/admin"\)/);
   assert.doesNotMatch(toolsLayout, /CustomCursor/);
 });

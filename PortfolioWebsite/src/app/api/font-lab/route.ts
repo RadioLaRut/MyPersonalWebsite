@@ -11,7 +11,12 @@ import {
   writeFontLabConfig,
 } from "@/lib/font-lab-config";
 import { parseFontLabSavePayload } from "@/lib/font-lab-config-schema";
-import { assertLocalEditorAccess } from "@/lib/security";
+import { CONTENT_BUDGET_PROFILE_V1 } from "@/lib/content-budget";
+import {
+  readJsonWithLimit,
+  RequestBodyError,
+} from "@/lib/request-body-policy";
+import { assertLocalEditorApiAccess } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -39,8 +44,8 @@ function errorResponse(status: number, code: string, message: string) {
   );
 }
 
-export async function GET() {
-  const denied = assertLocalEditorAccess("api");
+export async function GET(request: NextRequest) {
+  const denied = assertLocalEditorApiAccess(request);
   if (denied) {
     return denied;
   }
@@ -60,15 +65,21 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const denied = assertLocalEditorAccess("api", request, { requireToken: true });
+  const denied = assertLocalEditorApiAccess(request, { requireToken: true });
   if (denied) {
     return denied;
   }
 
   let payload: unknown;
   try {
-    payload = await request.json();
-  } catch {
+    payload = await readJsonWithLimit(
+      request,
+      CONTENT_BUDGET_PROFILE_V1.requestBytes.fontLabJson,
+    );
+  } catch (error) {
+    if (error instanceof RequestBodyError) {
+      return errorResponse(error.status, error.code, error.message);
+    }
     return errorResponse(400, "BAD_REQUEST", "Request body must be valid JSON");
   }
 

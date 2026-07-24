@@ -2,8 +2,25 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 import { NextResponse } from "next/server";
+import sharp from "sharp";
 
-import { assertLocalEditorAccess } from "@/lib/security";
+import {
+  assertAggregateContentQuota,
+  CONTENT_BUDGET_PROFILE_V1,
+  ContentQuotaExceededError,
+} from "@/lib/content-budget";
+import { withContentWriteQueue } from "@/lib/content-write-queue";
+import {
+  MediaBudgetError,
+  readAndValidateMediaMetadata,
+  SHARP_MEDIA_INPUT_OPTIONS,
+} from "@/lib/media-budget";
+import {
+  readBodyWithLimit,
+  rebuildRequestWithBody,
+  RequestBodyError,
+} from "@/lib/request-body-policy";
+import { assertLocalEditorApiAccess } from "@/lib/security";
 import {
   createUploadFileName,
   UploadValidationError,
@@ -48,8 +65,52 @@ function resolveUploadDestination(outputName: string) {
   return resolvedPath;
 }
 
+async function collectUploadUsage() {
+  const directories = [UPLOAD_DIRECTORY];
+  let bytes = 0;
+  let files = 0;
+
+  while (directories.length > 0) {
+    const directory = directories.pop();
+    if (!directory) break;
+    let entries;
+    try {
+      entries = await fs.readdir(directory, { withFileTypes: true });
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") continue;
+      throw error;
+    }
+
+    for (const entry of entries) {
+      const absolutePath = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        directories.push(absolutePath);
+      } else if (entry.isFile()) {
+        files += 1;
+        bytes += (await fs.stat(absolutePath)).size;
+      }
+    }
+  }
+
+  return { bytes, files };
+}
+
+function assertUploadQuota(
+  usage: Awaited<ReturnType<typeof collectUploadUsage>>,
+  nextFileBytes: number,
+) {
+  assertAggregateContentQuota(
+    usage,
+    nextFileBytes,
+    {
+      maxBytes: CONTENT_BUDGET_PROFILE_V1.storage.puckImageBytes,
+      maxFiles: CONTENT_BUDGET_PROFILE_V1.storage.puckImageFiles,
+    },
+  );
+}
+
 export async function POST(request: Request) {
-  const denied = assertLocalEditorAccess("api", request, { requireToken: true });
+  const denied = assertLocalEditorApiAccess(request, { requireToken: true });
   if (denied) {
     return denied;
   }
@@ -61,8 +122,15 @@ export async function POST(request: Request) {
 
   let formData: FormData;
   try {
-    formData = await request.formData();
-  } catch {
+    const body = await readBodyWithLimit(
+      request,
+      CONTENT_BUDGET_PROFILE_V1.requestBytes.multipart,
+    );
+    formData = await rebuildRequestWithBody(request, body).formData();
+  } catch (error) {
+    if (error instanceof RequestBodyError) {
+      return errorResponse(error.status, error.code, error.message);
+    }
     return errorResponse(400, "BAD_REQUEST", "Invalid multipart payload");
   }
 
@@ -83,13 +151,26 @@ export async function POST(request: Request) {
   }
 
   try {
-    await fs.mkdir(UPLOAD_DIRECTORY, { recursive: true });
     const fileBuffer = Buffer.from(await file.arrayBuffer());
     validateUploadBytes(fileBuffer, file.type);
+    await readAndValidateMediaMetadata(
+      () => sharp(fileBuffer, SHARP_MEDIA_INPUT_OPTIONS).metadata(),
+    );
     const destination = resolveUploadDestination(outputName);
-    await fs.writeFile(destination, fileBuffer);
+    await withContentWriteQueue(async () => {
+      const usage = await collectUploadUsage();
+      assertUploadQuota(usage, fileBuffer.byteLength);
+      await fs.mkdir(UPLOAD_DIRECTORY, { recursive: true });
+      await fs.writeFile(destination, fileBuffer, { flag: "wx" });
+    });
   } catch (error) {
     if (error instanceof UploadValidationError) {
+      return errorResponse(error.status, error.code, error.message);
+    }
+    if (error instanceof MediaBudgetError) {
+      return errorResponse(415, "UNSUPPORTED_MEDIA_TYPE", error.message);
+    }
+    if (error instanceof ContentQuotaExceededError) {
       return errorResponse(error.status, error.code, error.message);
     }
 

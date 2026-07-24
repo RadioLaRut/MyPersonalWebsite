@@ -5,6 +5,11 @@ import { fileURLToPath } from "node:url";
 
 import sharp from "sharp";
 
+import {
+  SHARP_MEDIA_INPUT_OPTIONS,
+  validateMediaMetadata,
+} from "../src/lib/media-budget.ts";
+
 sharp.cache({ files: 0 });
 sharp.concurrency(1);
 
@@ -121,7 +126,7 @@ function delay(ms) {
 }
 
 async function renderWebpBuffer(sourcePath) {
-  return sharp(sourcePath)
+  return sharp(sourcePath, SHARP_MEDIA_INPUT_OPTIONS)
     .rotate()
     .toColorspace("srgb")
     .webp({
@@ -136,7 +141,8 @@ async function convertToWebp(job) {
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt += 1) {
     try {
-      const metadata = await sharp(sourcePath).metadata();
+      const metadata = await sharp(sourcePath, SHARP_MEDIA_INPUT_OPTIONS).metadata();
+      validateMediaMetadata(metadata);
       const outputBuffer = await renderWebpBuffer(sourcePath);
 
       await writeOutputFile(destinationPath, outputBuffer);

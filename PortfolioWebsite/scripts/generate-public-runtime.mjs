@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
+import { CONTENT_BUDGET_PROFILE_V1 } from "../src/lib/content-budget.ts";
 import { parseCurrentPageDocument } from "../src/lib/page-document-contract.ts";
 import { createProjectCatalogProjection } from "../src/lib/project-catalog.ts";
 import { PUCK_COMPONENT_TYPES } from "../src/puck/component-manifest.ts";
@@ -9,6 +10,7 @@ import {
   createWorkAliasResolverSource,
 } from "../src/puck/public-runtime-codegen.ts";
 import { collectPuckComponentTypes } from "../src/puck/runtime-component-types.ts";
+import { mapWithConcurrency } from "./lib/bounded-concurrency.mjs";
 
 const projectRoot = process.cwd();
 const pagesRoot = path.join(projectRoot, "content/pages");
@@ -16,13 +18,43 @@ const outputRoot = path.join(projectRoot, "src/puck/generated");
 const checkOnly = process.argv.includes("--check");
 
 async function collectJsonFiles(directory) {
-  const entries = await fs.readdir(directory, { withFileTypes: true });
-  const nestedFiles = await Promise.all(entries.map(async (entry) => {
-    const entryPath = path.join(directory, entry.name);
-    if (entry.isDirectory()) return collectJsonFiles(entryPath);
-    return entry.isFile() && entry.name.endsWith(".json") ? [entryPath] : [];
-  }));
-  return nestedFiles.flat().sort();
+  const directories = [directory];
+  const files = [];
+  let totalBytes = 0;
+
+  while (directories.length > 0) {
+    const currentDirectory = directories.pop();
+    const entries = await fs.readdir(currentDirectory, { withFileTypes: true });
+    for (const entry of entries) {
+      const entryPath = path.join(currentDirectory, entry.name);
+      if (entry.isDirectory()) {
+        directories.push(entryPath);
+        continue;
+      }
+      if (!entry.isFile() || !entry.name.endsWith(".json")) continue;
+
+      const stat = await fs.stat(entryPath);
+      if (stat.size > CONTENT_BUDGET_PROFILE_V1.pageDocument.maxBytes) {
+        throw new Error(
+          `Page JSON exceeds ${CONTENT_BUDGET_PROFILE_V1.pageDocument.maxBytes} bytes: ${toSlug(entryPath)}`,
+        );
+      }
+      files.push({ filePath: entryPath, size: stat.size });
+      totalBytes += stat.size;
+      if (files.length > CONTENT_BUDGET_PROFILE_V1.storage.pageCount) {
+        throw new Error(
+          `Page count exceeds ${CONTENT_BUDGET_PROFILE_V1.storage.pageCount}`,
+        );
+      }
+      if (totalBytes > CONTENT_BUDGET_PROFILE_V1.storage.pageBytes) {
+        throw new Error(
+          `Page JSON storage exceeds ${CONTENT_BUDGET_PROFILE_V1.storage.pageBytes} bytes`,
+        );
+      }
+    }
+  }
+
+  return files.sort((left, right) => left.filePath.localeCompare(right.filePath));
 }
 
 function toSlug(filePath) {
@@ -38,10 +70,21 @@ function collectOrderedTypes(documents) {
   return PUCK_COMPONENT_TYPES.filter((type) => usedTypes.has(type));
 }
 
-const pageEntries = await Promise.all((await collectJsonFiles(pagesRoot)).map(async (filePath) => ({
-  document: parseCurrentPageDocument(JSON.parse(await fs.readFile(filePath, "utf8"))),
-  slug: toSlug(filePath),
-})));
+const pageInputs = await collectJsonFiles(pagesRoot);
+const pageEntries = await mapWithConcurrency(
+  pageInputs,
+  CONTENT_BUDGET_PROFILE_V1.generator.concurrency,
+  async ({ filePath, size }) => {
+    const file = await fs.readFile(filePath);
+    if (file.byteLength !== size || file.byteLength > CONTENT_BUDGET_PROFILE_V1.pageDocument.maxBytes) {
+      throw new Error(`Page JSON changed while reading or exceeded its limit: ${toSlug(filePath)}`);
+    }
+    return {
+      document: parseCurrentPageDocument(JSON.parse(file.toString("utf8"))),
+      slug: toSlug(filePath),
+    };
+  },
+);
 const pageMap = new Map(pageEntries.map((entry) => [entry.slug, entry.document]));
 
 function requirePage(slug) {

@@ -43,35 +43,42 @@ function getRawScript(char: string): TypographyScript | "space" | "neutral" | "b
   return "neutral";
 }
 
-function resolveNeutralScript(chars: string[], index: number): TypographyScript {
-  for (let cursor = index - 1; cursor >= 0; cursor -= 1) {
-    const prev = getRawScript(chars[cursor]);
-    if (prev === "latin" || prev === "cjk") {
-      return prev;
-    }
-    if (prev === "break") {
-      break;
-    }
-  }
-
-  for (let cursor = index + 1; cursor < chars.length; cursor += 1) {
-    const next = getRawScript(chars[cursor]);
-    if (next === "latin" || next === "cjk") {
-      return next;
-    }
-    if (next === "break") {
-      break;
-    }
-  }
-
-  return "latin";
-}
-
 export function segmentTypographyText(text: string): TypographyTextRun[] {
   const chars = Array.from(text);
+  const rawScripts = chars.map(getRawScript);
+  const leftScripts: Array<TypographyScript | null> = Array(chars.length).fill(null);
+  const rightScripts: Array<TypographyScript | null> = Array(chars.length).fill(null);
   const runs: TypographyTextRun[] = [];
   let buffer = "";
   let activeScript: TypographyScript | null = null;
+  let nearestScript: TypographyScript | null = null;
+
+  for (let index = 0; index < rawScripts.length; index += 1) {
+    const rawScript = rawScripts[index];
+    if (rawScript === "break") {
+      nearestScript = null;
+      continue;
+    }
+
+    leftScripts[index] = nearestScript;
+    if (rawScript === "latin" || rawScript === "cjk") {
+      nearestScript = rawScript;
+    }
+  }
+
+  nearestScript = null;
+  for (let index = rawScripts.length - 1; index >= 0; index -= 1) {
+    const rawScript = rawScripts[index];
+    if (rawScript === "break") {
+      nearestScript = null;
+      continue;
+    }
+
+    rightScripts[index] = nearestScript;
+    if (rawScript === "latin" || rawScript === "cjk") {
+      nearestScript = rawScript;
+    }
+  }
 
   const pushBufferedRun = () => {
     if (!buffer || !activeScript) {
@@ -90,7 +97,7 @@ export function segmentTypographyText(text: string): TypographyTextRun[] {
   };
 
   chars.forEach((char, index) => {
-    const rawScript = getRawScript(char);
+    const rawScript = rawScripts[index];
 
     if (rawScript === "break") {
       pushBufferedRun();
@@ -103,8 +110,9 @@ export function segmentTypographyText(text: string): TypographyTextRun[] {
       return;
     }
 
-    const resolvedScript =
-      rawScript === "neutral" ? resolveNeutralScript(chars, index) : rawScript;
+    const resolvedScript = rawScript === "neutral"
+      ? leftScripts[index] ?? rightScripts[index] ?? "latin"
+      : rawScript;
 
     if (activeScript === resolvedScript || activeScript === null) {
       activeScript = resolvedScript;

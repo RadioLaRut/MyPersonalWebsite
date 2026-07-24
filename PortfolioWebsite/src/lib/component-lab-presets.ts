@@ -5,6 +5,7 @@ import {
   COMPONENT_DESIGN_COMPONENT_KEYS,
   type ComponentDesignComponentKey,
 } from "./component-design-schema.ts";
+import { CONTENT_BUDGET_PROFILE_V1 } from "./content-budget.ts";
 import {
   contentRepository,
   type ContentPageEntry,
@@ -198,19 +199,26 @@ function toInstanceId(reference: ComponentLabInstanceReference) {
   return `${reference.pageSlug}#${reference.componentId}`;
 }
 
-function collectNodes(value: unknown, nodes: ComponentLabNode[] = []) {
-  if (Array.isArray(value)) {
-    value.forEach((entry) => collectNodes(entry, nodes));
-    return nodes;
-  }
-  if (!isPlainRecord(value)) return nodes;
+function* iterateNodes(value: unknown): Generator<ComponentLabNode> {
+  const stack: unknown[] = [value];
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (Array.isArray(current)) {
+      for (let index = current.length - 1; index >= 0; index -= 1) {
+        stack.push(current[index]);
+      }
+      continue;
+    }
+    if (!isPlainRecord(current)) continue;
 
-  if (isKnownPuckComponentType(value.type) && isPlainRecord(value.props)) {
-    nodes.push(cloneJson(value as ComponentLabNode));
+    if (isKnownPuckComponentType(current.type) && isPlainRecord(current.props)) {
+      yield current as ComponentLabNode;
+    }
+    const entries = Object.values(current);
+    for (let index = entries.length - 1; index >= 0; index -= 1) {
+      stack.push(entries[index]);
+    }
   }
-
-  Object.values(value).forEach((entry) => collectNodes(entry, nodes));
-  return nodes;
 }
 
 function createValidatedStressNode(
@@ -271,15 +279,28 @@ function createValidatedStressNode(
 export function createComponentLabInstanceCatalog(
   pages: ContentPageEntry[],
   presets: ComponentLabPresetDocument,
+  options: {
+    maxInstances?: number;
+  } = {},
 ): ComponentLabInstanceCatalog {
+  const maxInstances = options.maxInstances ??
+    CONTENT_BUDGET_PROFILE_V1.componentLab.maxInstances;
   const allInstances = new Map<string, ComponentLabCatalogInstance>();
   const instancesByType = new Map<ComponentDesignComponentKey, ComponentLabCatalogInstance[]>();
+  let materializedInstances = 0;
 
   for (const page of pages) {
-    for (const node of collectNodes(page.document)) {
-      if (!(COMPONENT_DESIGN_COMPONENT_KEYS as readonly string[]).includes(node.type)) {
+    for (const rawNode of iterateNodes(page.document)) {
+      if (!(COMPONENT_DESIGN_COMPONENT_KEYS as readonly string[]).includes(rawNode.type)) {
         continue;
       }
+      materializedInstances += 1;
+      if (materializedInstances > maxInstances) {
+        throw new ComponentLabPresetError(
+          `ComponentLab 页面实例超过维护上限 ${maxInstances}，请减少页面实例或调整版本化预算`,
+        );
+      }
+      const node = cloneJson(rawNode);
       const componentKey = node.type as ComponentDesignComponentKey;
       const componentId = node.props.id;
       if (typeof componentId !== "string" || componentId.trim() === "") {

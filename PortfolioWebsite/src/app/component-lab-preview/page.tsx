@@ -1,9 +1,7 @@
-import { notFound } from "next/navigation";
-
 import ComponentLabPreviewClient from "@/components/playground/ComponentLabPreviewClient";
-import { isTestingMode } from "@/lib/site-mode";
+import { assertLocalEditorPageAccess } from "@/lib/security";
 
-export default function ComponentLabPreviewPage() {
-  if (!isTestingMode()) notFound();
+export default async function ComponentLabPreviewPage() {
+  await assertLocalEditorPageAccess();
   return <ComponentLabPreviewClient />;
 }

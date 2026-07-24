@@ -113,3 +113,42 @@ test("getTypographyEdgeScripts resolves leading and trailing scripts from mixed 
   assert.equal(cjkOnly.leading, "cjk");
   assert.equal(cjkOnly.trailing, "cjk");
 });
+
+test("neutral script resolution keeps left priority and resets at line breaks", () => {
+  const leftPriority = segmentTypographyText("中🙂English").filter(
+    (run): run is Extract<TypographyTextRun, { type: "text" }> => run.type === "text",
+  );
+  const rightFallback = segmentTypographyText("🙂中文").filter(
+    (run): run is Extract<TypographyTextRun, { type: "text" }> => run.type === "text",
+  );
+  const lineReset = segmentTypographyText("中文\n🙂English").filter(
+    (run): run is Extract<TypographyTextRun, { type: "text" }> => run.type === "text",
+  );
+
+  assert.equal(leftPriority[0]?.script, "cjk");
+  assert.equal(leftPriority[0]?.value, "中🙂");
+  assert.equal(rightFallback[0]?.script, "cjk");
+  assert.equal(lineReset[1]?.script, "latin");
+});
+
+test("all-neutral text and Unicode code points preserve the original content", () => {
+  const source = "🙂 — …";
+  const runs = segmentTypographyText(source);
+
+  assert.equal(rebuildText(runs), source);
+  assert.deepEqual(runs, [{ script: "latin", type: "text", value: source }]);
+});
+
+test("long neutral runs preserve the previous segmentation semantics", () => {
+  const neutralText = "🙂".repeat(4_096);
+  const source = `中${neutralText}A`;
+  const runs = segmentTypographyText(source).filter(
+    (run): run is Extract<TypographyTextRun, { type: "text" }> => run.type === "text",
+  );
+
+  assert.equal(runs.length, 2);
+  assert.equal(runs[0]?.script, "cjk");
+  assert.equal(runs[0]?.value, `中${neutralText}`);
+  assert.equal(runs[1]?.script, "latin");
+  assert.equal(rebuildText(runs), source);
+});

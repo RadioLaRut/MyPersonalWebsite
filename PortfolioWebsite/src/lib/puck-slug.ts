@@ -1,5 +1,6 @@
 import path from "node:path";
 
+import { CONTENT_BUDGET_PROFILE_V1 } from "./content-budget.ts";
 import {
   getCanonicalSlugSegmentIssue,
   trySafeNormalizeSlugSegment,
@@ -104,7 +105,17 @@ export function normalizePuckSlugInput(rawInput: string | string[] | undefined):
     : normalizeRawStringInput(rawInput ?? "");
 
   const slugSegments = segments.map(decodeAndNormalizeSegment);
+  if (slugSegments.length > CONTENT_BUDGET_PROFILE_V1.slug.maxSegments) {
+    throw makeSlugValidationError(
+      `Slug must not exceed ${CONTENT_BUDGET_PROFILE_V1.slug.maxSegments} segments`,
+    );
+  }
   const slugKey = slugSegments.length === 0 ? "index" : slugSegments.join("/");
+  if (slugKey.length > CONTENT_BUDGET_PROFILE_V1.slug.maxNormalizedLength) {
+    throw makeSlugValidationError(
+      `Slug must not exceed ${CONTENT_BUDGET_PROFILE_V1.slug.maxNormalizedLength} characters`,
+    );
+  }
   const relativeJsonPath = `${slugKey}.json`;
   const absoluteJsonPath = path.resolve(CONTENT_PAGES_ROOT, relativeJsonPath);
 

@@ -2,7 +2,9 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 
-const { assertLocalEditorAccess } = require("../src/lib/security.ts");
+const {
+  evaluateLocalEditorApiAccess,
+} = require("../src/lib/local-editor-policy.ts");
 const { normalizePuckSlugInput, SlugValidationError } = require("../src/lib/puck-slug.ts");
 const {
   createUploadFileName,
@@ -48,34 +50,29 @@ function withEnv(nextEnv, run) {
 }
 
 function testGuard() {
+  const localRequest = () => new Request("http://localhost/api/puck");
   withEnv({ NODE_ENV: "development" }, () => {
-    const denied = assertLocalEditorAccess("api");
-    assert.equal(denied.status, 403);
-    assert.equal(denied.headers.get("Cache-Control"), "no-store");
+    assert.equal(evaluateLocalEditorApiAccess(localRequest()), "unauthorized");
   });
 
   withEnv({ NODE_ENV: "development", NEXT_PUBLIC_SITE_MODE: "testing", CI: "1" }, () => {
-    const denied = assertLocalEditorAccess("api");
-    assert.equal(denied.status, 403);
-    assert.equal(denied.headers.get("Cache-Control"), "no-store");
+    assert.equal(evaluateLocalEditorApiAccess(localRequest()), "unauthorized");
   });
 
   withEnv({ NODE_ENV: "development", NEXT_PUBLIC_SITE_MODE: "testing" }, () => {
-    const allowedApi = assertLocalEditorAccess("api");
-    assert.equal(allowedApi, undefined);
-    assert.equal(assertLocalEditorAccess("page"), undefined);
+    assert.equal(evaluateLocalEditorApiAccess(localRequest()), "allowed");
   });
 
-  const adminFile = fs.readFileSync(
-    path.join(projectRoot, "src/app/admin/[[...puckPath]]/page.tsx"),
+  const toolsLayoutFile = fs.readFileSync(
+    path.join(projectRoot, "src/app/(tools)/layout.tsx"),
     "utf8",
   );
-  const apiPuckFile = fs.readFileSync(path.join(projectRoot, "src/app/api/puck/route.ts"), "utf8");
+  const apiPuckFile = fs.readFileSync(path.join(projectRoot, "src/lib/puck-api-handler.ts"), "utf8");
   const apiUploadFile = fs.readFileSync(path.join(projectRoot, "src/app/api/upload/route.ts"), "utf8");
 
-  assert.match(adminFile, /assertLocalEditorAccess\("page"\)/);
-  assert.match(apiPuckFile, /assertLocalEditorAccess\("api"\)/);
-  assert.match(apiUploadFile, /assertLocalEditorAccess\("api"\)/);
+  assert.match(toolsLayoutFile, /assertLocalEditorPageAccess\(\)/);
+  assert.match(apiPuckFile, /evaluateLocalEditorApiAccess\(request/);
+  assert.match(apiUploadFile, /assertLocalEditorApiAccess\(request/);
 }
 
 function testSlugCases() {
@@ -121,17 +118,26 @@ function testSlugCases() {
 }
 
 function testLegacyPRedirectAndAtomicWriteContract() {
-  const legacyPFile = fs.readFileSync(path.join(projectRoot, "src/app/p/[[...slug]]/page.tsx"), "utf8");
+  const legacyPFile = fs.readFileSync(
+    path.join(projectRoot, "src/app/(site)/p/[[...slug]]/page.tsx"),
+    "utf8",
+  );
   const renderHelperFile = fs.readFileSync(path.join(projectRoot, "src/lib/render-puck-page.tsx"), "utf8");
   const puckContentFile = fs.readFileSync(path.join(projectRoot, "src/lib/puck-content.ts"), "utf8");
+  const writeQueueFile = fs.readFileSync(
+    path.join(projectRoot, "src/lib/content-write-queue.ts"),
+    "utf8",
+  );
 
   assert.match(legacyPFile, /redirect\(/);
-  assert.match(renderHelperFile, /fs\.readFile/);
-  assert.match(renderHelperFile, /JSON\.parse/);
+  assert.match(renderHelperFile, /contentRepository\.readPage/);
   assert.match(renderHelperFile, /notFound\(\)/);
   assert.doesNotMatch(renderHelperFile, /from\s+["'][^"']+\.json["']/);
 
-  assert.match(puckContentFile, /__puckWriteQueue/);
+  assert.match(puckContentFile, /fs\.readFile/);
+  assert.match(puckContentFile, /JSON\.parse/);
+  assert.match(puckContentFile, /withContentWriteQueue/);
+  assert.match(writeQueueFile, /__portfolioContentWriteQueue/);
   assert.match(puckContentFile, /fs\.rename/);
   assert.match(puckContentFile, /\.tmp\.json/);
   assert.match(puckContentFile, /fs\.unlink/);
