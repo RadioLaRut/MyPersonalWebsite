@@ -1,8 +1,9 @@
-import { isPlainRecord } from "./json-utils.ts";
+import { areJsonStructuresEqual, isPlainRecord } from "./json-utils.ts";
 import {
   PAGE_DOCUMENT_VERSION,
   type PageDocument,
   migrateLegacyPageDocument,
+  normalizePageDraft,
   parseCurrentPageDocument,
 } from "./page-document-contract.ts";
 
@@ -65,9 +66,10 @@ export function preparePageDocumentMigration(
   options: PageDocumentMigrationOptions = {},
 ): PageDocumentMigrationResult {
   if (isPlainRecord(value) && value.version === PAGE_DOCUMENT_VERSION) {
+    const normalized = normalizePageDraft(value);
     return {
-      document: parseCurrentPageDocument(value),
-      migrated: false,
+      document: parseCurrentPageDocument(normalized),
+      migrated: !areJsonStructuresEqual(value, normalized),
     };
   }
 

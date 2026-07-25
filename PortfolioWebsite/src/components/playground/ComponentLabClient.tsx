@@ -21,12 +21,12 @@ import { MotionButton } from "@/components/motion";
 import {
   COMPONENT_LAB_COMPONENT_KEYS,
   COMPONENT_LAB_REGISTRY,
+  type ComponentLabComponentKey,
   type ComponentLabFieldConfig,
 } from "@/components/playground/component-lab-registry";
 import {
   createDefaultComponentDesignDocument,
   normalizeComponentDesignDocument,
-  type ComponentDesignComponentKey,
   type ComponentDesignDocument,
   type ComponentGridBounds,
   type ComponentResponsiveGridBounds,
@@ -132,7 +132,7 @@ function BoundsRow({
           })}
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3 pl-[5.25rem]">
+      <div className="grid grid-cols-2 gap-3">
         <SelectField
           label="起始列"
           value={String(value.leftCol)}
@@ -353,7 +353,7 @@ export default function ComponentLabClient({
   const [committedDocument, setCommittedDocument] = useState(normalizedProviderDocument);
   const [draftDocument, setDraftDocument] = useState(normalizedProviderDocument);
   const [externalUpdatePending, setExternalUpdatePending] = useState(false);
-  const [selectedComponent, setSelectedComponent] = useState<ComponentDesignComponentKey>(
+  const [selectedComponent, setSelectedComponent] = useState<ComponentLabComponentKey>(
     COMPONENT_LAB_COMPONENT_KEYS[0],
   );
   const [selectedInstanceByComponent, setSelectedInstanceByComponent] = useState(() =>
@@ -362,12 +362,11 @@ export default function ComponentLabClient({
         key,
         getInitialInstanceId(catalog.components[key]),
       ]),
-    ) as Record<ComponentDesignComponentKey, string>,
+    ) as Record<ComponentLabComponentKey, string>,
   );
   const [selectedViewport, setSelectedViewport] = useState<PreviewViewportKey>(
     DEFAULT_PREVIEW_VIEWPORT.key,
   );
-  const [searchQuery, setSearchQuery] = useState("");
   const [showGrid, setShowGrid] = useState(true);
   const [saveState, setSaveState] = useState<"error" | "idle" | "saving" | "success">("idle");
   const [configPath, setConfigPath] = useState("content/component-design/component-design.json");
@@ -423,18 +422,35 @@ export default function ComponentLabClient({
     ? selectedEntry.stressSample
     : selectedEntry.instances.find((instance) => instance.id === selectedInstanceId) ??
       selectedEntry.stressSample;
+  const componentOptions = useMemo(
+    () => COMPONENT_LAB_COMPONENT_KEYS.map((key) => ({
+      label: `${key} · ${catalog.components[key].instances.length} 个页面实例`,
+      value: key,
+    })),
+    [catalog],
+  );
+  const instanceOptions = useMemo(
+    () => [
+      ...selectedEntry.instances.map((instance) => ({
+        label: instance.label,
+        value: instance.id,
+      })),
+      {
+        label: selectedEntry.stressSample.label,
+        value: selectedEntry.stressSample.id,
+      },
+    ],
+    [selectedEntry],
+  );
+  const selectedInstanceSource = selectedInstance.source === "page"
+    ? `content/pages/${selectedInstance.pageSlug}.json · ${selectedInstance.componentId}`
+    : selectedEntry.instances.length === 0
+      ? "压力样本 · 该组件暂无页面实例"
+      : "压力样本 · 不写入页面 JSON";
   const previewData = useMemo(
     () => createPreviewData(selectedEntry, selectedInstance.id),
     [selectedEntry, selectedInstance.id],
   );
-  const filteredComponentKeys = useMemo(() => {
-    const query = searchQuery.trim().toLocaleLowerCase();
-    if (!query) return COMPONENT_LAB_COMPONENT_KEYS;
-    return COMPONENT_LAB_COMPONENT_KEYS.filter((key) => {
-      const definition = COMPONENT_LAB_REGISTRY[key];
-      return `${definition.label} ${definition.description}`.toLocaleLowerCase().includes(query);
-    });
-  }, [searchQuery]);
   const previewMeasurementKey = `${selectedComponent}:${selectedInstance.id}:${selectedViewport}`;
   const previewContentHeight = previewMeasurement.key === previewMeasurementKey
     ? previewMeasurement.height
@@ -472,7 +488,9 @@ export default function ComponentLabClient({
   function resetCurrentComponent() {
     const defaults = createDefaultComponentDesignDocument();
     updateDraftDocument((next) => {
-      next.components[selectedComponent] = cloneDocument(defaults).components[selectedComponent] as never;
+      for (const designKey of selectedDefinition.designKeys) {
+        next.components[designKey] = cloneDocument(defaults).components[designKey] as never;
+      }
     });
   }
 
@@ -510,105 +528,110 @@ export default function ComponentLabClient({
 
   return (
     <main className="min-h-screen bg-black text-white">
-      <div className="grid-container gap-y-8 py-6 lg:h-screen lg:overflow-hidden lg:py-8">
-        <aside className="col-span-12 flex min-h-0 flex-col lg:col-span-4 lg:h-full lg:overflow-hidden lg:pr-2">
-          <header className="border-b border-white/10 pb-5">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <SmallText className="text-textMuted">INTERNAL TOOL / COMPONENT DESIGN</SmallText>
-                <Typography as="h1" preset="sans-body" size="title-sm" weight="strong" wrapPolicy="heading" className="mt-1 text-white">
-                  ComponentLab
-                </Typography>
-              </div>
-              <MotionButton type="button" onClick={() => router.push("/playground")} className="min-h-10 border border-white/10 px-3 text-textPrimary hover:border-white/25">
-                <SmallText>返回</SmallText>
-              </MotionButton>
-            </div>
-            <Typography as="p" preset="sans-body" size="body-sm" weight="regular" wrapPolicy="prose" className="mt-3 max-w-xl text-textMuted">
-              页面 JSON 提供实例内容，组件设计 JSON 提供版式。预览由公开页同一 Puck 适配器输出。
+      <div className="grid-container gap-y-4 py-6 lg:h-screen lg:grid-rows-[auto_auto_minmax(0,1fr)] lg:overflow-hidden lg:py-8">
+        <header className="col-span-12 flex items-start justify-between gap-6 border-b border-white/10 pb-4">
+          <div>
+            <SmallText className="text-textMuted">INTERNAL TOOL / COMPONENT DESIGN</SmallText>
+            <Typography as="h1" preset="sans-body" size="title-sm" weight="strong" wrapPolicy="heading" className="mt-1 text-white">
+              ComponentLab
             </Typography>
-          </header>
+            <Typography as="p" preset="sans-body" size="body-sm" weight="regular" wrapPolicy="prose" className="mt-2 max-w-3xl text-textMuted">
+              页面 JSON 提供实例内容，组件设计 JSON 提供共享版式。选择上下文后，在设置面板中调整并通过真实渲染画布校验。
+            </Typography>
+          </div>
+          <MotionButton type="button" onClick={() => router.push("/playground")} className="min-h-10 shrink-0 border border-white/10 px-3 text-textPrimary hover:border-white/25">
+            <SmallText>返回</SmallText>
+          </MotionButton>
+        </header>
 
-          <div className="min-h-0 flex-1 space-y-6 overflow-y-auto py-5 pr-1 lg:overscroll-contain">
-            <section className="space-y-3">
-              <SmallText className="text-textPrimary">组件与实例</SmallText>
-              <input
-                type="search"
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.currentTarget.value)}
-                placeholder="搜索组件"
-                className="min-h-10 w-full border border-white/10 bg-black px-3 text-sm text-white outline-none placeholder:text-textMuted focus:border-white/30"
-              />
-              <div className="grid grid-cols-2 gap-2">
-                {filteredComponentKeys.map((key) => {
-                  const entry = catalog.components[key];
-                  return (
-                    <button
-                      key={key}
-                      type="button"
-                      onClick={() => setSelectedComponent(key)}
-                      className={`min-h-11 border px-3 text-left text-sm transition-colors ${selectedComponent === key ? "border-white/35 bg-white/10 text-white" : "border-white/8 text-textMuted hover:border-white/20 hover:text-white"}`}
-                    >
-                      <span className="block truncate">{key}</span>
-                      <span className="mt-0.5 block text-[11px] text-textMuted">{entry.instances.length} 个页面实例</span>
-                    </button>
-                  );
-                })}
-              </div>
-              <SelectField
-                label="预览实例"
-                value={selectedInstance.id}
-                options={[
-                  ...selectedEntry.instances.map((instance) => ({ label: instance.label, value: instance.id })),
-                  { label: selectedEntry.stressSample.label, value: selectedEntry.stressSample.id },
-                ]}
-                onChange={(id) => setSelectedInstanceByComponent((current) => ({ ...current, [selectedComponent]: id }))}
-              />
-              <SmallText className="block text-textMuted">
-                {selectedInstance.source === "page"
-                  ? `真实来源：content/pages/${selectedInstance.pageSlug}.json · ${selectedInstance.componentId}`
-                  : selectedEntry.instances.length === 0
-                    ? "该类型目前没有页面实例；正在显示预设中的独立压力样本。"
-                    : "压力样本：由预设覆盖真实实例生成，不写入页面 JSON。"}
-              </SmallText>
-            </section>
+        <section
+          data-component-lab-region="context"
+          aria-label="组件预览上下文"
+          className="col-span-12 grid-subgrid items-end border-b border-white/10 pb-4"
+        >
+          <div className="col-span-12 min-w-0 lg:col-span-4">
+            <SelectField
+              label="组件"
+              value={selectedComponent}
+              options={componentOptions}
+              onChange={(key) => setSelectedComponent(key as ComponentLabComponentKey)}
+            />
+          </div>
+          <div className="col-span-12 min-w-0 lg:col-span-4">
+            <SelectField
+              label="预览实例"
+              value={selectedInstance.id}
+              options={instanceOptions}
+              onChange={(id) => setSelectedInstanceByComponent((current) => ({
+                ...current,
+                [selectedComponent]: id,
+              }))}
+            />
+          </div>
+          <div
+            aria-live="polite"
+            className="col-span-12 min-w-0 border-white/10 lg:col-span-4 lg:border-l lg:pl-4"
+          >
+            <SmallText className="block text-textMuted">实例来源</SmallText>
+            <Typography
+              as="p"
+              preset="sans-body"
+              size="body-sm"
+              weight="regular"
+              wrapPolicy="prose"
+              className="mt-2 break-all text-textPrimary"
+            >
+              {selectedInstanceSource}
+            </Typography>
+          </div>
+        </section>
 
-            <section className="border-t border-white/10 pt-4">
-              <div className="mb-2 flex items-baseline justify-between gap-3">
-                <SmallText className="text-textPrimary">{selectedDefinition.label} 设置</SmallText>
+        <aside
+          data-component-lab-region="settings"
+          aria-label={`${selectedDefinition.label} 设置`}
+          className="col-span-12 flex min-h-0 flex-col lg:col-span-4 lg:h-full lg:border-r lg:border-white/10 lg:pr-6"
+        >
+          <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto pr-1 lg:overscroll-contain">
+            <header className="border-b border-white/10 pb-4">
+              <div className="flex items-baseline justify-between gap-3">
+                <SmallText className="text-textMuted">COMPONENT SETTINGS</SmallText>
                 <SmallText className="text-textMuted">{selectedDefinition.sections.length} 组</SmallText>
               </div>
-              <Typography as="p" preset="sans-body" size="body-sm" weight="regular" wrapPolicy="prose" className="mb-3 text-textMuted">
+              <Typography as="h2" preset="sans-body" size="body-lg" weight="medium" wrapPolicy="heading" className="mt-1 text-white">
+                {selectedDefinition.label}
+              </Typography>
+              <Typography as="p" preset="sans-body" size="body-sm" weight="regular" wrapPolicy="prose" className="mt-2 text-textMuted">
                 {selectedDefinition.description}
               </Typography>
-              <div className="divide-y divide-white/10 border-y border-white/10">
-                {selectedDefinition.sections.map((section, index) => (
-                  <details key={section.title} open={index === 0} className="group py-1">
-                    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-sm text-textPrimary">
-                      {section.title}<span className="text-textMuted group-open:rotate-45">＋</span>
-                    </summary>
-                    <div className="space-y-4 pb-4">
-                      {section.fields.map((field) => (
-                        <div key={`${section.title}-${field.label}`}>
-                          {renderFieldControl(field, draftDocument, updateDraftDocument)}
-                        </div>
-                      ))}
-                    </div>
-                  </details>
-                ))}
-              </div>
-              <button type="button" onClick={resetCurrentComponent} className="mt-3 min-h-10 text-sm text-textMuted underline decoration-white/20 underline-offset-4 hover:text-white">
-                重置当前组件设计
-              </button>
-            </section>
+            </header>
+
+            <div className="divide-y divide-white/10 border-b border-white/10">
+              {selectedDefinition.sections.map((section, index) => (
+                <details key={section.title} open={index === 0} className="group py-1">
+                  <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-sm text-textPrimary">
+                    {section.title}<span className="text-textMuted group-open:rotate-45">＋</span>
+                  </summary>
+                  <div className="space-y-4 pb-4">
+                    {section.fields.map((field) => (
+                      <div key={`${section.title}-${field.label}`}>
+                        {renderFieldControl(field, draftDocument, updateDraftDocument)}
+                      </div>
+                    ))}
+                  </div>
+                </details>
+              ))}
+            </div>
+            <button type="button" onClick={resetCurrentComponent} className="my-3 min-h-10 text-sm text-textMuted underline decoration-white/20 underline-offset-4 hover:text-white">
+              重置当前组件设计
+            </button>
           </div>
 
-          <footer className="sticky bottom-0 border-t border-white/10 bg-black py-4">
+          <footer className="shrink-0 border-t border-white/10 bg-black pt-4">
             <div className="mb-3 flex items-start justify-between gap-4">
               <SmallText className={isDirty ? "text-white" : "text-textMuted"}>
                 {isDirty ? "有未保存修改，仅在本 Lab 生效" : saveState === "success" ? "已保存并广播已提交配置" : saveState === "error" ? "保存失败，正式配置未变化" : "已与正式配置同步"}
               </SmallText>
-              <SmallText className="text-right text-textMuted">{hasSavedFile ? configPath : "默认配置"}</SmallText>
+              <SmallText className="block max-w-[55%] truncate text-right text-textMuted">{hasSavedFile ? configPath : "默认配置"}</SmallText>
             </div>
             {externalUpdatePending ? (
               <div className="mb-3 border-l-2 border-white/40 pl-3 text-sm text-textMuted">
@@ -640,10 +663,14 @@ export default function ComponentLabClient({
           </footer>
         </aside>
 
-        <section className="col-span-12 min-w-0 lg:col-span-8 lg:flex lg:h-full lg:min-h-0 lg:flex-col">
+        <section
+          data-component-lab-region="canvas"
+          aria-label="实时组件画布"
+          className="col-span-12 min-w-0 lg:col-span-8 lg:flex lg:h-full lg:min-h-0 lg:flex-col"
+        >
           <header className="mb-3 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
             <div>
-              <SmallText className="text-textMuted">LIVE CANVAS / {selectedInstance.source === "page" ? "REAL PAGE INSTANCE" : "STRESS SAMPLE"}</SmallText>
+              <SmallText className="text-textMuted">LIVE CANVAS</SmallText>
               <Typography as="h2" preset="sans-body" size="body-lg" weight="medium" wrapPolicy="heading" className="mt-1 text-white">
                 {selectedComponent}
               </Typography>

@@ -1,63 +1,92 @@
 {
   "content": [
     {
-      "type": "PortfolioHeroHeader",
+      "type": "EditorialHeader",
       "props": {
         "id": "hero-1",
-        "title": "LIGHTING",
-        "subtitle": "PORTFOLIO",
+        "backHref": "",
+        "ctaHref": "/works",
+        "ctaLabel": "进入全部作品",
+        "description": "",
+        "descriptionAlign": "left",
         "descriptionLine1": "MOOD / SHOT / SPATIAL HIERARCHY",
         "descriptionLine2": "围绕镜头构图、时间变化与空间情绪展开的灯光研究归档。",
-        "ctaLabel": "进入全部作品",
-        "ctaHref": "/works"
+        "number": "",
+        "subtitle": "PORTFOLIO",
+        "title": "LIGHTING",
+        "variant": "index"
       }
     },
     {
-      "type": "LightingProjectCard",
+      "type": "ProjectCoverLink",
       "props": {
         "id": "collection-1",
-        "number": "01",
-        "title": "CINEMATIC SHOTS",
-        "coverImage": "/images/city-2026/002.webp",
+        "align": "auto",
         "href": "/works/lighting-portfolio/collection-1",
+        "imageFitMode": "cover",
         "imagePreset": "ratio-21-9",
-        "imageFitMode": "cover"
+        "index": 0,
+        "mediaSrc": "/images/city-2026/002.webp",
+        "mobileImageFocalX": 50,
+        "mobileImageFocalY": 50,
+        "number": "01",
+        "subtitle": "",
+        "title": "CINEMATIC SHOTS",
+        "variant": "card"
       }
     },
     {
-      "type": "LightingProjectCard",
+      "type": "ProjectCoverLink",
       "props": {
         "id": "collection-2",
-        "number": "02",
-        "title": "TRAIN STATION",
-        "coverImage": "/images/train-station/Cut2Day.webp",
+        "align": "auto",
         "href": "/works/lighting-portfolio/collection-2",
+        "imageFitMode": "cover",
         "imagePreset": "ratio-21-9",
-        "imageFitMode": "cover"
+        "index": 0,
+        "mediaSrc": "/images/train-station/Cut2Day.webp",
+        "mobileImageFocalX": 50,
+        "mobileImageFocalY": 50,
+        "number": "02",
+        "subtitle": "",
+        "title": "TRAIN STATION",
+        "variant": "card"
       }
     },
     {
-      "type": "LightingProjectCard",
+      "type": "ProjectCoverLink",
       "props": {
         "id": "collection-3",
-        "number": "03",
-        "title": "WEST",
-        "coverImage": "/images/west/CDay.webp",
+        "align": "auto",
         "href": "/works/lighting-portfolio/collection-3",
+        "imageFitMode": "cover",
         "imagePreset": "ratio-21-9",
-        "imageFitMode": "cover"
+        "index": 0,
+        "mediaSrc": "/images/west/CDay.webp",
+        "mobileImageFocalX": 50,
+        "mobileImageFocalY": 50,
+        "number": "03",
+        "subtitle": "",
+        "title": "WEST",
+        "variant": "card"
       }
     },
     {
-      "type": "LightingProjectCard",
+      "type": "ProjectCoverLink",
       "props": {
         "id": "collection-4",
-        "number": "04",
-        "title": "ATMOSPHERE PRACTICE",
-        "coverImage": "/images/penguin/01.webp",
+        "align": "auto",
         "href": "/works/lighting-portfolio/collection-4",
+        "imageFitMode": "cover",
         "imagePreset": "ratio-21-9",
-        "imageFitMode": "cover"
+        "index": 0,
+        "mediaSrc": "/images/penguin/01.webp",
+        "mobileImageFocalX": 50,
+        "mobileImageFocalY": 50,
+        "number": "04",
+        "subtitle": "",
+        "title": "ATMOSPHERE PRACTICE",
+        "variant": "card"
       }
     },
     {

@@ -1,5 +1,6 @@
 import type { ComponentDefinitionRegistry } from "./component-definition";
 import { createFieldGroup } from "@/puck/fields/field-groups";
+import { createTextAlignmentField } from "@/puck/fields/text-alignment-field";
 
 // defaultProps 仅服务 Admin 新建节点；ComponentLab 的演示内容统一来自页面实例与预设文件。
 export const contactCommonComponents = {
@@ -15,6 +16,7 @@ export const contactCommonComponents = {
         name: { type: "text", label: "Name" },
         taglineText: { type: "text", label: "Tagline Text" },
         taglineSub: { type: "text", label: "Tagline Sub" },
+        taglineSubAlign: createTextAlignmentField("Tagline Sub 对齐"),
         _g_contact: createFieldGroup("联系方式"),
         email: { type: "text", label: "Email" },
         wechat: { type: "text", label: "WeChat" },
@@ -22,8 +24,16 @@ export const contactCommonComponents = {
         copySuccessMessage: { type: "text", label: "复制成功反馈" },
         copyErrorMessage: { type: "text", label: "复制失败反馈" },
         _g_slots: createFieldGroup("内容槽"),
-        experienceHistory: { type: "slot", label: "Experience History" },
-        creativeDirection: { type: "slot", label: "Creative Direction" }
+        experienceHistory: {
+          type: "slot",
+          label: "Experience History",
+          allow: ["MetadataListItem"],
+        },
+        creativeDirection: {
+          type: "slot",
+          label: "Creative Direction",
+          allow: ["MetadataListItem"],
+        }
       },
       defaultProps: {
         anchorId: "contact",
@@ -34,6 +44,7 @@ export const contactCommonComponents = {
         name: "JIANG CHENGYAN",
         taglineText: "艺术与科技 / 交互叙事设计 / 游戏设计",
         taglineSub: "CUC '2028",
+        taglineSubAlign: "left",
         email: "hello@example.com",
         wechat: "wechat_id",
         copyLabel: "复制微信号",
@@ -67,8 +78,10 @@ export const contactCommonComponents = {
     TextParagraphBlock: {
       fields: {
         text: { type: "textarea", label: "Text" },
+        align: createTextAlignmentField("段落对齐"),
       },
       defaultProps: {
+        align: "left",
         text: "Sample paragraph text.",
       },
     },

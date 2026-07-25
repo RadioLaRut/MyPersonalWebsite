@@ -8,15 +8,15 @@ type PublicRendererModule = { render: PublicRenderer };
 type PublicRendererModuleLoader = () => Promise<PublicRendererModule>;
 
 export const LIGHTING_INDEX_PUBLIC_RENDERER_TYPES = [
-  "PortfolioHeroHeader",
+  "EditorialHeader",
+  "ProjectCoverLink",
   "NextProjectBlock",
-  "LightingProjectCard",
 ] as const satisfies readonly PuckComponentType[];
 
 const ROUTE_PUBLIC_RENDERER_LOADERS = {
-  PortfolioHeroHeader: () => import("../public-renderers/portfolio-hero-header"),
+  EditorialHeader: () => import("../public-renderers/editorial-header"),
+  ProjectCoverLink: () => import("../public-renderers/project-cover-link"),
   NextProjectBlock: () => import("../public-renderers/next-project-block"),
-  LightingProjectCard: () => import("../public-renderers/lighting-project-card"),
 } satisfies Partial<Record<PuckComponentType, PublicRendererModuleLoader>>;
 
 export async function loadLightingIndexPublicRenderer(type: PuckComponentType): Promise<PublicRenderer> {

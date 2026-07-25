@@ -76,6 +76,175 @@ test("normalizePuckData migrates LightingCollectionItem to ImagePanel.large", ()
   assert.equal(item.props.variant, "large");
 });
 
+test("normalizePuckData deterministically merges all legacy top-level component pairs", () => {
+  const normalized = normalizePuckData({
+    content: [
+      {
+        type: "PortfolioHeroHeader",
+        props: {
+          id: "header-index",
+          title: "WORKS",
+          descriptionLine2: "Index description",
+        },
+      },
+      {
+        type: "LightingCollectionHeader",
+        props: {
+          id: "header-collection",
+          title: "COLLECTION",
+          description: "Collection description",
+          number: "02",
+        },
+      },
+      {
+        type: "ContentCard",
+        props: {
+          id: "split-plain",
+          title: "Plain",
+          description: "Plain body",
+          imagePosition: "left",
+        },
+      },
+      {
+        type: "TextSplitLayout",
+        props: {
+          id: "split-slot",
+          heading: "Slot",
+          layoutVariant: "stack",
+          paragraphs: ["First paragraph"],
+        },
+      },
+      {
+        type: "BreakdownTriptych",
+        props: {
+          id: "columns-triptych",
+          col1Title: "One",
+          col1Text: "Body one",
+        },
+      },
+      {
+        type: "HighDensityInfoBlock",
+        props: {
+          id: "columns-phase",
+          phase1Title: "Context",
+          phase1Content: "Context body",
+          phase3ImageSrc: "/images/train-station/2Day.webp",
+        },
+      },
+      {
+        type: "ProjectSection",
+        props: {
+          id: "cover-immersive",
+          title: "Immersive",
+          link: "/works/immersive",
+          imageSrc: "/images/train-station/2Day.webp",
+        },
+      },
+      {
+        type: "LightingProjectCard",
+        props: {
+          id: "cover-card",
+          title: "Card",
+          href: "/works/card",
+          coverImage: "/images/train-station/2Night.webp",
+        },
+      },
+    ],
+    root: {
+      props: {
+        title: "Demo",
+      },
+    },
+  });
+
+  const nodes = normalized.content as Array<{
+    props: Record<string, unknown>;
+    type: string;
+  }>;
+  assert.deepEqual(nodes.map((node) => node.type), [
+    "EditorialHeader",
+    "EditorialHeader",
+    "EditorialSplit",
+    "EditorialSplit",
+    "ThreeColumnSection",
+    "ThreeColumnSection",
+    "ProjectCoverLink",
+    "ProjectCoverLink",
+  ]);
+
+  assert.equal(nodes[0].props.variant, "index");
+  assert.equal(nodes[0].props.descriptionAlign, "left");
+  assert.equal(nodes[1].props.variant, "collection");
+  assert.equal(nodes[1].props.descriptionAlign, "right");
+
+  assert.equal(nodes[2].props.bodyMode, "plain");
+  assert.equal(nodes[2].props.layout, "media-left");
+  assert.equal(nodes[3].props.bodyMode, "slot");
+  assert.equal(nodes[3].props.layout, "stack");
+  assert.deepEqual(nodes[3].props.paragraphs, [
+    {
+      props: {
+        align: "center",
+        id: "split-slot-paragraph-1",
+        text: "First paragraph",
+      },
+      type: "TextParagraphBlock",
+    },
+  ]);
+
+  assert.equal(nodes[4].props.variant, "triptych");
+  assert.equal(nodes[4].props.rhythm, "staggered");
+  assert.equal(nodes[5].props.variant, "phase");
+  assert.equal(nodes[5].props.rhythm, "aligned");
+  assert.equal(
+    nodes[5].props.col3MediaSrc,
+    "/images/train-station/2Day.webp",
+  );
+
+  assert.equal(nodes[6].props.variant, "immersive");
+  assert.equal(nodes[6].props.href, "/works/immersive");
+  assert.equal(nodes[7].props.variant, "card");
+  assert.equal(nodes[7].props.href, "/works/card");
+});
+
+test("normalizePuckData removes ParameterGrid local video state and hydrates description alignment", () => {
+  const normalized = normalizePuckData({
+    content: [
+      {
+        type: "ParameterGrid",
+        props: {
+          id: "parameters",
+          isVideo: true,
+          mediaSrc: "/images/train-station/2Day.webp",
+          parameters: [
+            {
+              description: "Description",
+              name: "Name",
+            },
+          ],
+        },
+      },
+    ],
+    root: {
+      props: {
+        title: "Demo",
+      },
+    },
+  });
+
+  const parameterGrid = normalized.content[0] as {
+    props: Record<string, unknown>;
+  };
+  assert.equal("isVideo" in parameterGrid.props, false);
+  assert.deepEqual(parameterGrid.props.parameters, [
+    {
+      description: "Description",
+      descriptionAlign: "left",
+      name: "Name",
+    },
+  ]);
+});
+
 test("normalizePuckData hydrates blank HeroHeadline props", () => {
   const normalized = normalizePuckData({
     content: [

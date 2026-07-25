@@ -11,42 +11,21 @@ import {
   createResponsiveGridBounds,
   getResponsiveGridColumnClassName,
 } from "@/lib/component-design-style";
+import {
+  hasEditableTextContent,
+  toPlainText,
+} from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 export type LightingProjectCardProps = {
-  number: string;
+  number: ReactNode;
   title: ReactNode;
-  coverImage: string;
+  coverImage?: string;
   href?: string;
   imagePreset?: ImagePreset;
   imageFitMode?: ImageFitMode;
   editMode?: boolean;
 } & ComponentDesignOverride<"LightingProjectCard">;
-
-function hasNodeContent(value: ReactNode) {
-  if (value === null || value === undefined || value === false) {
-    return false;
-  }
-
-  if (typeof value === "string") {
-    return value.trim().length > 0;
-  }
-
-  return true;
-}
-
-function getNodeAltText(value: ReactNode) {
-  if (typeof value === "string") {
-    const trimmed = value.trim();
-    return trimmed.length > 0 ? trimmed : null;
-  }
-
-  if (typeof value === "number") {
-    return String(value);
-  }
-
-  return null;
-}
 
 export default function LightingProjectCard({
   number,
@@ -54,27 +33,30 @@ export default function LightingProjectCard({
   coverImage,
   href,
   imagePreset = "ratio-21-9",
+  imageFitMode = "cover",
   editMode = false,
   design,
 }: LightingProjectCardProps) {
   const resolvedDesign = resolveComponentDesign("LightingProjectCard", design);
-  const hasTitle = hasNodeContent(title);
-  const imageAlt = getNodeAltText(title) ?? `Lighting collection ${number}`;
+  const hasTitle = hasEditableTextContent(title);
+  const imageAlt = toPlainText(title) ?? `Lighting collection ${toPlainText(number) ?? ""}`;
 
   const content = (
     <article className="group glass-panel relative h-full w-full overflow-hidden rounded-none">
       <div className="absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.12)_0%,rgba(0,0,0,0.18)_35%,rgba(0,0,0,0.82)_100%)] opacity-95 transition-opacity duration-700 group-hover:opacity-[0.88] group-focus-visible:opacity-[0.88]" />
-      <div className="absolute inset-0 z-0">
-        <PresetImage
-          src={coverImage}
-          alt={imageAlt}
-          preset={imagePreset === "native" ? "ratio-16-9" : imagePreset}
-          fitMode="cover"
-          lockFrame={false}
-          frameClassName="h-full w-full"
-          imageClassName="transition-[filter,transform] duration-700 ease-out group-hover:scale-[1.018] group-hover:contrast-[1.04] group-focus-visible:scale-[1.018] group-focus-visible:contrast-[1.04]"
-        />
-      </div>
+      {coverImage ? (
+        <div className="absolute inset-0 z-0">
+          <PresetImage
+            src={coverImage}
+            alt={imageAlt}
+            preset={imagePreset === "native" ? "ratio-16-9" : imagePreset}
+            fitMode={imageFitMode}
+            lockFrame={false}
+            frameClassName="h-full w-full"
+            imageClassName="transition-[filter,transform] duration-700 ease-out group-hover:scale-[1.018] group-hover:contrast-[1.04] group-focus-visible:scale-[1.018] group-focus-visible:contrast-[1.04]"
+          />
+        </div>
+      ) : null}
 
       <div className="relative z-20 aspect-video md:aspect-[21/9]">
         <div className="absolute left-0 top-0 px-5 py-5 md:px-6 md:py-6">

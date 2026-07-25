@@ -1,4 +1,8 @@
-import Typography from "@/components/common/Typography";
+import type { ReactNode } from "react";
+
+import Typography, {
+  type TypographyAlignment,
+} from "@/components/common/Typography";
 import {
   type ComponentDesignOverride,
   resolveComponentDesign,
@@ -10,10 +14,12 @@ import {
 } from "@/lib/component-design-style";
 
 type RichParagraphBlockProps = {
-  content: string;
+  align?: TypographyAlignment;
+  content: ReactNode;
 } & ComponentDesignOverride<"RichParagraph">;
 
 export default function RichParagraphBlock({
+  align = "justify",
   content,
   design,
 }: RichParagraphBlockProps) {
@@ -35,7 +41,8 @@ export default function RichParagraphBlock({
             size={resolvedDesign.bodySize}
             weight="medium"
             wrapPolicy={resolvedDesign.bodyAutoWrap ? "prose" : "nowrap"}
-            className="text-justify text-textSecondary"
+            align={align}
+            className="text-textSecondary"
           >
             {content}
           </Typography>

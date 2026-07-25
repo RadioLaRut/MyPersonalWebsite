@@ -30,7 +30,7 @@ npm run dev
 npm run dev:test
 ```
 
-测试模式启用 `/admin`、`/playground`、FontLab、ComponentLab 与本地写接口。写操作还要求设置 `LOCAL_EDITOR_ACCESS_TOKEN`，客户端通过 `x-local-editor-token` 请求头发送同一值。Vercel 或其他生产环境变量存在时，本地编辑入口会被阻断。
+测试模式启用 `/admin`、`/playground`、FontLab、ComponentLab 与本地写接口。写操作推荐在 `.env.local` 设置逗号或换行分隔的 `LOCAL_EDITOR_ACCESS_TOKENS`，每台电脑的浏览器通过 `x-local-editor-token` 请求头发送各自的一个 Token；原有单值 `LOCAL_EDITOR_ACCESS_TOKEN` 继续兼容。具体配置与浏览器启用方式见《配置指南》。Vercel 或其他生产环境变量存在时，本地编辑入口会被阻断。
 
 ## 检查与构建
 

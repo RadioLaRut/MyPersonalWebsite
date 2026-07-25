@@ -9,6 +9,7 @@ import {
   getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
 } from "@/lib/component-design-style";
+import { hasEditableTextContent } from "@/lib/editable-text";
 
 type SectionHeadlineProps = {
   indexLabel?: ReactNode;
@@ -32,7 +33,7 @@ export default function BreakdownSectionHeadline({
         { leftCol: 1, rightCol: 12 },
         resolvedDesign.contentBounds,
       ))}>
-        {indexLabel ? (
+        {hasEditableTextContent(indexLabel) ? (
           <Typography
             as="p"
             preset="sans-body"

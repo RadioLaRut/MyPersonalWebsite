@@ -5,14 +5,17 @@ import {
   ContentQuotaExceededError,
 } from "./content-budget.ts";
 import {
+  ContentAlreadyExistsError,
   ContentNotFoundError,
   ContentPersistenceError,
   StoredContentInvalidError,
 } from "./content-repository.ts";
+import { isCreatePageRequest } from "./editor-page-contract.ts";
 import { isJsonValue, isPlainRecord } from "./json-utils.ts";
 import {
   LOCAL_EDITOR_ACCESS_HEADER,
   LOCAL_EDITOR_ACCESS_TOKEN_ENV,
+  LOCAL_EDITOR_ACCESS_TOKENS_ENV,
 } from "./local-editor-access.ts";
 import { evaluateLocalEditorApiAccess } from "./local-editor-policy.ts";
 import { PageDocumentValidationError } from "./page-document-contract.ts";
@@ -25,7 +28,12 @@ import { normalizePuckSlugInput, SlugValidationError } from "./puck-slug.ts";
 
 type PuckApiRepository = Pick<
   ContentRepository,
-  "listPageSlugs" | "publishPage" | "readPage" | "readProjectCatalog"
+  | "createPage"
+  | "listPageSlugs"
+  | "listPageSummaries"
+  | "publishPage"
+  | "readPage"
+  | "readProjectCatalog"
 >;
 
 const NO_STORE_HEADER = { "Cache-Control": "no-store" } as const;
@@ -57,7 +65,7 @@ function authorize(request: Request, requireToken = false) {
     ? errorResponse(
       403,
       "EDITOR_TOKEN_REQUIRED",
-      `Set ${LOCAL_EDITOR_ACCESS_TOKEN_ENV} and send ${LOCAL_EDITOR_ACCESS_HEADER}`,
+      `Set ${LOCAL_EDITOR_ACCESS_TOKENS_ENV} (or legacy ${LOCAL_EDITOR_ACCESS_TOKEN_ENV}) and send ${LOCAL_EDITOR_ACCESS_HEADER}`,
     )
     : errorResponse(403, "UNAUTHORIZED", "Editor access denied");
 }
@@ -83,8 +91,11 @@ export async function handlePuckGet(
   try {
     const searchParams = new URL(request.url).searchParams;
     if (searchParams.get("list") === "1") {
-      const slugs = await repository.listPageSlugs();
-      return jsonResponse({ slugs });
+      const pages = await repository.listPageSummaries();
+      return jsonResponse({
+        pages,
+        slugs: pages.map((page) => page.slug),
+      });
     }
 
     const normalizedOrError = normalizeSlugOrError(searchParams.get("slug"));
@@ -110,6 +121,62 @@ export async function handlePuckGet(
     }
     if (error instanceof StoredContentInvalidError) {
       return errorResponse(500, error.code, "Stored Puck content is invalid");
+    }
+    return errorResponse(500, "INTERNAL_ERROR", "Unexpected server error");
+  }
+}
+
+export async function handlePuckPut(
+  request: Request,
+  repository: PuckApiRepository,
+) {
+  const denied = authorize(request, true);
+  if (denied) return denied;
+
+  let payload: unknown;
+  try {
+    payload = await readJsonWithLimit(
+      request,
+      CONTENT_BUDGET_PROFILE_V1.requestBytes.puckJson,
+    );
+  } catch (error) {
+    if (error instanceof RequestBodyError) {
+      return errorResponse(error.status, error.code, error.message);
+    }
+    return errorResponse(400, "BAD_REQUEST", "Request body must be valid JSON");
+  }
+
+  if (!isCreatePageRequest(payload)) {
+    return errorResponse(
+      400,
+      "BAD_REQUEST",
+      "Request body must contain slug and a valid blank or duplicate mode",
+    );
+  }
+
+  try {
+    return jsonResponse(await repository.createPage(payload), 201);
+  } catch (error) {
+    if (error instanceof SlugValidationError) {
+      return errorResponse(error.status, error.code, error.message);
+    }
+    if (error instanceof ContentAlreadyExistsError) {
+      return errorResponse(409, error.code, "A page already exists at this path");
+    }
+    if (error instanceof ContentNotFoundError) {
+      return errorResponse(404, error.code, "The source page does not exist");
+    }
+    if (error instanceof PageDocumentValidationError) {
+      return errorResponse(422, error.code, error.message, error.issues);
+    }
+    if (error instanceof ContentBudgetExceededError) {
+      return errorResponse(error.status, error.code, error.message);
+    }
+    if (error instanceof ContentQuotaExceededError) {
+      return errorResponse(error.status, error.code, error.message);
+    }
+    if (error instanceof ContentPersistenceError) {
+      return errorResponse(500, error.code, "Failed to create Puck content");
     }
     return errorResponse(500, "INTERNAL_ERROR", "Unexpected server error");
   }

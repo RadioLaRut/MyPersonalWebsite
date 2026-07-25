@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import Typography from "@/components/common/Typography";
 import {
   type ComponentDesignOverride,
@@ -7,7 +9,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { getGridColumnClassName } from "@/lib/component-design-style";
 
 type StatementBlockProps = {
-  content: string;
+  content: ReactNode;
   align?: "left" | "center" | "right";
   backgroundColor?: "black" | "dark-gray";
   minHeight?: "small" | "medium" | "large";

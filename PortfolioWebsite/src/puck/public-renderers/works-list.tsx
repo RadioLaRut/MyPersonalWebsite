@@ -10,6 +10,7 @@ import {
   pickEntryField,
   readSlot,
 } from "./shared";
+import { castTypographyAlignment } from "../../lib/typography-alignment";
 
 export const render: ComponentConfig["render"] = ({ editMode, entries, heading, indexSummary }) => {
   const { items: works = [], SlotComponent: EntriesSlot } = readSlot(
@@ -18,6 +19,9 @@ export const render: ComponentConfig["render"] = ({ editMode, entries, heading, 
       aliases: pickEntryField<{ slug: string }[]>(entry, "aliases") ?? [],
       category: pickEntryField<string>(entry, "category") ?? "",
       desc: pickEntryField<string>(entry, "desc") ?? "",
+      descriptionAlign: castTypographyAlignment(
+        pickEntryField(entry, "descriptionAlign"),
+      ),
       href: toSafePuckHref(pickEntryField(entry, "href")),
       id: pickEntryField<string>(entry, "id") ?? "",
       imageFitMode: castImageFitMode(pickEntryField(entry, "imageFitMode") ?? "x"),

@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import {
   LOCAL_EDITOR_ACCESS_HEADER,
   LOCAL_EDITOR_ACCESS_TOKEN_ENV,
+  LOCAL_EDITOR_ACCESS_TOKENS_ENV,
 } from "./local-editor-access.ts";
 import {
   createLocalEditorTransportContext,
@@ -20,7 +21,7 @@ const UNAUTHORIZED_BODY = {
 const TOKEN_REQUIRED_BODY = {
   error: {
     code: "EDITOR_TOKEN_REQUIRED",
-    message: `Set ${LOCAL_EDITOR_ACCESS_TOKEN_ENV} and send ${LOCAL_EDITOR_ACCESS_HEADER}`,
+    message: `Set ${LOCAL_EDITOR_ACCESS_TOKENS_ENV} (or legacy ${LOCAL_EDITOR_ACCESS_TOKEN_ENV}) and send ${LOCAL_EDITOR_ACCESS_HEADER}`,
   },
 } as const;
 

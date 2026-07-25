@@ -1,56 +1,138 @@
 {
-  "version": 1,
   "components": {
     "HeroSection": {
-      "defaultInstance": { "pageSlug": "index", "componentId": "hero-section-1" },
+      "defaultInstance": {
+        "pageSlug": "index",
+        "componentId": "hero-section-1"
+      },
       "stressSample": {
+        "instance": {
+          "pageSlug": "index",
+          "componentId": "hero-section-1"
+        },
         "kind": "derived",
-        "instance": { "pageSlug": "index", "componentId": "hero-section-1" },
         "props": {
           "eyebrow": "LIGHTING / TECH ART / SYSTEM DESIGN / INTERACTIVE NARRATIVE",
-          "title": "JIANG\nCHENGYAN"
+          "title": "JIANG\nCHENGYAN",
+          "descriptionAlign": "left"
         }
       }
     },
     "HeroHeadline": {
-      "defaultInstance": { "pageSlug": "works/epic-stage", "componentId": "hero-1" },
+      "defaultInstance": {
+        "pageSlug": "works/epic-stage",
+        "componentId": "hero-1"
+      },
       "stressSample": {
+        "instance": {
+          "pageSlug": "works/epic-stage",
+          "componentId": "hero-1"
+        },
         "kind": "derived",
-        "instance": { "pageSlug": "works/epic-stage", "componentId": "hero-1" },
         "props": {
           "title": "EPIC STAGE LIGHTING AND INTERACTIVE ENVIRONMENT",
-          "subtitle": "A deliberately extended project summary for validating editorial wrapping, media framing, and grid alignment."
+          "subtitle": "A deliberately extended project summary for validating editorial wrapping, media framing, and grid alignment.",
+          "eyebrow": "PROJECT",
+          "subtitleAlign": "left",
+          "heroImage": "/images/train-station/2Day.webp",
+          "heroImagePreset": "ratio-21-9",
+          "heroImageFitMode": "x",
+          "navLink": "",
+          "navLinkLabel": "观看视频"
         }
       }
     },
-    "PortfolioHeroHeader": {
-      "defaultInstance": { "pageSlug": "about", "componentId": "about-hero-1" },
+    "EditorialHeader": {
+      "defaultInstance": {
+        "pageSlug": "about",
+        "componentId": "about-hero-1"
+      },
       "stressSample": {
+        "instance": {
+          "pageSlug": "about",
+          "componentId": "about-hero-1"
+        },
         "kind": "derived",
-        "instance": { "pageSlug": "about", "componentId": "about-hero-1" },
         "props": {
+          "backHref": "",
+          "ctaHref": "",
+          "ctaLabel": "",
+          "description": "",
+          "descriptionAlign": "left",
+          "descriptionLine1": "",
+          "descriptionLine2": "这是一段用于验证长文本、跨语言字形、栅格边界与按钮关系的压力样本文案。它只存在于 ComponentLab 预设中，不进入页面内容。",
+          "number": "",
+          "subtitle": "",
           "title": "ABOUT / PROCESS / PRACTICE",
-          "descriptionLine2": "这是一段用于验证长文本、跨语言字形、栅格边界与按钮关系的压力样本文案。它只存在于 ComponentLab 预设中，不进入页面内容。"
+          "variant": "index"
         }
       }
     },
-    "LightingCollectionHeader": {
-      "defaultInstance": { "pageSlug": "works/lighting-portfolio/collection-1", "componentId": "collection-1-header" },
+    "EditorialSplit": {
+      "defaultInstance": {
+        "pageSlug": "works/holy-tank",
+        "componentId": "holytank-card-2"
+      },
       "stressSample": {
+        "instance": {
+          "pageSlug": "works/holy-tank",
+          "componentId": "holytank-card-2"
+        },
         "kind": "derived",
-        "instance": { "pageSlug": "works/lighting-portfolio/collection-1", "componentId": "collection-1-header" },
         "props": {
-          "title": "NIGHT TRANSIT LIGHTING COLLECTION",
-          "description": "A longer collection introduction used to expose wrapping, vertical rhythm, and responsive column boundaries across all standard preview viewports."
+          "body": "A deliberately long bilingual description，用于检查图文比例、标题换行、段落节奏以及左右图片布局在三档视口中的一致性。",
+          "bodyAlign": "left",
+          "bodyMode": "plain",
+          "heading": "SYSTEM CONSTRAINTS AND HUMAN CONSEQUENCES",
+          "imageFitMode": "x",
+          "imagePreset": "ratio-16-9",
+          "imageSrc": "",
+          "layout": "media-right",
+          "paragraphs": []
         }
       }
     },
-    "LightingProjectCard": {
-      "defaultInstance": { "pageSlug": "works/lighting-portfolio", "componentId": "collection-1" },
+    "ThreeColumnSection": {
+      "defaultInstance": {
+        "pageSlug": "about",
+        "componentId": "about-info-1"
+      },
       "stressSample": {
+        "instance": {
+          "pageSlug": "about",
+          "componentId": "about-info-1"
+        },
         "kind": "derived",
-        "instance": { "pageSlug": "works/lighting-portfolio", "componentId": "collection-1" },
-        "props": { "title": "NIGHT TRANSIT / ATMOSPHERE / TECHNICAL BREAKDOWN" }
+        "props": {
+          "col1Items": [],
+          "col2Items": [],
+          "rhythm": "aligned",
+          "variant": "phase",
+          "col1Body": "",
+          "col1BodyAlign": "left",
+          "col1Label": "",
+          "col1MediaFitMode": "x",
+          "col1MediaPreset": "ratio-16-9",
+          "col1MediaSrc": "",
+          "col1Subtitle": "",
+          "col1Title": "DISCOVERY / CONSTRAINTS / DIRECTION",
+          "col2Body": "",
+          "col2BodyAlign": "left",
+          "col2Label": "",
+          "col2MediaFitMode": "x",
+          "col2MediaPreset": "ratio-16-9",
+          "col2MediaSrc": "",
+          "col2Subtitle": "",
+          "col2Title": "PRODUCTION SYSTEMS AND COLLABORATION",
+          "col3Body": "压力样本通过更长的标题与正文检查三栏信息密度、条目 Slot、图片落位以及小屏堆叠后的阅读顺序。",
+          "col3BodyAlign": "left",
+          "col3Label": "",
+          "col3MediaFitMode": "x",
+          "col3MediaPreset": "ratio-16-9",
+          "col3MediaSrc": "",
+          "col3Subtitle": "",
+          "col3Title": ""
+        }
       }
     },
     "StatementBlock": {
@@ -70,59 +152,154 @@
       }
     },
     "RichParagraph": {
-      "defaultInstance": { "pageSlug": "works/im-explode", "componentId": "explod-desc-1" },
+      "defaultInstance": {
+        "pageSlug": "works/im-explode",
+        "componentId": "explod-desc-1"
+      },
       "stressSample": {
+        "instance": {
+          "pageSlug": "works/im-explode",
+          "componentId": "explod-desc-1"
+        },
         "kind": "derived",
-        "instance": { "pageSlug": "works/im-explode", "componentId": "explod-desc-1" },
         "props": {
-          "content": "这是一段用于测试中文、Latin words、数字 2028 与长句标点混排的压力文本。它需要在既定阅读宽度内保持稳定的字重、行高和段落节奏，并避免编辑器包装节点改变 Typography 的语言分段判断。\n\n第二段继续验证自然换行、显式换段与窄屏可读性。"
-        }
-      }
-    },
-    "ContentCard": {
-      "defaultInstance": { "pageSlug": "works/holy-tank", "componentId": "holytank-card-2" },
-      "stressSample": {
-        "kind": "derived",
-        "instance": { "pageSlug": "works/holy-tank", "componentId": "holytank-card-2" },
-        "props": {
-          "title": "SYSTEM CONSTRAINTS AND HUMAN CONSEQUENCES",
-          "description": "A deliberately long bilingual description，用于检查图文比例、标题换行、段落节奏以及左右图片布局在三档视口中的一致性。"
-        }
-      }
-    },
-    "TextSplitLayout": {
-      "defaultInstance": { "pageSlug": "works/epic-stage", "componentId": "tsl-1" },
-      "stressSample": {
-        "kind": "derived",
-        "instance": { "pageSlug": "works/epic-stage", "componentId": "tsl-1" },
-        "props": { "heading": "A LONGER HEADING FOR SPLIT LAYOUT AND SLOT CONTENT" }
-      }
-    },
-    "HighDensityInfoBlock": {
-      "defaultInstance": { "pageSlug": "about", "componentId": "about-info-1" },
-      "stressSample": {
-        "kind": "derived",
-        "instance": { "pageSlug": "about", "componentId": "about-info-1" },
-        "props": {
-          "phase1Title": "DISCOVERY / CONSTRAINTS / DIRECTION",
-          "phase2Title": "PRODUCTION SYSTEMS AND COLLABORATION",
-          "phase3Content": "压力样本通过更长的标题与正文检查三栏信息密度、条目 Slot、图片落位以及小屏堆叠后的阅读顺序。"
+          "content": "这是一段用于测试中文、Latin words、数字 2028 与长句标点混排的压力文本。它需要在既定阅读宽度内保持稳定的字重、行高和段落节奏，并避免编辑器包装节点改变 Typography 的语言分段判断。\n\n第二段继续验证自然换行、显式换段与窄屏可读性。",
+          "align": "justify"
         }
       }
     },
     "ImagePanel": {
-      "defaultInstance": { "pageSlug": "works/houdini-pcg", "componentId": "gallery-img-1" },
+      "defaultInstance": {
+        "pageSlug": "works/houdini-pcg",
+        "componentId": "gallery-img-1"
+      },
       "stressSample": {
+        "instance": {
+          "pageSlug": "works/houdini-pcg",
+          "componentId": "gallery-img-1"
+        },
         "kind": "derived",
-        "instance": { "pageSlug": "works/houdini-pcg", "componentId": "gallery-img-1" },
-        "props": { "caption": "Houdini procedural generation study / extended technical caption / 2026" }
+        "props": {
+          "caption": "Houdini procedural generation study / extended technical caption / 2026",
+          "captionAlign": "left"
+        }
+      }
+    },
+    "BilibiliEmbed": {
+      "defaultInstance": {
+        "componentId": "bilibili-works-im-explode",
+        "pageSlug": "works/im-explode"
+      },
+      "stressSample": {
+        "kind": "standalone",
+        "node": {
+          "props": {
+            "caption": "跨语言长图注测试：A Bilibili project film with mixed Chinese and English copy.",
+            "captionAlign": "justify",
+            "id": "component-lab-stress-BilibiliEmbed",
+            "source": "BV1DNwUeDEos",
+            "title": "ComponentLab B 站播放器压力样本"
+          },
+          "type": "BilibiliEmbed"
+        }
+      }
+    },
+    "ProjectCoverLink": {
+      "defaultInstance": {
+        "pageSlug": "index",
+        "componentId": "proj-1"
+      },
+      "stressSample": {
+        "instance": {
+          "pageSlug": "index",
+          "componentId": "proj-1"
+        },
+        "kind": "derived",
+        "props": {
+          "align": "auto",
+          "href": "",
+          "imageFitMode": "x",
+          "imagePreset": "ratio-16-9",
+          "index": 0,
+          "mediaSrc": "",
+          "mobileImageFocalX": 50,
+          "mobileImageFocalY": 50,
+          "number": "",
+          "subtitle": "Environment / Narrative / Technical Art / Production",
+          "title": "INTERACTIVE LIGHTING SYSTEMS",
+          "variant": "immersive"
+        }
+      }
+    },
+    "WorksList": {
+      "defaultInstance": {
+        "pageSlug": "works",
+        "componentId": "workslist-1"
+      },
+      "stressSample": {
+        "instance": {
+          "pageSlug": "works",
+          "componentId": "workslist-1"
+        },
+        "kind": "derived",
+        "props": {
+          "heading": "SELECTED WORKS / RESEARCH / PRODUCTION ARCHIVE",
+          "indexSummary": "A complete index spanning lighting, systems, narrative, production tooling, and technical studies."
+        }
+      }
+    },
+    "ParameterGrid": {
+      "defaultInstance": {
+        "pageSlug": "works/epic-stage",
+        "componentId": "param-1"
+      },
+      "stressSample": {
+        "instance": {
+          "pageSlug": "works/epic-stage",
+          "componentId": "param-1"
+        },
+        "kind": "derived",
+        "props": {
+          "parameters": [
+            {
+              "name": "Primary Atmosphere Density",
+              "value": "0.175",
+              "description": "Controls the global volumetric response across the complete sequence.",
+              "descriptionAlign": "left"
+            },
+            {
+              "name": "Directional Contrast",
+              "value": "1.85",
+              "description": "Balances subject readability against the background lighting hierarchy.",
+              "descriptionAlign": "left"
+            },
+            {
+              "name": "Interactive Transition Duration",
+              "value": "2400ms",
+              "description": "Stress-tests long labels and descriptions inside the parameter grid.",
+              "descriptionAlign": "left"
+            },
+            {
+              "name": "Fallback Quality Tier",
+              "value": "Medium",
+              "description": "Verifies dense wrapping without changing the configured item span.",
+              "descriptionAlign": "left"
+            }
+          ]
+        }
       }
     },
     "ImageSlider": {
-      "defaultInstance": { "pageSlug": "works/lighting-portfolio/collection-2", "componentId": "ImageSlider-fc7ebed5-5622-4dbf-abb3-43df8d11cd40" },
+      "defaultInstance": {
+        "pageSlug": "works/lighting-portfolio/collection-2",
+        "componentId": "ImageSlider-fc7ebed5-5622-4dbf-abb3-43df8d11cd40"
+      },
       "stressSample": {
+        "instance": {
+          "pageSlug": "works/lighting-portfolio/collection-2",
+          "componentId": "ImageSlider-fc7ebed5-5622-4dbf-abb3-43df8d11cd40"
+        },
         "kind": "derived",
-        "instance": { "pageSlug": "works/lighting-portfolio/collection-2", "componentId": "ImageSlider-fc7ebed5-5622-4dbf-abb3-43df8d11cd40" },
         "props": {
           "title": "UNLIT / FINAL LIGHTING / COMPOSITION COMPARISON",
           "leftLabel": "BEFORE / UNLIT",
@@ -131,104 +308,125 @@
       }
     },
     "BreakdownHeadline": {
-      "defaultInstance": { "pageSlug": "works/holy-tank", "componentId": "holytank-headline-1" },
+      "defaultInstance": {
+        "pageSlug": "works/holy-tank",
+        "componentId": "holytank-headline-1"
+      },
       "stressSample": {
+        "instance": {
+          "pageSlug": "works/holy-tank",
+          "componentId": "holytank-headline-1"
+        },
         "kind": "derived",
-        "instance": { "pageSlug": "works/holy-tank", "componentId": "holytank-headline-1" },
-        "props": { "title": "RESEARCH, CONSTRAINTS, ITERATION, AND FINAL SYSTEM" }
-      }
-    },
-    "BreakdownTriptych": {
-      "defaultInstance": { "pageSlug": "works/insight", "componentId": "insight-triptych-1" },
-      "stressSample": {
-        "kind": "derived",
-        "instance": { "pageSlug": "works/insight", "componentId": "insight-triptych-1" },
         "props": {
-          "col1Title": "DISCOVERY AND RESEARCH",
-          "col2Title": "INTERACTION SYSTEM",
-          "col3Title": "VALIDATION AND ITERATION",
-          "col2Text": "Extended explanatory copy used to validate independent column rhythm and staggered media alignment."
-        }
-      }
-    },
-    "ParameterGrid": {
-      "defaultInstance": { "pageSlug": "works/epic-stage", "componentId": "param-1" },
-      "stressSample": {
-        "kind": "derived",
-        "instance": { "pageSlug": "works/epic-stage", "componentId": "param-1" },
-        "props": {
-          "parameters": [
-            { "name": "Primary Atmosphere Density", "value": "0.175", "description": "Controls the global volumetric response across the complete sequence." },
-            { "name": "Directional Contrast", "value": "1.85", "description": "Balances subject readability against the background lighting hierarchy." },
-            { "name": "Interactive Transition Duration", "value": "2400ms", "description": "Stress-tests long labels and descriptions inside the parameter grid." },
-            { "name": "Fallback Quality Tier", "value": "Medium", "description": "Verifies dense wrapping without changing the configured item span." }
-          ]
-        }
-      }
-    },
-    "ProjectSection": {
-      "defaultInstance": { "pageSlug": "index", "componentId": "proj-1" },
-      "stressSample": {
-        "kind": "derived",
-        "instance": { "pageSlug": "index", "componentId": "proj-1" },
-        "props": {
-          "title": "INTERACTIVE LIGHTING SYSTEMS",
-          "subtitle": "Environment / Narrative / Technical Art / Production"
-        }
-      }
-    },
-    "WorksList": {
-      "defaultInstance": { "pageSlug": "works", "componentId": "workslist-1" },
-      "stressSample": {
-        "kind": "derived",
-        "instance": { "pageSlug": "works", "componentId": "workslist-1" },
-        "props": {
-          "heading": "SELECTED WORKS / RESEARCH / PRODUCTION ARCHIVE",
-          "indexSummary": "A complete index spanning lighting, systems, narrative, production tooling, and technical studies."
-        }
-      }
-    },
-    "WorksListEntry": {
-      "defaultInstance": { "pageSlug": "works", "componentId": "w1" },
-      "stressSample": {
-        "kind": "derived",
-        "instance": { "pageSlug": "works", "componentId": "w1" },
-        "props": {
-          "title": "PENGUIN INTERSTELLAR TRADING COMPANY",
-          "category": "FULL-STACK PRODUCTION / SYSTEM DESIGN / TECH ART",
-          "desc": "A deliberately expanded archive description used to validate the active image layer, title wrapping, and responsive sidebar geometry."
-        }
-      }
-    },
-    "HomeEndcapSection": {
-      "defaultInstance": { "pageSlug": "about", "componentId": "about-endcap-1" },
-      "stressSample": {
-        "kind": "derived",
-        "instance": { "pageSlug": "about", "componentId": "about-endcap-1" },
-        "props": {
-          "title": "ALL WORKS / COMPLETE PRODUCTION ARCHIVE",
-          "description": "A longer closing statement spanning interactive narrative, technical systems, lighting studies, and production experiments."
+          "title": "RESEARCH, CONSTRAINTS, ITERATION, AND FINAL SYSTEM"
         }
       }
     },
     "NextProjectBlock": {
-      "defaultInstance": { "pageSlug": "works/epic-stage", "componentId": "next-1" },
+      "defaultInstance": {
+        "pageSlug": "works/epic-stage",
+        "componentId": "next-1"
+      },
       "stressSample": {
+        "instance": {
+          "pageSlug": "works/epic-stage",
+          "componentId": "next-1"
+        },
         "kind": "derived",
-        "instance": { "pageSlug": "works/epic-stage", "componentId": "next-1" },
         "props": {}
       }
     },
-    "ContactFlashlight": {
-      "defaultInstance": { "pageSlug": "about", "componentId": "about-contact-1" },
+    "HomeEndcapSection": {
+      "defaultInstance": {
+        "pageSlug": "about",
+        "componentId": "about-endcap-1"
+      },
       "stressSample": {
+        "instance": {
+          "pageSlug": "about",
+          "componentId": "about-endcap-1"
+        },
         "kind": "derived",
-        "instance": { "pageSlug": "about", "componentId": "about-contact-1" },
+        "props": {
+          "title": "ALL WORKS / COMPLETE PRODUCTION ARCHIVE",
+          "description": "A longer closing statement spanning interactive narrative, technical systems, lighting studies, and production experiments.",
+          "descriptionAlign": "center"
+        }
+      }
+    },
+    "ContactFlashlight": {
+      "defaultInstance": {
+        "pageSlug": "about",
+        "componentId": "about-contact-1"
+      },
+      "stressSample": {
+        "instance": {
+          "pageSlug": "about",
+          "componentId": "about-contact-1"
+        },
+        "kind": "derived",
         "props": {
           "taglineText": "艺术与科技 / 交互叙事设计 / 游戏设计 / 技术美术 / 系统化生产流程",
-          "taglineSub": "CUC '2028 / AVAILABLE FOR COLLABORATION"
+          "taglineSub": "CUC '2028 / AVAILABLE FOR COLLABORATION",
+          "taglineSubAlign": "left"
+        }
+      }
+    },
+    "WorksListEntry": {
+      "defaultInstance": {
+        "pageSlug": "works",
+        "componentId": "w1"
+      },
+      "stressSample": {
+        "instance": {
+          "pageSlug": "works",
+          "componentId": "w1"
+        },
+        "kind": "derived",
+        "props": {
+          "title": "PENGUIN INTERSTELLAR TRADING COMPANY",
+          "category": "FULL-STACK PRODUCTION / SYSTEM DESIGN / TECH ART",
+          "desc": "A deliberately expanded archive description used to validate the active image layer, title wrapping, and responsive sidebar geometry.",
+          "descriptionAlign": "left"
+        }
+      }
+    },
+    "MetadataListItem": {
+      "defaultInstance": {
+        "pageSlug": "about",
+        "componentId": "about-exp-1"
+      },
+      "stressSample": {
+        "kind": "standalone",
+        "node": {
+          "type": "MetadataListItem",
+          "props": {
+            "id": "component-lab-metadata-list-item",
+            "label": "ROLE / RESPONSIBILITY / COLLABORATION",
+            "value": "CREATIVE TECHNOLOGIST AND INTERACTION DESIGNER",
+            "align": "start"
+          }
+        }
+      }
+    },
+    "TextParagraphBlock": {
+      "defaultInstance": {
+        "pageSlug": "works/epic-stage",
+        "componentId": "tsl-1-paragraph-1"
+      },
+      "stressSample": {
+        "kind": "standalone",
+        "node": {
+          "type": "TextParagraphBlock",
+          "props": {
+            "id": "component-lab-text-paragraph-block",
+            "text": "这是一段用于检查长文本、中文与 Latin 字符混排，以及窄栏自然换行表现的原子段落样本。",
+            "align": "left"
+          }
         }
       }
     }
-  }
+  },
+  "version": 2
 }

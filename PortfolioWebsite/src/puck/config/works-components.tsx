@@ -4,25 +4,30 @@ import type {
 } from "./component-definition";
 import { createFieldGroup } from "@/puck/fields/field-groups";
 import {
-  buildImageFieldTriple,
+  buildImagePickerFieldTriple,
+  createImageSourceField,
+} from "@/puck/fields/image-source-field";
+import {
   imageFitModeField,
   imagePresetField,
 } from "@/puck/fields/image-fields";
+import { createTextAlignmentField } from "@/puck/fields/text-alignment-field";
 
-const contentCardImageFields = buildImageFieldTriple("imageSrc");
-const parameterGridImageFields = buildImageFieldTriple("mediaSrc", {
+const contentCardImageFields = buildImagePickerFieldTriple("imageSrc");
+const parameterGridImageFields = buildImagePickerFieldTriple("mediaSrc", {
   defaultPreset: "ratio-21-9",
   fitModeKey: "imageFitMode",
+  mode: "media",
   presetKey: "imagePreset",
-  srcLabel: "Media Source",
+  srcLabel: "可选图片",
 });
-const highDensityPhase3ImageFields = buildImageFieldTriple("phase3ImageSrc", {
+const highDensityPhase3ImageFields = buildImagePickerFieldTriple("phase3ImageSrc", {
   fitModeLabel: "Phase 3 Image Fit Mode",
   presetLabel: "Phase 3 Image Preset",
   srcLabel: "Phase 3 Image Source",
 });
-const projectSectionImageFields = buildImageFieldTriple("imageSrc");
-const worksListEntryImageFields = buildImageFieldTriple("imageSrc", {
+const projectSectionImageFields = buildImagePickerFieldTriple("imageSrc");
+const worksListEntryImageFields = buildImagePickerFieldTriple("imageSrc", {
   defaultPreset: "ratio-21-9",
 });
 function buildTriptychColumnFields(
@@ -32,7 +37,7 @@ function buildTriptychColumnFields(
     [`_g_col${column}`]: createFieldGroup(`列 ${column}`),
     [`col${column}Title`]: { type: "text", label: `Column ${column} Title` },
     [`col${column}Text`]: { type: "textarea", label: `Column ${column} Text` },
-    [`col${column}Img`]: { type: "text", label: `Column ${column} Image` },
+    [`col${column}Img`]: createImageSourceField(`Column ${column} Image`),
     [`col${column}Preset`]: { ...imagePresetField, label: `Column ${column} Preset` },
     [`col${column}FitMode`]: { ...imageFitModeField, label: `Column ${column} Fit Mode` },
   };
@@ -94,8 +99,8 @@ export const worksComponents = {
       fields: {
         _g_images: createFieldGroup("对比图片"),
         title: { type: "text", label: "Title" },
-        unlitSrc: { type: "text", label: "Unlit Source" },
-        litSrc: { type: "text", label: "Lit Source" },
+        unlitSrc: createImageSourceField("Unlit Source"),
+        litSrc: createImageSourceField("Lit Source"),
         alt: { type: "text", label: "Alt Text" },
         _g_display: createFieldGroup("显示设置"),
         imagePreset: { ...imagePresetField, label: "Image Preset" },
@@ -155,16 +160,8 @@ export const worksComponents = {
 
     ParameterGrid: {
       fields: {
-        _g_media: createFieldGroup("媒体配置"),
+        _g_media: createFieldGroup("可选图片"),
         ...parameterGridImageFields.fields,
-        isVideo: {
-          type: "select",
-          label: "Is Video",
-          options: [
-            { label: "Image", value: false },
-            { label: "Video", value: true }
-          ]
-        },
         _g_params: createFieldGroup("参数列表"),
         parameters: {
           type: "array",
@@ -173,13 +170,13 @@ export const worksComponents = {
           arrayFields: {
             name: { type: "text", label: "Name" },
             value: { type: "text", label: "Value" },
-            description: { type: "textarea", label: "Description" }
+            description: { type: "textarea", label: "Description" },
+            descriptionAlign: createTextAlignmentField("说明对齐"),
           }
         }
       },
       defaultProps: {
         ...parameterGridImageFields.defaults,
-        isVideo: false,
         parameters: []
       },
     },
@@ -188,10 +185,18 @@ export const worksComponents = {
       fields: {
         _g_phase1: createFieldGroup("阶段 1"),
         ...buildPhaseTextFields(1),
-        phase1Items: { type: "slot", label: "Phase 1 Items" },
+        phase1Items: {
+          type: "slot",
+          label: "Phase 1 Items",
+          allow: ["MetadataListItem"],
+        },
         _g_phase2: createFieldGroup("阶段 2"),
         ...buildPhaseTextFields(2),
-        phase2Items: { type: "slot", label: "Phase 2 Items" },
+        phase2Items: {
+          type: "slot",
+          label: "Phase 2 Items",
+          allow: ["MetadataListItem"],
+        },
         _g_phase3: createFieldGroup("阶段 3"),
         ...buildPhaseTextFields(3),
         ...highDensityPhase3ImageFields.fields,
@@ -265,7 +270,11 @@ export const worksComponents = {
       fields: {
         heading: { type: "text", label: "Heading" },
         indexSummary: { type: "text", label: "索引说明" },
-        entries: { type: "slot", label: "Entries" }
+        entries: {
+          type: "slot",
+          label: "Entries",
+          allow: ["WorksListEntry"],
+        }
       },
       defaultProps: {
         heading: "",
@@ -282,6 +291,7 @@ export const worksComponents = {
         title: { type: "text", label: "Title" },
         category: { type: "text", label: "Category" },
         desc: { type: "textarea", label: "Description" },
+        descriptionAlign: createTextAlignmentField("描述对齐"),
         aliases: {
           type: "array",
           label: "历史别名",
@@ -300,6 +310,7 @@ export const worksComponents = {
         category: "",
         ...worksListEntryImageFields.defaults,
         desc: "",
+        descriptionAlign: "left",
         aliases: [],
       },
     },

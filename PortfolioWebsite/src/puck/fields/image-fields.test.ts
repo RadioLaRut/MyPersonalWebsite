@@ -36,3 +36,16 @@ test("buildImageFieldTriple allows render-compatible preset and fit mode keys", 
   assert.equal("mediaPreset" in triple.fields, false);
   assert.equal("mediaFitMode" in triple.fields, false);
 });
+
+test("buildImageFieldTriple preserves a custom image source field", () => {
+  const sourceField = {
+    type: "custom" as const,
+    label: "Image Source",
+    render: (() => null) as never,
+  };
+  const triple = buildImageFieldTriple("imageSrc", {
+    srcField: sourceField,
+  });
+
+  assert.equal(triple.fields.imageSrc, sourceField);
+});

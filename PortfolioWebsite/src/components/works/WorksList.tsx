@@ -1,6 +1,8 @@
 import { type ReactNode } from "react";
 
-import Typography from "@/components/common/Typography";
+import Typography, {
+    type TypographyAlignment,
+} from "@/components/common/Typography";
 import {
     type ComponentDesignOverride,
     resolveComponentDesign,
@@ -15,11 +17,12 @@ import {
 import WorksListEntry, {
     type WorksListEntryAlias,
 } from "@/components/works/WorksListEntry";
+import { hasEditableTextContent } from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 interface WorkItem {
     aliases?: WorksListEntryAlias[];
-    number?: string;
+    number?: ReactNode;
     id: string;
     href?: string;
     title: ReactNode;
@@ -28,6 +31,7 @@ interface WorkItem {
     imagePreset?: ImagePreset;
     imageFitMode?: ImageFitMode;
     desc: ReactNode;
+    descriptionAlign?: TypographyAlignment;
 }
 
 export type WorksListProps = {
@@ -91,7 +95,7 @@ export default function WorksList({
                     >
                         {heading}
                     </Typography>
-                    {indexSummary ? (
+                    {hasEditableTextContent(indexSummary) ? (
                       <Typography
                         as="p"
                         preset="sans-body"
@@ -123,6 +127,7 @@ export default function WorksList({
                             imagePreset={work.imagePreset}
                             imageFitMode={work.imageFitMode}
                             desc={work.desc}
+                            descriptionAlign={work.descriptionAlign}
                             editMode={editMode}
                             design={entryDesign}
                         />

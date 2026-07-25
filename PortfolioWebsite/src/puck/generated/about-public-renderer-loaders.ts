@@ -8,17 +8,17 @@ type PublicRendererModule = { render: PublicRenderer };
 type PublicRendererModuleLoader = () => Promise<PublicRendererModule>;
 
 export const ABOUT_PUBLIC_RENDERER_TYPES = [
+  "EditorialHeader",
+  "ThreeColumnSection",
   "HomeEndcapSection",
-  "PortfolioHeroHeader",
-  "HighDensityInfoBlock",
   "ContactFlashlight",
   "MetadataListItem",
 ] as const satisfies readonly PuckComponentType[];
 
 const ROUTE_PUBLIC_RENDERER_LOADERS = {
+  EditorialHeader: () => import("../public-renderers/editorial-header"),
+  ThreeColumnSection: () => import("../public-renderers/three-column-section"),
   HomeEndcapSection: () => import("../public-renderers/home-endcap-section"),
-  PortfolioHeroHeader: () => import("../public-renderers/portfolio-hero-header"),
-  HighDensityInfoBlock: () => import("../public-renderers/high-density-info-block"),
   ContactFlashlight: () => import("../public-renderers/contact-flashlight"),
   MetadataListItem: () => import("../public-renderers/metadata-list-item"),
 } satisfies Partial<Record<PuckComponentType, PublicRendererModuleLoader>>;

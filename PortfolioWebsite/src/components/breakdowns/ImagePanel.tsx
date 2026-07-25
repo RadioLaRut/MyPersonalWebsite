@@ -1,5 +1,9 @@
+import type { ReactNode } from "react";
+
 import { PresetImage } from "@/components/common/PresetImage";
-import Typography from "@/components/common/Typography";
+import Typography, {
+  type TypographyAlignment,
+} from "@/components/common/Typography";
 import {
   type ComponentDesignOverride,
   resolveComponentDesign,
@@ -9,12 +13,17 @@ import {
   getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
 } from "@/lib/component-design-style";
+import {
+  hasEditableTextContent,
+  toPlainText,
+} from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 export type ImagePanelProps = {
   src: string;
   alt?: string;
-  caption?: string;
+  caption?: ReactNode;
+  captionAlign?: TypographyAlignment;
   preset?: ImagePreset;
   fitMode?: ImageFitMode;
   variant?: "content" | "large" | "fullscreen";
@@ -24,6 +33,7 @@ export default function ImagePanel({
   src,
   alt,
   caption,
+  captionAlign = "left",
   preset,
   fitMode,
   variant = "content",
@@ -32,7 +42,8 @@ export default function ImagePanel({
   const resolvedDesign = resolveComponentDesign("ImagePanel", design);
   if (!src) return null;
 
-  const imageAlt = alt || caption || "Image";
+  const imageAlt = alt || toPlainText(caption) || "Image";
+  const hasCaption = hasEditableTextContent(caption);
 
   if (variant === "fullscreen") {
     return (
@@ -53,9 +64,9 @@ export default function ImagePanel({
             frameClassName="h-full w-full pointer-events-none"
           />
         </div>
-        {caption ? (
+        {hasCaption ? (
           <div className="absolute bottom-5 right-5 bg-black/65 border border-white/15 px-4 py-2 md:bottom-8 md:right-8">
-            <Typography preset="sans-body" size="label" weight="semantic" wrapPolicy="label" className="text-textPrimary">
+            <Typography preset="sans-body" size="label" weight="semantic" wrapPolicy="prose" align={captionAlign} className="text-textPrimary">
               {caption}
             </Typography>
           </div>
@@ -83,9 +94,9 @@ export default function ImagePanel({
               frameClassName="w-full"
               imageClassName="select-none"
             />
-            {caption ? (
+            {hasCaption ? (
               <figcaption className="border-t border-white/10 px-5 py-4 md:px-6">
-                <Typography preset="sans-body" size="caption" weight="semantic" wrapPolicy="label" className="text-textPrimary">
+                <Typography preset="sans-body" size="caption" weight="semantic" wrapPolicy="prose" align={captionAlign} className="text-textPrimary">
                   {caption}
                 </Typography>
               </figcaption>
@@ -105,9 +116,9 @@ export default function ImagePanel({
           resolvedDesign.contentBounds,
         ))} mx-auto w-full max-w-5xl overflow-hidden border border-white/15 bg-white/[0.03]`}>
           <PresetImage alt={imageAlt} src={src} preset={preset} fitMode={fitMode} />
-          {caption ? (
+          {hasCaption ? (
             <figcaption className="border-t border-white/15 px-4 py-3">
-              <Typography preset="sans-body" size="label" weight="semantic" wrapPolicy="label" className="text-textPrimary">
+              <Typography preset="sans-body" size="label" weight="semantic" wrapPolicy="prose" align={captionAlign} className="text-textPrimary">
                 {caption}
               </Typography>
             </figcaption>

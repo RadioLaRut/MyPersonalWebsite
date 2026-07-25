@@ -1,5 +1,9 @@
+import type { ReactNode } from "react";
+
 import { PresetImage } from "@/components/common/PresetImage";
-import Typography from "@/components/common/Typography";
+import Typography, {
+  type TypographyAlignment,
+} from "@/components/common/Typography";
 import {
   type ComponentDesignOverride,
   resolveComponentDesign,
@@ -11,17 +15,18 @@ import {
   getSpacingRem,
 } from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
+import { hasEditableTextContent } from "@/lib/editable-text";
 import { getParameterGridItemBounds } from "@/lib/parameter-grid-layout";
 
 interface Parameter {
-  name: string;
-  value?: string;
-  description: string;
+  name: ReactNode;
+  value?: ReactNode;
+  description: ReactNode;
+  descriptionAlign?: TypographyAlignment;
 }
 
 type ParameterGridProps = {
-  mediaSrc: string;
-  isVideo?: boolean;
+  mediaSrc?: string;
   imagePreset?: ImagePreset;
   imageFitMode?: ImageFitMode;
   parameters?: Parameter[];
@@ -29,7 +34,6 @@ type ParameterGridProps = {
 
 export default function ParameterGrid({
   mediaSrc,
-  isVideo = false,
   imagePreset = "ratio-21-9",
   imageFitMode = "x",
   parameters,
@@ -39,20 +43,11 @@ export default function ParameterGrid({
 
   return (
     <div className={`w-full ${getSectionSpacingClassName(resolvedDesign.sectionSpacing)}`}>
-      <div
-        className="relative w-full overflow-hidden bg-[#050505]"
-        style={{ marginBottom: getSpacingRem(resolvedDesign.mediaBottomSpacing) }}
-      >
-        {isVideo ? (
-          <video
-            src={mediaSrc}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-full object-cover opacity-80"
-          />
-        ) : (
+      {mediaSrc ? (
+        <div
+          className="relative w-full overflow-hidden bg-[#050505]"
+          style={{ marginBottom: getSpacingRem(resolvedDesign.mediaBottomSpacing) }}
+        >
           <PresetImage
             src={mediaSrc}
             alt="PCG Generation Overview"
@@ -60,20 +55,20 @@ export default function ParameterGrid({
             fitMode={imageFitMode}
             imageClassName="opacity-80"
           />
-        )}
-        <div className="absolute top-4 left-4 border border-white/10 bg-black/60 px-3 py-1 backdrop-blur-md">
-          <Typography
-            as="span"
-            preset="sans-body"
-            size="caption"
-            weight="semantic"
-            wrapPolicy="label"
-            className="text-white"
-          >
-            PROCEDURAL GENERATION PREVIEW
-          </Typography>
+          <div className="absolute top-4 left-4 border border-white/10 bg-black/60 px-3 py-1 backdrop-blur-md">
+            <Typography
+              as="span"
+              preset="sans-body"
+              size="caption"
+              weight="semantic"
+              wrapPolicy="label"
+              className="text-white"
+            >
+              PROCEDURAL GENERATION PREVIEW
+            </Typography>
+          </div>
         </div>
-      </div>
+      ) : null}
 
       {parameters && parameters.length > 0 && (
         <div className="grid-container">
@@ -98,7 +93,7 @@ export default function ParameterGrid({
               >
                 {param.name}
               </Typography>
-              {param.value && (
+              {hasEditableTextContent(param.value) && (
                 <Typography
                   as="div"
                   preset="sans-body"
@@ -116,6 +111,7 @@ export default function ParameterGrid({
                 size="body"
                 weight="light"
                 wrapPolicy="prose"
+                align={param.descriptionAlign ?? "left"}
                 className="max-w-[32ch] text-textSecondary"
               >
                 {param.description}

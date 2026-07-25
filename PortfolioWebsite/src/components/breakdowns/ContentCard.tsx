@@ -1,12 +1,17 @@
 import type { CSSProperties, ReactNode } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
-import Typography from "@/components/common/Typography";
+import Typography, {
+  type TypographyAlignment,
+} from "@/components/common/Typography";
 import {
   type ComponentDesignOverride,
   resolveComponentDesign,
 } from "@/lib/component-design-runtime";
-import { toParagraphNodes } from "@/lib/editable-text";
+import {
+  toParagraphNodes,
+  toPlainText,
+} from "@/lib/editable-text";
 import {
   createResponsiveGridBounds,
   getResponsiveGridColumnClassName,
@@ -18,6 +23,7 @@ import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 type ContentCardProps = {
   title: ReactNode;
   description: ReactNode;
+  bodyAlign?: TypographyAlignment;
   imageSrc?: string;
   imagePreset?: ImagePreset;
   imageFitMode?: ImageFitMode;
@@ -29,6 +35,7 @@ type StyleWithVars = CSSProperties & Record<string, string>;
 export default function ContentCard({
   title,
   description,
+  bodyAlign = "left",
   imageSrc,
   imagePreset = "ratio-16-9",
   imageFitMode = "x",
@@ -37,7 +44,7 @@ export default function ContentCard({
 }: ContentCardProps) {
   const resolvedDesign = resolveComponentDesign("ContentCard", design);
   const paragraphs = toParagraphNodes(description);
-  const imageAlt = typeof title === "string" ? title : "Content card image";
+  const imageAlt = toPlainText(title) ?? "Content card image";
   const hasImage = Boolean(imageSrc);
   const mobileMediaOffsetStyle: StyleWithVars = {
     "--content-card-mobile-media-top-spacing": getSpacingRem(resolvedDesign.mobileMediaTopSpacing),
@@ -71,6 +78,7 @@ export default function ContentCard({
             size={resolvedDesign.bodySize}
             weight="medium"
             wrapPolicy={resolvedDesign.bodyAutoWrap ? "prose" : "nowrap"}
+            align={bodyAlign}
             className="text-textSecondary"
           >
             {paragraph}

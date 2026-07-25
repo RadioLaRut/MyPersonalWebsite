@@ -3,34 +3,31 @@ import type { Config } from "@puckeditor/core";
 const LAYOUT_COMPONENT_TYPES = [
   "HeroSection",
   "HeroHeadline",
+  "EditorialHeader",
+  "EditorialSplit",
+  "ThreeColumnSection",
   "StatementBlock",
-  "TextSplitLayout",
-  "HomeEndcapSection",
   "RichParagraph",
   "ImagePanel",
+  "BilibiliEmbed",
 ] as const;
 
 const WORKS_COMPONENT_TYPES = [
-  "PortfolioHeroHeader",
-  "ProjectSection",
+  "ProjectCoverLink",
   "WorksList",
-  "WorksListEntry",
-  "ContentCard",
   "ParameterGrid",
-  "HighDensityInfoBlock",
   "ImageSlider",
   "BreakdownHeadline",
-  "BreakdownTriptych",
   "NextProjectBlock",
 ] as const;
 
-const LIGHTING_COMPONENT_TYPES = [
-  "LightingCollectionHeader",
-  "LightingProjectCard",
+const CONTACT_COMPONENT_TYPES = [
+  "HomeEndcapSection",
+  "ContactFlashlight",
 ] as const;
 
-const CONTACT_COMPONENT_TYPES = [
-  "ContactFlashlight",
+const INTERNAL_COMPONENT_TYPES = [
+  "WorksListEntry",
   "MetadataListItem",
   "TextParagraphBlock",
 ] as const;
@@ -38,8 +35,8 @@ const CONTACT_COMPONENT_TYPES = [
 const ALL_COMPONENT_TYPES = [
   ...LAYOUT_COMPONENT_TYPES,
   ...WORKS_COMPONENT_TYPES,
-  ...LIGHTING_COMPONENT_TYPES,
   ...CONTACT_COMPONENT_TYPES,
+  ...INTERNAL_COMPONENT_TYPES,
 ] as const;
 
 export type PuckComponentType = (typeof ALL_COMPONENT_TYPES)[number];
@@ -53,13 +50,14 @@ export const PUCK_COMPONENT_CATEGORIES = {
     title: "作品展示",
     components: [...WORKS_COMPONENT_TYPES],
   },
-  lighting: {
-    title: "灯光作品特供",
-    components: [...LIGHTING_COMPONENT_TYPES],
-  },
   contact: {
     title: "关于与联系",
     components: [...CONTACT_COMPONENT_TYPES],
+  },
+  internal: {
+    title: "内部 Slot 类型",
+    components: [...INTERNAL_COMPONENT_TYPES],
+    visible: false,
   },
 } satisfies Config["categories"];
 

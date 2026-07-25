@@ -3,7 +3,9 @@
 import React, { type ReactNode, useRef, useState } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
-import Typography from "@/components/common/Typography";
+import Typography, {
+  type TypographyAlignment,
+} from "@/components/common/Typography";
 import { MotionLink } from "@/components/motion/MotionLink";
 import {
   type ComponentDesignOverride,
@@ -13,6 +15,10 @@ import {
   createResponsiveGridBounds,
   getResponsiveGridColumnClassName,
 } from "@/lib/component-design-style";
+import {
+  resolveEditableText,
+  toPlainText,
+} from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 import {
   AnimatePresence,
@@ -30,7 +36,7 @@ export type WorksListEntryAlias = {
 interface WorksListEntryProps extends ComponentDesignOverride<"WorksListEntry"> {
   aliases?: WorksListEntryAlias[];
   id: string;
-  number?: string;
+  number?: ReactNode;
   href?: string;
   title: ReactNode;
   category: ReactNode;
@@ -38,6 +44,7 @@ interface WorksListEntryProps extends ComponentDesignOverride<"WorksListEntry"> 
   imagePreset?: ImagePreset;
   imageFitMode?: ImageFitMode;
   desc: ReactNode;
+  descriptionAlign?: TypographyAlignment;
   editMode?: boolean;
 }
 
@@ -50,10 +57,14 @@ export default function WorksListEntry({
   imagePreset = "ratio-21-9",
   imageFitMode = "x",
   desc,
+  descriptionAlign = "left",
   editMode = false,
   design: designOverride,
 }: WorksListEntryProps) {
   const design = resolveComponentDesign("WorksListEntry", designOverride);
+  const plainTitle = toPlainText(title);
+  const plainCategory = toPlainText(category);
+  const resolvedNumber = resolveEditableText(number, "00");
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const entryRef = useRef<HTMLElement>(null);
@@ -90,8 +101,8 @@ export default function WorksListEntry({
       className={`group relative grid min-h-[calc(var(--site-viewport-unit)*26)] w-full content-center border-b border-white/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-2px] focus-visible:outline-white/70 ${cursorClass} sm:min-h-[calc(var(--site-viewport-unit)*30)] md:min-h-[calc(var(--site-viewport-unit)*34)] lg:min-h-[calc(var(--site-viewport-unit)*42)]`}
       data-active={active ? "true" : "false"}
       aria-label={
-        typeof title === "string"
-          ? `打开作品 ${title}${typeof category === "string" ? `，${category}` : ""}`
+        plainTitle
+          ? `打开作品 ${plainTitle}${plainCategory ? `，${plainCategory}` : ""}`
           : "打开作品"
       }
       onMouseEnter={() => supportsHoverIntent && !editMode && setIsHovered(true)}
@@ -117,7 +128,7 @@ export default function WorksListEntry({
             >
               <PresetImage
                 src={imageSrc}
-                alt={typeof title === "string" ? title : "Work entry"}
+                alt={plainTitle ?? "Work entry"}
                 preset={imagePreset}
                 fitMode={imageFitMode}
                 fitModeByBreakpoint={{
@@ -142,7 +153,7 @@ export default function WorksListEntry({
               wrapPolicy="label"
               className={`transition-colors duration-700 ease-out ${active ? "text-white/[0.76]" : "text-textMuted"}`}
             >
-              {number ?? "00"}
+              {resolvedNumber}
             </Typography>
             <span
               className={`absolute top-full mt-3 h-px bg-white/60 transition-[width,opacity] duration-700 ease-out ${active ? "w-4 opacity-100" : "w-2 opacity-40"}`}
@@ -160,7 +171,7 @@ export default function WorksListEntry({
               wrapPolicy="label"
               className={`transition-colors duration-700 ease-out ${active ? "text-white/[0.76]" : "text-textMuted"}`}
             >
-              {number ?? "00"}
+              {resolvedNumber}
             </Typography>
             <span
               className={`absolute top-full mt-3 h-px bg-white/60 transition-[width,opacity] duration-700 ease-out ${active ? "w-4 opacity-100" : "w-0 opacity-0"}`}
@@ -208,6 +219,7 @@ export default function WorksListEntry({
                 size="body-sm"
                 weight="light"
                 wrapPolicy="prose"
+                align={descriptionAlign}
                 className="mt-4 text-textSecondary"
               >
                 {desc}

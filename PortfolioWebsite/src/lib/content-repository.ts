@@ -5,11 +5,20 @@ import {
   ContentQuotaExceededError,
 } from "./content-budget.ts";
 import {
+  createPageDataByNormalizedSlug,
   type JsonValue,
   listPageSlugs,
   readPageDataByNormalizedSlug,
   writePageDataByNormalizedSlug,
 } from "./puck-content.ts";
+import {
+  createBlankPageDocument,
+  duplicatePageDocument,
+  type CreatePageRequest,
+  type PageSummary,
+} from "./editor-page-contract.ts";
+import { randomUUID } from "node:crypto";
+import { toPublicPathFromSlugKey } from "./public-paths.ts";
 import {
   PageDocumentValidationError,
   type PageDocument,
@@ -28,6 +37,7 @@ import {
 } from "./puck-slug.ts";
 
 type ContentRepositoryDependencies = {
+  createData: (slug: NormalizedPuckSlug, data: JsonValue) => Promise<void>;
   listSlugs: () => Promise<string[]>;
   publicRoot: string;
   readData: (slug: NormalizedPuckSlug) => Promise<JsonValue>;
@@ -77,7 +87,19 @@ export class ContentPersistenceError extends Error {
   }
 }
 
+export class ContentAlreadyExistsError extends Error {
+  readonly code = "CONTENT_ALREADY_EXISTS";
+  readonly slug: string;
+
+  constructor(slug: string, options?: ErrorOptions) {
+    super(`Content page "${slug}" already exists`, options);
+    this.name = "ContentAlreadyExistsError";
+    this.slug = slug;
+  }
+}
+
 const defaultDependencies: ContentRepositoryDependencies = {
+  createData: createPageDataByNormalizedSlug,
   listSlugs: listPageSlugs,
   publicRoot: path.resolve(process.cwd(), "public"),
   readData: readPageDataByNormalizedSlug,
@@ -131,6 +153,45 @@ export class ContentRepository {
 
   async listPageSlugs(): Promise<string[]> {
     return this.dependencies.listSlugs();
+  }
+
+  async listPageSummaries(): Promise<PageSummary[]> {
+    const pages = await this.listPages();
+    return pages.map(({ document, slug }) => ({
+      publicPath: toPublicPathFromSlugKey(slug),
+      slug,
+      title: document.root.props.title || "未命名页面",
+    }));
+  }
+
+  async createPage(request: CreatePageRequest): Promise<PublishPageResult> {
+    const normalizedSlug = normalizePuckSlugInput(request.slug);
+    const document = request.mode === "blank"
+      ? createBlankPageDocument()
+      : duplicatePageDocument(await this.readPage(request.sourceSlug), randomUUID);
+    const parsedDocument = parseEditorPageDraft(document);
+
+    try {
+      await this.dependencies.createData(normalizedSlug, parsedDocument as JsonValue);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "EEXIST") {
+        throw new ContentAlreadyExistsError(normalizedSlug.slugKey, { cause: error });
+      }
+      if (
+        error instanceof ContentBudgetExceededError ||
+        error instanceof ContentQuotaExceededError
+      ) {
+        throw error;
+      }
+      throw new ContentPersistenceError("Failed to create page content", { cause: error });
+    }
+
+    return {
+      ok: true,
+      path: normalizedSlug.relativeJsonPath,
+      slug: normalizedSlug.slugKey,
+      slugs: await this.listPageSlugs().catch(() => [normalizedSlug.slugKey]),
+    };
   }
 
   async publishPage(

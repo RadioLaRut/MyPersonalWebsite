@@ -266,6 +266,49 @@ export async function writePageDataByNormalizedSlug(normalizedSlug: NormalizedPu
   });
 }
 
+export async function createPageDataByNormalizedSlug(
+  normalizedSlug: NormalizedPuckSlug,
+  data: JsonValue,
+) {
+  assertPageDocumentBudget(data);
+  await withContentWriteQueue(async () => {
+    await assertExactCaseParentPath(normalizedSlug.relativeJsonPath);
+    const serialized = `${JSON.stringify(data, null, 2).replace(/\n/g, os.EOL)}${os.EOL}`;
+    const serializedBytes = Buffer.byteLength(serialized, "utf8");
+    if (serializedBytes > CONTENT_BUDGET_PROFILE_V1.pageDocument.maxBytes) {
+      throw new ContentBudgetExceededError(
+        `Serialized page exceeds ${CONTENT_BUDGET_PROFILE_V1.pageDocument.maxBytes} bytes`,
+      );
+    }
+
+    const usage = await collectPageStorageUsage(normalizedSlug.absoluteJsonPath);
+    if (usage.targetExists) {
+      const conflict = new Error(
+        `Content page "${normalizedSlug.slugKey}" already exists`,
+      ) as NodeJS.ErrnoException;
+      conflict.code = "EEXIST";
+      throw conflict;
+    }
+    assertPageStorageQuota(usage, serializedBytes);
+
+    await fs.mkdir(path.dirname(normalizedSlug.absoluteJsonPath), { recursive: true });
+    const baseName = path.basename(normalizedSlug.absoluteJsonPath, ".json");
+    const tmpPath = path.join(
+      path.dirname(normalizedSlug.absoluteJsonPath),
+      `${baseName}.${Date.now()}.${randomUUID()}.tmp.json`,
+    );
+
+    try {
+      await fs.writeFile(tmpPath, serialized, { encoding: "utf8", flag: "wx" });
+      await fs.link(tmpPath, normalizedSlug.absoluteJsonPath);
+    } finally {
+      await fs.unlink(tmpPath).catch((error: NodeJS.ErrnoException) => {
+        if (error.code !== "ENOENT") throw error;
+      });
+    }
+  });
+}
+
 export async function listStaticPuckRouteParams() {
   await ensureContentPagesRoot();
 

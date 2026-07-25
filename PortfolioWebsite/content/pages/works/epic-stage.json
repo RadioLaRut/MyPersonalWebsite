@@ -8,37 +8,53 @@
         "title": "舞台灯光叙事概念设计",
         "subtitle": "",
         "heroImage": "/images/penguin/Epic.webp",
-        "navLink": "https://www.bilibili.com/video/BV1oSDTYJEi2/",
+        "navLink": "",
         "heroImagePreset": "ratio-21-9",
         "heroImageFitMode": "x",
-        "navLinkLabel": "观看视频"
+        "navLinkLabel": "",
+        "subtitleAlign": "left"
       }
     },
     {
-      "type": "TextSplitLayout",
+      "props": {
+        "caption": "",
+        "captionAlign": "left",
+        "id": "bilibili-works-epic-stage",
+        "source": "https://www.bilibili.com/video/BV1oSDTYJEi2",
+        "title": "舞台灯光叙事概念设计项目视频"
+      },
+      "type": "BilibiliEmbed"
+    },
+    {
+      "type": "EditorialSplit",
       "props": {
         "id": "tsl-1",
+        "body": "",
+        "bodyAlign": "left",
+        "bodyMode": "slot",
         "heading": "叙事概念构建",
+        "imageFitMode": "cover",
+        "imagePreset": "ratio-16-9",
+        "imageSrc": "/images/train-station/2Day.webp",
+        "layout": "media-left",
         "paragraphs": [
           {
             "props": {
               "id": "tsl-1-paragraph-1",
-              "text": "基于音乐剧《Epic》的概念舞台灯光设计项目。我独立完成舞台搭建、调度和灯光，核心思路是为希腊诸神建立性格化的色彩语言：每位神祇对应一种高饱和冷暖色，当剧情中神的影响介入时，后方的希腊石像就会被对应的颜色打亮。"
+              "text": "基于音乐剧《Epic》的概念舞台灯光设计项目。我独立完成舞台搭建、调度和灯光，核心思路是为希腊诸神建立性格化的色彩语言：每位神祇对应一种高饱和冷暖色，当剧情中神的影响介入时，后方的希腊石像就会被对应的颜色打亮。",
+              "align": "left"
             },
             "type": "TextParagraphBlock"
           },
           {
             "props": {
               "id": "tsl-1-paragraph-2",
-              "text": "选择 UE 作为制作栈的原因是即时演算可以快速验证灯光角度和色彩对撞效果，比传统灯光软件的离线渲染更适合概念阶段的反复试错。"
+              "text": "选择 UE 作为制作栈的原因是即时演算可以快速验证灯光角度和色彩对撞效果，比传统灯光软件的离线渲染更适合概念阶段的反复试错。",
+              "align": "left"
             },
             "type": "TextParagraphBlock"
           }
-        ],
-        "imageSrc": "/images/train-station/2Day.webp",
-        "imagePreset": "ratio-16-9",
-        "imageFitMode": "cover",
-        "layoutVariant": "split-left"
+        ]
       }
     },
     {
@@ -47,22 +63,24 @@
         "id": "param-1",
         "mediaSrc": "/images/penguin/Epic.webp",
         "imagePreset": "ratio-21-9",
-        "isVideo": false,
         "parameters": [
           {
             "name": "核心概念",
             "value": "性格隐喻",
-            "description": "通过高饱和冷暖色映射希腊众神的个性特征。"
+            "description": "通过高饱和冷暖色映射希腊众神的个性特征。",
+            "descriptionAlign": "left"
           },
           {
             "name": "空间调度",
             "value": "纵深分层",
-            "description": "利用前景实体打光与后方幕布色彩对撞，增强舞台透视感。"
+            "description": "利用前景实体打光与后方幕布色彩对撞，增强舞台透视感。",
+            "descriptionAlign": "left"
           },
           {
             "name": "制作栈",
             "value": "Unreal Engine",
-            "description": "全流程虚幻引擎实施概念打光与即时演算推演。"
+            "description": "全流程虚幻引擎实施概念打光与即时演算推演。",
+            "descriptionAlign": "left"
           }
         ]
       }

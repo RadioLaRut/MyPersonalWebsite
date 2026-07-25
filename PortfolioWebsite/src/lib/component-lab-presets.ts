@@ -1,10 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-import {
-  COMPONENT_DESIGN_COMPONENT_KEYS,
-  type ComponentDesignComponentKey,
-} from "./component-design-schema.ts";
 import { CONTENT_BUDGET_PROFILE_V1 } from "./content-budget.ts";
 import {
   contentRepository,
@@ -15,10 +11,11 @@ import { parseCurrentPageDocument } from "./page-document-contract.ts";
 import { synchronizeNextProjectBlocks } from "./project-catalog.ts";
 import {
   isKnownPuckComponentType,
+  PUCK_COMPONENT_TYPES,
   type PuckComponentType,
 } from "../puck/component-manifest.ts";
 
-export const COMPONENT_LAB_PRESET_VERSION = 1 as const;
+export const COMPONENT_LAB_PRESET_VERSION = 2 as const;
 export const COMPONENT_LAB_PRESET_FILE = path.resolve(
   process.cwd(),
   "content/component-design/component-lab-presets.json",
@@ -46,7 +43,7 @@ type StandaloneStressSample = {
 };
 
 export type ComponentLabPresetDocument = {
-  components: Record<ComponentDesignComponentKey, {
+  components: Record<PuckComponentType, {
     defaultInstance: ComponentLabInstanceReference | null;
     stressSample: DerivedStressSample | StandaloneStressSample;
   }>;
@@ -63,14 +60,14 @@ export type ComponentLabCatalogInstance = {
 };
 
 export type ComponentLabCatalogEntry = {
-  componentKey: ComponentDesignComponentKey;
+  componentKey: PuckComponentType;
   instances: ComponentLabCatalogInstance[];
   preferredInstanceId: string | null;
   stressSample: ComponentLabCatalogInstance;
 };
 
 export type ComponentLabInstanceCatalog = {
-  components: Record<ComponentDesignComponentKey, ComponentLabCatalogEntry>;
+  components: Record<PuckComponentType, ComponentLabCatalogEntry>;
   version: typeof COMPONENT_LAB_PRESET_VERSION;
 };
 
@@ -135,8 +132,8 @@ export function parseComponentLabPresetDocument(
   const rawComponents = value.components;
 
   const configuredKeys = Object.keys(rawComponents);
-  const expectedKeys = new Set<string>(COMPONENT_DESIGN_COMPONENT_KEYS);
-  const missing = COMPONENT_DESIGN_COMPONENT_KEYS.filter(
+  const expectedKeys = new Set<string>(PUCK_COMPONENT_TYPES);
+  const missing = PUCK_COMPONENT_TYPES.filter(
     (key) => !(key in rawComponents),
   );
   const extra = configuredKeys.filter((key) => !expectedKeys.has(key));
@@ -147,7 +144,7 @@ export function parseComponentLabPresetDocument(
   }
 
   const components = Object.fromEntries(
-    COMPONENT_DESIGN_COMPONENT_KEYS.map((componentKey) => {
+    PUCK_COMPONENT_TYPES.map((componentKey) => {
       const rawEntry = rawComponents[componentKey];
       const entryPath = `components.${componentKey}`;
       if (!isPlainRecord(rawEntry) || !("defaultInstance" in rawEntry)) {
@@ -222,7 +219,7 @@ function* iterateNodes(value: unknown): Generator<ComponentLabNode> {
 }
 
 function createValidatedStressNode(
-  componentKey: ComponentDesignComponentKey,
+  componentKey: PuckComponentType,
   rawNode: ComponentLabNode,
 ) {
   if (rawNode.type !== componentKey) {
@@ -286,14 +283,11 @@ export function createComponentLabInstanceCatalog(
   const maxInstances = options.maxInstances ??
     CONTENT_BUDGET_PROFILE_V1.componentLab.maxInstances;
   const allInstances = new Map<string, ComponentLabCatalogInstance>();
-  const instancesByType = new Map<ComponentDesignComponentKey, ComponentLabCatalogInstance[]>();
+  const instancesByType = new Map<PuckComponentType, ComponentLabCatalogInstance[]>();
   let materializedInstances = 0;
 
   for (const page of pages) {
     for (const rawNode of iterateNodes(page.document)) {
-      if (!(COMPONENT_DESIGN_COMPONENT_KEYS as readonly string[]).includes(rawNode.type)) {
-        continue;
-      }
       materializedInstances += 1;
       if (materializedInstances > maxInstances) {
         throw new ComponentLabPresetError(
@@ -301,7 +295,7 @@ export function createComponentLabInstanceCatalog(
         );
       }
       const node = cloneJson(rawNode);
-      const componentKey = node.type as ComponentDesignComponentKey;
+      const componentKey = node.type;
       const componentId = node.props.id;
       if (typeof componentId !== "string" || componentId.trim() === "") {
         throw new ComponentLabPresetError(
@@ -332,7 +326,7 @@ export function createComponentLabInstanceCatalog(
   }
 
   function resolveReference(
-    componentKey: ComponentDesignComponentKey,
+    componentKey: PuckComponentType,
     reference: ComponentLabInstanceReference,
     pathLabel: string,
   ) {
@@ -351,7 +345,7 @@ export function createComponentLabInstanceCatalog(
   }
 
   const components = Object.fromEntries(
-    COMPONENT_DESIGN_COMPONENT_KEYS.map((componentKey) => {
+    PUCK_COMPONENT_TYPES.map((componentKey) => {
       const preset = presets.components[componentKey];
       const instances = instancesByType.get(componentKey) ?? [];
       const preferredInstance = preset.defaultInstance

@@ -8,6 +8,14 @@ type PageMetadataOverrides = {
   title?: string;
 };
 
+export const SITE_ROBOTS_POLICY = {
+  follow: false,
+  index: false,
+  noarchive: true,
+  noimageindex: true,
+  nosnippet: true,
+} satisfies NonNullable<Metadata["robots"]>;
+
 export function createPageMetadata(
   document: PageDocument,
   overrides: PageMetadataOverrides = {},
@@ -24,6 +32,6 @@ export function createPageMetadata(
       ...(description ? { description } : {}),
       ...(image ? { images: [{ url: image }] } : {}),
     },
-    robots: document.root.props.noIndex ? { follow: false, index: false } : undefined,
+    robots: SITE_ROBOTS_POLICY,
   };
 }

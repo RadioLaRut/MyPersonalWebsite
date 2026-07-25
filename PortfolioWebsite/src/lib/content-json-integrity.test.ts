@@ -13,6 +13,7 @@ import {
   validatePuckContentData,
   walkJsonFiles,
 } from "./puck-content-validation.ts";
+import { BILIBILI_VIDEO_BY_PAGE_SLUG } from "./bilibili-page-migration.ts";
 import { toSafePuckHref } from "./puck-href.ts";
 
 const projectRoot = path.resolve(process.cwd());
@@ -52,7 +53,7 @@ test("联系内容只以关于页为唯一来源", () => {
   const contactBlocks = aboutPageData.content.filter(
     (node) => node.type === "ContactFlashlight",
   );
-  const hero = aboutPageData.content.find((node) => node.type === "PortfolioHeroHeader");
+  const hero = aboutPageData.content.find((node) => node.type === "EditorialHeader");
 
   assert.equal(fs.existsSync(legacyContactPagePath), false);
   assert.equal(fs.existsSync(legacyContactRoutePath), false);
@@ -81,6 +82,53 @@ test("penguin case study preserves playable CTAs and truthful contribution bound
   assert.equal(new Set(ids).size, ids.length);
   assert.match(serialized, /具体技术架构均由 AI 生成/);
   assert.doesNotMatch(serialized, /8\s*人|半年|已完成并结项|大大提高|我实现了|我编写/);
+});
+
+test("六个目标页面各含一个 B 站播放器且不重复首屏观看按钮", () => {
+  for (const [slug, source] of Object.entries(BILIBILI_VIDEO_BY_PAGE_SLUG)) {
+    const pagePath = path.join(contentRoot, `${slug.replace(/^works\//, "works/")}.json`);
+    const page = JSON.parse(fs.readFileSync(pagePath, "utf8")) as {
+      content: Array<{ props: Record<string, unknown>; type: string }>;
+    };
+    const heroIndex = page.content.findIndex((node) => node.type === "HeroHeadline");
+    const embeds = page.content.filter((node) => node.type === "BilibiliEmbed");
+
+    assert.notEqual(heroIndex, -1, slug);
+    assert.equal(embeds.length, 1, slug);
+    assert.equal(embeds[0].props.source, source, slug);
+    assert.equal(page.content[heroIndex + 1]?.type, "BilibiliEmbed", slug);
+    assert.equal(page.content[heroIndex].props.navLink, "", slug);
+    assert.equal(page.content[heroIndex].props.navLinkLabel, "", slug);
+  }
+});
+
+test("当前内容已清除旧顶层类型与本地视频字段", () => {
+  const legacyTypes = new Set([
+    "PortfolioHeroHeader",
+    "LightingCollectionHeader",
+    "ContentCard",
+    "TextSplitLayout",
+    "HighDensityInfoBlock",
+    "BreakdownTriptych",
+    "ProjectSection",
+    "LightingProjectCard",
+  ]);
+  const violations: string[] = [];
+
+  for (const jsonFile of walkJsonFiles(contentRoot)) {
+    const source = fs.readFileSync(jsonFile, "utf8");
+    const data = JSON.parse(source) as unknown;
+    for (const componentType of collectComponentTypes(data)) {
+      if (legacyTypes.has(componentType)) {
+        violations.push(`${jsonFile}: ${componentType}`);
+      }
+    }
+    if (source.includes('"isVideo"')) {
+      violations.push(`${jsonFile}: isVideo`);
+    }
+  }
+
+  assert.deepEqual(violations, []);
 });
 
 test("editor empty-state fixture is valid neutral starter content", () => {

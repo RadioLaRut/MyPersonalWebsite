@@ -6,6 +6,7 @@ import test from "node:test";
 import { PUCK_COMPONENT_TYPES } from "./component-manifest.ts";
 
 const CONFIG_FILES = [
+  "consolidated-components.tsx",
   "layout-components.tsx",
   "works-components.tsx",
   "lighting-components.tsx",
@@ -44,4 +45,14 @@ test("编辑态只禁用 WorksListEntry 交互，不强制视觉激活", () => {
     /const active = isHovered \|\| isFocused \|\| isInsideCenterZone;/,
   );
   assert.doesNotMatch(source, /const active = editMode/);
+});
+
+test("搜索收录是全站策略，不允许在单页设置中覆盖", () => {
+  const source = fs.readFileSync(
+    path.join(process.cwd(), "src/puck/config.tsx"),
+    "utf8",
+  );
+
+  assert.doesNotMatch(source, /label:\s*"搜索收录\|noIndex"/);
+  assert.match(source, /noIndex:\s*true/);
 });

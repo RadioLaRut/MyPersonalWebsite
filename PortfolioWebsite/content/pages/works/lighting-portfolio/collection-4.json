@@ -1,13 +1,20 @@
 {
   "content": [
     {
-      "type": "LightingCollectionHeader",
+      "type": "EditorialHeader",
       "props": {
         "id": "collection-4-header",
-        "title": "PRACTICE",
-        "number": "04",
+        "backHref": "/works/lighting-portfolio",
+        "ctaHref": "",
+        "ctaLabel": "",
         "description": "日常的虚幻引擎写实环境与打光专项练习。",
-        "backHref": "/works/lighting-portfolio"
+        "descriptionAlign": "right",
+        "descriptionLine1": "",
+        "descriptionLine2": "",
+        "number": "04",
+        "subtitle": "",
+        "title": "PRACTICE",
+        "variant": "collection"
       }
     },
     {
@@ -18,7 +25,8 @@
         "caption": "IMAGE",
         "preset": "ratio-16-9",
         "fitMode": "x",
-        "variant": "large"
+        "variant": "large",
+        "captionAlign": "left"
       }
     },
     {
@@ -29,7 +37,8 @@
         "caption": "IMAGE",
         "preset": "native",
         "fitMode": "x",
-        "variant": "large"
+        "variant": "large",
+        "captionAlign": "left"
       }
     },
     {
@@ -40,7 +49,8 @@
         "caption": "IMAGE",
         "preset": "ratio-16-9",
         "fitMode": "x",
-        "variant": "large"
+        "variant": "large",
+        "captionAlign": "left"
       }
     },
     {
@@ -51,7 +61,8 @@
         "description": "",
         "buttonLabel": "enter",
         "buttonHref": "/works",
-        "id": "HomeEndcapSection-5ed9aa0c-9857-499a-83dd-ffc6184a5abc"
+        "id": "HomeEndcapSection-5ed9aa0c-9857-499a-83dd-ffc6184a5abc",
+        "descriptionAlign": "center"
       }
     }
   ],

@@ -2,7 +2,9 @@
 import React, { type ReactNode, useRef } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
-import Typography from "@/components/common/Typography";
+import Typography, {
+  type TypographyAlignment,
+} from "@/components/common/Typography";
 import { MotionLink } from "@/components/motion/MotionLink";
 import {
   type ComponentDesignOverride,
@@ -12,7 +14,10 @@ import {
   getResponsiveGridColumnClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
-import { toPlainText } from "@/lib/editable-text";
+import {
+  hasEditableTextContent,
+  toPlainText,
+} from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 import {
   heroLeadVariants,
@@ -23,18 +28,6 @@ import {
   useScroll,
   useTransform,
 } from "@/lib/motion";
-
-function hasNodeContent(value: ReactNode) {
-  if (value === null || value === undefined || value === false) {
-    return false;
-  }
-
-  if (typeof value === "string") {
-    return value.trim().length > 0;
-  }
-
-  return true;
-}
 
 function getPosterTitleLines(title: ReactNode) {
   const plainTitle = toPlainText(title);
@@ -57,6 +50,7 @@ export interface HeroSectionProps extends ComponentDesignOverride<"HeroSection">
   title: ReactNode;
   subtitle: ReactNode;
   description: ReactNode;
+  descriptionAlign?: TypographyAlignment;
   primaryCtaLabel?: ReactNode;
   primaryCtaHref?: string;
   secondaryCtaLabel?: ReactNode;
@@ -76,6 +70,7 @@ export default function HeroSection({
   title,
   subtitle,
   description,
+  descriptionAlign = "left",
   primaryCtaLabel,
   primaryCtaHref,
   secondaryCtaLabel,
@@ -92,11 +87,11 @@ export default function HeroSection({
   const design = resolveComponentDesign("HeroSection", designOverride);
   const containerRef = useRef<HTMLDivElement>(null);
   const contentBoundsClassName = getResponsiveGridColumnClassName(design.contentBounds);
-  const hasSubtitle = hasNodeContent(subtitle);
-  const hasPositioning = hasNodeContent(positioning);
-  const hasDescription = hasNodeContent(description);
-  const hasPrimaryCta = hasNodeContent(primaryCtaLabel) && Boolean(primaryCtaHref);
-  const hasSecondaryCta = hasNodeContent(secondaryCtaLabel) && Boolean(secondaryCtaHref);
+  const hasSubtitle = hasEditableTextContent(subtitle);
+  const hasPositioning = hasEditableTextContent(positioning);
+  const hasDescription = hasEditableTextContent(description);
+  const hasPrimaryCta = hasEditableTextContent(primaryCtaLabel) && Boolean(primaryCtaHref);
+  const hasSecondaryCta = hasEditableTextContent(secondaryCtaLabel) && Boolean(secondaryCtaHref);
   const hasCta = hasPrimaryCta || hasSecondaryCta;
   const posterMode = !hasDescription && !hasCta;
   const posterTitleLines = posterMode && !hasSubtitle ? getPosterTitleLines(title) : null;
@@ -236,7 +231,7 @@ export default function HeroSection({
                   </Typography>
                 ) : null}
 
-                {eyebrow ? (
+                {hasEditableTextContent(eyebrow) ? (
                   <Typography
                     as="p"
                     preset="sans-body"
@@ -258,7 +253,7 @@ export default function HeroSection({
                 animate={editMode ? undefined : "visible"}
                 variants={heroLeadVariants}
               >
-                {eyebrow ? (
+                {hasEditableTextContent(eyebrow) ? (
                   <Typography
                     as="p"
                     preset="sans-body"
@@ -312,6 +307,7 @@ export default function HeroSection({
                         size="body"
                         weight="semantic"
                         wrapPolicy="prose"
+                        align={descriptionAlign}
                         className="mt-4 max-w-[24rem] text-white/76 whitespace-pre-line"
                       >
                         {description}

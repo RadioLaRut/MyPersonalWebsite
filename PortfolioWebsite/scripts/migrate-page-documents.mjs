@@ -4,9 +4,11 @@ import path from "node:path";
 
 import {
   PAGE_DOCUMENT_VERSION,
+  parseCurrentPageDocument,
   validatePageReferences,
 } from "../src/lib/page-document-contract.ts";
 import { preparePageDocumentMigration } from "../src/lib/page-document-migration.ts";
+import { migrateBilibiliPage } from "../src/lib/bilibili-page-migration.ts";
 
 const contentRoot = path.resolve(process.cwd(), "content/pages");
 const publicRoot = path.resolve(process.cwd(), "public");
@@ -67,7 +69,8 @@ const preparedDocuments = await Promise.all(files.map(async (filePath) => {
   const migration = preparePageDocumentMigration(parsed, {
     description: DESCRIPTION_BY_SLUG[slug],
   });
-  const { document } = migration;
+  const videoMigration = migrateBilibiliPage(migration.document, slug);
+  const document = parseCurrentPageDocument(videoMigration.document);
   const referenceIssues = validatePageReferences(document, publicRoot);
   if (referenceIssues.length > 0) {
     throw new Error(`${slug}: ${referenceIssues.map((issue) => `${issue.path} ${issue.message}`).join("; ")}`);
@@ -77,7 +80,7 @@ const preparedDocuments = await Promise.all(files.map(async (filePath) => {
     document,
     filePath,
     lineEnding: raw.includes("\r\n") ? "\r\n" : "\n",
-    migrated: migration.migrated,
+    migrated: migration.migrated || videoMigration.migrated,
   };
 }));
 

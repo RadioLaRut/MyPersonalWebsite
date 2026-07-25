@@ -8,17 +8,29 @@
         "title": "INSIGHT",
         "subtitle": "互动叙事游戏",
         "heroImage": "/images/insight/InsightOnlyCover.webp",
-        "navLink": "https://www.bilibili.com/video/BV1gQbDzQEUL",
+        "navLink": "",
         "heroImagePreset": "ratio-21-9",
         "heroImageFitMode": "x",
-        "navLinkLabel": "观看视频"
+        "navLinkLabel": "",
+        "subtitleAlign": "left"
       }
+    },
+    {
+      "props": {
+        "caption": "",
+        "captionAlign": "left",
+        "id": "bilibili-works-insight",
+        "source": "https://www.bilibili.com/video/BV1gQbDzQEUL",
+        "title": "INSIGHT项目视频"
+      },
+      "type": "BilibiliEmbed"
     },
     {
       "type": "RichParagraph",
       "props": {
         "id": "insight-desc-1",
-        "content": "INSIGHT 是一款轻交互的互动叙事游戏。玩家扮演一位网络舆情监管员，通过审查社交媒体内容、与用户对话，在维护网络秩序与尊重个人隐私之间做出选择。游戏通过对话选择驱动 2-3 条主要剧情分支，探讨网络监管的伦理困境。这是我第一个从概念到完成全流程独立开发的游戏项目，在一个月内完成了剧本写作、系统搭建、UI 设计与技术实现。"
+        "content": "INSIGHT 是一款轻交互的互动叙事游戏。玩家扮演一位网络舆情监管员，通过审查社交媒体内容、与用户对话，在维护网络秩序与尊重个人隐私之间做出选择。游戏通过对话选择驱动 2-3 条主要剧情分支，探讨网络监管的伦理困境。这是我第一个从概念到完成全流程独立开发的游戏项目，在一个月内完成了剧本写作、系统搭建、UI 设计与技术实现。",
+        "align": "justify"
       }
     },
     {
@@ -30,25 +42,42 @@
         "preset": "ratio-16-9",
         "fitMode": "x",
         "variant": "fullscreen",
-        "id": "ImagePanel-51db880b-c9ae-42ec-9045-4063838ef3d3"
+        "id": "ImagePanel-51db880b-c9ae-42ec-9045-4063838ef3d3",
+        "captionAlign": "left"
       }
     },
     {
-      "type": "HighDensityInfoBlock",
+      "type": "ThreeColumnSection",
       "props": {
-        "phase2Items": [],
-        "phase1Items": [],
         "id": "insight-info-1",
-        "phase1Title": "项目背景",
-        "phase1Subtitle": "Context",
-        "phase1Content": "作为游戏叙事课程的结课作业，我独立完成了这款互动叙事游戏的全部设计与开发工作。项目周期约一个月，使用 Unreal Engine 5 和 Articy Draft 构建。这是我第一次完整实现从剧本到可玩版本的全流程开发。",
-        "phase2Title": "系统架构",
-        "phase2Subtitle": "Architecture",
-        "phase2Content": "游戏采用对话选择驱动的叙事机制，使用 Articy Draft 管理多分支剧情树，通过自定义蓝图系统将对话数据导入 Unreal Engine。拟真的桌面操作系统 UI 设计增强了沉浸感，玩家在审查内容与对话选择中推进剧情。",
-        "phase3Title": "项目成果",
-        "phase3Subtitle": "Execution",
-        "phase3Content": "项目最终完成了完整可玩版本，包含 2-3 条主要剧情分支和多个结局。游戏在课程中获得高分，并在 B 站发布了演示视频。开发过程中克服了蓝图基础不牢固、Articy Draft 集成、以及题材表现难度等挑战。",
-        "phase3ImageSrc": ""
+        "col1Items": [],
+        "col2Items": [],
+        "rhythm": "aligned",
+        "variant": "phase",
+        "col1Body": "作为游戏叙事课程的结课作业，我独立完成了这款互动叙事游戏的全部设计与开发工作。项目周期约一个月，使用 Unreal Engine 5 和 Articy Draft 构建。这是我第一次完整实现从剧本到可玩版本的全流程开发。",
+        "col1BodyAlign": "left",
+        "col1Label": "",
+        "col1MediaFitMode": "x",
+        "col1MediaPreset": "ratio-16-9",
+        "col1MediaSrc": "",
+        "col1Subtitle": "Context",
+        "col1Title": "项目背景",
+        "col2Body": "游戏采用对话选择驱动的叙事机制，使用 Articy Draft 管理多分支剧情树，通过自定义蓝图系统将对话数据导入 Unreal Engine。拟真的桌面操作系统 UI 设计增强了沉浸感，玩家在审查内容与对话选择中推进剧情。",
+        "col2BodyAlign": "left",
+        "col2Label": "",
+        "col2MediaFitMode": "x",
+        "col2MediaPreset": "ratio-16-9",
+        "col2MediaSrc": "",
+        "col2Subtitle": "Architecture",
+        "col2Title": "系统架构",
+        "col3Body": "项目最终完成了完整可玩版本，包含 2-3 条主要剧情分支和多个结局。游戏在课程中获得高分，并在 B 站发布了演示视频。开发过程中克服了蓝图基础不牢固、Articy Draft 集成、以及题材表现难度等挑战。",
+        "col3BodyAlign": "left",
+        "col3Label": "",
+        "col3MediaFitMode": "x",
+        "col3MediaPreset": "ratio-16-9",
+        "col3MediaSrc": "",
+        "col3Subtitle": "Execution",
+        "col3Title": "项目成果"
       }
     },
     {
@@ -59,36 +88,67 @@
       }
     },
     {
-      "type": "ContentCard",
+      "type": "EditorialSplit",
       "props": {
         "id": "insight-card-1",
-        "title": "多分支叙事与题材表现",
-        "description": "设计多分支剧情时面临两个核心挑战：如何保持不同分支的叙事连贯性，以及如何表现网络舆情监管员这一特殊角色的内心活动。由于一般人不会在互联网上表露真实想法，设计真实可信的私密对话和心理活动成为难点。最终通过 Articy Draft 的节点系统实现了清晰的剧情流程管理。",
-        "imageSrc": ""
+        "body": "设计多分支剧情时面临两个核心挑战：如何保持不同分支的叙事连贯性，以及如何表现网络舆情监管员这一特殊角色的内心活动。由于一般人不会在互联网上表露真实想法，设计真实可信的私密对话和心理活动成为难点。最终通过 Articy Draft 的节点系统实现了清晰的剧情流程管理。",
+        "bodyAlign": "left",
+        "bodyMode": "plain",
+        "heading": "多分支叙事与题材表现",
+        "imageFitMode": "x",
+        "imagePreset": "ratio-16-9",
+        "imageSrc": "",
+        "layout": "media-right",
+        "paragraphs": []
       }
     },
     {
-      "type": "ContentCard",
+      "type": "EditorialSplit",
       "props": {
         "id": "insight-card-2",
-        "title": "技术集成与边学边做",
-        "description": "这是我第一次使用 Articy Draft 和深度使用 UE 蓝图系统。在蓝图基础不牢固的情况下，边学习边开发，最终实现了 Articy Draft 对话树与 Unreal Engine 的完整集成，搭建了可扩展的对话系统框架。",
-        "imageSrc": ""
+        "body": "这是我第一次使用 Articy Draft 和深度使用 UE 蓝图系统。在蓝图基础不牢固的情况下，边学习边开发，最终实现了 Articy Draft 对话树与 Unreal Engine 的完整集成，搭建了可扩展的对话系统框架。",
+        "bodyAlign": "left",
+        "bodyMode": "plain",
+        "heading": "技术集成与边学边做",
+        "imageFitMode": "x",
+        "imagePreset": "ratio-16-9",
+        "imageSrc": "",
+        "layout": "media-right",
+        "paragraphs": []
       }
     },
     {
-      "type": "BreakdownTriptych",
+      "type": "ThreeColumnSection",
       "props": {
         "id": "insight-triptych-1",
+        "col1Items": [],
+        "col2Items": [],
+        "rhythm": "staggered",
+        "variant": "triptych",
+        "col1Body": "剧本写作使用了 Articy Draft，通过节点极为方便地实现多分支剧情流程树的管理。",
+        "col1BodyAlign": "left",
+        "col1Label": "",
+        "col1MediaFitMode": "x",
+        "col1MediaPreset": "ratio-16-9",
+        "col1MediaSrc": "/images/insight/Code01.webp",
+        "col1Subtitle": "",
         "col1Title": "剧情树管理",
-        "col1Text": "剧本写作使用了 Articy Draft，通过节点极为方便地实现多分支剧情流程树的管理。",
-        "col1Img": "/images/insight/Code01.webp",
+        "col2Body": "Unreal Engine 蓝图深度结合对话树系统，实现对话数据的导入与运行时逻辑。",
+        "col2BodyAlign": "left",
+        "col2Label": "",
+        "col2MediaFitMode": "x",
+        "col2MediaPreset": "ratio-16-9",
+        "col2MediaSrc": "/images/insight/Code02.webp",
+        "col2Subtitle": "",
         "col2Title": "蓝图系统",
-        "col2Text": "Unreal Engine 蓝图深度结合对话树系统，实现对话数据的导入与运行时逻辑。",
-        "col2Img": "/images/insight/Code02.webp",
-        "col3Title": "UI 设计",
-        "col3Text": "拟真桌面操作系统 UI 设计，增强玩家的沉浸感与代入感。",
-        "col3Img": "/images/insight/Shot04.webp"
+        "col3Body": "拟真桌面操作系统 UI 设计，增强玩家的沉浸感与代入感。",
+        "col3BodyAlign": "left",
+        "col3Label": "",
+        "col3MediaFitMode": "x",
+        "col3MediaPreset": "ratio-16-9",
+        "col3MediaSrc": "/images/insight/Shot04.webp",
+        "col3Subtitle": "",
+        "col3Title": "UI 设计"
       }
     },
     {
@@ -97,7 +157,8 @@
         "id": "insight-gallery-img-1",
         "src": "/images/insight/Shot01.webp",
         "caption": "游戏界面",
-        "variant": "fullscreen"
+        "variant": "fullscreen",
+        "captionAlign": "left"
       }
     },
     {
@@ -106,7 +167,8 @@
         "id": "insight-gallery-img-2",
         "src": "/images/insight/Shot02.webp",
         "caption": "对话系统",
-        "variant": "fullscreen"
+        "variant": "fullscreen",
+        "captionAlign": "left"
       }
     },
     {
@@ -115,7 +177,8 @@
         "id": "insight-gallery-img-3",
         "src": "/images/insight/Shot03.webp",
         "caption": "剧情分支",
-        "variant": "fullscreen"
+        "variant": "fullscreen",
+        "captionAlign": "left"
       }
     },
     {

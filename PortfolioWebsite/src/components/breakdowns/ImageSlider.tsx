@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { type ReactNode, useId, useRef, useState } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
@@ -13,6 +13,10 @@ import {
   getSectionSpacingClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
+import {
+  hasEditableTextContent,
+  toPlainText,
+} from "@/lib/editable-text";
 import {
   type ImageFitMode,
   type ImagePreset,
@@ -47,15 +51,15 @@ function ChevronIcon({ direction }: { direction: "left" | "right" }) {
 }
 
 interface ImageSliderProps extends ComponentDesignOverride<"ImageSlider"> {
-  title?: string;
+  title?: ReactNode;
   unlitSrc: string;
   litSrc: string;
   alt?: string;
   className?: string;
   imagePreset?: ImagePreset;
   imageFitMode?: ImageFitMode;
-  leftLabel?: string;
-  rightLabel?: string;
+  leftLabel?: ReactNode;
+  rightLabel?: ReactNode;
   initialPosition?: number;
   editMode?: boolean;
 }
@@ -96,7 +100,10 @@ export default function ImageSlider({
   const frameClassName = getImagePresetFrameClassName(resolvedPreset);
   const preservesNativeHeight = resolvedPreset === "native";
   const imageFrameClassName = preservesNativeHeight ? "w-full" : "h-full w-full";
-  const visibleTitle = typeof title === "string" && title.trim().length > 0 ? title : alt;
+  const visibleTitle = hasEditableTextContent(title) ? title : alt;
+  const visibleTitleText = toPlainText(visibleTitle) ?? alt;
+  const leftLabelText = toPlainText(leftLabel);
+  const rightLabelText = toPlainText(rightLabel);
   const sliderDescriptionId = useId();
 
   const updatePosition = (clientX: number) => {
@@ -197,12 +204,12 @@ export default function ImageSlider({
             data-dragging={isDragging ? "true" : undefined}
             role="slider"
             tabIndex={editMode ? -1 : 0}
-            aria-label={`${visibleTitle} 图片对比`}
+            aria-label={`${visibleTitleText} 图片对比`}
             aria-describedby={sliderDescriptionId}
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={Math.round(sliderPosition)}
-            aria-valuetext={`${leftLabel ?? "左侧图像"} ${Math.round(sliderPosition)}%，${rightLabel ?? "右侧图像"} ${Math.round(100 - sliderPosition)}%`}
+            aria-valuetext={`${leftLabelText ?? "左侧图像"} ${Math.round(sliderPosition)}%，${rightLabelText ?? "右侧图像"} ${Math.round(100 - sliderPosition)}%`}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={resetDrag}
@@ -239,7 +246,7 @@ export default function ImageSlider({
                 <div className="relative z-10 h-full w-full">
                   <PresetImage
                     src={litSrc}
-                    alt={rightLabel ? `${alt} ${rightLabel}` : alt}
+                    alt={rightLabelText ? `${alt} ${rightLabelText}` : alt}
                     preset={resolvedPreset}
                     fitMode={resolvedFitMode}
                     lockFrame={preservesNativeHeight}
@@ -261,7 +268,7 @@ export default function ImageSlider({
                 <div className="relative z-10 h-full w-full">
                   <PresetImage
                     src={unlitSrc}
-                    alt={leftLabel ? `${alt} ${leftLabel}` : alt}
+                    alt={leftLabelText ? `${alt} ${leftLabelText}` : alt}
                     preset={resolvedPreset}
                     fitMode={resolvedFitMode}
                     lockFrame={preservesNativeHeight}
@@ -289,12 +296,12 @@ export default function ImageSlider({
             </div>
           </div>
 
-          {leftLabel || rightLabel ? (
+          {hasEditableTextContent(leftLabel) || hasEditableTextContent(rightLabel) ? (
             <div
               className="flex items-start justify-between gap-6"
               style={{ marginTop: getSpacingRem(design.labelsTopSpacing) }}
             >
-              {leftLabel ? (
+              {hasEditableTextContent(leftLabel) ? (
                 <Typography
                   as="span"
                   preset="sans-body"
@@ -308,7 +315,7 @@ export default function ImageSlider({
               ) : (
                 <span />
               )}
-              {rightLabel ? (
+              {hasEditableTextContent(rightLabel) ? (
                 <Typography
                   as="span"
                   preset="sans-body"

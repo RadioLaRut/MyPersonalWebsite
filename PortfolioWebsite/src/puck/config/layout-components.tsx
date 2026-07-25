@@ -1,19 +1,23 @@
 import type { ComponentDefinitionRegistry } from "./component-definition";
 import { createFieldGroup } from "@/puck/fields/field-groups";
 import {
-  buildImageFieldTriple,
+  buildImagePickerFieldTriple,
+  createImageSourceField,
+} from "@/puck/fields/image-source-field";
+import {
   imageFitModeField,
   imagePresetField,
 } from "@/puck/fields/image-fields";
+import { createTextAlignmentField } from "@/puck/fields/text-alignment-field";
 
-const heroHeadlineImageFields = buildImageFieldTriple("heroImage", {
+const heroHeadlineImageFields = buildImagePickerFieldTriple("heroImage", {
   defaultPreset: "ratio-21-9",
   fitModeLabel: "Image Fit Mode",
   presetLabel: "Image Preset",
   srcLabel: "Hero Image",
 });
 
-const textSplitImageFields = buildImageFieldTriple("imageSrc");
+const textSplitImageFields = buildImagePickerFieldTriple("imageSrc");
 // defaultProps 仅服务 Admin 新建节点；ComponentLab 的演示内容统一来自页面实例与预设文件。
 export const layoutComponents = {
     StatementBlock: {
@@ -63,6 +67,7 @@ export const layoutComponents = {
         eyebrow: { type: "text", label: "Eyebrow" },
         title: { type: "textarea", label: "Title" },
         subtitle: { type: "textarea", label: "Subtitle" },
+        subtitleAlign: createTextAlignmentField("副标题对齐"),
         _g_image: createFieldGroup("Hero 图片"),
         ...heroHeadlineImageFields.fields,
         _g_link: createFieldGroup("导航链接"),
@@ -73,6 +78,7 @@ export const layoutComponents = {
         eyebrow: "PROJECT",
         title: "PROJECT TITLE",
         subtitle: "Add a short project summary.",
+        subtitleAlign: "left",
         ...heroHeadlineImageFields.defaults,
         navLink: "",
         navLinkLabel: "观看视频",
@@ -81,17 +87,20 @@ export const layoutComponents = {
     RichParagraph: {
       fields: {
         content: { type: "textarea", label: "Content" },
+        align: createTextAlignmentField("正文对齐"),
       },
       defaultProps: {
+        align: "justify",
         content: "Enter your paragraph text here.",
       },
     },
     ImagePanel: {
       fields: {
         _g_image: createFieldGroup("图片"),
-        src: { type: "text", label: "Image Source" },
+        src: createImageSourceField("Image Source"),
         alt: { type: "text", label: "Alt Text" },
         caption: { type: "text", label: "Caption" },
+        captionAlign: createTextAlignmentField("图注对齐"),
         _g_display: createFieldGroup("显示设置"),
         preset: { ...imagePresetField, label: "Preset" },
         fitMode: { ...imageFitModeField, label: "Fit Mode" },
@@ -109,6 +118,7 @@ export const layoutComponents = {
         src: "",
         alt: "",
         caption: "Enter an image caption",
+        captionAlign: "left",
         preset: "ratio-16-9",
         fitMode: "x",
         variant: "content",
@@ -119,7 +129,11 @@ export const layoutComponents = {
       fields: {
         _g_text: createFieldGroup("文本内容"),
         heading: { type: "text", label: "Heading" },
-        paragraphs: { type: "slot", label: "Paragraphs" },
+        paragraphs: {
+          type: "slot",
+          label: "Paragraphs",
+          allow: ["TextParagraphBlock"],
+        },
         _g_image: createFieldGroup("图片配置"),
         ...textSplitImageFields.fields,
         _g_layout: createFieldGroup("布局设置"),
@@ -149,13 +163,14 @@ export const layoutComponents = {
         positioning: { type: "text", label: "定位文案" },
         subtitle: { type: "text", label: "Subtitle" },
         description: { type: "textarea", label: "Description" },
+        descriptionAlign: createTextAlignmentField("描述对齐"),
         _g_cta: createFieldGroup("行动按钮 (CTA)"),
         primaryCtaLabel: { type: "text", label: "Primary CTA Label" },
         primaryCtaHref: { type: "text", label: "Primary CTA Href" },
         secondaryCtaLabel: { type: "text", label: "Secondary CTA Label" },
         secondaryCtaHref: { type: "text", label: "Secondary CTA Href" },
         _g_image: createFieldGroup("图片配置"),
-        imageSrc: { type: "text", label: "Image Source" },
+        imageSrc: createImageSourceField("Image Source"),
         imageAlt: { type: "text", label: "Image Alt" },
         imagePreset: { ...imagePresetField, label: "Image Preset" },
         imageFitMode: { ...imageFitModeField, label: "Image Fit Mode" },
@@ -168,6 +183,7 @@ export const layoutComponents = {
         positioning: "让氛围、系统与落地流程共同服务体验。",
         subtitle: "",
         description: "",
+        descriptionAlign: "left",
         primaryCtaLabel: "",
         primaryCtaHref: "",
         secondaryCtaLabel: "",
@@ -187,6 +203,7 @@ export const layoutComponents = {
         eyebrow: { type: "text", label: "Eyebrow" },
         title: { type: "text", label: "Title" },
         description: { type: "textarea", label: "Description" },
+        descriptionAlign: createTextAlignmentField("描述对齐"),
         _g_button: createFieldGroup("按钮设置"),
         buttonLabel: { type: "text", label: "Button Label" },
         buttonHref: { type: "text", label: "Button Href" },
@@ -195,6 +212,7 @@ export const layoutComponents = {
         eyebrow: "NEXT STEP",
         title: "Ready to start a project?",
         description: "Let's create something amazing together.",
+        descriptionAlign: "center",
         buttonLabel: "About Me",
         buttonHref: "/about",
       },

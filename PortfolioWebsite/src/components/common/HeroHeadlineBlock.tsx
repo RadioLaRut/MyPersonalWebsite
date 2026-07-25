@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
-import Typography from "@/components/common/Typography";
+import Typography, {
+  type TypographyAlignment,
+} from "@/components/common/Typography";
 import {
   type ComponentDesignOverride,
   resolveComponentDesign,
@@ -17,11 +19,12 @@ type HeroHeadlineBlockProps = {
   eyebrow?: ReactNode;
   title?: ReactNode;
   subtitle?: ReactNode;
+  subtitleAlign?: TypographyAlignment;
   heroImage?: string;
   heroImagePreset?: ImagePreset;
   heroImageFitMode?: ImageFitMode;
   navLink?: string;
-  navLinkLabel?: string;
+  navLinkLabel?: ReactNode;
   editMode?: boolean;
 } & ComponentDesignOverride<"HeroHeadline">;
 
@@ -29,6 +32,7 @@ export default function HeroHeadlineBlock({
   eyebrow,
   title,
   subtitle,
+  subtitleAlign = "left",
   heroImage,
   heroImagePreset,
   heroImageFitMode,
@@ -105,6 +109,7 @@ export default function HeroHeadlineBlock({
                   size="title-sm"
                   weight="medium"
                   wrapPolicy="prose"
+                  align={subtitleAlign}
                   className="max-w-3xl text-white/90"
                 >
                   {resolvedSubtitle}

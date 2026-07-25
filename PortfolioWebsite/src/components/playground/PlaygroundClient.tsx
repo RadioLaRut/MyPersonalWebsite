@@ -158,7 +158,6 @@ const PLAYGROUND_PROPS: Record<string, Record<string, unknown>> = {
     mediaSrc: "/images/train-station/2Day.webp",
     imagePreset: "ratio-21-9",
     imageFitMode: "x",
-    isVideo: false,
     parameters: [
       { name: "Parameter 1", value: "Value 1", description: "Description 1" },
       { name: "Parameter 2", value: "Value 2", description: "Description 2" },

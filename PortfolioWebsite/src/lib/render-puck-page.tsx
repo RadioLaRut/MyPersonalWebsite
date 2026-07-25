@@ -8,6 +8,7 @@ import {
   contentRepository,
 } from "@/lib/content-repository";
 import { normalizePuckSlugInput } from "@/lib/puck-slug";
+import { stripPageEditorMetadata } from "@/lib/page-document-contract";
 import { synchronizeNextProjectBlocks } from "@/lib/project-catalog";
 import {
   createPublicRuntimeConfig,
@@ -28,13 +29,14 @@ export async function renderPuckPage(
       normalizedSlug.slugSegments.length === 2 && normalizedSlug.slugSegments[0] === "works"
         ? normalizedSlug.slugSegments[1]
         : null;
-    const data: Data = currentProjectId
+    const projectedData: Data = currentProjectId
       ? synchronizeNextProjectBlocks(
         normalizedData,
         currentProjectId,
         await contentRepository.readProjectCatalog(),
       )
       : normalizedData;
+    const data = stripPageEditorMetadata(projectedData);
     const runtimeConfig = await createPublicRuntimeConfig(data as typeof normalizedData, {
       designDocument,
       loadRenderer,

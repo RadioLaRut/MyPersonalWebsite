@@ -9,33 +9,31 @@ type PublicRendererModuleLoader = () => Promise<PublicRendererModule>;
 
 export const WORK_DETAIL_PUBLIC_RENDERER_TYPES = [
   "HeroHeadline",
-  "TextSplitLayout",
-  "HomeEndcapSection",
+  "EditorialSplit",
+  "ThreeColumnSection",
   "RichParagraph",
   "ImagePanel",
-  "ContentCard",
+  "BilibiliEmbed",
   "ParameterGrid",
-  "HighDensityInfoBlock",
   "ImageSlider",
   "BreakdownHeadline",
-  "BreakdownTriptych",
   "NextProjectBlock",
+  "HomeEndcapSection",
   "TextParagraphBlock",
 ] as const satisfies readonly PuckComponentType[];
 
 const ROUTE_PUBLIC_RENDERER_LOADERS = {
   HeroHeadline: () => import("../public-renderers/hero-headline"),
-  TextSplitLayout: () => import("../public-renderers/text-split-layout"),
-  HomeEndcapSection: () => import("../public-renderers/home-endcap-section"),
+  EditorialSplit: () => import("../public-renderers/editorial-split"),
+  ThreeColumnSection: () => import("../public-renderers/three-column-section"),
   RichParagraph: () => import("../public-renderers/rich-paragraph"),
   ImagePanel: () => import("../public-renderers/image-panel"),
-  ContentCard: () => import("../public-renderers/content-card"),
+  BilibiliEmbed: () => import("../public-renderers/bilibili-embed"),
   ParameterGrid: () => import("../public-renderers/parameter-grid"),
-  HighDensityInfoBlock: () => import("../public-renderers/high-density-info-block"),
   ImageSlider: () => import("../public-renderers/image-slider"),
   BreakdownHeadline: () => import("../public-renderers/breakdown-headline"),
-  BreakdownTriptych: () => import("../public-renderers/breakdown-triptych"),
   NextProjectBlock: () => import("../public-renderers/next-project-block"),
+  HomeEndcapSection: () => import("../public-renderers/home-endcap-section"),
   TextParagraphBlock: () => import("../public-renderers/text-paragraph-block"),
 } satisfies Partial<Record<PuckComponentType, PublicRendererModuleLoader>>;
 

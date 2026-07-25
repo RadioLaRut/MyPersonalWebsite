@@ -19,6 +19,7 @@ import {
   resolvePreviewViewportByWidth,
   SITE_VIEWPORT_UNIT_CSS_VAR,
 } from "@/lib/preview-viewports";
+import { PREVIEW_CONTENT_HEIGHT_EVENT } from "./preview-canvas-layout";
 
 const PREVIEW_CLONED_HEAD_ATTR = "data-puck-preview-font-clone";
 
@@ -108,14 +109,66 @@ function setupIframePreviewChrome(
     const htmlElement = frameDocument.documentElement;
     const bodyElement = frameDocument.body;
     const frameWindow = frameDocument.defaultView;
+    const previewEntry = frameDocument.querySelector<HTMLElement>(
+      "[data-puck-entry]",
+    );
     const previousViewportUnit = htmlElement.style.getPropertyValue(
       SITE_VIEWPORT_UNIT_CSS_VAR,
     );
+    const previousEntryHeight = previewEntry?.style.height ?? "";
+    const previousEntryMinHeight = previewEntry?.style.minHeight ?? "";
     const previousHtml = snapshotElement(htmlElement, {
       attributes: PREVIEW_HTML_ATTRIBUTES,
       includeLang: true,
     });
     const previousBody = snapshotElement(bodyElement);
+    let measurementFrameId = 0;
+    let lastReportedContentHeight = 0;
+
+    const reportPreviewContentHeight = () => {
+      cancelAnimationFrame(measurementFrameId);
+      measurementFrameId = requestAnimationFrame(() => {
+        if (!previewEntry) {
+          return;
+        }
+
+        const nextHeight = Math.ceil(
+          Math.max(previewEntry.offsetHeight, previewEntry.scrollHeight),
+        );
+
+        if (
+          !Number.isFinite(nextHeight) ||
+          nextHeight <= 0 ||
+          Math.abs(nextHeight - lastReportedContentHeight) < 1
+        ) {
+          return;
+        }
+
+        lastReportedContentHeight = nextHeight;
+        window.dispatchEvent(new CustomEvent(PREVIEW_CONTENT_HEIGHT_EVENT, {
+          detail: { height: nextHeight },
+        }));
+      });
+    };
+
+    const contentResizeObserver = new ResizeObserver(
+      reportPreviewContentHeight,
+    );
+    const refreshObservedContent = () => {
+      contentResizeObserver.disconnect();
+
+      if (previewEntry) {
+        contentResizeObserver.observe(previewEntry);
+        previewEntry
+          .querySelectorAll<HTMLElement>("[data-puck-component]")
+          .forEach((element) => contentResizeObserver.observe(element));
+      }
+
+      reportPreviewContentHeight();
+    };
+    const contentMutationObserver = previewEntry
+      ? new MutationObserver(refreshObservedContent)
+      : null;
 
     const syncPreviewEnvironment = (overrideVars?: FontLabCssVars | null) => {
       syncPreviewHeadNodes(frameDocument, lastClonedHeadSignatureRef);
@@ -140,6 +193,11 @@ function setupIframePreviewChrome(
         SITE_VIEWPORT_UNIT_CSS_VAR,
         getLogicalViewportUnit(viewport),
       );
+      if (previewEntry) {
+        previewEntry.style.height = "auto";
+        previewEntry.style.minHeight = `${viewport.height}px`;
+      }
+      reportPreviewContentHeight();
     };
 
     const handleFontLabUpdate = (event: Event) => {
@@ -148,7 +206,10 @@ function setupIframePreviewChrome(
         detail && typeof detail === "object" ? detail : null,
       );
     };
-    const handleViewportResize = () => syncPreviewEnvironment();
+    const handleViewportResize = () => {
+      syncPreviewEnvironment();
+      refreshObservedContent();
+    };
 
     htmlElement.setAttribute(ADMIN_MODE_ATTRIBUTE, "true");
     htmlElement.removeAttribute(ADMIN_ROOT_ATTRIBUTE);
@@ -159,13 +220,32 @@ function setupIframePreviewChrome(
     bodyElement.style.height = "";
     bodyElement.style.overscrollBehavior = "";
     syncPreviewEnvironment(getLatestFontLabPreviewVarsSnapshot());
+    if (contentMutationObserver && previewEntry) {
+      contentMutationObserver.observe(previewEntry, {
+        attributes: true,
+        attributeFilter: ["data-puck-component"],
+        childList: true,
+        subtree: true,
+      });
+    }
+    refreshObservedContent();
+    void frameDocument.fonts.ready
+      .then(reportPreviewContentHeight)
+      .catch(() => undefined);
     window.addEventListener(FONT_LAB_UPDATED_EVENT, handleFontLabUpdate as EventListener);
     frameWindow?.addEventListener("resize", handleViewportResize);
 
     return () => {
+      cancelAnimationFrame(measurementFrameId);
+      contentMutationObserver?.disconnect();
+      contentResizeObserver.disconnect();
       window.removeEventListener(FONT_LAB_UPDATED_EVENT, handleFontLabUpdate as EventListener);
       frameWindow?.removeEventListener("resize", handleViewportResize);
 
+      if (previewEntry) {
+        previewEntry.style.height = previousEntryHeight;
+        previewEntry.style.minHeight = previousEntryMinHeight;
+      }
       restoreElement(htmlElement, previousHtml);
       restoreElement(bodyElement, previousBody);
       frameDocument.head.querySelectorAll(`[${PREVIEW_CLONED_HEAD_ATTR}]`).forEach((node) => node.remove());

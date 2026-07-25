@@ -19,9 +19,11 @@ type PuckSlotComponent = ComponentType<{
 
 type EntryFieldKey =
   | "aliases"
+  | "align"
   | "category"
   | "company"
   | "desc"
+  | "descriptionAlign"
   | "href"
   | "id"
   | "imageFitMode"

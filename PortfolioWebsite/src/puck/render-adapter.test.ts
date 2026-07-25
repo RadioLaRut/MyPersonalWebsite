@@ -3,7 +3,10 @@ import test from "node:test";
 import { createElement, type ReactElement } from "react";
 
 import { createDefaultComponentDesignDocument } from "../lib/component-design-schema.ts";
-import { renderWithAdapter } from "./render-adapter.ts";
+import {
+  renderWithAdapter,
+  resolveComponentDesignProps,
+} from "./render-adapter.ts";
 
 const render = (props: Record<string, unknown>) => createElement("div", props);
 
@@ -48,4 +51,37 @@ test("统一适配器注入组件设计与 WorksList 子项设计", () => {
   assert.deepEqual(hero.props.design, designDocument.components.HeroSection);
   assert.deepEqual(worksList.props.design, designDocument.components.WorksList);
   assert.deepEqual(worksList.props.entryDesign, designDocument.components.WorksListEntry);
+});
+
+test("合并组件注入其两套内部设计作用域", () => {
+  const designDocument = createDefaultComponentDesignDocument();
+
+  assert.deepEqual(
+    resolveComponentDesignProps("EditorialHeader", designDocument),
+    {
+      collectionDesign: designDocument.components.LightingCollectionHeader,
+      indexDesign: designDocument.components.PortfolioHeroHeader,
+    },
+  );
+  assert.deepEqual(
+    resolveComponentDesignProps("EditorialSplit", designDocument),
+    {
+      cardDesign: designDocument.components.ContentCard,
+      splitDesign: designDocument.components.TextSplitLayout,
+    },
+  );
+  assert.deepEqual(
+    resolveComponentDesignProps("ThreeColumnSection", designDocument),
+    {
+      phaseDesign: designDocument.components.HighDensityInfoBlock,
+      triptychDesign: designDocument.components.BreakdownTriptych,
+    },
+  );
+  assert.deepEqual(
+    resolveComponentDesignProps("ProjectCoverLink", designDocument),
+    {
+      cardDesign: designDocument.components.LightingProjectCard,
+      immersiveDesign: designDocument.components.ProjectSection,
+    },
+  );
 });

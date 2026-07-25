@@ -1,8 +1,8 @@
 import type { ComponentDefinitionRegistry } from "./component-definition";
 import { CANONICAL_PLACEHOLDER_PATH } from "@/lib/public-paths";
-import { buildImageFieldTriple } from "@/puck/fields/image-fields";
+import { buildImagePickerFieldTriple } from "@/puck/fields/image-source-field";
 
-const lightingProjectImageFields = buildImageFieldTriple("coverImage", {
+const lightingProjectImageFields = buildImagePickerFieldTriple("coverImage", {
   defaultFitMode: "cover",
   defaultPreset: "ratio-21-9",
   defaultSrc: CANONICAL_PLACEHOLDER_PATH,

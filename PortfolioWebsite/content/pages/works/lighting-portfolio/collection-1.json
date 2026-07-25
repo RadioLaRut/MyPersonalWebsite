@@ -1,13 +1,20 @@
 {
   "content": [
     {
-      "type": "LightingCollectionHeader",
+      "type": "EditorialHeader",
       "props": {
         "id": "collection-1-header",
-        "title": "电影化镜头叙事设计",
-        "number": "01",
+        "backHref": "/works/lighting-portfolio",
+        "ctaHref": "",
+        "ctaLabel": "",
         "description": "基于现有资产独立完成构图、镜头推进与电影化灯光塑形的系列练习。",
-        "backHref": "/works/lighting-portfolio"
+        "descriptionAlign": "right",
+        "descriptionLine1": "",
+        "descriptionLine2": "",
+        "number": "01",
+        "subtitle": "",
+        "title": "电影化镜头叙事设计",
+        "variant": "collection"
       }
     },
     {
@@ -17,7 +24,8 @@
         "src": "/images/city-2026/001.webp",
         "caption": "",
         "preset": "native",
-        "variant": "large"
+        "variant": "large",
+        "captionAlign": "left"
       }
     },
     {
@@ -27,7 +35,8 @@
         "src": "/images/city-2026/002.webp",
         "caption": "",
         "preset": "native",
-        "variant": "large"
+        "variant": "large",
+        "captionAlign": "left"
       }
     },
     {
@@ -37,7 +46,8 @@
         "src": "/images/city-2026/003.webp",
         "caption": "",
         "preset": "native",
-        "variant": "large"
+        "variant": "large",
+        "captionAlign": "left"
       }
     },
     {
@@ -47,7 +57,8 @@
         "src": "/images/rainforest/Version2Output.0029.webp",
         "caption": "",
         "preset": "native",
-        "variant": "large"
+        "variant": "large",
+        "captionAlign": "left"
       }
     },
     {
@@ -57,7 +68,8 @@
         "src": "/images/rainforest/Output.0050.webp",
         "caption": "",
         "preset": "native",
-        "variant": "large"
+        "variant": "large",
+        "captionAlign": "left"
       }
     },
     {
@@ -67,7 +79,8 @@
         "src": "/images/rainforest/Output.0101.webp",
         "caption": "",
         "preset": "native",
-        "variant": "large"
+        "variant": "large",
+        "captionAlign": "left"
       }
     },
     {
@@ -78,7 +91,8 @@
         "description": "\n",
         "buttonLabel": "ENTER",
         "buttonHref": "/works/lighting-portfolio/collection-2",
-        "id": "HomeEndcapSection-8ad2878f-002b-426e-8c93-993529b54abc"
+        "id": "HomeEndcapSection-8ad2878f-002b-426e-8c93-993529b54abc",
+        "descriptionAlign": "center"
       }
     }
   ],

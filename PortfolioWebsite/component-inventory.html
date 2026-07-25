@@ -1,0 +1,1442 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <title>组件总览与精简结果</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #111111;
+        --surface: #181818;
+        --surface-raised: #202020;
+        --media: #343434;
+        --media-strong: #494949;
+        --text: #f2f2f2;
+        --text-secondary: #ababab;
+        --text-muted: #727272;
+        --rule: #303030;
+        --accent: #8cc8ff;
+        --accent-surface: #14283a;
+        --warning: #ffc18b;
+        --page: min(1480px, calc(100vw - 48px));
+        --radius: 0;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+          "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+        line-height: 1.55;
+      }
+
+      button,
+      select {
+        font: inherit;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      code,
+      .mono {
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      }
+
+      .page {
+        width: var(--page);
+        margin: 0 auto;
+      }
+
+      .site-header {
+        padding: 72px 0 56px;
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .eyebrow,
+      .section-index,
+      .component-number,
+      .tag,
+      .meta-label {
+        color: var(--text-muted);
+        font-size: 12px;
+        font-weight: 650;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 8fr) minmax(280px, 4fr);
+        gap: 40px;
+        align-items: end;
+        margin-top: 34px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        max-width: 10ch;
+        font-size: clamp(54px, 8vw, 124px);
+        font-weight: 560;
+        letter-spacing: -0.065em;
+        line-height: 0.88;
+      }
+
+      .hero-copy {
+        max-width: 42ch;
+        color: var(--text-secondary);
+        font-size: 17px;
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        margin-top: 64px;
+        border-top: 1px solid var(--rule);
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .metric {
+        min-height: 132px;
+        padding: 24px 20px 20px 0;
+      }
+
+      .metric + .metric {
+        border-left: 1px solid var(--rule);
+        padding-left: 20px;
+      }
+
+      .metric strong {
+        display: block;
+        font-size: 42px;
+        font-weight: 520;
+        line-height: 1;
+      }
+
+      .metric span {
+        display: block;
+        margin-top: 12px;
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+
+      .jump-nav {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        gap: 24px;
+        align-items: center;
+        min-height: 52px;
+        overflow-x: auto;
+        border-bottom: 1px solid var(--rule);
+        background: rgba(17, 17, 17, 0.96);
+        backdrop-filter: blur(16px);
+        color: var(--text-secondary);
+        font-size: 13px;
+        white-space: nowrap;
+      }
+
+      .jump-nav a:hover,
+      .jump-nav a:focus-visible {
+        color: var(--text);
+      }
+
+      .section {
+        padding: 88px 0;
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .section-heading {
+        display: grid;
+        grid-template-columns: minmax(0, 8fr) minmax(280px, 4fr);
+        gap: 40px;
+        align-items: end;
+        margin-bottom: 48px;
+      }
+
+      h2 {
+        margin-top: 10px;
+        font-size: clamp(34px, 4.2vw, 64px);
+        font-weight: 520;
+        letter-spacing: -0.045em;
+        line-height: 0.98;
+      }
+
+      .section-heading > p {
+        max-width: 48ch;
+        color: var(--text-secondary);
+      }
+
+      .family-list {
+        display: grid;
+        gap: 20px;
+      }
+
+      .family {
+        display: grid;
+        grid-template-columns: minmax(300px, 4fr) minmax(0, 8fr);
+        gap: 28px;
+        padding: 28px;
+        border: 1px solid var(--rule);
+        background: var(--surface);
+      }
+
+      .family h3 {
+        margin-top: 10px;
+        font-size: clamp(26px, 3vw, 42px);
+        font-weight: 540;
+        letter-spacing: -0.035em;
+      }
+
+      .family-source {
+        margin-top: 10px;
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+
+      .family-purpose {
+        max-width: 46ch;
+        margin-top: 22px;
+        color: var(--text-secondary);
+      }
+
+      .controls {
+        display: grid;
+        gap: 14px;
+        margin-top: 28px;
+      }
+
+      .control {
+        display: grid;
+        gap: 7px;
+      }
+
+      .control label {
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+
+      select {
+        width: 100%;
+        height: 44px;
+        padding: 0 38px 0 13px;
+        border: 1px solid #393939;
+        border-radius: var(--radius);
+        background: var(--surface-raised);
+        color: var(--text);
+      }
+
+      select:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      .optional-note {
+        margin-top: 18px;
+        padding-top: 16px;
+        border-top: 1px solid var(--rule);
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+
+      .preview-shell {
+        min-width: 0;
+      }
+
+      .preview {
+        min-height: 390px;
+        padding: 26px;
+        overflow: hidden;
+        background: #0d0d0d;
+      }
+
+      .preview-caption {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 20px;
+        padding-top: 14px;
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+
+      .shape {
+        display: block;
+        background: var(--media-strong);
+      }
+
+      .bar {
+        display: block;
+        height: 9px;
+        background: #777777;
+      }
+
+      .bar.dim {
+        background: #4f4f4f;
+      }
+
+      .bar.short {
+        width: 42%;
+      }
+
+      .bar.medium {
+        width: 68%;
+      }
+
+      .bar.long {
+        width: 100%;
+      }
+
+      .header-preview {
+        display: grid;
+        align-content: end;
+        min-height: 338px;
+      }
+
+      .header-preview .header-title {
+        width: min(74%, 620px);
+        height: 74px;
+        background: #dedede;
+      }
+
+      .header-preview .header-meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        width: min(62%, 520px);
+        margin-top: 26px;
+      }
+
+      .header-preview[data-variant="collection"] {
+        grid-template-columns: 7fr 5fr;
+        gap: 30px;
+        align-items: end;
+      }
+
+      .header-preview[data-variant="collection"] .header-title {
+        width: 100%;
+      }
+
+      .header-preview[data-variant="collection"] .header-meta {
+        width: 100%;
+        grid-template-columns: 1fr;
+        justify-self: end;
+      }
+
+      .split-preview {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 22px;
+        align-items: center;
+        min-height: 338px;
+      }
+
+      .split-preview[data-layout="media-right"] .preview-copy {
+        order: 1;
+      }
+
+      .split-preview[data-layout="media-right"] .preview-media {
+        order: 2;
+      }
+
+      .split-preview[data-layout="media-left"] .preview-copy {
+        order: 2;
+      }
+
+      .split-preview[data-layout="media-left"] .preview-media {
+        order: 1;
+      }
+
+      .split-preview[data-layout="stack"] {
+        grid-template-columns: 1fr;
+        align-content: center;
+      }
+
+      .split-preview[data-layout="stack"] .preview-copy {
+        order: 1;
+      }
+
+      .split-preview[data-layout="stack"] .preview-media {
+        order: 2;
+        min-height: 130px;
+      }
+
+      .split-preview[data-media="none"] {
+        grid-template-columns: minmax(0, 0.72fr);
+        justify-content: start;
+      }
+
+      .split-preview[data-media="none"] .preview-media {
+        display: none;
+      }
+
+      .preview-copy {
+        display: grid;
+        gap: 15px;
+      }
+
+      .preview-media {
+        min-height: 250px;
+        background: var(--media);
+      }
+
+      .slot-bars {
+        display: none;
+        gap: 8px;
+      }
+
+      .split-preview[data-body="slot"] .plain-bars {
+        display: none;
+      }
+
+      .split-preview[data-body="slot"] .slot-bars {
+        display: grid;
+      }
+
+      .columns-preview {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        align-items: start;
+        min-height: 338px;
+        padding-top: 14px;
+      }
+
+      .column {
+        display: grid;
+        gap: 12px;
+        min-height: 250px;
+        padding: 18px;
+        background: #1c1c1c;
+      }
+
+      .columns-preview[data-rhythm="staggered"] .column:nth-child(2) {
+        margin-top: 30px;
+      }
+
+      .columns-preview[data-rhythm="staggered"] .column:nth-child(3) {
+        margin-top: 60px;
+      }
+
+      .column-media {
+        min-height: 96px;
+        margin-top: auto;
+        background: var(--media);
+      }
+
+      .columns-preview[data-media="none"] .column-media {
+        display: none;
+      }
+
+      .columns-preview[data-variant="phase"] .column {
+        min-height: 280px;
+        border-top: 4px solid #6b6b6b;
+      }
+
+      .columns-preview[data-variant="evidence"] .column {
+        min-height: 230px;
+        background: #242424;
+      }
+
+      .evidence-chip {
+        display: none;
+        width: 54%;
+        height: 28px;
+        background: #5d5d5d;
+      }
+
+      .columns-preview[data-variant="evidence"] .evidence-chip {
+        display: block;
+      }
+
+      .cover-preview {
+        position: relative;
+        display: grid;
+        align-content: end;
+        min-height: 338px;
+        padding: 28px;
+        background: #252525;
+      }
+
+      .cover-preview[data-variant="card"] {
+        min-height: 260px;
+        margin: 38px 8%;
+        background: #2c2c2c;
+      }
+
+      .cover-preview[data-media="none"] {
+        background: #202020;
+      }
+
+      .cover-preview .cover-number {
+        position: absolute;
+        top: 24px;
+        left: 24px;
+        width: 44px;
+        height: 12px;
+        background: #727272;
+      }
+
+      .cover-preview .cover-title {
+        width: min(72%, 540px);
+        height: 62px;
+        background: #e1e1e1;
+      }
+
+      .alignment-grid {
+        display: grid;
+        grid-template-columns: minmax(240px, 3fr) minmax(0, 9fr);
+        gap: 32px;
+      }
+
+      .alignment-copy {
+        min-height: 280px;
+        padding: 32px;
+        background: var(--surface);
+      }
+
+      .alignment-copy p {
+        max-width: 720px;
+        color: #d0d0d0;
+        font-size: clamp(18px, 2vw, 25px);
+        line-height: 1.8;
+      }
+
+      .alignment-rule {
+        margin-top: 24px;
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+
+      .catalog {
+        border-top: 1px solid var(--rule);
+      }
+
+      .component-row {
+        display: grid;
+        grid-template-columns: 58px minmax(230px, 3fr) minmax(300px, 5fr) minmax(160px, 2fr);
+        gap: 24px;
+        align-items: center;
+        min-height: 126px;
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .component-row h3 {
+        font-size: clamp(19px, 2vw, 28px);
+        font-weight: 520;
+        letter-spacing: -0.025em;
+      }
+
+      .component-description {
+        color: var(--text-secondary);
+        font-size: 14px;
+      }
+
+      .component-mini {
+        position: relative;
+        display: grid;
+        align-content: center;
+        gap: 8px;
+        width: 100%;
+        height: 76px;
+        padding: 14px;
+        overflow: hidden;
+        background: var(--surface-raised);
+      }
+
+      .component-mini.media {
+        background: var(--media);
+      }
+
+      .component-mini.statement {
+        height: 102px;
+        place-items: center;
+        background: #171717;
+      }
+
+      .component-mini.video {
+        aspect-ratio: 16 / 9;
+        height: auto;
+        place-items: center;
+        background: #303030;
+        color: #bcbcbc;
+        font-size: 11px;
+        text-align: center;
+      }
+
+      .component-mini.columns {
+        grid-template-columns: repeat(3, 1fr);
+        align-items: stretch;
+      }
+
+      .component-mini.columns span {
+        background: #3d3d3d;
+      }
+
+      .tag {
+        width: fit-content;
+        padding: 6px 9px;
+        background: var(--accent-surface);
+        color: var(--accent);
+        letter-spacing: 0.08em;
+      }
+
+      .principles {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border-top: 1px solid var(--rule);
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .principle {
+        min-height: 150px;
+        padding: 26px 24px 26px 0;
+      }
+
+      .principle + .principle {
+        border-left: 1px solid var(--rule);
+        padding-left: 24px;
+      }
+
+      .principle strong {
+        display: block;
+        font-size: 19px;
+        font-weight: 540;
+      }
+
+      .principle span {
+        display: block;
+        margin-top: 10px;
+        color: var(--text-muted);
+        font-size: 14px;
+      }
+
+      .merge-map {
+        display: grid;
+        gap: 1px;
+        background: var(--rule);
+        border: 1px solid var(--rule);
+      }
+
+      .merge-row {
+        display: grid;
+        grid-template-columns: minmax(220px, 5fr) 36px minmax(180px, 4fr) minmax(180px, 3fr);
+        gap: 18px;
+        align-items: center;
+        min-height: 78px;
+        padding: 16px 20px;
+        background: var(--surface);
+      }
+
+      .merge-arrow {
+        color: var(--text-muted);
+        text-align: center;
+      }
+
+      .merge-note {
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+
+      .site-footer {
+        display: grid;
+        grid-template-columns: 8fr 4fr;
+        gap: 40px;
+        padding: 72px 0 88px;
+      }
+
+      .site-footer strong {
+        max-width: 14ch;
+        font-size: clamp(34px, 5vw, 72px);
+        font-weight: 520;
+        letter-spacing: -0.05em;
+        line-height: 0.98;
+      }
+
+      .site-footer p {
+        align-self: end;
+        color: var(--text-muted);
+      }
+
+      @media (max-width: 900px) {
+        :root {
+          --page: min(100% - 32px, 760px);
+        }
+
+        .site-header {
+          padding-top: 48px;
+        }
+
+        .hero,
+        .section-heading,
+        .family,
+        .alignment-grid,
+        .site-footer {
+          grid-template-columns: 1fr;
+        }
+
+        .metrics {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .metric:nth-child(3) {
+          border-left: 0;
+          border-top: 1px solid var(--rule);
+          padding-left: 0;
+        }
+
+        .metric:nth-child(4) {
+          border-top: 1px solid var(--rule);
+        }
+
+        .family {
+          padding: 20px;
+        }
+
+        .component-row {
+          grid-template-columns: 42px minmax(0, 1fr);
+          gap: 12px 16px;
+          padding: 22px 0;
+        }
+
+        .component-description,
+        .component-mini {
+          grid-column: 2;
+        }
+
+        .principles {
+          grid-template-columns: 1fr;
+        }
+
+        .principle + .principle {
+          border-top: 1px solid var(--rule);
+          border-left: 0;
+          padding-left: 0;
+        }
+
+        .merge-row {
+          grid-template-columns: 1fr 28px 1fr;
+        }
+
+        .merge-note {
+          grid-column: 3;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .section {
+          padding: 64px 0;
+        }
+
+        .metrics {
+          grid-template-columns: 1fr;
+        }
+
+        .metric + .metric,
+        .metric:nth-child(3),
+        .metric:nth-child(4) {
+          border-top: 1px solid var(--rule);
+          border-left: 0;
+          padding-left: 0;
+        }
+
+        .preview {
+          min-height: 300px;
+          padding: 16px;
+        }
+
+        .header-preview {
+          min-height: 268px;
+        }
+
+        .header-preview[data-variant="collection"],
+        .split-preview,
+        .split-preview[data-layout="stack"],
+        .split-preview[data-media="none"] {
+          grid-template-columns: 1fr;
+        }
+
+        .columns-preview {
+          grid-template-columns: 1fr;
+        }
+
+        .columns-preview[data-rhythm="staggered"] .column:nth-child(2),
+        .columns-preview[data-rhythm="staggered"] .column:nth-child(3) {
+          margin-top: 0;
+        }
+
+        .cover-preview[data-variant="card"] {
+          margin: 20px 0;
+        }
+
+        .preview-caption {
+          grid-template-columns: 1fr;
+        }
+
+        .merge-row {
+          grid-template-columns: 1fr;
+          gap: 7px;
+        }
+
+        .merge-arrow,
+        .merge-note {
+          grid-column: 1;
+          text-align: left;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="page">
+        <p class="eyebrow">Component Inventory / Implemented System</p>
+        <div class="hero">
+          <h1>组件精简总览</h1>
+          <p class="hero-copy">
+            作者入口从 23 个收敛为 17 个。共享结构进入枚举，内部 Slot
+            不再占菜单位置；媒体为空时直接消失，预览只使用纯色块，不绘制辅助线。
+          </p>
+        </div>
+        <div class="metrics" aria-label="精简结果">
+          <div class="metric">
+            <strong>17</strong>
+            <span>作者可选组件</span>
+          </div>
+          <div class="metric">
+            <strong>4</strong>
+            <span>合并后的组件族</span>
+          </div>
+          <div class="metric">
+            <strong>3</strong>
+            <span>隐藏的内部 Slot 类型</span>
+          </div>
+          <div class="metric">
+            <strong>1</strong>
+            <span>唯一视频入口：BilibiliEmbed</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="jump-nav page" aria-label="页面目录">
+      <span class="meta-label">JUMP</span>
+      <a href="#merged">合并组件</a>
+      <a href="#alignment">文本对齐</a>
+      <a href="#catalog">17 个组件</a>
+      <a href="#mapping">迁移映射</a>
+    </nav>
+
+    <main>
+      <section class="section page" id="merged">
+        <div class="section-heading">
+          <div>
+            <span class="section-index">01 / ENUMERATED FAMILIES</span>
+            <h2>四个合并组件</h2>
+          </div>
+          <p>
+            枚举只决定真实结构差异。媒体是否存在不再做枚举：字段空着，就不生成媒体节点。
+          </p>
+        </div>
+
+        <div class="family-list">
+          <article class="family">
+            <div>
+              <span class="section-index">M01 / HEADER</span>
+              <h3>EditorialHeader</h3>
+              <p class="family-source mono">
+                PortfolioHeroHeader + LightingCollectionHeader
+              </p>
+              <p class="family-purpose">
+                统一作品索引与灯光合集页头。内容字段按变体显隐，但页头节奏与设计作用域继续保留。
+              </p>
+              <div class="controls">
+                <div class="control">
+                  <label for="header-variant">variant</label>
+                  <select id="header-variant">
+                    <option value="index">作品索引 / index</option>
+                    <option value="collection">灯光合集 / collection</option>
+                  </select>
+                </div>
+                <div class="control">
+                  <label for="header-align">descriptionAlign</label>
+                  <select id="header-align">
+                    <option value="left">左对齐</option>
+                    <option value="center">居中对齐</option>
+                    <option value="right">右对齐</option>
+                    <option value="justify">两端对齐（含末行）</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="preview-shell">
+              <div
+                class="preview header-preview"
+                data-variant="index"
+                id="header-preview"
+                aria-label="EditorialHeader 纯色结构预览"
+              >
+                <span class="shape header-title"></span>
+                <div class="header-meta" id="header-copy">
+                  <span class="bar long"></span>
+                  <span class="bar dim medium"></span>
+                </div>
+              </div>
+              <div class="preview-caption">
+                <span id="header-description">作品索引：大标题与索引说明形成主次。</span>
+                <code id="header-schema">variant: "index"</code>
+              </div>
+            </div>
+          </article>
+
+          <article class="family">
+            <div>
+              <span class="section-index">M02 / TEXT + OPTIONAL IMAGE</span>
+              <h3>EditorialSplit</h3>
+              <p class="family-source mono">
+                ContentCard + TextSplitLayout
+              </p>
+              <p class="family-purpose">
+                统一标题、正文与可选图片。单一正文和段落 Slot
+                由内容模型区分，左右与堆叠由布局枚举区分。
+              </p>
+              <div class="controls">
+                <div class="control">
+                  <label for="split-layout">layout</label>
+                  <select id="split-layout">
+                    <option value="media-right">媒体在右 / media-right</option>
+                    <option value="media-left">媒体在左 / media-left</option>
+                    <option value="stack">上下堆叠 / stack</option>
+                  </select>
+                </div>
+                <div class="control">
+                  <label for="split-body">bodyMode</label>
+                  <select id="split-body">
+                    <option value="plain">单一正文 / plain</option>
+                    <option value="slot">段落 Slot / slot</option>
+                  </select>
+                </div>
+                <div class="control">
+                  <label for="split-media">imageSrc</label>
+                  <select id="split-media">
+                    <option value="present">已填写图片</option>
+                    <option value="none">未填写：无媒体节点</option>
+                  </select>
+                </div>
+              </div>
+              <p class="optional-note">
+                图片为空时只留下正文，不显示灰色空画框，也不保留空列。
+              </p>
+            </div>
+            <div class="preview-shell">
+              <div
+                class="preview split-preview"
+                data-layout="media-right"
+                data-body="plain"
+                data-media="present"
+                id="split-preview"
+                aria-label="EditorialSplit 纯色结构预览"
+              >
+                <div class="preview-copy">
+                  <span class="bar long"></span>
+                  <div class="plain-bars">
+                    <span class="bar dim long"></span>
+                  </div>
+                  <div class="slot-bars">
+                    <span class="bar dim long"></span>
+                    <span class="bar dim medium"></span>
+                    <span class="bar dim long"></span>
+                  </div>
+                </div>
+                <div class="preview-media" aria-label="纯色图片占位"></div>
+              </div>
+              <div class="preview-caption">
+                <span id="split-description">文本在左，纯色媒体块在右。</span>
+                <code id="split-schema">layout: "media-right" · bodyMode: "plain"</code>
+              </div>
+            </div>
+          </article>
+
+          <article class="family">
+            <div>
+              <span class="section-index">M03 / THREE COLUMNS</span>
+              <h3>ThreeColumnSection</h3>
+              <p class="family-source mono">
+                HighDensityInfoBlock + BreakdownTriptych
+              </p>
+              <p class="family-purpose">
+                一套三栏承载独立图文、阶段叙事与证据网格。三栏正文分别控制对齐，图片分别可空。
+              </p>
+              <div class="controls">
+                <div class="control">
+                  <label for="columns-variant">variant</label>
+                  <select id="columns-variant">
+                    <option value="triptych">独立图文 / triptych</option>
+                    <option value="phase">阶段叙事 / phase</option>
+                    <option value="evidence">证据网格 / evidence</option>
+                  </select>
+                </div>
+                <div class="control">
+                  <label for="columns-rhythm">rhythm</label>
+                  <select id="columns-rhythm">
+                    <option value="aligned">顶端齐平 / aligned</option>
+                    <option value="staggered">逐栏错落 / staggered</option>
+                  </select>
+                </div>
+                <div class="control">
+                  <label for="columns-media">三栏媒体</label>
+                  <select id="columns-media">
+                    <option value="present">已填写：显示纯色块</option>
+                    <option value="none">均未填写：全部消失</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="preview-shell">
+              <div
+                class="preview columns-preview"
+                data-variant="triptych"
+                data-rhythm="aligned"
+                data-media="present"
+                id="columns-preview"
+                aria-label="ThreeColumnSection 纯色结构预览"
+              >
+                <div class="column">
+                  <span class="bar short"></span>
+                  <span class="bar dim long"></span>
+                  <span class="evidence-chip"></span>
+                  <span class="column-media"></span>
+                </div>
+                <div class="column">
+                  <span class="bar short"></span>
+                  <span class="bar dim long"></span>
+                  <span class="evidence-chip"></span>
+                  <span class="column-media"></span>
+                </div>
+                <div class="column">
+                  <span class="bar short"></span>
+                  <span class="bar dim long"></span>
+                  <span class="evidence-chip"></span>
+                  <span class="column-media"></span>
+                </div>
+              </div>
+              <div class="preview-caption">
+                <span id="columns-description">三组独立图文，顶部齐平。</span>
+                <code id="columns-schema">variant: "triptych" · rhythm: "aligned"</code>
+              </div>
+            </div>
+          </article>
+
+          <article class="family">
+            <div>
+              <span class="section-index">M04 / COVER LINK</span>
+              <h3>ProjectCoverLink</h3>
+              <p class="family-source mono">
+                ProjectSection + LightingProjectCard
+              </p>
+              <p class="family-purpose">
+                两者都是“封面按钮”。一个负责沉浸式整屏入口，一个负责卡片式合集入口，共享标题、链接与可选封面。
+              </p>
+              <div class="controls">
+                <div class="control">
+                  <label for="cover-variant">variant</label>
+                  <select id="cover-variant">
+                    <option value="immersive">沉浸式 / immersive</option>
+                    <option value="card">卡片式 / card</option>
+                  </select>
+                </div>
+                <div class="control">
+                  <label for="cover-media">mediaSrc</label>
+                  <select id="cover-media">
+                    <option value="present">已填写封面</option>
+                    <option value="none">未填写：纯色文字入口</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="preview-shell">
+              <div
+                class="preview cover-preview"
+                data-variant="immersive"
+                data-media="present"
+                id="cover-preview"
+                aria-label="ProjectCoverLink 纯色结构预览"
+              >
+                <span class="cover-number"></span>
+                <span class="cover-title"></span>
+              </div>
+              <div class="preview-caption">
+                <span id="cover-description">沉浸式整屏封面按钮。</span>
+                <code id="cover-schema">variant: "immersive"</code>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section page" id="alignment">
+        <div class="section-heading">
+          <div>
+            <span class="section-index">02 / TEXT ALIGNMENT</span>
+            <h2>长文本独立对齐</h2>
+          </div>
+          <p>
+            正文、描述与图注可选左、中、右和含末行的两端对齐。标题、按钮、导航、编号与短标签不开放两端对齐。
+          </p>
+        </div>
+        <div class="alignment-grid">
+          <div class="control">
+            <label for="alignment-select">TypographyAlignment</label>
+            <select id="alignment-select">
+              <option value="left">左对齐</option>
+              <option value="center">居中对齐</option>
+              <option value="right">右对齐</option>
+              <option value="justify">两端对齐（含末行）</option>
+            </select>
+            <p class="alignment-rule mono" id="alignment-rule">
+              text-align: left
+            </p>
+          </div>
+          <div class="alignment-copy">
+            <p id="alignment-copy">
+              对齐是每个页面实例自己的内容属性，不写进全局字体预设。中文、English
+              与中英混排都经过同一 Typography 接口；选择两端对齐时，末尾一行也会拉伸到左右边界。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section page" id="catalog">
+        <div class="section-heading">
+          <div>
+            <span class="section-index">03 / AUTHOR CATALOG</span>
+            <h2>17 个作者组件</h2>
+          </div>
+          <p>
+            下列编号与 Admin、ComponentLab 的作者入口一致。小图只表达结构，不加载图片或视频资源。
+          </p>
+        </div>
+
+        <div class="catalog">
+          <article class="component-row">
+            <span class="component-number">01</span>
+            <h3>HeroSection</h3>
+            <p class="component-description">首页沉浸式首屏；说明正文独立对齐，CTA 可选。</p>
+            <div class="component-mini media"><span class="bar long"></span><span class="bar short"></span></div>
+          </article>
+          <article class="component-row">
+            <span class="component-number">02</span>
+            <h3>HeroHeadline</h3>
+            <p class="component-description">作品详情页头；副标题独立对齐，外部通用链接继续可选。</p>
+            <div class="component-mini media"><span class="bar medium"></span><span class="bar long"></span></div>
+          </article>
+          <article class="component-row">
+            <span class="component-number">03</span>
+            <h3>EditorialHeader</h3>
+            <p class="component-description">作品索引与灯光合集页头，使用 index / collection 枚举。</p>
+            <div class="component-mini"><span class="bar long"></span><span class="bar dim medium"></span></div>
+          </article>
+          <article class="component-row">
+            <span class="component-number">04</span>
+            <h3>EditorialSplit</h3>
+            <p class="component-description">标题、正文、可选图片；支持左右、堆叠及段落 Slot。</p>
+            <div class="component-mini columns"><span></span><span></span><span></span></div>
+          </article>
+          <article class="component-row">
+            <span class="component-number">05</span>
+            <h3>ThreeColumnSection</h3>
+            <p class="component-description">独立图文、阶段叙事与证据网格，支持齐平或错落节奏。</p>
+            <div class="component-mini columns"><span></span><span></span><span></span></div>
+          </article>
+          <article class="component-row">
+            <span class="component-number">06</span>
+            <h3>StatementBlock</h3>
+            <p class="component-description">保留的大留白叙事转场；负责换气，不并入 RichParagraph。</p>
+            <div class="component-mini statement"><span class="bar medium"></span></div>
+          </article>
+          <article class="component-row">
+            <span class="component-number">07</span>
+            <h3>RichParagraph</h3>
+            <p class="component-description">窄栏长正文；默认两端对齐并包含末行。</p>
+            <div class="component-mini"><span class="bar long"></span><span class="bar dim long"></span><span class="bar dim medium"></span></div>
+          </article>
+          <article class="component-row">
+            <span class="component-number">08</span>
+            <h3>ImagePanel</h3>
+            <p class="component-description">单图与图注容器；保留固定间距，不再新增 ImageGallery。</p>
+            <div class="component-mini media"></div>
+          </article>
+          <article class="component-row">
+            <span class="component-number">09</span>
+            <h3>BilibiliEmbed</h3>
+            <p class="component-description">唯一视频组件；官方 16:9 iframe，空值与非法值不公开渲染。</p>
+            <div class="component-mini video">B 站 iframe 16:9<br />本总览不发起网络请求</div>
+          </article>
+          <article class="component-row">
+            <span class="component-number">10</span>
+            <h3>ProjectCoverLink</h3>
+            <p class="component-description">沉浸式或卡片式封面按钮；封面为空时显示纯色文字入口。</p>
+            <div class="component-mini media"><span class="bar medium"></span></div>
+          </article>
+          <article class="component-row">
+            <span class="component-number">11</span>
+            <h3>WorksList</h3>
+            <p class="component-description">作品索引；内部 WorksListEntry 不占顶层菜单。</p>
+            <div class="component-mini"><span class="bar long"></span><span class="bar dim long"></span><span class="bar dim long"></span></div>
+          </article>
+          <article class="component-row">
+            <span class="component-number">12</span>
+            <h3>ParameterGrid</h3>
+            <p class="component-description">参数说明网格与可选图片；已移除本地视频分支。</p>
+            <div class="component-mini columns"><span></span><span></span><span></span></div>
+          </article>
+          <article class="component-row">
+            <span class="component-number">13</span>
+            <h3>ImageSlider</h3>
+            <p class="component-description">同一镜头的双图对比滑杆；保持独立交互职责。</p>
+            <div class="component-mini media"><span class="bar short"></span></div>
+          </article>
+          <article class="component-row">
+            <span class="component-number">14</span>
+            <h3>BreakdownHeadline</h3>
+            <p class="component-description">项目拆解章节标题；仅控制标题层级，不开放两端对齐。</p>
+            <div class="component-mini"><span class="bar short"></span><span class="bar long"></span></div>
+          </article>
+          <article class="component-row">
+            <span class="component-number">15</span>
+            <h3>NextProjectBlock</h3>
+            <p class="component-description">下一项目入口；通过目录投影取得名称、链接与封面。</p>
+            <div class="component-mini media"><span class="bar medium"></span></div>
+          </article>
+          <article class="component-row">
+            <span class="component-number">16</span>
+            <h3>HomeEndcapSection</h3>
+            <p class="component-description">页面收束 CTA；描述默认居中并可独立调整。</p>
+            <div class="component-mini statement"><span class="bar short"></span></div>
+          </article>
+          <article class="component-row">
+            <span class="component-number">17</span>
+            <h3>ContactFlashlight</h3>
+            <p class="component-description">关于页探照灯联系区；交互和页面职责独立，不继续合并。</p>
+            <div class="component-mini media"><span class="bar long"></span><span class="bar dim medium"></span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section page" id="mapping">
+        <div class="section-heading">
+          <div>
+            <span class="section-index">04 / MIGRATION MAP</span>
+            <h2>合并与保留边界</h2>
+          </div>
+          <p>
+            旧名称仍可出现在迁移器与底层设计作用域中，但不会再出现在作者添加菜单。
+          </p>
+        </div>
+
+        <div class="merge-map" role="list">
+          <div class="merge-row" role="listitem">
+            <code>PortfolioHeroHeader<br />LightingCollectionHeader</code>
+            <span class="merge-arrow">→</span>
+            <code>EditorialHeader</code>
+            <span class="merge-note">variant 保留用途差异</span>
+          </div>
+          <div class="merge-row" role="listitem">
+            <code>ContentCard<br />TextSplitLayout</code>
+            <span class="merge-arrow">→</span>
+            <code>EditorialSplit</code>
+            <span class="merge-note">layout + bodyMode</span>
+          </div>
+          <div class="merge-row" role="listitem">
+            <code>HighDensityInfoBlock<br />BreakdownTriptych</code>
+            <span class="merge-arrow">→</span>
+            <code>ThreeColumnSection</code>
+            <span class="merge-note">variant + rhythm</span>
+          </div>
+          <div class="merge-row" role="listitem">
+            <code>ProjectSection<br />LightingProjectCard</code>
+            <span class="merge-arrow">→</span>
+            <code>ProjectCoverLink</code>
+            <span class="merge-note">两种封面按钮</span>
+          </div>
+          <div class="merge-row" role="listitem">
+            <code>WorksListEntry<br />MetadataListItem<br />TextParagraphBlock</code>
+            <span class="merge-arrow">→</span>
+            <code>内部 Slot</code>
+            <span class="merge-note">保留能力，隐藏顶层入口</span>
+          </div>
+        </div>
+
+        <div class="principles" aria-label="最终原则">
+          <div class="principle">
+            <strong>StatementBlock 保留</strong>
+            <span>大留白是叙事节奏，不等同于普通富文本。</span>
+          </div>
+          <div class="principle">
+            <strong>媒体为空即不存在</strong>
+            <span>不输出空图片、空媒体列或假占位框。</span>
+          </div>
+          <div class="principle">
+            <strong>B 站是唯一视频入口</strong>
+            <span>页面真实 iframe；本总览只显示纯色 16:9 结构块。</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer page">
+      <strong>少一些入口，保留清楚的职责。</strong>
+      <p>
+        17 个作者组件，4 个结构枚举族，3 个内部 Slot。总览不加载任何外部媒体。
+      </p>
+    </footer>
+
+    <script>
+      const byId = (id) => document.getElementById(id);
+
+      const headerVariant = byId("header-variant");
+      const headerAlign = byId("header-align");
+      const headerPreview = byId("header-preview");
+      const headerCopy = byId("header-copy");
+      const updateHeader = () => {
+        const variant = headerVariant.value;
+        const align = headerAlign.value;
+        headerPreview.dataset.variant = variant;
+        headerCopy.style.textAlign = align;
+        headerCopy.style.textAlignLast = align === "justify" ? "justify" : "auto";
+        byId("header-description").textContent =
+          variant === "collection"
+            ? "灯光合集：标题与右侧说明形成双栏关系。"
+            : "作品索引：大标题与索引说明形成主次。";
+        byId("header-schema").textContent =
+          `variant: "${variant}" · descriptionAlign: "${align}"`;
+      };
+
+      const splitLayout = byId("split-layout");
+      const splitBody = byId("split-body");
+      const splitMedia = byId("split-media");
+      const splitPreview = byId("split-preview");
+      const updateSplit = () => {
+        const layout = splitLayout.value;
+        const body = splitBody.value;
+        const media = splitMedia.value;
+        splitPreview.dataset.layout = layout;
+        splitPreview.dataset.body = body;
+        splitPreview.dataset.media = media;
+        const layoutDescriptions = {
+          "media-left": "纯色媒体块在左，文本在右。",
+          "media-right": "文本在左，纯色媒体块在右。",
+          stack: "文本与纯色媒体块上下堆叠。",
+        };
+        byId("split-description").textContent =
+          media === "none"
+            ? "媒体字段为空：布局自动收敛为纯文本结构。"
+            : layoutDescriptions[layout];
+        byId("split-schema").textContent =
+          `layout: "${layout}" · bodyMode: "${body}" · media: "${media}"`;
+      };
+
+      const columnsVariant = byId("columns-variant");
+      const columnsRhythm = byId("columns-rhythm");
+      const columnsMedia = byId("columns-media");
+      const columnsPreview = byId("columns-preview");
+      const updateColumns = () => {
+        const variant = columnsVariant.value;
+        const rhythm = columnsRhythm.value;
+        const media = columnsMedia.value;
+        columnsPreview.dataset.variant = variant;
+        columnsPreview.dataset.rhythm = rhythm;
+        columnsPreview.dataset.media = media;
+        const labels = {
+          triptych: "三组独立图文",
+          phase: "三个连续叙事阶段",
+          evidence: "三栏证据与参数摘要",
+        };
+        byId("columns-description").textContent =
+          `${labels[variant]}，${rhythm === "aligned" ? "顶部齐平" : "逐栏错落"}；` +
+          `${media === "none" ? "不生成媒体节点。" : "媒体仅用纯色块示意。"}`;
+        byId("columns-schema").textContent =
+          `variant: "${variant}" · rhythm: "${rhythm}"`;
+      };
+
+      const coverVariant = byId("cover-variant");
+      const coverMedia = byId("cover-media");
+      const coverPreview = byId("cover-preview");
+      const updateCover = () => {
+        const variant = coverVariant.value;
+        const media = coverMedia.value;
+        coverPreview.dataset.variant = variant;
+        coverPreview.dataset.media = media;
+        byId("cover-description").textContent =
+          media === "none"
+            ? `${variant === "card" ? "卡片式" : "沉浸式"}纯色文字入口，不创建图片节点。`
+            : `${variant === "card" ? "卡片式合集" : "沉浸式整屏"}封面按钮。`;
+        byId("cover-schema").textContent =
+          `variant: "${variant}" · media: "${media}"`;
+      };
+
+      const alignmentSelect = byId("alignment-select");
+      const alignmentCopy = byId("alignment-copy");
+      const updateAlignment = () => {
+        const align = alignmentSelect.value;
+        alignmentCopy.style.textAlign = align;
+        alignmentCopy.style.textAlignLast =
+          align === "justify" ? "justify" : "auto";
+        byId("alignment-rule").textContent =
+          align === "justify"
+            ? "text-align: justify; text-align-last: justify"
+            : `text-align: ${align}`;
+      };
+
+      [
+        headerVariant,
+        headerAlign,
+      ].forEach((control) => control.addEventListener("change", updateHeader));
+      [
+        splitLayout,
+        splitBody,
+        splitMedia,
+      ].forEach((control) => control.addEventListener("change", updateSplit));
+      [
+        columnsVariant,
+        columnsRhythm,
+        columnsMedia,
+      ].forEach((control) => control.addEventListener("change", updateColumns));
+      [
+        coverVariant,
+        coverMedia,
+      ].forEach((control) => control.addEventListener("change", updateCover));
+      alignmentSelect.addEventListener("change", updateAlignment);
+
+      updateHeader();
+      updateSplit();
+      updateColumns();
+      updateCover();
+      updateAlignment();
+    </script>
+  </body>
+</html>

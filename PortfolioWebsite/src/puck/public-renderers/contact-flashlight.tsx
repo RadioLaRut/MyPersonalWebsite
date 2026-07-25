@@ -6,6 +6,7 @@ import {
   pickEntryField,
   readSlot,
 } from "./shared";
+import { castTypographyAlignment } from "../../lib/typography-alignment";
 
 export const render: ComponentConfig["render"] = ({
   anchorId,
@@ -22,6 +23,7 @@ export const render: ComponentConfig["render"] = ({
   maskSmoothness,
   name,
   taglineSub,
+  taglineSubAlign,
   taglineText,
   wechat,
 }) => {
@@ -70,6 +72,7 @@ export const render: ComponentConfig["render"] = ({
       maskSmoothness={maskSmoothness}
       name={name}
       taglineSub={taglineSub}
+      taglineSubAlign={castTypographyAlignment(taglineSubAlign)}
       taglineText={taglineText}
       wechat={wechat}
     />

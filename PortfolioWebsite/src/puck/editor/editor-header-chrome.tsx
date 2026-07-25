@@ -2,7 +2,7 @@ import { memo, type ReactNode, useCallback, useEffect, useMemo, useRef, useState
 import { ChevronDown } from "lucide-react/dist/cjs/lucide-react.js";
 
 import { MotionButton } from "@/components/motion";
-import type { FontLabSyncState } from "./types";
+import type { FontLabSyncState, PageListState } from "./types";
 import { splitPublicPathSegments } from "@/lib/public-paths";
 
 const FONT_LAB_SYNC_LABEL: Record<FontLabSyncState, string> = {
@@ -164,16 +164,20 @@ function EditorHeaderChrome({
   availablePublicPaths,
   isSwitchingPage,
   fontLabSyncState,
+  pageListState,
   onSelectPagePath,
   onCreatePage,
+  onRetryPageList,
 }: {
   children: ReactNode;
   selectedPagePath: string;
   availablePublicPaths: string[];
   isSwitchingPage: boolean;
   fontLabSyncState: FontLabSyncState;
+  pageListState: PageListState;
   onSelectPagePath: (nextPath: string) => void;
   onCreatePage: (rawValue: string) => void;
+  onRetryPageList: () => void;
 }) {
   const [newPageInputState, setNewPageInputState] = useState(() => ({
     selectedPagePath,
@@ -198,7 +202,7 @@ function EditorHeaderChrome({
               paths={availablePublicPaths}
               selected={selectedPagePath}
               onSelect={onSelectPagePath}
-              disabled={isSwitchingPage}
+              disabled={isSwitchingPage || pageListState.status !== "ready"}
             />
           </div>
 
@@ -235,6 +239,23 @@ function EditorHeaderChrome({
           </span>
         </div>
       </div>
+
+      {pageListState.status === "error" && (
+        <div
+          className="flex flex-wrap items-center justify-between gap-3 border-b border-amber-200 bg-amber-50 px-4 py-2 text-xs text-amber-900 md:px-5"
+          role="alert"
+        >
+          <span>{pageListState.message}</span>
+          <MotionButton
+            type="button"
+            interactionPreset="lightButton"
+            className="border border-amber-300 bg-white px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-900 transition-colors hover:border-amber-500 hover:bg-amber-100"
+            onClick={onRetryPageList}
+          >
+            重试页面清单
+          </MotionButton>
+        </div>
+      )}
 
       {children}
     </div>

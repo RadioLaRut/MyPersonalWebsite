@@ -9,14 +9,14 @@ type PublicRendererModuleLoader = () => Promise<PublicRendererModule>;
 
 export const HOME_PUBLIC_RENDERER_TYPES = [
   "HeroSection",
+  "ProjectCoverLink",
   "HomeEndcapSection",
-  "ProjectSection",
 ] as const satisfies readonly PuckComponentType[];
 
 const ROUTE_PUBLIC_RENDERER_LOADERS = {
   HeroSection: () => import("../public-renderers/hero-section"),
+  ProjectCoverLink: () => import("../public-renderers/project-cover-link"),
   HomeEndcapSection: () => import("../public-renderers/home-endcap-section"),
-  ProjectSection: () => import("../public-renderers/project-section"),
 } satisfies Partial<Record<PuckComponentType, PublicRendererModuleLoader>>;
 
 export async function loadHomePublicRenderer(type: PuckComponentType): Promise<PublicRenderer> {

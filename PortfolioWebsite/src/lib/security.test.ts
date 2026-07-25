@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   LOCAL_EDITOR_ACCESS_HEADER,
   LOCAL_EDITOR_ACCESS_TOKEN_ENV,
+  LOCAL_EDITOR_ACCESS_TOKENS_ENV,
 } from "./local-editor-access.ts";
 import {
   createApiLocalEditorTransportContext,
@@ -22,12 +23,21 @@ function setEnvValue(name: string, value: string | undefined) {
   }
 }
 
-function withLocalEditorEnv(token: string | undefined, callback: () => void) {
+type LocalEditorTokenEnvironment = {
+  legacyToken?: string;
+  tokens?: string;
+};
+
+function withLocalEditorEnv(
+  tokenEnvironment: LocalEditorTokenEnvironment,
+  callback: () => void,
+) {
   const previous = new Map<string, string | undefined>();
   for (const name of [
     "NODE_ENV",
     "NEXT_PUBLIC_SITE_MODE",
     LOCAL_EDITOR_ACCESS_TOKEN_ENV,
+    LOCAL_EDITOR_ACCESS_TOKENS_ENV,
     ...BLOCKED_ENV_NAMES,
   ]) {
     previous.set(name, process.env[name]);
@@ -39,7 +49,8 @@ function withLocalEditorEnv(token: string | undefined, callback: () => void) {
     setEnvValue(name, undefined);
   }
 
-  setEnvValue(LOCAL_EDITOR_ACCESS_TOKEN_ENV, token);
+  setEnvValue(LOCAL_EDITOR_ACCESS_TOKEN_ENV, tokenEnvironment.legacyToken);
+  setEnvValue(LOCAL_EDITOR_ACCESS_TOKENS_ENV, tokenEnvironment.tokens);
 
   try {
     callback();
@@ -100,6 +111,10 @@ test("page Origin is optional but must be loopback and authority-matched when pr
     createLocalEditorTransportContext("localhost:3000", "http://localhost:3000"),
     { authority: "localhost:3000", origin: "http://localhost:3000" },
   );
+  assert.deepEqual(
+    createLocalEditorTransportContext("localhost:80", "http://localhost"),
+    { authority: "localhost:80", origin: "http://localhost" },
+  );
 
   for (const origin of [
     "ftp://localhost:3000",
@@ -114,26 +129,45 @@ test("page Origin is optional but must be loopback and authority-matched when pr
   }
 });
 
-test("API authority comes from the URL and an existing Host must agree", () => {
+test("API authority accepts equivalent loopback aliases on the same port", () => {
   assert.deepEqual(
     createApiLocalEditorTransportContext(localRequest(undefined, {
       host: "localhost:3000",
     })),
     { authority: "localhost:3000" },
   );
-  assert.equal(
+  assert.deepEqual(
     createApiLocalEditorTransportContext(localRequest(undefined, {
       host: "127.0.0.1:3000",
+    })),
+    { authority: "127.0.0.1:3000" },
+  );
+  assert.equal(
+    createApiLocalEditorTransportContext(localRequest(undefined, {
+      host: "127.0.0.1:3001",
     })),
     null,
   );
 });
 
-test("API Origin must be the exact HTTP(S) request origin", () => {
+test("API Origin must match the actual Host and request protocol", () => {
   assert.ok(
     createApiLocalEditorTransportContext(localRequest(undefined, {
       origin: "http://localhost:3000",
     })),
+  );
+  assert.ok(
+    createApiLocalEditorTransportContext(localRequest(undefined, {
+      host: "127.0.0.1:3000",
+      origin: "http://127.0.0.1:3000",
+    })),
+  );
+  assert.equal(
+    createApiLocalEditorTransportContext(localRequest(undefined, {
+      host: "127.0.0.1:3000",
+      origin: "http://localhost:3000",
+    })),
+    null,
   );
   assert.equal(
     createApiLocalEditorTransportContext(localRequest(undefined, {
@@ -149,6 +183,19 @@ test("API Origin must be the exact HTTP(S) request origin", () => {
   );
 });
 
+test("page and API guards derive the same context from the actual transport headers", () => {
+  const pageContext = createLocalEditorTransportContext(
+    "127.0.0.1:3000",
+    "http://127.0.0.1:3000",
+  );
+  const apiContext = createApiLocalEditorTransportContext(localRequest(undefined, {
+    host: "127.0.0.1:3000",
+    origin: "http://127.0.0.1:3000",
+  }));
+
+  assert.deepEqual(apiContext, pageContext);
+});
+
 test("forwarded source headers are ignored", () => {
   const request = localRequest(undefined, {
     forwardedHost: "example.test",
@@ -160,7 +207,7 @@ test("forwarded source headers are ignored", () => {
 });
 
 test("local editor reads require a valid transport context", () => {
-  withLocalEditorEnv(undefined, () => {
+  withLocalEditorEnv({}, () => {
     assert.equal(
       evaluateLocalEditorAccess(createLocalEditorTransportContext("localhost:3000")),
       "allowed",
@@ -170,14 +217,14 @@ test("local editor reads require a valid transport context", () => {
 });
 
 test("local editor writes require a configured, matching token", () => {
-  withLocalEditorEnv(undefined, () => {
+  withLocalEditorEnv({}, () => {
     assert.equal(
       evaluateLocalEditorApiAccess(localRequest(), { requireToken: true }),
       "token-required",
     );
   });
 
-  withLocalEditorEnv("expected-token", () => {
+  withLocalEditorEnv({ legacyToken: "expected-token" }, () => {
     assert.equal(
       evaluateLocalEditorApiAccess(localRequest(), { requireToken: true }),
       "token-required",
@@ -193,8 +240,43 @@ test("local editor writes require a configured, matching token", () => {
   });
 });
 
+test("local editor writes accept every configured computer token", () => {
+  withLocalEditorEnv({
+    legacyToken: "legacy-token",
+    tokens: [
+      " computer-a-token",
+      "computer-b-token",
+      "",
+      "computer-c-token",
+      "computer-b-token ",
+    ].join(",\n"),
+  }, () => {
+    for (const token of [
+      "legacy-token",
+      "computer-a-token",
+      "computer-b-token",
+      "computer-c-token",
+    ]) {
+      assert.equal(
+        evaluateLocalEditorApiAccess(localRequest(token), { requireToken: true }),
+        "allowed",
+      );
+    }
+
+    for (const token of [
+      "wrong-token",
+      "computer-a-token,computer-b-token",
+    ]) {
+      assert.equal(
+        evaluateLocalEditorApiAccess(localRequest(token), { requireToken: true }),
+        "token-required",
+      );
+    }
+  });
+});
+
 test("source rejection precedes token validation", () => {
-  withLocalEditorEnv("expected-token", () => {
+  withLocalEditorEnv({ legacyToken: "expected-token" }, () => {
     for (const request of [
       new Request("http://example.test/api/puck", {
         headers: { [LOCAL_EDITOR_ACCESS_HEADER]: "expected-token" },
@@ -211,7 +293,7 @@ test("source rejection precedes token validation", () => {
 });
 
 test("production and hosted environments remain closed", () => {
-  withLocalEditorEnv(undefined, () => {
+  withLocalEditorEnv({}, () => {
     const context = createLocalEditorTransportContext("localhost:3000");
     assert.ok(context);
 

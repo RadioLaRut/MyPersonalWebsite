@@ -1,14 +1,20 @@
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { PRODUCTION_SECURITY_HEADERS } from "./scripts/security-headers.mjs";
 
 /** @type {import("next").NextConfig} */
 const isDevelopmentServer = process.env.NODE_ENV === "development";
 const siteMode = process.env.NEXT_PUBLIC_SITE_MODE === "testing" ? "testing" : "normal";
+const projectRoot = dirname(fileURLToPath(import.meta.url));
 
 const nextConfig = {
   distDir: isDevelopmentServer ? `.next-dev-${siteMode}` : ".next",
   reactStrictMode: true,
   typescript: {
     tsconfigPath: isDevelopmentServer ? "tsconfig.json" : "tsconfig.typecheck.json",
+  },
+  turbopack: {
+    root: projectRoot,
   },
   images: {
     formats: ["image/webp", "image/avif"],

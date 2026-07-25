@@ -24,11 +24,18 @@ import {
   type TypographyWrapPolicy,
 } from "@/lib/typography-tokens";
 import { getTypographyEdgeScripts, segmentTypographyText } from "@/lib/typography";
+import {
+  getTypographyAlignmentStyle,
+  type TypographyAlignment,
+} from "@/lib/typography-alignment";
+import { getInlineEditableTextValue } from "@/lib/editable-text";
+
+export type { TypographyAlignment } from "@/lib/typography-alignment";
 
 type TypographyWeightMode = TypographyWeight | "semantic";
 
 type BaseTypographyProps = {
-  align?: "left" | "center" | "right";
+  align?: TypographyAlignment;
   autospace?: TypographyAutospace;
   children: ReactNode;
   className?: string;
@@ -60,8 +67,49 @@ function extractTypographyPlainText(node: ReactNode): string {
     return "";
   }
 
+  const inlineEditableText = getInlineEditableTextValue(node);
+  if (inlineEditableText !== undefined) {
+    return inlineEditableText;
+  }
+
   const element = node as React.ReactElement<{ children?: ReactNode }>;
   return extractTypographyPlainText(element.props.children);
+}
+
+function removeGenericFontFamily(fontFamily: string) {
+  return fontFamily.replace(/,\s*(?:sans-serif|serif)\s*$/, "");
+}
+
+function getRootTypographyFallbackStyle(
+  text: string,
+  preset: TypographyPreset,
+  size: TypographySize,
+  weight: TypographyWeightMode,
+): Pick<StyleWithVars, "fontFamily" | "fontWeight"> {
+  const presetToken = getTypographyPresetToken(preset);
+  const scripts = segmentTypographyText(text)
+    .filter((run) => run.type !== "break")
+    .map((run) => run.script);
+  const hasLatin = scripts.includes("latin");
+  const hasCjk = scripts.includes("cjk");
+  const firstScript = scripts[0] ?? "latin";
+  const resolvedWeight =
+    weight === "semantic"
+      ? getDefaultTypographySemanticWeight(size)
+      : weight;
+  const weightPair = presetToken.weights[resolvedWeight];
+  const scriptType = firstScript === "latin" ? "latin" : "cjk";
+  const baseWeight = firstScript === "latin" ? weightPair.latin : weightPair.cjk;
+  const fontWeight = weight === "semantic"
+    ? `var(--typography-${preset}-${size}-semantic-${scriptType}-weight, var(--typography-${preset}-${resolvedWeight}-${scriptType}-weight, ${baseWeight}))`
+    : `var(--typography-${preset}-${resolvedWeight}-${scriptType}-weight, ${baseWeight})`;
+  const fontFamily = hasLatin && hasCjk
+    ? `${removeGenericFontFamily(presetToken.latinFontFamily)}, ${presetToken.cjkFontFamily}`
+    : hasCjk
+      ? presetToken.cjkFontFamily
+      : presetToken.latinFontFamily;
+
+  return { fontFamily, fontWeight };
 }
 
 function getRunLang(script: TypographyScript, containerLang: string) {
@@ -200,7 +248,14 @@ export default function Typography<T extends ElementType = "span">({
     : "display";
   const sizeToken = getTypographySizeToken(resolvedSize);
   const wrapToken = getTypographyWrapToken(wrapPolicy);
-  const edgeScripts = getTypographyEdgeScripts(extractTypographyPlainText(children));
+  const plainText = extractTypographyPlainText(children);
+  const edgeScripts = getTypographyEdgeScripts(plainText);
+  const rootTypographyFallbackStyle = getRootTypographyFallbackStyle(
+    plainText,
+    preset,
+    resolvedSize,
+    weight,
+  );
   function getEdgeOffset(script: TypographyScript | null): string {
     if (!script) return "0em";
     const scriptType = script === "latin" ? "latin" : "cjk";
@@ -212,7 +267,7 @@ export default function Typography<T extends ElementType = "span">({
 
   function getTranslateX(): string {
     if (align === "right") return `calc(var(--typography-trailing-edge-offset, 0em) * -1)`;
-    if (align === "center") return "0em";
+    if (align === "center" || align === "justify") return "0em";
     return `var(--typography-leading-edge-offset, 0em)`;
   }
 
@@ -225,14 +280,16 @@ export default function Typography<T extends ElementType = "span">({
   }
 
   const Component = (as ?? "span") as ElementType;
+  const alignmentStyle = getTypographyAlignmentStyle(align);
   const baseStyle: StyleWithVars = {
+    ...rootTypographyFallbackStyle,
     fontSize: `var(--typography-${preset}-${resolvedSize}-font-size, var(--typography-size-${resolvedSize}-font-size, ${sizeToken.fontSize}))`,
     fontVariantNumeric: numericStyle === "tabular" ? "tabular-nums" : "normal",
     hyphens: wrapToken.hyphens,
     letterSpacing: `var(--typography-${preset}-${resolvedSize}-letter-spacing, var(--typography-size-${resolvedSize}-letter-spacing, ${sizeToken.letterSpacing}))`,
     lineHeight: `var(--typography-${preset}-${resolvedSize}-line-height, var(--typography-size-${resolvedSize}-line-height, ${sizeToken.lineHeight}))`,
     overflowWrap: wrapToken.overflowWrap,
-    textAlign: align,
+    ...alignmentStyle,
     textWrapStyle: getTextWrap(),
     transform: translateX === "0em" ? undefined : `translateX(${translateX})`,
     whiteSpace: wrapToken.whiteSpace,
@@ -259,6 +316,7 @@ export default function Typography<T extends ElementType = "span">({
       data-typography-size={resolvedSize}
       data-typography-weight={weight}
       data-typography-autospace={autospace}
+      data-typography-align={align}
       data-typography-numeric={numericStyle}
       data-typography-wrap={wrapPolicy}
       data-typography-leading-script={edgeScripts.leading ?? "none"}

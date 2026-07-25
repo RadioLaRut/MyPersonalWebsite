@@ -1,5 +1,9 @@
 import { ChevronLeft } from "lucide-react/dist/cjs/lucide-react.js";
-import Typography from "@/components/common/Typography";
+import type { ReactNode } from "react";
+
+import Typography, {
+  type TypographyAlignment,
+} from "@/components/common/Typography";
 import {
   type ComponentDesignOverride,
   resolveComponentDesign,
@@ -9,11 +13,13 @@ import {
   getResponsiveGridColumnClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
+import { hasEditableTextContent } from "@/lib/editable-text";
 
 export type LightingCollectionHeaderProps = {
-  title: string;
-  number: string;
-  description?: string;
+  title: ReactNode;
+  number: ReactNode;
+  description?: ReactNode;
+  descriptionAlign?: TypographyAlignment;
   backHref?: string;
   editMode?: boolean;
 } & ComponentDesignOverride<"LightingCollectionHeader">;
@@ -22,12 +28,13 @@ export default function LightingCollectionHeader({
   title,
   number,
   description,
+  descriptionAlign = "right",
   backHref = "/works/lighting-portfolio",
   editMode = false,
   design,
 }: LightingCollectionHeaderProps) {
   const resolvedDesign = resolveComponentDesign("LightingCollectionHeader", design);
-  const hasDescription = typeof description === "string" && description.trim().length > 0;
+  const hasDescription = hasEditableTextContent(description);
 
   return (
     <section className="border-b border-white/10 rhythm-section-hero">
@@ -88,7 +95,7 @@ export default function LightingCollectionHeader({
                 size="body"
                 weight="semantic"
                 wrapPolicy="prose"
-                align="right"
+                align={descriptionAlign}
                 className="ml-auto max-w-[22rem] text-textPrimary/90"
               >
                 {description}

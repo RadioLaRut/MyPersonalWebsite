@@ -9,6 +9,8 @@ import {
 } from "./puck-content-validation.ts";
 import { normalizePuckData } from "./puck-data-normalization.ts";
 import { toSafePuckHref } from "./puck-href.ts";
+import { isSupportedPublicMediaPath } from "./media-library-paths.ts";
+import { parseBilibiliVideoSource } from "./bilibili-embed.ts";
 import {
   PUCK_COMPONENT_TYPE_SET,
   type PuckComponentType,
@@ -39,31 +41,31 @@ const boolean = "boolean" as const;
 const array = "array" as const;
 
 function withId(contract: PropContract): PropContract {
-  return { id: string, ...contract };
+  return { id: string, editorDisplayName: string, ...contract };
 }
 
-const triptychColumnContract = Object.fromEntries(
+const threeColumnContract = Object.fromEntries(
   [1, 2, 3].flatMap((column) => [
+    [`col${column}Label`, string],
     [`col${column}Title`, string],
-    [`col${column}Text`, string],
-    [`col${column}Img`, string],
-    [`col${column}Preset`, string],
-    [`col${column}FitMode`, string],
-  ]),
-) as PropContract;
-
-const phaseContract = Object.fromEntries(
-  [1, 2, 3].flatMap((phase) => [
-    [`phase${phase}Label`, string],
-    [`phase${phase}Title`, string],
-    [`phase${phase}Subtitle`, string],
-    [`phase${phase}Content`, string],
+    [`col${column}Subtitle`, string],
+    [`col${column}Body`, string],
+    [`col${column}BodyAlign`, string],
+    [`col${column}MediaSrc`, string],
+    [`col${column}MediaPreset`, string],
+    [`col${column}MediaFitMode`, string],
+    ...(column < 3 ? [[`col${column}Items`, array] as const] : []),
   ]),
 ) as PropContract;
 
 export const PAGE_COMPONENT_PROP_CONTRACTS = {
+  BilibiliEmbed: withId({
+    caption: string,
+    captionAlign: string,
+    source: string,
+    title: string,
+  }),
   BreakdownHeadline: withId({ indexLabel: string, title: string, variant: string }),
-  BreakdownTriptych: withId(triptychColumnContract),
   ContactFlashlight: withId({
     anchorId: string,
     copyErrorMessage: string,
@@ -78,16 +80,33 @@ export const PAGE_COMPONENT_PROP_CONTRACTS = {
     maskSmoothness: number,
     name: string,
     taglineSub: string,
+    taglineSubAlign: string,
     taglineText: string,
     wechat: string,
   }),
-  ContentCard: withId({
+  EditorialHeader: withId({
+    backHref: string,
+    ctaHref: string,
+    ctaLabel: string,
     description: string,
+    descriptionAlign: string,
+    descriptionLine1: string,
+    descriptionLine2: string,
+    number: string,
+    subtitle: string,
+    title: string,
+    variant: string,
+  }),
+  EditorialSplit: withId({
+    body: string,
+    bodyAlign: string,
+    bodyMode: string,
+    heading: string,
     imageFitMode: string,
-    imagePosition: string,
     imagePreset: string,
     imageSrc: string,
-    title: string,
+    layout: string,
+    paragraphs: array,
   }),
   HeroHeadline: withId({
     eyebrow: string,
@@ -97,10 +116,12 @@ export const PAGE_COMPONENT_PROP_CONTRACTS = {
     navLink: string,
     navLinkLabel: string,
     subtitle: string,
+    subtitleAlign: string,
     title: string,
   }),
   HeroSection: withId({
     description: string,
+    descriptionAlign: string,
     eyebrow: string,
     imageAlt: string,
     imageFitMode: string,
@@ -116,24 +137,18 @@ export const PAGE_COMPONENT_PROP_CONTRACTS = {
     subtitle: string,
     title: string,
   }),
-  HighDensityInfoBlock: withId({
-    ...phaseContract,
-    phase1Items: array,
-    phase2Items: array,
-    phase3ImageFitMode: string,
-    phase3ImagePreset: string,
-    phase3ImageSrc: string,
-  }),
   HomeEndcapSection: withId({
     buttonHref: string,
     buttonLabel: string,
     description: string,
+    descriptionAlign: string,
     eyebrow: string,
     title: string,
   }),
   ImagePanel: withId({
     alt: string,
     caption: string,
+    captionAlign: string,
     fitMode: string,
     preset: string,
     src: string,
@@ -150,20 +165,6 @@ export const PAGE_COMPONENT_PROP_CONTRACTS = {
     title: string,
     unlitSrc: string,
   }),
-  LightingCollectionHeader: withId({
-    backHref: string,
-    description: string,
-    number: string,
-    title: string,
-  }),
-  LightingProjectCard: withId({
-    coverImage: string,
-    href: string,
-    imageFitMode: string,
-    imagePreset: string,
-    number: string,
-    title: string,
-  }),
   MetadataListItem: withId({ align: string, label: string, value: string }),
   NextProjectBlock: withId({
     nextId: string,
@@ -171,51 +172,42 @@ export const PAGE_COMPONENT_PROP_CONTRACTS = {
   ParameterGrid: withId({
     imageFitMode: string,
     imagePreset: string,
-    isVideo: boolean,
     mediaSrc: string,
     parameters: array,
   }),
-  PortfolioHeroHeader: withId({
-    ctaHref: string,
-    ctaLabel: string,
-    descriptionLine1: string,
-    descriptionLine2: string,
-    subtitle: string,
-    title: string,
-  }),
-  ProjectSection: withId({
+  ProjectCoverLink: withId({
     align: string,
+    href: string,
     imageFitMode: string,
     imagePreset: string,
-    imageSrc: string,
     index: number,
-    link: string,
+    mediaSrc: string,
     mobileImageFocalX: number,
     mobileImageFocalY: number,
+    number: string,
     subtitle: string,
     title: string,
+    variant: string,
   }),
-  RichParagraph: withId({ content: string }),
+  RichParagraph: withId({ align: string, content: string }),
   StatementBlock: withId({
     align: string,
     backgroundColor: string,
     content: string,
     minHeight: string,
   }),
-  TextParagraphBlock: withId({ text: string }),
-  TextSplitLayout: withId({
-    heading: string,
-    imageFitMode: string,
-    imagePreset: string,
-    imageSrc: string,
-    layoutVariant: string,
-    paragraphs: array,
+  TextParagraphBlock: withId({ align: string, text: string }),
+  ThreeColumnSection: withId({
+    ...threeColumnContract,
+    rhythm: string,
+    variant: string,
   }),
   WorksList: withId({ entries: array, heading: string, indexSummary: string }),
   WorksListEntry: withId({
     aliases: array,
     category: string,
     desc: string,
+    descriptionAlign: string,
     href: string,
     imageFitMode: string,
     imagePreset: string,
@@ -238,54 +230,86 @@ const SLOT_COMPONENTS: Partial<Record<PuckComponentType, Readonly<Record<string,
     creativeDirection: ["MetadataListItem"],
     experienceHistory: ["MetadataListItem"],
   },
-  HighDensityInfoBlock: {
-    phase1Items: ["MetadataListItem"],
-    phase2Items: ["MetadataListItem"],
+  EditorialSplit: { paragraphs: ["TextParagraphBlock"] },
+  ThreeColumnSection: {
+    col1Items: ["MetadataListItem"],
+    col2Items: ["MetadataListItem"],
   },
-  TextSplitLayout: { paragraphs: ["TextParagraphBlock"] },
   WorksList: { entries: ["WorksListEntry"] },
 };
 
 const PROP_ENUMS: Partial<Record<PuckComponentType, Readonly<Record<string, readonly unknown[]>>>> = {
   BreakdownHeadline: { variant: ["chapter", "section"] },
-  ContentCard: { imagePosition: ["left", "right"] },
-  ImagePanel: { variant: ["content", "large", "fullscreen"] },
+  EditorialHeader: {
+    descriptionAlign: ["left", "center", "right", "justify"],
+    variant: ["index", "collection"],
+  },
+  EditorialSplit: {
+    bodyAlign: ["left", "center", "right", "justify"],
+    bodyMode: ["plain", "slot"],
+    layout: ["media-left", "media-right", "stack"],
+  },
+  HeroHeadline: {
+    subtitleAlign: ["left", "center", "right", "justify"],
+  },
+  HeroSection: {
+    descriptionAlign: ["left", "center", "right", "justify"],
+  },
+  HomeEndcapSection: {
+    descriptionAlign: ["left", "center", "right", "justify"],
+  },
+  ImagePanel: {
+    captionAlign: ["left", "center", "right", "justify"],
+    variant: ["content", "large", "fullscreen"],
+  },
   MetadataListItem: { align: ["start", "end"] },
-  ProjectSection: { align: ["auto", "left", "right"] },
+  ProjectCoverLink: {
+    align: ["auto", "left", "right"],
+    variant: ["immersive", "card"],
+  },
+  RichParagraph: {
+    align: ["left", "center", "right", "justify"],
+  },
   StatementBlock: {
     align: ["left", "center", "right"],
     backgroundColor: ["black", "dark-gray"],
     minHeight: ["small", "medium", "large"],
   },
-  TextSplitLayout: { layoutVariant: ["split-left", "split-right", "stack"] },
+  TextParagraphBlock: {
+    align: ["left", "center", "right", "justify"],
+  },
+  ThreeColumnSection: {
+    col1BodyAlign: ["left", "center", "right", "justify"],
+    col2BodyAlign: ["left", "center", "right", "justify"],
+    col3BodyAlign: ["left", "center", "right", "justify"],
+    rhythm: ["aligned", "staggered"],
+    variant: ["triptych", "phase", "evidence"],
+  },
+  WorksListEntry: {
+    descriptionAlign: ["left", "center", "right", "justify"],
+  },
+  BilibiliEmbed: {
+    captionAlign: ["left", "center", "right", "justify"],
+  },
+  ContactFlashlight: {
+    taglineSubAlign: ["left", "center", "right", "justify"],
+  },
 };
 
 const OPTIONAL_COMPONENT_PROPS: Partial<Record<PuckComponentType, readonly string[]>> = {
+  BilibiliEmbed: ["caption"],
   BreakdownHeadline: ["indexLabel", "variant"],
-  BreakdownTriptych: [
-    "col1FitMode",
-    "col1Preset",
-    "col2FitMode",
-    "col2Preset",
-    "col3FitMode",
-    "col3Preset",
-  ],
-  ContentCard: ["imageFitMode", "imagePosition", "imagePreset", "imageSrc"],
   ContactFlashlight: [
     "anchorId",
     "copyErrorMessage",
     "copyLabel",
     "copySuccessMessage",
   ],
-  HighDensityInfoBlock: [
-    "phase1Items",
-    "phase1Label",
-    "phase2Items",
-    "phase2Label",
-    "phase3Label",
-    "phase3ImageFitMode",
-    "phase3ImagePreset",
-    "phase3ImageSrc",
+  EditorialSplit: [
+    "imageFitMode",
+    "imagePreset",
+    "imageSrc",
+    "paragraphs",
   ],
   HeroSection: [
     "imagePreset",
@@ -297,18 +321,15 @@ const OPTIONAL_COMPONENT_PROPS: Partial<Record<PuckComponentType, readonly strin
   ImagePanel: ["alt", "caption", "fitMode", "preset"],
   ImageSlider: ["imageFitMode", "imagePreset"],
   MetadataListItem: ["align"],
-  ParameterGrid: ["imageFitMode", "imagePreset", "parameters"],
-  ProjectSection: ["align", "imageFitMode", "imagePreset"],
-  TextSplitLayout: ["imageFitMode", "imagePreset"],
+  ParameterGrid: ["imageFitMode", "imagePreset", "mediaSrc", "parameters"],
+  ProjectCoverLink: ["imageFitMode", "imagePreset", "mediaSrc"],
+  ThreeColumnSection: ["col1Items", "col2Items"],
   WorksListEntry: ["aliases", "imageFitMode", "imagePreset"],
 };
 
 const IMAGE_PRESET_VALUES = ["ratio-16-9", "ratio-21-9", "native"] as const;
 const IMAGE_FIT_MODE_VALUES = ["x", "y", "cover"] as const;
 const ALIAS_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const LOCAL_MEDIA_PATH_PATTERN = /^\/(?:images|uploads)\/[A-Za-z0-9][A-Za-z0-9._/-]*$/;
-const VIDEO_PATH_PATTERN = /\.(?:mp4|webm)$/i;
-const RASTER_IMAGE_PATH_PATTERN = /\.(?:avif|gif|jpe?g|png|webp)$/i;
 
 function makeIssue(pathName: string, message: string): ContentValidationIssue {
   return { message, path: pathName };
@@ -376,20 +397,13 @@ function validateLocalMediaPath(
 ) {
   if (typeof value !== "string" || value.length === 0) return;
 
-  if (
-    !LOCAL_MEDIA_PATH_PATTERN.test(value) ||
-    value.includes("..") ||
-    value.includes("\\")
-  ) {
-    issues.push(makeIssue(pathName, "must be a canonical /images or /uploads path"));
-    return;
-  }
-
-  const extensionMatches = expected === "video"
-    ? VIDEO_PATH_PATTERN.test(value)
-    : RASTER_IMAGE_PATH_PATTERN.test(value);
-  if (!extensionMatches) {
-    issues.push(makeIssue(pathName, `must reference a supported ${expected} file`));
+  if (!isSupportedPublicMediaPath(value, expected)) {
+    issues.push(
+      makeIssue(
+        pathName,
+        `must reference a supported ${expected} file under /images or /uploads`,
+      ),
+    );
   }
 }
 
@@ -426,17 +440,28 @@ function validateStructuredArray(
         return;
       }
       for (const parameterKey of Object.keys(parameter)) {
-        if (!["description", "name", "value"].includes(parameterKey)) {
+        if (!["description", "descriptionAlign", "name", "value"].includes(parameterKey)) {
           issues.push(makeIssue(
             `${parameterPath}.${parameterKey}`,
             `unknown parameter field "${parameterKey}"`,
           ));
         }
       }
-      for (const requiredKey of ["description", "name"] as const) {
+      for (const requiredKey of ["description", "descriptionAlign", "name"] as const) {
         if (typeof parameter[requiredKey] !== "string") {
           issues.push(makeIssue(`${parameterPath}.${requiredKey}`, "must be string"));
         }
+      }
+      if (
+        typeof parameter.descriptionAlign === "string" &&
+        !["left", "center", "right", "justify"].includes(
+          parameter.descriptionAlign,
+        )
+      ) {
+        issues.push(makeIssue(
+          `${parameterPath}.descriptionAlign`,
+          "must be one of left, center, right, justify",
+        ));
       }
       if (parameter.value !== undefined && typeof parameter.value !== "string") {
         issues.push(makeIssue(`${parameterPath}.value`, "must be string when provided"));
@@ -477,8 +502,30 @@ function validateNode(
     PAGE_COMPONENT_PROP_CONTRACTS[node.type as PuckComponentType],
     `${pathName}.props`,
     issues,
-    OPTIONAL_COMPONENT_PROPS[node.type as PuckComponentType],
+    [
+      ...(OPTIONAL_COMPONENT_PROPS[node.type as PuckComponentType] ?? []),
+      "editorDisplayName",
+    ],
   );
+
+  if ("editorDisplayName" in node.props) {
+    const editorDisplayName = node.props.editorDisplayName;
+    if (
+      typeof editorDisplayName !== "string" ||
+      editorDisplayName.trim().length === 0 ||
+      editorDisplayName !== editorDisplayName.trim()
+    ) {
+      issues.push(makeIssue(
+        `${pathName}.props.editorDisplayName`,
+        "must be a non-empty trimmed string when provided",
+      ));
+    } else if (editorDisplayName.length > 80) {
+      issues.push(makeIssue(
+        `${pathName}.props.editorDisplayName`,
+        "must be at most 80 characters",
+      ));
+    }
+  }
 
   if (typeof node.props.id !== "string" || node.props.id.trim().length === 0) {
     issues.push(makeIssue(`${pathName}.props.id`, "must be a non-empty string"));
@@ -558,14 +605,12 @@ function validateNode(
   }
 
   const imagePathKeys = [
-    "col1Img",
-    "col2Img",
-    "col3Img",
-    "coverImage",
+    "col1MediaSrc",
+    "col2MediaSrc",
+    "col3MediaSrc",
     "heroImage",
     "imageSrc",
     "litSrc",
-    "phase3ImageSrc",
     "src",
     "unlitSrc",
   ];
@@ -579,8 +624,25 @@ function validateNode(
       node.props.mediaSrc,
       `${pathName}.props.mediaSrc`,
       issues,
-      node.props.isVideo === true ? "video" : "image",
     );
+  }
+
+  if (componentType === "BilibiliEmbed") {
+    if (parseBilibiliVideoSource(node.props.source) === null) {
+      issues.push(makeIssue(
+        `${pathName}.props.source`,
+        "must be a BV id or a standard bilibili.com/video/BV… URL",
+      ));
+    }
+    if (
+      typeof node.props.title !== "string" ||
+      node.props.title.trim().length === 0
+    ) {
+      issues.push(makeIssue(
+        `${pathName}.props.title`,
+        "must be a non-empty accessibility title",
+      ));
+    }
   }
 }
 
@@ -627,14 +689,6 @@ export function validateCurrentPageDocument(value: unknown): ContentValidationIs
     for (const key of Object.keys(ROOT_PROP_CONTRACT)) {
       if (!(key in value.root.props)) {
         issues.push(makeIssue(`$.root.props.${key}`, "is required"));
-      }
-    }
-    for (const key of ["description", "title"] as const) {
-      if (
-        typeof value.root.props[key] === "string" &&
-        value.root.props[key].trim().length === 0
-      ) {
-        issues.push(makeIssue(`$.root.props.${key}`, "must be a non-empty string"));
       }
     }
     validateLocalMediaPath(value.root.props.image, "$.root.props.image", issues);
@@ -706,6 +760,37 @@ function removeRuntimeProjectionProps(value: unknown): unknown {
   return nextValue;
 }
 
+function normalizeEditorMetadata(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(normalizeEditorMetadata);
+  if (!isPlainRecord(value)) return value;
+
+  const nextValue = Object.fromEntries(
+    Object.entries(value).map(([key, entry]) => [key, normalizeEditorMetadata(entry)]),
+  );
+  if (isPlainRecord(nextValue.props) && "editorDisplayName" in nextValue.props) {
+    const rawName = nextValue.props.editorDisplayName;
+    if (typeof rawName !== "string") return nextValue;
+    const normalizedName = rawName.trim().slice(0, 80);
+    if (normalizedName) nextValue.props.editorDisplayName = normalizedName;
+    else delete nextValue.props.editorDisplayName;
+  }
+
+  return nextValue;
+}
+
+export function stripPageEditorMetadata<T>(value: T): T {
+  if (Array.isArray(value)) {
+    return value.map((entry) => stripPageEditorMetadata(entry)) as T;
+  }
+  if (!isPlainRecord(value)) return value;
+
+  return Object.fromEntries(
+    Object.entries(value)
+      .filter(([key]) => key !== "editorDisplayName")
+      .map(([key, entry]) => [key, stripPageEditorMetadata(entry)]),
+  ) as T;
+}
+
 export function migrateLegacyPageDocument(value: unknown): unknown {
   assertPageDocumentBudget(value);
   if (
@@ -756,7 +841,9 @@ export function migrateLegacyPageDocument(value: unknown): unknown {
 export function normalizePageDraft(value: unknown): unknown {
   assertPageDocumentBudget(value);
   if (isPlainRecord(value) && value.version === PAGE_DOCUMENT_VERSION) {
-    return removeRuntimeProjectionProps(value);
+    return normalizeEditorMetadata(
+      removeRuntimeProjectionProps(normalizePuckData(value)),
+    );
   }
 
   if (isPlainRecord(value) && value.version !== undefined) {

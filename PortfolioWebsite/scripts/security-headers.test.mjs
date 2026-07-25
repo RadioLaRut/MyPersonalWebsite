@@ -10,7 +10,7 @@ test("production security header baseline is explicit and excludes HSTS", () => 
 
   assert.equal(
     headers["Content-Security-Policy"],
-    "base-uri 'self'; object-src 'none'; frame-ancestors 'self'",
+    "base-uri 'self'; object-src 'none'; frame-ancestors 'self'; frame-src 'self' https://player.bilibili.com",
   );
   assert.equal(headers["Cross-Origin-Opener-Policy"], "same-origin");
   assert.equal(headers["X-Content-Type-Options"], "nosniff");
@@ -18,6 +18,10 @@ test("production security header baseline is explicit and excludes HSTS", () => 
   assert.equal(
     headers["Permissions-Policy"],
     "camera=(), geolocation=(), microphone=()",
+  );
+  assert.equal(
+    headers["X-Robots-Tag"],
+    "noindex, nofollow, noarchive, nosnippet, noimageindex",
   );
   assert.equal(headers["X-Frame-Options"], "SAMEORIGIN");
   assert.equal(headers["Strict-Transport-Security"], undefined);

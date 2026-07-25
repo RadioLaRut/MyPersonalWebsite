@@ -1,3 +1,5 @@
+import type { Field } from "@puckeditor/core";
+
 import {
   type ImageFitMode,
   type ImagePreset,
@@ -39,6 +41,7 @@ export type ImageFieldTripleOptions = {
   fitModeLabel?: string;
   presetKey?: string;
   presetLabel?: string;
+  srcField?: Field<string>;
   srcLabel?: string;
 };
 
@@ -77,6 +80,7 @@ export function buildImageFieldTriple(srcKey: string, options: ImageFieldTripleO
     fitModeLabel = "Image Fit Mode",
     presetKey = deriveImagePresetKey(srcKey),
     presetLabel = "Image Preset",
+    srcField,
     srcLabel = "Image Source",
   } = options;
 
@@ -87,7 +91,7 @@ export function buildImageFieldTriple(srcKey: string, options: ImageFieldTripleO
       [fitModeKey]: defaultFitMode,
     },
     fields: {
-      [srcKey]: { type: "text", label: srcLabel },
+      [srcKey]: srcField ?? { type: "text", label: srcLabel },
       [presetKey]: { ...imagePresetField, label: presetLabel },
       [fitModeKey]: { ...imageFitModeField, label: fitModeLabel },
     },

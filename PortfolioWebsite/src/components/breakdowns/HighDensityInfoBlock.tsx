@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
-import Typography from "@/components/common/Typography";
+import Typography, {
+  type TypographyAlignment,
+} from "@/components/common/Typography";
 import {
   type ComponentDesignOverride,
   resolveComponentDesign,
@@ -12,6 +14,10 @@ import {
   getSectionSpacingClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
+import {
+  hasEditableTextContent,
+  toPlainText,
+} from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 interface InfoItem {
@@ -20,11 +26,12 @@ interface InfoItem {
 }
 
 type HighDensityInfoBlockProps = {
-  phase1: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; items?: InfoItem[]; label?: ReactNode };
-  phase2: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; items?: InfoItem[]; label?: ReactNode };
-  phase3: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; imageSrc?: string; imagePreset?: ImagePreset; imageFitMode?: ImageFitMode; label?: ReactNode };
+  phase1: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; bodyAlign?: TypographyAlignment; items?: InfoItem[]; label?: ReactNode };
+  phase2: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; bodyAlign?: TypographyAlignment; items?: InfoItem[]; label?: ReactNode };
+  phase3: { title: ReactNode; subtitle?: ReactNode; content: ReactNode; bodyAlign?: TypographyAlignment; imageSrc?: string; imagePreset?: ImagePreset; imageFitMode?: ImageFitMode; label?: ReactNode };
   phase1ItemsContent?: ReactNode;
   phase2ItemsContent?: ReactNode;
+  rhythm?: "aligned" | "staggered";
 } & ComponentDesignOverride<"HighDensityInfoBlock">;
 
 const DEFAULT_PHASE_LABELS = {
@@ -33,24 +40,12 @@ const DEFAULT_PHASE_LABELS = {
   phase3: "PHASE 03 / EXECUTION & RESULTS",
 } as const;
 
-function hasLabelContent(value: ReactNode) {
-  if (value === null || value === undefined || value === false) {
-    return false;
-  }
-
-  if (typeof value === "string") {
-    return value.trim().length > 0;
-  }
-
-  return true;
-}
-
-export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1ItemsContent, phase2ItemsContent, design }: HighDensityInfoBlockProps) {
+export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1ItemsContent, phase2ItemsContent, rhythm = "aligned", design }: HighDensityInfoBlockProps) {
   const resolvedDesign = resolveComponentDesign("HighDensityInfoBlock", design);
-  const phase3ImageAlt = typeof phase3.title === "string" ? phase3.title : "Phase image";
-  const phase1Label = hasLabelContent(phase1.label) ? phase1.label : DEFAULT_PHASE_LABELS.phase1;
-  const phase2Label = hasLabelContent(phase2.label) ? phase2.label : DEFAULT_PHASE_LABELS.phase2;
-  const phase3Label = hasLabelContent(phase3.label) ? phase3.label : DEFAULT_PHASE_LABELS.phase3;
+  const phase3ImageAlt = toPlainText(phase3.title) ?? "Phase image";
+  const phase1Label = hasEditableTextContent(phase1.label) ? phase1.label : DEFAULT_PHASE_LABELS.phase1;
+  const phase2Label = hasEditableTextContent(phase2.label) ? phase2.label : DEFAULT_PHASE_LABELS.phase2;
+  const phase3Label = hasEditableTextContent(phase3.label) ? phase3.label : DEFAULT_PHASE_LABELS.phase3;
 
     return (
         <div className={`w-full ${getSectionSpacingClassName(resolvedDesign.sectionSpacing)}`}>
@@ -65,8 +60,8 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
                         {phase1Label}
                     </Typography>
                     <Typography as="h3" preset="sans-body" size={resolvedDesign.titleSize} weight="semantic" wrapPolicy={resolvedDesign.titleAutoWrap ? "heading" : "nowrap"} className="text-textPrimary" style={{ marginBottom: getSpacingRem(resolvedDesign.phaseTitleGap) }}>{phase1.title}</Typography>
-                    {phase1.subtitle && <Typography as="h4" preset="sans-body" size={resolvedDesign.bodySize} weight="light" wrapPolicy={resolvedDesign.subtitleAutoWrap ? "prose" : "nowrap"} className="text-textMuted italic" style={{ marginBottom: getSpacingRem(resolvedDesign.subtitleGap) }}>{phase1.subtitle}</Typography>}
-                    <Typography as="p" preset="sans-body" size={resolvedDesign.bodySize} weight="medium" wrapPolicy={resolvedDesign.bodyAutoWrap ? "prose" : "nowrap"} className="pr-0 text-textSecondary lg:pr-4" style={{ marginBottom: getSpacingRem(resolvedDesign.titleBodyGap) }}>
+                    {hasEditableTextContent(phase1.subtitle) && <Typography as="h4" preset="sans-body" size={resolvedDesign.bodySize} weight="light" wrapPolicy={resolvedDesign.subtitleAutoWrap ? "prose" : "nowrap"} className="text-textMuted italic" style={{ marginBottom: getSpacingRem(resolvedDesign.subtitleGap) }}>{phase1.subtitle}</Typography>}
+                    <Typography as="p" preset="sans-body" size={resolvedDesign.bodySize} weight="medium" wrapPolicy={resolvedDesign.bodyAutoWrap ? "prose" : "nowrap"} align={phase1.bodyAlign ?? "left"} className="pr-0 text-textSecondary lg:pr-4" style={{ marginBottom: getSpacingRem(resolvedDesign.titleBodyGap) }}>
                         {phase1.content}
                     </Typography>
 
@@ -90,7 +85,7 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
                     ) : null}
                 </div>
 
-                <div className={`px-0 lg:px-8 mb-12 lg:mb-0 border-r border-transparent lg:border-white/5 ${getResponsiveGridColumnClassName(createResponsiveGridBounds(
+                <div className={`px-0 lg:px-8 mb-12 lg:mb-0 border-r border-transparent lg:border-white/5 ${rhythm === "staggered" ? "lg:pt-8" : ""} ${getResponsiveGridColumnClassName(createResponsiveGridBounds(
                   { leftCol: 1, rightCol: 12 },
                   { leftCol: 7, rightCol: 12 },
                   resolvedDesign.middleBounds,
@@ -99,8 +94,8 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
                         {phase2Label}
                     </Typography>
                     <Typography as="h3" preset="sans-body" size={resolvedDesign.titleSize} weight="semantic" wrapPolicy={resolvedDesign.titleAutoWrap ? "heading" : "nowrap"} className="text-textPrimary" style={{ marginBottom: getSpacingRem(resolvedDesign.phaseTitleGap) }}>{phase2.title}</Typography>
-                    {phase2.subtitle && <Typography as="h4" preset="sans-body" size={resolvedDesign.bodySize} weight="light" wrapPolicy={resolvedDesign.subtitleAutoWrap ? "prose" : "nowrap"} className="text-textMuted italic" style={{ marginBottom: getSpacingRem(resolvedDesign.subtitleGap) }}>{phase2.subtitle}</Typography>}
-                    <Typography as="p" preset="sans-body" size={resolvedDesign.bodySize} weight="medium" wrapPolicy={resolvedDesign.bodyAutoWrap ? "prose" : "nowrap"} className="text-textSecondary" style={{ marginBottom: getSpacingRem(resolvedDesign.titleBodyGap) }}>
+                    {hasEditableTextContent(phase2.subtitle) && <Typography as="h4" preset="sans-body" size={resolvedDesign.bodySize} weight="light" wrapPolicy={resolvedDesign.subtitleAutoWrap ? "prose" : "nowrap"} className="text-textMuted italic" style={{ marginBottom: getSpacingRem(resolvedDesign.subtitleGap) }}>{phase2.subtitle}</Typography>}
+                    <Typography as="p" preset="sans-body" size={resolvedDesign.bodySize} weight="medium" wrapPolicy={resolvedDesign.bodyAutoWrap ? "prose" : "nowrap"} align={phase2.bodyAlign ?? "left"} className="text-textSecondary" style={{ marginBottom: getSpacingRem(resolvedDesign.titleBodyGap) }}>
                         {phase2.content}
                     </Typography>
 
@@ -124,7 +119,7 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
                     ) : null}
                 </div>
 
-                <div className={`pl-0 lg:pl-8 ${getResponsiveGridColumnClassName(createResponsiveGridBounds(
+                <div className={`pl-0 lg:pl-8 ${rhythm === "staggered" ? "lg:pt-16" : ""} ${getResponsiveGridColumnClassName(createResponsiveGridBounds(
                   { leftCol: 1, rightCol: 12 },
                   { leftCol: 1, rightCol: 12 },
                   resolvedDesign.rightBounds,
@@ -133,8 +128,8 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
                         {phase3Label}
                     </Typography>
                     <Typography as="h3" preset="sans-body" size={resolvedDesign.titleSize} weight="semantic" wrapPolicy={resolvedDesign.titleAutoWrap ? "heading" : "nowrap"} className="text-textPrimary" style={{ marginBottom: getSpacingRem(resolvedDesign.phaseTitleGap) }}>{phase3.title}</Typography>
-                    {phase3.subtitle && <Typography as="h4" preset="sans-body" size={resolvedDesign.bodySize} weight="light" wrapPolicy={resolvedDesign.subtitleAutoWrap ? "prose" : "nowrap"} className="text-textMuted italic" style={{ marginBottom: getSpacingRem(resolvedDesign.subtitleGap) }}>{phase3.subtitle}</Typography>}
-                    <Typography as="p" preset="sans-body" size={resolvedDesign.bodySize} weight="medium" wrapPolicy={resolvedDesign.bodyAutoWrap ? "prose" : "nowrap"} className="text-textSecondary" style={{ marginBottom: getSpacingRem(resolvedDesign.titleBodyGap) }}>
+                    {hasEditableTextContent(phase3.subtitle) && <Typography as="h4" preset="sans-body" size={resolvedDesign.bodySize} weight="light" wrapPolicy={resolvedDesign.subtitleAutoWrap ? "prose" : "nowrap"} className="text-textMuted italic" style={{ marginBottom: getSpacingRem(resolvedDesign.subtitleGap) }}>{phase3.subtitle}</Typography>}
+                    <Typography as="p" preset="sans-body" size={resolvedDesign.bodySize} weight="medium" wrapPolicy={resolvedDesign.bodyAutoWrap ? "prose" : "nowrap"} align={phase3.bodyAlign ?? "left"} className="text-textSecondary" style={{ marginBottom: getSpacingRem(resolvedDesign.titleBodyGap) }}>
                         {phase3.content}
                     </Typography>
 

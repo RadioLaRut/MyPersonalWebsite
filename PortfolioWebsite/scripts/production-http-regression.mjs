@@ -21,7 +21,7 @@ async function checkStatus(name, pathname, expectedStatus, init) {
 
 const home = await checkStatus("public-home", "/", 200);
 const expectedHeaders = {
-  "content-security-policy": "base-uri 'self'; object-src 'none'; frame-ancestors 'self'",
+  "content-security-policy": "base-uri 'self'; object-src 'none'; frame-ancestors 'self'; frame-src 'self' https://player.bilibili.com",
   "cross-origin-opener-policy": "same-origin",
   "permissions-policy": "camera=(), geolocation=(), microphone=()",
   "referrer-policy": "strict-origin-when-cross-origin",

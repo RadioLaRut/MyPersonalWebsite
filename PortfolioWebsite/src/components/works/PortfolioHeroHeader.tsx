@@ -1,10 +1,13 @@
 import { type ReactNode } from "react";
-import Typography from "@/components/common/Typography";
+import Typography, {
+    type TypographyAlignment,
+} from "@/components/common/Typography";
 import {
     type ComponentDesignOverride,
     resolveComponentDesign,
 } from "@/lib/component-design-runtime";
 import { MotionLink } from "@/components/motion/MotionLink";
+import { hasEditableTextContent } from "@/lib/editable-text";
 import {
     getGridColumnClassName,
     getResponsiveGridColumnClassName,
@@ -16,38 +19,28 @@ type LightingCollectionHeroHeaderProps = {
     subtitle: ReactNode;
     descriptionLine1: ReactNode;
     descriptionLine2: ReactNode;
-    ctaLabel?: string;
+    descriptionAlign?: TypographyAlignment;
+    ctaLabel?: ReactNode;
     ctaHref?: string;
     editMode?: boolean;
 } & ComponentDesignOverride<"PortfolioHeroHeader">;
-
-function hasNodeContent(value: ReactNode) {
-    if (value === null || value === undefined || value === false) {
-        return false;
-    }
-
-    if (typeof value === "string") {
-        return value.trim().length > 0;
-    }
-
-    return true;
-}
 
 export default function LightingCollectionHeroHeader({
     title,
     subtitle,
     descriptionLine1,
     descriptionLine2,
+    descriptionAlign = "left",
     ctaLabel,
     ctaHref,
     editMode = false,
     design,
 }: LightingCollectionHeroHeaderProps) {
     const resolvedDesign = resolveComponentDesign("PortfolioHeroHeader", design);
-    const hasSubtitle = hasNodeContent(subtitle);
-    const hasDescriptionLine1 = hasNodeContent(descriptionLine1);
-    const hasDescriptionLine2 = hasNodeContent(descriptionLine2);
-    const hasCta = hasNodeContent(ctaLabel) && Boolean(ctaHref);
+    const hasSubtitle = hasEditableTextContent(subtitle);
+    const hasDescriptionLine1 = hasEditableTextContent(descriptionLine1);
+    const hasDescriptionLine2 = hasEditableTextContent(descriptionLine2);
+    const hasCta = hasEditableTextContent(ctaLabel) && Boolean(ctaHref);
     const hasSideRail = hasDescriptionLine1 || hasDescriptionLine2 || hasCta;
 
     const titleLockup = (
@@ -109,13 +102,14 @@ export default function LightingCollectionHeroHeader({
                                         size="body"
                                         weight="semantic"
                                         wrapPolicy="prose"
+                                        align={descriptionAlign}
                                         className="text-textPrimary/90"
                                         style={{ marginTop: getSpacingRem(resolvedDesign.descriptionTopSpacing) }}
                                     >
                                         {descriptionLine2}
                                     </Typography>
                                 ) : null}
-                                {ctaLabel && ctaHref ? (
+                                {hasCta && ctaHref ? (
                                     <MotionLink
                                         href={ctaHref}
                                         disabled={editMode}

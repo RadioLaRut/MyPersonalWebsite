@@ -8,14 +8,14 @@ type PublicRendererModule = { render: PublicRenderer };
 type PublicRendererModuleLoader = () => Promise<PublicRendererModule>;
 
 export const WORKS_INDEX_PUBLIC_RENDERER_TYPES = [
-  "HomeEndcapSection",
   "WorksList",
+  "HomeEndcapSection",
   "WorksListEntry",
 ] as const satisfies readonly PuckComponentType[];
 
 const ROUTE_PUBLIC_RENDERER_LOADERS = {
-  HomeEndcapSection: () => import("../public-renderers/home-endcap-section"),
   WorksList: () => import("../public-renderers/works-list"),
+  HomeEndcapSection: () => import("../public-renderers/home-endcap-section"),
   WorksListEntry: () => import("../public-renderers/works-list-entry"),
 } satisfies Partial<Record<PuckComponentType, PublicRendererModuleLoader>>;
 

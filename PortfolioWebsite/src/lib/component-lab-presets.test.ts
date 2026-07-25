@@ -1,10 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import {
-  COMPONENT_DESIGN_COMPONENT_KEYS,
-  type ComponentDesignComponentKey,
-} from "./component-design-schema.ts";
+import { PUCK_COMPONENT_TYPES } from "../puck/component-manifest.ts";
 import {
   ComponentLabPresetError,
   createComponentLabInstanceCatalog,
@@ -24,8 +21,8 @@ test("ComponentLab 目录覆盖设计组件、真实实例与合法压力样本"
   ]);
   const catalog = createComponentLabInstanceCatalog(pages, presets);
 
-  assert.deepEqual(Object.keys(catalog.components), [...COMPONENT_DESIGN_COMPONENT_KEYS]);
-  for (const componentKey of COMPONENT_DESIGN_COMPONENT_KEYS) {
+  assert.deepEqual(Object.keys(catalog.components), [...PUCK_COMPONENT_TYPES]);
+  for (const componentKey of PUCK_COMPONENT_TYPES) {
     const entry = catalog.components[componentKey];
     assert.equal(entry.stressSample.node.type, componentKey);
     assert.equal(entry.stressSample.source, "stress");
@@ -112,7 +109,7 @@ test("ComponentLab 对缺失引用、类型错配和非法压力样本明确报�
 
 test("每个 ComponentLab 预设只能声明自己的组件类型", async () => {
   const presets = await readComponentLabPresetDocument();
-  for (const key of Object.keys(presets.components) as ComponentDesignComponentKey[]) {
+  for (const key of PUCK_COMPONENT_TYPES) {
     const stress = presets.components[key].stressSample;
     if (stress.kind === "standalone") {
       assert.equal(stress.node.type, key);

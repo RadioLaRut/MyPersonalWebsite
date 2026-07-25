@@ -8,17 +8,17 @@ type PublicRendererModule = { render: PublicRenderer };
 type PublicRendererModuleLoader = () => Promise<PublicRendererModule>;
 
 export const LIGHTING_DETAIL_PUBLIC_RENDERER_TYPES = [
-  "HomeEndcapSection",
+  "EditorialHeader",
   "ImagePanel",
   "ImageSlider",
-  "LightingCollectionHeader",
+  "HomeEndcapSection",
 ] as const satisfies readonly PuckComponentType[];
 
 const ROUTE_PUBLIC_RENDERER_LOADERS = {
-  HomeEndcapSection: () => import("../public-renderers/home-endcap-section"),
+  EditorialHeader: () => import("../public-renderers/editorial-header"),
   ImagePanel: () => import("../public-renderers/image-panel"),
   ImageSlider: () => import("../public-renderers/image-slider"),
-  LightingCollectionHeader: () => import("../public-renderers/lighting-collection-header"),
+  HomeEndcapSection: () => import("../public-renderers/home-endcap-section"),
 } satisfies Partial<Record<PuckComponentType, PublicRendererModuleLoader>>;
 
 export async function loadLightingDetailPublicRenderer(type: PuckComponentType): Promise<PublicRenderer> {

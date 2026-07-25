@@ -11,6 +11,10 @@ import {
   getResponsiveGridColumnClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
+import {
+  hasEditableTextContent,
+  toPlainText,
+} from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 import {
   motion,
@@ -22,7 +26,7 @@ import {
 
 interface ProjectSectionProps extends ComponentDesignOverride<"ProjectSection"> {
   title: ReactNode;
-  imageSrc: string;
+  imageSrc?: string;
   subtitle?: ReactNode;
   link?: string;
   index?: number;
@@ -50,7 +54,8 @@ export default function ProjectSection({
 }: ProjectSectionProps) {
   const design = resolveComponentDesign("ProjectSection", designOverride);
   const containerRef = useRef<HTMLElement>(null);
-  const imageAlt = typeof title === "string" ? title : "Project cover";
+  const plainTitle = toPlainText(title);
+  const imageAlt = plainTitle ?? "Project cover";
   const isLinkEnabled = !editMode && Boolean(link);
   const cursorClass = isLinkEnabled ? "cursor-pointer" : "cursor-default";
   const sectionClassName = `relative m-0 grid min-h-[calc(var(--site-viewport-unit)*100)] w-full place-items-center overflow-hidden p-0 mix-blend-normal group ${cursorClass}`;
@@ -104,11 +109,11 @@ export default function ProjectSection({
       disabled={!isLinkEnabled}
       disabledElement="section"
       interactionPreset="blockLink"
-      aria-label={typeof title === "string" ? `Open ${title}` : "Open project"}
+      aria-label={plainTitle ? `Open ${plainTitle}` : "Open project"}
       className={sectionClassName}
     >
       <motion.div
-        className={mediaLayerClassName}
+        className={`${mediaLayerClassName} bg-[#111]`}
         style={editMode ? undefined : { y, scale }}
       >
         {/* Environment ambient gradient/shadow to improve contrast */}
@@ -116,21 +121,23 @@ export default function ProjectSection({
 
         <div className="project-section-edge-shade absolute inset-0 z-10" />
 
-        <PresetImage
-          src={imageSrc}
-          alt={imageAlt}
-          priority={index === 0}
-          preset={imagePreset}
-          fitMode={imageFitMode}
-          fitModeByBreakpoint={{ base: "cover", lg: imageFitMode }}
-          objectPositionByBreakpoint={{
-            base: { x: mobileImageFocalX, y: mobileImageFocalY },
-            lg: { x: 50, y: 50 },
-          }}
-          lockFrame={false}
-          frameClassName="h-full w-full"
-          imageClassName="select-none"
-        />
+        {imageSrc ? (
+          <PresetImage
+            src={imageSrc}
+            alt={imageAlt}
+            priority={index === 0}
+            preset={imagePreset}
+            fitMode={imageFitMode}
+            fitModeByBreakpoint={{ base: "cover", lg: imageFitMode }}
+            objectPositionByBreakpoint={{
+              base: { x: mobileImageFocalX, y: mobileImageFocalY },
+              lg: { x: 50, y: 50 },
+            }}
+            lockFrame={false}
+            frameClassName="h-full w-full"
+            imageClassName="select-none"
+          />
+        ) : null}
       </motion.div>
 
       <motion.div
@@ -142,7 +149,7 @@ export default function ProjectSection({
             className={`${textBoundsClassName} grid content-start ${textColumnClassName}`}
           >
             <div className={`grid max-w-full auto-rows-max gap-y-0 ${lockupClassName}`}>
-              {subtitle && (
+              {hasEditableTextContent(subtitle) && (
                 <Typography
                   as="p"
                   preset="sans-body"

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  ContentAlreadyExistsError,
   ContentNotFoundError,
   ContentPersistenceError,
   StoredContentInvalidError,
@@ -10,8 +11,17 @@ import {
   ContentBudgetExceededError,
   ContentQuotaExceededError,
 } from "./content-budget.ts";
+import {
+  LOCAL_EDITOR_ACCESS_HEADER,
+  LOCAL_EDITOR_ACCESS_TOKEN_ENV,
+  LOCAL_EDITOR_ACCESS_TOKENS_ENV,
+} from "./local-editor-access.ts";
 import { PageDocumentValidationError, type PageDocument } from "./page-document-contract.ts";
-import { handlePuckGet, handlePuckPost } from "./puck-api-handler.ts";
+import {
+  handlePuckGet,
+  handlePuckPost,
+  handlePuckPut,
+} from "./puck-api-handler.ts";
 
 const validDocument = {
   content: [],
@@ -29,7 +39,18 @@ const validDocument = {
 
 function createRepository(overrides: Record<string, unknown> = {}) {
   return {
+    createPage: async () => ({
+      ok: true as const,
+      path: "new-page.json",
+      slug: "new-page",
+      slugs: ["index", "new-page"],
+    }),
     listPageSlugs: async () => ["index"],
+    listPageSummaries: async () => [{
+      publicPath: "/",
+      slug: "index",
+      title: "Title",
+    }],
     publishPage: async () => ({
       ok: true as const,
       path: "index.json",
@@ -49,12 +70,14 @@ function withEditorEnvironment(callback: () => Promise<void>) {
     ci: process.env.CI,
     mode: process.env.NEXT_PUBLIC_SITE_MODE,
     nodeEnv: process.env.NODE_ENV,
-    token: process.env.LOCAL_EDITOR_ACCESS_TOKEN,
+    token: process.env[LOCAL_EDITOR_ACCESS_TOKEN_ENV],
+    tokens: process.env[LOCAL_EDITOR_ACCESS_TOKENS_ENV],
     vercel: process.env.VERCEL,
   };
   process.env.NEXT_PUBLIC_SITE_MODE = "testing";
   Reflect.set(process.env, "NODE_ENV", "development");
-  process.env.LOCAL_EDITOR_ACCESS_TOKEN = "test-token";
+  delete process.env[LOCAL_EDITOR_ACCESS_TOKEN_ENV];
+  process.env[LOCAL_EDITOR_ACCESS_TOKENS_ENV] = "other-computer-token,test-token";
   delete process.env.CI;
   delete process.env.VERCEL;
 
@@ -64,7 +87,8 @@ function withEditorEnvironment(callback: () => Promise<void>) {
         ci: "CI",
         mode: "NEXT_PUBLIC_SITE_MODE",
         nodeEnv: "NODE_ENV",
-        token: "LOCAL_EDITOR_ACCESS_TOKEN",
+        token: LOCAL_EDITOR_ACCESS_TOKEN_ENV,
+        tokens: LOCAL_EDITOR_ACCESS_TOKENS_ENV,
         vercel: "VERCEL",
       }[key] as string;
       if (value === undefined) Reflect.deleteProperty(process.env, environmentKey);
@@ -78,7 +102,7 @@ function postRequest(body: BodyInit, includeToken = true) {
     body,
     headers: {
       "Content-Type": "application/json",
-      ...(includeToken ? { "x-local-editor-token": "test-token" } : {}),
+      ...(includeToken ? { [LOCAL_EDITOR_ACCESS_HEADER]: "test-token" } : {}),
     },
     method: "POST",
   });
@@ -98,7 +122,66 @@ test("Puck handler denies normal mode and lists pages in local testing mode", as
       createRepository(),
     );
     assert.equal(response.status, 200);
-    assert.deepEqual(await response.json(), { slugs: ["index"] });
+    assert.deepEqual(await response.json(), {
+      pages: [{ publicPath: "/", slug: "index", title: "Title" }],
+      slugs: ["index"],
+    });
+  });
+});
+
+test("Puck PUT creates blank or duplicate pages and preserves status codes", async () => {
+  await withEditorEnvironment(async () => {
+    const created = await handlePuckPut(
+      new Request("http://localhost/api/puck", {
+        body: JSON.stringify({ mode: "blank", slug: "new-page" }),
+        headers: {
+          "Content-Type": "application/json",
+          [LOCAL_EDITOR_ACCESS_HEADER]: "test-token",
+        },
+        method: "PUT",
+      }),
+      createRepository(),
+    );
+    assert.equal(created.status, 201);
+
+    const conflict = await handlePuckPut(
+      new Request("http://localhost/api/puck", {
+        body: JSON.stringify({ mode: "blank", slug: "existing" }),
+        headers: {
+          "Content-Type": "application/json",
+          [LOCAL_EDITOR_ACCESS_HEADER]: "test-token",
+        },
+        method: "PUT",
+      }),
+      createRepository({
+        createPage: async () => {
+          throw new ContentAlreadyExistsError("existing");
+        },
+      }),
+    );
+    assert.equal(conflict.status, 409);
+    assert.equal((await conflict.json()).error.code, "CONTENT_ALREADY_EXISTS");
+
+    const missingSource = await handlePuckPut(
+      new Request("http://localhost/api/puck", {
+        body: JSON.stringify({
+          mode: "duplicate",
+          slug: "copy",
+          sourceSlug: "missing",
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          [LOCAL_EDITOR_ACCESS_HEADER]: "test-token",
+        },
+        method: "PUT",
+      }),
+      createRepository({
+        createPage: async () => {
+          throw new ContentNotFoundError("missing");
+        },
+      }),
+    );
+    assert.equal(missingSource.status, 404);
   });
 });
 

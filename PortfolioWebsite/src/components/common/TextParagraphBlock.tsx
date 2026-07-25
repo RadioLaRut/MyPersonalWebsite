@@ -1,12 +1,18 @@
 import type { ReactNode } from "react";
 
-import Typography from "@/components/common/Typography";
+import Typography, {
+  type TypographyAlignment,
+} from "@/components/common/Typography";
 
 interface TextParagraphBlockProps {
+  align?: TypographyAlignment;
   text: ReactNode;
 }
 
-export default function TextParagraphBlock({ text }: TextParagraphBlockProps) {
+export default function TextParagraphBlock({
+  align = "left",
+  text,
+}: TextParagraphBlockProps) {
   return (
     <Typography
       as="p"
@@ -14,6 +20,7 @@ export default function TextParagraphBlock({ text }: TextParagraphBlockProps) {
       size="body"
       weight="medium"
       wrapPolicy="prose"
+      align={align}
       className="text-textPrimary"
     >
       {text}

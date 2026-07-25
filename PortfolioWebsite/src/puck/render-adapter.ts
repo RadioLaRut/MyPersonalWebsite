@@ -11,24 +11,16 @@ export type RenderSurface = "public" | "editor" | "lab";
 
 export const DESIGN_KEY_BY_COMPONENT = {
   BreakdownHeadline: "BreakdownHeadline",
-  BreakdownTriptych: "BreakdownTriptych",
   ContactFlashlight: "ContactFlashlight",
-  ContentCard: "ContentCard",
   HeroHeadline: "HeroHeadline",
   HeroSection: "HeroSection",
-  HighDensityInfoBlock: "HighDensityInfoBlock",
   HomeEndcapSection: "HomeEndcapSection",
   ImagePanel: "ImagePanel",
   ImageSlider: "ImageSlider",
-  LightingCollectionHeader: "LightingCollectionHeader",
-  LightingProjectCard: "LightingProjectCard",
   NextProjectBlock: "NextProjectBlock",
   ParameterGrid: "ParameterGrid",
-  PortfolioHeroHeader: "PortfolioHeroHeader",
-  ProjectSection: "ProjectSection",
   RichParagraph: "RichParagraph",
   StatementBlock: "StatementBlock",
-  TextSplitLayout: "TextSplitLayout",
   WorksList: "WorksList",
   WorksListEntry: "WorksListEntry",
 } as const satisfies Partial<Record<PuckComponentType, ComponentDesignComponentKey>>;
@@ -40,7 +32,34 @@ export function resolveComponentDesignProps(
   designDocument?: ComponentDesignDocument,
 ): Record<string, unknown> | undefined {
   const componentKey = DESIGN_KEY_BY_COMPONENT[type as keyof typeof DESIGN_KEY_BY_COMPONENT];
-  if (!componentKey || !designDocument) return undefined;
+  if (!designDocument) return undefined;
+
+  if (type === "EditorialHeader") {
+    return {
+      collectionDesign: designDocument.components.LightingCollectionHeader,
+      indexDesign: designDocument.components.PortfolioHeroHeader,
+    };
+  }
+  if (type === "EditorialSplit") {
+    return {
+      cardDesign: designDocument.components.ContentCard,
+      splitDesign: designDocument.components.TextSplitLayout,
+    };
+  }
+  if (type === "ThreeColumnSection") {
+    return {
+      phaseDesign: designDocument.components.HighDensityInfoBlock,
+      triptychDesign: designDocument.components.BreakdownTriptych,
+    };
+  }
+  if (type === "ProjectCoverLink") {
+    return {
+      cardDesign: designDocument.components.LightingProjectCard,
+      immersiveDesign: designDocument.components.ProjectSection,
+    };
+  }
+
+  if (!componentKey) return undefined;
 
   const design = designDocument.components[componentKey];
   if (type === "WorksList") {

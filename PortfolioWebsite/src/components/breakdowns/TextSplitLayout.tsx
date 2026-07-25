@@ -1,7 +1,9 @@
 import type { CSSProperties, ReactNode } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
-import Typography from "@/components/common/Typography";
+import Typography, {
+  type TypographyAlignment,
+} from "@/components/common/Typography";
 import {
   type ComponentDesignOverride,
   resolveComponentDesign,
@@ -12,11 +14,13 @@ import {
   getSectionSpacingClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
+import { toPlainText } from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 
 type TextSplitLayoutProps = {
   heading: ReactNode;
   paragraphs: ReactNode[];
+  bodyAlign?: TypographyAlignment;
   imageSrc?: string;
   imagePreset?: ImagePreset;
   imageFitMode?: ImageFitMode;
@@ -29,6 +33,7 @@ type StyleWithVars = CSSProperties & Record<string, string>;
 export default function TextSplitLayout({
   heading,
   paragraphs,
+  bodyAlign = "left",
   imageSrc,
   imagePreset = "ratio-16-9",
   imageFitMode = "x",
@@ -37,7 +42,7 @@ export default function TextSplitLayout({
   design,
 }: TextSplitLayoutProps) {
   const resolvedDesign = resolveComponentDesign("TextSplitLayout", design);
-  const imageAlt = typeof heading === "string" ? heading : "TextSplitLayout image";
+  const imageAlt = toPlainText(heading) ?? "TextSplitLayout image";
   const splitHeadingGapStyle: StyleWithVars = {
     "--text-split-heading-image-gap": getSpacingRem(resolvedDesign.headingImageGap),
   };
@@ -54,7 +59,7 @@ export default function TextSplitLayout({
           size={resolvedDesign.bodySize}
           weight="semantic"
           wrapPolicy={resolvedDesign.bodyAutoWrap ? "prose" : "nowrap"}
-          align={layoutVariant === "stack" ? "center" : "left"}
+          align={bodyAlign}
           className="text-textSecondary"
         >
           {p}

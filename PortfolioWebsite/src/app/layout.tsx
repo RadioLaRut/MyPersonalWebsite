@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import { SITE_MODE_ATTRIBUTE } from "@/lib/admin-attributes";
 import { buildFontLabDocumentCssVars } from "@/lib/font-lab-css-vars";
 import { readFontLabConfig } from "@/lib/font-lab-config";
+import { SITE_ROBOTS_POLICY } from "@/lib/page-metadata";
 import { isTestingMode } from "@/lib/site-mode";
 import "./globals.css";
 
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: "JIANG CHENGYAN",
   description: "江承彦作品集：灯光、技术美术、游戏设计与交互叙事案例。",
+  robots: SITE_ROBOTS_POLICY,
 };
 
 const sourceHanSerif = localFont({

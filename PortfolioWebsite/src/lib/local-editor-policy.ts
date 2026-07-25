@@ -1,8 +1,9 @@
-import { timingSafeEqual } from "node:crypto";
+import { createHash, timingSafeEqual } from "node:crypto";
 
 import {
   LOCAL_EDITOR_ACCESS_HEADER,
   LOCAL_EDITOR_ACCESS_TOKEN_ENV,
+  LOCAL_EDITOR_ACCESS_TOKENS_ENV,
 } from "./local-editor-access.ts";
 import { isTestingMode } from "./site-mode.ts";
 
@@ -83,6 +84,15 @@ function authoritiesMatch(
   protocol?: string,
 ): boolean {
   if (left.hostname !== right.hostname) return false;
+
+  return loopbackPortsMatch(left, right, protocol);
+}
+
+function loopbackPortsMatch(
+  left: LoopbackAuthority,
+  right: LoopbackAuthority,
+  protocol?: string,
+): boolean {
   if (!protocol) return left.port === right.port;
 
   const defaultPort = defaultPortForProtocol(protocol);
@@ -131,7 +141,12 @@ export function createLocalEditorTransportContext(
   }
 
   const origin = parseOrigin(rawOrigin);
-  if (!origin || !authoritiesMatch(authority, origin.authority)) return null;
+  if (
+    !origin ||
+    !authoritiesMatch(authority, origin.authority, origin.parsed.protocol)
+  ) {
+    return null;
+  }
 
   return {
     authority: formatLoopbackAuthority(authority),
@@ -160,42 +175,69 @@ export function createApiLocalEditorTransportContext(
   const requestAuthority = parseLoopbackAuthority(requestUrl.host);
   if (!requestAuthority) return null;
 
-  const hostHeader = request.headers.get("host");
-  if (hostHeader !== null) {
-    const headerAuthority = parseLoopbackAuthority(hostHeader);
-    if (
-      !headerAuthority ||
-      !authoritiesMatch(requestAuthority, headerAuthority, requestUrl.protocol)
-    ) {
-      return null;
-    }
+  const rawOrigin = request.headers.get("origin");
+  const transportContext = createLocalEditorTransportContext(
+    request.headers.get("host") ?? requestUrl.host,
+    rawOrigin,
+  );
+  if (!transportContext) return null;
+
+  const transportAuthority = parseLoopbackAuthority(transportContext.authority);
+  if (
+    !transportAuthority ||
+    !loopbackPortsMatch(requestAuthority, transportAuthority, requestUrl.protocol)
+  ) {
+    return null;
   }
 
-  const rawOrigin = request.headers.get("origin");
   if (rawOrigin !== null) {
     const origin = parseOrigin(rawOrigin);
-    if (
-      !origin ||
-      origin.parsed.protocol !== requestUrl.protocol ||
-      origin.parsed.origin !== requestUrl.origin
-    ) {
-      return null;
+    if (!origin || origin.parsed.protocol !== requestUrl.protocol) return null;
+  }
+
+  return transportContext;
+}
+
+function getConfiguredLocalEditorTokens() {
+  const tokens = new Set<string>();
+  const legacyToken = process.env[LOCAL_EDITOR_ACCESS_TOKEN_ENV]?.trim();
+  if (legacyToken) {
+    tokens.add(legacyToken);
+  }
+
+  const configuredTokens = process.env[LOCAL_EDITOR_ACCESS_TOKENS_ENV];
+  for (const token of configuredTokens?.split(/[,\r\n]+/u) ?? []) {
+    const normalizedToken = token.trim();
+    if (normalizedToken) {
+      tokens.add(normalizedToken);
     }
   }
 
-  return {
-    authority: formatLoopbackAuthority(requestAuthority),
-    ...(rawOrigin === null ? {} : { origin: rawOrigin }),
-  };
+  return [...tokens];
 }
 
-function hasMatchingLocalEditorToken(actualToken: string | null, expectedToken: string) {
+function hashLocalEditorToken(token: string) {
+  return createHash("sha256").update(token, "utf8").digest();
+}
+
+function hasMatchingLocalEditorToken(
+  actualToken: string | null,
+  expectedTokens: readonly string[],
+) {
   const normalizedActualToken = actualToken?.trim();
   if (!normalizedActualToken) return false;
 
-  const expected = Buffer.from(expectedToken);
-  const actual = Buffer.from(normalizedActualToken);
-  return expected.length === actual.length && timingSafeEqual(expected, actual);
+  const actualHash = hashLocalEditorToken(normalizedActualToken);
+  let hasMatch = false;
+  for (const expectedToken of expectedTokens) {
+    const tokenMatches = timingSafeEqual(
+      actualHash,
+      hashLocalEditorToken(expectedToken),
+    );
+    hasMatch = tokenMatches || hasMatch;
+  }
+
+  return hasMatch;
 }
 
 export function evaluateLocalEditorAccess(
@@ -206,8 +248,8 @@ export function evaluateLocalEditorAccess(
   if (!canAccessLocalEditor() || context === null) return "unauthorized";
   if (!options.requireToken) return "allowed";
 
-  const expectedToken = process.env[LOCAL_EDITOR_ACCESS_TOKEN_ENV]?.trim();
-  return expectedToken && hasMatchingLocalEditorToken(actualToken, expectedToken)
+  const expectedTokens = getConfiguredLocalEditorTokens();
+  return hasMatchingLocalEditorToken(actualToken, expectedTokens)
     ? "allowed"
     : "token-required";
 }

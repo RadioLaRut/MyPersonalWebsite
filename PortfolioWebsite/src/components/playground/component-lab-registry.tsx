@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  COMPONENT_DESIGN_COMPONENT_KEYS,
   COMPONENT_DESIGN_PARAMETER_ITEM_SPANS,
   COMPONENT_DESIGN_PARAMETER_ITEM_SPAN_LABELS,
   COMPONENT_DESIGN_SECTION_SPACING_LABELS,
@@ -15,6 +14,30 @@ import {
   type ComponentResponsiveGridBounds,
 } from "@/lib/component-design-schema";
 import { type TypographySize } from "@/lib/typography-tokens";
+import type { PuckComponentType } from "@/puck/component-manifest";
+
+export const COMPONENT_LAB_COMPONENT_KEYS = [
+  "HeroSection",
+  "HeroHeadline",
+  "EditorialHeader",
+  "EditorialSplit",
+  "ThreeColumnSection",
+  "StatementBlock",
+  "RichParagraph",
+  "ImagePanel",
+  "BilibiliEmbed",
+  "ProjectCoverLink",
+  "WorksList",
+  "ParameterGrid",
+  "ImageSlider",
+  "BreakdownHeadline",
+  "NextProjectBlock",
+  "HomeEndcapSection",
+  "ContactFlashlight",
+] as const satisfies readonly PuckComponentType[];
+
+export type ComponentLabComponentKey =
+  (typeof COMPONENT_LAB_COMPONENT_KEYS)[number];
 
 type SelectOption<TValue extends string | number> = {
   label: string;
@@ -70,6 +93,14 @@ export type ComponentLabSectionConfig = {
 
 export type ComponentLabDefinition = {
   description: string;
+  designKeys: readonly ComponentDesignComponentKey[];
+  key: ComponentLabComponentKey;
+  label: string;
+  sections: ComponentLabSectionConfig[];
+};
+
+type ComponentDesignLabDefinition = {
+  description: string;
   key: ComponentDesignComponentKey;
   label: string;
   sections: ComponentLabSectionConfig[];
@@ -105,11 +136,9 @@ const ITEM_SPAN_OPTIONS = COMPONENT_DESIGN_PARAMETER_ITEM_SPANS.map((value) => (
   value,
 }));
 
-export const COMPONENT_LAB_COMPONENT_KEYS = COMPONENT_DESIGN_COMPONENT_KEYS;
-
-export const COMPONENT_LAB_REGISTRY: Record<
+const COMPONENT_DESIGN_LAB_REGISTRY: Record<
   ComponentDesignComponentKey,
-  ComponentLabDefinition
+  ComponentDesignLabDefinition
 > = {
   HeroSection: {
     key: "HeroSection",
@@ -1323,4 +1352,116 @@ export const COMPONENT_LAB_REGISTRY: Record<
       },
     ],
   },
+};
+
+function prefixSections(
+  prefix: string,
+  definition: ComponentDesignLabDefinition,
+): ComponentLabSectionConfig[] {
+  return definition.sections.map((section) => ({
+    ...section,
+    title: `${prefix} / ${section.title}`,
+  }));
+}
+
+function directDefinition(
+  key: Extract<ComponentLabComponentKey, ComponentDesignComponentKey>,
+): ComponentLabDefinition {
+  const definition = COMPONENT_DESIGN_LAB_REGISTRY[key];
+  return {
+    ...definition,
+    designKeys: [key],
+    key,
+  };
+}
+
+export const COMPONENT_LAB_REGISTRY: Record<
+  ComponentLabComponentKey,
+  ComponentLabDefinition
+> = {
+  HeroSection: directDefinition("HeroSection"),
+  HeroHeadline: directDefinition("HeroHeadline"),
+  EditorialHeader: {
+    key: "EditorialHeader",
+    label: "EditorialHeader",
+    description: "统一管理作品索引页头与灯光合集页头，两种枚举共用一处作者入口。",
+    designKeys: ["PortfolioHeroHeader", "LightingCollectionHeader"],
+    sections: [
+      ...prefixSections(
+        "作品索引",
+        COMPONENT_DESIGN_LAB_REGISTRY.PortfolioHeroHeader,
+      ),
+      ...prefixSections(
+        "灯光合集",
+        COMPONENT_DESIGN_LAB_REGISTRY.LightingCollectionHeader,
+      ),
+    ],
+  },
+  EditorialSplit: {
+    key: "EditorialSplit",
+    label: "EditorialSplit",
+    description: "统一管理普通正文与段落 Slot，并支持媒体左、右和堆叠三种布局。",
+    designKeys: ["ContentCard", "TextSplitLayout"],
+    sections: [
+      ...prefixSections("单一正文", COMPONENT_DESIGN_LAB_REGISTRY.ContentCard),
+      ...prefixSections("段落 Slot", COMPONENT_DESIGN_LAB_REGISTRY.TextSplitLayout),
+    ],
+  },
+  ThreeColumnSection: {
+    key: "ThreeColumnSection",
+    label: "ThreeColumnSection",
+    description: "统一管理独立图文、叙事阶段和证据网格，并切换齐平或错落节奏。",
+    designKeys: ["HighDensityInfoBlock", "BreakdownTriptych"],
+    sections: [
+      ...prefixSections(
+        "阶段 / 证据",
+        COMPONENT_DESIGN_LAB_REGISTRY.HighDensityInfoBlock,
+      ),
+      ...prefixSections(
+        "独立图文",
+        COMPONENT_DESIGN_LAB_REGISTRY.BreakdownTriptych,
+      ),
+    ],
+  },
+  StatementBlock: directDefinition("StatementBlock"),
+  RichParagraph: directDefinition("RichParagraph"),
+  ImagePanel: directDefinition("ImagePanel"),
+  BilibiliEmbed: {
+    key: "BilibiliEmbed",
+    label: "BilibiliEmbed",
+    description: "固定 16:9 的 B 站官方外链播放器；内容、图注与对齐由页面实例控制。",
+    designKeys: [],
+    sections: [],
+  },
+  ProjectCoverLink: {
+    key: "ProjectCoverLink",
+    label: "ProjectCoverLink",
+    description: "统一管理沉浸式封面入口与卡片式封面入口；媒体为空时退化为纯色文字入口。",
+    designKeys: ["ProjectSection", "LightingProjectCard"],
+    sections: [
+      ...prefixSections(
+        "沉浸式",
+        COMPONENT_DESIGN_LAB_REGISTRY.ProjectSection,
+      ),
+      ...prefixSections(
+        "卡片式",
+        COMPONENT_DESIGN_LAB_REGISTRY.LightingProjectCard,
+      ),
+    ],
+  },
+  WorksList: {
+    ...directDefinition("WorksList"),
+    description: "作品索引及其内部条目共用一个作者入口。",
+    designKeys: ["WorksList", "WorksListEntry"],
+    sections: [
+      ...prefixSections("列表", COMPONENT_DESIGN_LAB_REGISTRY.WorksList),
+      ...prefixSections("内部条目", COMPONENT_DESIGN_LAB_REGISTRY.WorksListEntry),
+    ],
+  },
+  ParameterGrid: directDefinition("ParameterGrid"),
+  ImageSlider: directDefinition("ImageSlider"),
+  BreakdownHeadline: directDefinition("BreakdownHeadline"),
+  NextProjectBlock: directDefinition("NextProjectBlock"),
+  HomeEndcapSection: directDefinition("HomeEndcapSection"),
+  ContactFlashlight: directDefinition("ContactFlashlight"),
 };

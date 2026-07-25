@@ -1,11 +1,14 @@
 "use client";
 import React, { type CSSProperties, type ReactNode, useEffect, useRef, useState } from "react";
-import Typography from "@/components/common/Typography";
+import Typography, {
+    type TypographyAlignment,
+} from "@/components/common/Typography";
 import { getGridColumnClassName } from "@/lib/component-design-style";
 import {
     type ComponentDesignOverride,
     resolveComponentDesign,
 } from "@/lib/component-design-runtime";
+import { toPlainText } from "@/lib/editable-text";
 import { motion, useInputCapabilities } from "@/lib/motion";
 
 export interface ContactFlashlightBlockProps extends ComponentDesignOverride<"ContactFlashlight"> {
@@ -17,6 +20,7 @@ export interface ContactFlashlightBlockProps extends ComponentDesignOverride<"Co
     name?: ReactNode;
     taglineText?: ReactNode;
     taglineSub?: ReactNode;
+    taglineSubAlign?: TypographyAlignment;
     email?: ReactNode;
     wechat?: ReactNode;
     copyLabel?: ReactNode;
@@ -38,6 +42,7 @@ export default function ContactFlashlightBlock({
     name,
     taglineText,
     taglineSub,
+    taglineSubAlign = "left",
     email,
     wechat,
     copyLabel = "复制微信号",
@@ -58,8 +63,8 @@ export default function ContactFlashlightBlock({
     const copyResetTimerRef = useRef<number | null>(null);
     const { isTouchLike } = useInputCapabilities();
     const disablesFlashlight = editMode || isTouchLike || detectedTouchDevice;
-    const emailText = typeof email === "string" ? email.trim() : "";
-    const wechatText = typeof wechat === "string" ? wechat.trim() : "";
+    const emailText = toPlainText(email) ?? "";
+    const wechatText = toPlainText(wechat) ?? "";
 
     useEffect(() => () => {
         if (copyResetTimerRef.current !== null) {
@@ -218,7 +223,8 @@ export default function ContactFlashlightBlock({
                         preset="sans-body"
                         size="label"
                         weight="semantic"
-                        wrapPolicy="label"
+                        wrapPolicy="prose"
+                        align={taglineSubAlign}
                         className="opacity-50"
                     >
                         {taglineSub}

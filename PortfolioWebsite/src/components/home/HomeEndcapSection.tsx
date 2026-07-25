@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
-import Typography from "@/components/common/Typography";
+import Typography, {
+  type TypographyAlignment,
+} from "@/components/common/Typography";
 import {
   type ComponentDesignOverride,
   resolveComponentDesign,
@@ -9,36 +11,31 @@ import {
   getGridColumnClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
+import { hasEditableTextContent } from "@/lib/editable-text";
 import { isExternalWebHref } from "@/lib/puck-href";
 
 type HomeEndcapSectionProps = {
   eyebrow?: ReactNode;
   title: ReactNode;
   description?: ReactNode;
+  descriptionAlign?: TypographyAlignment;
   buttonLabel: ReactNode;
   buttonHref: string;
   editMode?: boolean;
 } & ComponentDesignOverride<"HomeEndcapSection">;
 
-function isContentEmpty(content: ReactNode): boolean {
-  if (content === null || content === undefined) return true;
-  if (typeof content === "string") return content.trim() === "";
-  if (typeof content === "number") return false;
-  if (Array.isArray(content)) return content.length === 0 || content.every(isContentEmpty);
-  return false;
-}
-
 export default function HomeEndcapSection({
   eyebrow,
   title,
   description,
+  descriptionAlign = "center",
   buttonLabel,
   buttonHref,
   editMode = false,
   design,
 }: HomeEndcapSectionProps) {
   const resolvedDesign = resolveComponentDesign("HomeEndcapSection", design);
-  const hasDescription = !isContentEmpty(description);
+  const hasDescription = hasEditableTextContent(description);
   const buttonTopSpacing = getSpacingRem(
     hasDescription ? resolvedDesign.buttonTopSpacing : "32",
   );
@@ -50,7 +47,7 @@ export default function HomeEndcapSection({
 
       <div className="grid-container relative z-10">
         <div className={`${getGridColumnClassName(resolvedDesign.contentBounds)} text-center`}>
-          {eyebrow ? (
+          {hasEditableTextContent(eyebrow) ? (
             <Typography
               as="p"
               preset="sans-body"
@@ -83,7 +80,7 @@ export default function HomeEndcapSection({
               size="body"
               weight="medium"
               wrapPolicy="prose"
-              align="center"
+              align={descriptionAlign}
               className="mx-auto w-full max-w-3xl text-white/55 uppercase"
               style={{ marginTop: getSpacingRem(resolvedDesign.descriptionTopSpacing) }}
             >

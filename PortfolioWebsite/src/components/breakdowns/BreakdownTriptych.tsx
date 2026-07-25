@@ -1,6 +1,8 @@
 import type { CSSProperties, ReactNode } from "react";
 import { PresetImage } from "@/components/common/PresetImage";
-import Typography from "@/components/common/Typography";
+import Typography, {
+  type TypographyAlignment,
+} from "@/components/common/Typography";
 import {
   type ComponentDesignOverride,
   resolveComponentDesign,
@@ -12,29 +14,37 @@ import {
   getSpacingRem,
 } from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
-import { toPlainText } from "@/lib/editable-text";
+import {
+  hasEditableTextContent,
+  toPlainText,
+} from "@/lib/editable-text";
 
 type BreakdownTriptychProps = {
   col1Title: ReactNode;
   col1Text: ReactNode;
+  col1BodyAlign?: TypographyAlignment;
   col1Img: string;
   col1Preset?: ImagePreset;
   col1FitMode?: ImageFitMode;
   col2Title: ReactNode;
   col2Text: ReactNode;
+  col2BodyAlign?: TypographyAlignment;
   col2Img: string;
   col2Preset?: ImagePreset;
   col2FitMode?: ImageFitMode;
   col3Title: ReactNode;
   col3Text: ReactNode;
+  col3BodyAlign?: TypographyAlignment;
   col3Img: string;
   col3Preset?: ImagePreset;
   col3FitMode?: ImageFitMode;
+  rhythm?: "aligned" | "staggered";
 } & ComponentDesignOverride<"BreakdownTriptych">;
 
 function TriptychColumn({
   title,
   text,
+  bodyAlign,
   img,
   alt,
   boundsClassName,
@@ -45,6 +55,7 @@ function TriptychColumn({
 }: {
   title: ReactNode;
   text: ReactNode;
+  bodyAlign: TypographyAlignment;
   img: string;
   alt: string;
   boundsClassName: string;
@@ -53,17 +64,19 @@ function TriptychColumn({
   className?: string;
   style?: CSSProperties;
 }) {
-  if (!title && !text && !img) return null;
+  const hasTitle = hasEditableTextContent(title);
+  const hasText = hasEditableTextContent(text);
+  if (!hasTitle && !hasText && !img) return null;
 
   return (
     <div className={`${boundsClassName} space-y-4 ${className}`} style={style}>
-      {title && (
+      {hasTitle && (
         <Typography as="h4" preset="sans-body" size="label" weight="strong" wrapPolicy="label" className="border-l-2 pl-3 border-white/80 text-white">
           {title}
         </Typography>
       )}
-      {text && (
-        <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="prose" className="text-textPrimary">
+      {hasText && (
+        <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="prose" align={bodyAlign} className="text-textPrimary">
           {text}
         </Typography>
       )}
@@ -79,19 +92,23 @@ function TriptychColumn({
 export default function BreakdownTriptych({
   col1Title,
   col1Text,
+  col1BodyAlign = "left",
   col1Img,
   col1Preset = "ratio-16-9",
   col1FitMode = "x",
   col2Title,
   col2Text,
+  col2BodyAlign = "left",
   col2Img,
   col2Preset = "ratio-16-9",
   col2FitMode = "x",
   col3Title,
   col3Text,
+  col3BodyAlign = "left",
   col3Img,
   col3Preset = "ratio-16-9",
   col3FitMode = "x",
+  rhythm = "staggered",
   design,
 }: BreakdownTriptychProps) {
   const resolvedDesign = resolveComponentDesign("BreakdownTriptych", design);
@@ -99,10 +116,14 @@ export default function BreakdownTriptych({
   const col2Alt = toPlainText(col2Title) ?? "Breakdown image 2";
   const col3Alt = toPlainText(col3Title) ?? "Breakdown image 3";
   const col2Style = {
-    "--triptych-col-top-spacing": getSpacingRem(resolvedDesign.col2TopSpacing),
+    "--triptych-col-top-spacing": rhythm === "staggered"
+      ? getSpacingRem(resolvedDesign.col2TopSpacing)
+      : "0rem",
   } as CSSProperties;
   const col3Style = {
-    "--triptych-col-top-spacing": getSpacingRem(resolvedDesign.col3TopSpacing),
+    "--triptych-col-top-spacing": rhythm === "staggered"
+      ? getSpacingRem(resolvedDesign.col3TopSpacing)
+      : "0rem",
   } as CSSProperties;
 
   return (
@@ -111,6 +132,7 @@ export default function BreakdownTriptych({
         <TriptychColumn
           title={col1Title}
           text={col1Text}
+          bodyAlign={col1BodyAlign}
           img={col1Img}
           alt={col1Alt}
           boundsClassName={getResponsiveGridColumnClassName(createResponsiveGridBounds(
@@ -124,6 +146,7 @@ export default function BreakdownTriptych({
         <TriptychColumn
           title={col2Title}
           text={col2Text}
+          bodyAlign={col2BodyAlign}
           img={col2Img}
           alt={col2Alt}
           boundsClassName={getResponsiveGridColumnClassName(createResponsiveGridBounds(
@@ -139,6 +162,7 @@ export default function BreakdownTriptych({
         <TriptychColumn
           title={col3Title}
           text={col3Text}
+          bodyAlign={col3BodyAlign}
           img={col3Img}
           alt={col3Alt}
           boundsClassName={getResponsiveGridColumnClassName(createResponsiveGridBounds(
