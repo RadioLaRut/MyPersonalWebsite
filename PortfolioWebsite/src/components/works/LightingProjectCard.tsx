@@ -16,6 +16,7 @@ import {
   toPlainText,
 } from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
+import type { PublicMediaHint } from "@/lib/media-layout";
 
 export type LightingProjectCardProps = {
   number: ReactNode;
@@ -25,6 +26,7 @@ export type LightingProjectCardProps = {
   imagePreset?: ImagePreset;
   imageFitMode?: ImageFitMode;
   editMode?: boolean;
+  publicMediaHint?: PublicMediaHint;
 } & ComponentDesignOverride<"LightingProjectCard">;
 
 export default function LightingProjectCard({
@@ -35,6 +37,7 @@ export default function LightingProjectCard({
   imagePreset = "ratio-21-9",
   imageFitMode = "cover",
   editMode = false,
+  publicMediaHint,
   design,
 }: LightingProjectCardProps) {
   const resolvedDesign = resolveComponentDesign("LightingProjectCard", design);
@@ -49,6 +52,9 @@ export default function LightingProjectCard({
           <PresetImage
             src={coverImage}
             alt={imageAlt}
+            preload={publicMediaHint?.src === coverImage && publicMediaHint.preload}
+            mediaProfile="grid-10"
+            sizes={publicMediaHint?.src === coverImage ? publicMediaHint.sizes : undefined}
             preset={imagePreset === "native" ? "ratio-16-9" : imagePreset}
             fitMode={imageFitMode}
             lockFrame={false}

@@ -1,14 +1,12 @@
 "use client";
 
 import { type ReactNode } from "react";
-
+import { motion, type HTMLMotionProps } from "framer-motion";
 import {
-  motion,
   revealLeftVariants,
   revealRightVariants,
   revealUpVariants,
-  type HTMLMotionProps,
-} from "@/lib/motion";
+} from "@/lib/motion/variants";
 
 type RevealDirection = "left" | "right" | "up";
 

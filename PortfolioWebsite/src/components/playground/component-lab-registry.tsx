@@ -14,30 +14,22 @@ import {
   type ComponentResponsiveGridBounds,
 } from "@/lib/component-design-schema";
 import { type TypographySize } from "@/lib/typography-tokens";
-import type { PuckComponentType } from "@/puck/component-manifest";
+import {
+  PUCK_COMPONENT_DESCRIPTORS,
+  type PuckComponentDescriptor,
+} from "@/puck/component-manifest";
 
-export const COMPONENT_LAB_COMPONENT_KEYS = [
-  "HeroSection",
-  "HeroHeadline",
-  "EditorialHeader",
-  "EditorialSplit",
-  "ThreeColumnSection",
-  "StatementBlock",
-  "RichParagraph",
-  "ImagePanel",
-  "BilibiliEmbed",
-  "ProjectCoverLink",
-  "WorksList",
-  "ParameterGrid",
-  "ImageSlider",
-  "BreakdownHeadline",
-  "NextProjectBlock",
-  "HomeEndcapSection",
-  "ContactFlashlight",
-] as const satisfies readonly PuckComponentType[];
+type AuthorComponentDescriptor = Extract<
+  (typeof PUCK_COMPONENT_DESCRIPTORS)[number],
+  PuckComponentDescriptor & { labVisibility: "author" }
+>;
 
-export type ComponentLabComponentKey =
-  (typeof COMPONENT_LAB_COMPONENT_KEYS)[number];
+export type ComponentLabComponentKey = AuthorComponentDescriptor["type"];
+
+export const COMPONENT_LAB_COMPONENT_KEYS =
+  (PUCK_COMPONENT_DESCRIPTORS
+    .filter((descriptor) => descriptor.labVisibility === "author")
+    .map((descriptor) => descriptor.type)) as readonly ComponentLabComponentKey[];
 
 type SelectOption<TValue extends string | number> = {
   label: string;

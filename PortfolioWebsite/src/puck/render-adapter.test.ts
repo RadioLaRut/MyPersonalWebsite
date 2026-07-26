@@ -31,6 +31,26 @@ test("渲染表面只改变 editMode，不改变原始内容 props", () => {
   assert.equal(editorElement.props.editMode, true);
 });
 
+test("公开媒体提示只注入公开渲染表面", () => {
+  const publicMediaHint = {
+    height: 900,
+    preload: true,
+    profile: "full-bleed" as const,
+    sizes: "100vw",
+    src: "/images/insight/InsightCover.webp",
+    width: 1600,
+  };
+  const element = renderWithAdapter({
+    props: { id: "hero" },
+    publicMediaHint,
+    render: render as never,
+    surface: "public",
+    type: "HeroSection",
+  }) as ReactElement<Record<string, unknown>>;
+
+  assert.deepEqual(element.props.publicMediaHint, publicMediaHint);
+});
+
 test("统一适配器注入组件设计与 WorksList 子项设计", () => {
   const designDocument = createDefaultComponentDesignDocument();
   const hero = renderWithAdapter({

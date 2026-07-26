@@ -13,8 +13,18 @@ const home = routeReports["/"];
 
 console.log(
   `Build report: ${report.prerenderedRoutes.length} prerendered routes; ` +
-  `homepage JS ${home?.rawBytes ?? 0} raw / ${home?.gzipBytes ?? 0} gzip bytes; ` +
+  `homepage JS ${home?.js.rawBytes ?? 0} raw / ${home?.js.gzipBytes ?? 0} gzip bytes; ` +
   `largest public route ${largestRoute?.[0] ?? "n/a"} ${
-    largestRoute?.[1].gzipBytes ?? 0
+    largestRoute?.[1].js.gzipBytes ?? 0
   } gzip bytes.`,
 );
+
+if (report.budgetFailures.length > 0) {
+  for (const failure of report.budgetFailures) {
+    console.error(
+      `Performance budget failed: ${failure.route} ${failure.budget} ` +
+      `${failure.actual} > ${failure.limit}`,
+    );
+  }
+  process.exitCode = 1;
+}

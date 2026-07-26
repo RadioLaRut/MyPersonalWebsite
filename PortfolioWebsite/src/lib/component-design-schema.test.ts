@@ -148,10 +148,12 @@ test("parseComponentDesignDocument accepts valid component config", () => {
   assert.ok(parsed);
   assert.equal(parsed.components.ContentCard.titleSize, "title");
   assert.equal(parsed.components.TextSplitLayout.stackBounds.rightCol, 9);
+  assert.equal(parsed.components.TextSplitLayout.stackTextTopSpacing, "24");
   assert.equal(parsed.components.HeroSection.contentBounds.lg.leftCol, 8);
   assert.equal(parsed.components.HeroSection.eyebrowTopSpacing, "12");
   assert.equal(parsed.components.ProjectSection.lockupGap, "12");
   assert.equal(parsed.components.ProjectSection.titleSize, "display");
-  assert.equal(parsed.components.ProjectSection.titleUnderlineOpticalPull, "56");
+  assert.equal(parsed.components.ProjectSection.titleUnderlineOpticalPull, "12");
+  assert.equal(parsed.components.WorksList.headingBottomSpacing, "32");
   assert.equal(parsed.components.HomeEndcapSection.titleSize, "display");
 });

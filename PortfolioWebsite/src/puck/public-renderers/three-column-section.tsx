@@ -69,6 +69,7 @@ export const render: ComponentConfig["render"] = (props) => {
       }}
       col3={readColumn(props, 3)}
       rhythm={castSelectValue(props.rhythm, RHYTHM_VALUES, "aligned")}
+      publicMediaHint={props.publicMediaHint}
       variant={castSelectValue(props.variant, VARIANT_VALUES, "triptych")}
     />
   );

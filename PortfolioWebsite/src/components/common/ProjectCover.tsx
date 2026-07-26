@@ -4,7 +4,7 @@ import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 interface ProjectCoverProps {
   src: string;
   alt: string;
-  priority?: boolean;
+  preload?: boolean;
   className?: string;
   preset?: ImagePreset;
   fitMode?: ImageFitMode;
@@ -13,7 +13,7 @@ interface ProjectCoverProps {
 export function ProjectCover({
   src,
   alt,
-  priority = false,
+  preload = false,
   className = "",
   preset = "ratio-21-9",
   fitMode = "x",
@@ -22,7 +22,7 @@ export function ProjectCover({
     <PresetImage
       src={src}
       alt={alt}
-      priority={priority}
+      preload={preload}
       preset={preset}
       fitMode={fitMode}
       frameClassName={className}

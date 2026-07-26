@@ -16,6 +16,7 @@ import {
 } from "@/lib/component-design-style";
 import { toPlainText } from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
+import type { PublicMediaHint } from "@/lib/media-layout";
 
 type TextSplitLayoutProps = {
   heading: ReactNode;
@@ -26,6 +27,7 @@ type TextSplitLayoutProps = {
   imageFitMode?: ImageFitMode;
   layoutVariant?: "split-left" | "split-right" | "stack";
   paragraphsContent?: ReactNode;
+  publicMediaHint?: PublicMediaHint;
 } & ComponentDesignOverride<"TextSplitLayout">;
 
 type StyleWithVars = CSSProperties & Record<string, string>;
@@ -39,6 +41,7 @@ export default function TextSplitLayout({
   imageFitMode = "x",
   layoutVariant = "split-left",
   paragraphsContent,
+  publicMediaHint,
   design,
 }: TextSplitLayoutProps) {
   const resolvedDesign = resolveComponentDesign("TextSplitLayout", design);
@@ -89,7 +92,7 @@ export default function TextSplitLayout({
                             </Typography>
                             {imageSrc && (
                                 <div className="relative w-full opacity-90 transition-opacity duration-700 hover:opacity-100">
-                                    <PresetImage src={imageSrc} alt={imageAlt} preset={imagePreset} fitMode={imageFitMode} />
+                                    <PresetImage src={imageSrc} alt={imageAlt} preset={imagePreset} fitMode={imageFitMode} mediaProfile="grid-6" preload={publicMediaHint?.src === imageSrc && publicMediaHint.preload} sizes={publicMediaHint?.src === imageSrc ? publicMediaHint.sizes : undefined} />
                                     <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] pointer-events-none" />
                                 </div>
                             )}
@@ -140,7 +143,7 @@ export default function TextSplitLayout({
                             </Typography>
                             {imageSrc && (
                                 <div className="relative w-full opacity-90 transition-opacity duration-700 hover:opacity-100">
-                                    <PresetImage src={imageSrc} alt={imageAlt} preset={imagePreset} fitMode={imageFitMode} />
+                                    <PresetImage src={imageSrc} alt={imageAlt} preset={imagePreset} fitMode={imageFitMode} mediaProfile="grid-6" preload={publicMediaHint?.src === imageSrc && publicMediaHint.preload} sizes={publicMediaHint?.src === imageSrc ? publicMediaHint.sizes : undefined} />
                                     <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] pointer-events-none" />
                                 </div>
                             )}
@@ -181,7 +184,7 @@ export default function TextSplitLayout({
                         </div>
                         {imageSrc && (
                             <div className="relative w-full opacity-90 transition-opacity duration-700 hover:opacity-100" style={{ marginTop: getSpacingRem(resolvedDesign.stackImageTopSpacing) }}>
-                                <PresetImage src={imageSrc} alt={imageAlt} preset={imagePreset} fitMode={imageFitMode} />
+                                <PresetImage src={imageSrc} alt={imageAlt} preset={imagePreset} fitMode={imageFitMode} mediaProfile="grid-10" preload={publicMediaHint?.src === imageSrc && publicMediaHint.preload} sizes={publicMediaHint?.src === imageSrc ? publicMediaHint.sizes : undefined} />
                                 <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] pointer-events-none" />
                             </div>
                         )}

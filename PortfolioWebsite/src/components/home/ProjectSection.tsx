@@ -1,5 +1,4 @@
-"use client";
-import React, { type ReactNode, useRef } from "react";
+import React, { type ReactNode } from "react";
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography from "@/components/common/Typography";
 import { MotionLink } from "@/components/motion/MotionLink";
@@ -16,13 +15,9 @@ import {
   toPlainText,
 } from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
-import {
-  motion,
-  motionClassNames,
-  motionScrollTokens,
-  useScroll,
-  useTransform,
-} from "@/lib/motion";
+import type { PublicMediaHint } from "@/lib/media-layout";
+import { PUBLIC_COPY } from "@/lib/public-copy";
+import { motionClassNames } from "@/lib/motion/classes";
 
 interface ProjectSectionProps extends ComponentDesignOverride<"ProjectSection"> {
   title: ReactNode;
@@ -35,6 +30,7 @@ interface ProjectSectionProps extends ComponentDesignOverride<"ProjectSection"> 
   imageFitMode?: ImageFitMode;
   mobileImageFocalX?: number;
   mobileImageFocalY?: number;
+  publicMediaHint?: PublicMediaHint;
   editMode?: boolean;
 }
 
@@ -49,38 +45,18 @@ export default function ProjectSection({
   imageFitMode = "x",
   mobileImageFocalX = 50,
   mobileImageFocalY = 50,
+  publicMediaHint,
   editMode = false,
   design: designOverride,
 }: ProjectSectionProps) {
   const design = resolveComponentDesign("ProjectSection", designOverride);
-  const containerRef = useRef<HTMLElement>(null);
   const plainTitle = toPlainText(title);
-  const imageAlt = plainTitle ?? "Project cover";
+  const imageAlt = plainTitle ?? PUBLIC_COPY.fallbacks.projectCoverAlt;
   const isLinkEnabled = !editMode && Boolean(link);
   const cursorClass = isLinkEnabled ? "cursor-pointer" : "cursor-default";
   const sectionClassName = `relative m-0 grid min-h-[calc(var(--site-viewport-unit)*100)] w-full place-items-center overflow-hidden p-0 mix-blend-normal group ${cursorClass}`;
   const mediaLayerClassName = "absolute inset-x-0 -inset-y-[10%] grid place-items-center px-0 lg:inset-0";
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"],
-  });
-
-  const y = useTransform(
-    scrollYProgress,
-    motionScrollTokens.projectMedia.input,
-    motionScrollTokens.projectMedia.y,
-  );
-  const scale = useTransform(
-    scrollYProgress,
-    motionScrollTokens.projectMedia.input,
-    motionScrollTokens.projectMedia.scale,
-  );
-  const opacity = useTransform(
-    scrollYProgress,
-    motionScrollTokens.projectContent.input,
-    motionScrollTokens.projectContent.opacity,
-  );
   const shouldAlignRight = align === "right" || (align === "auto" && index % 2 !== 0);
   const textColumnClassName = shouldAlignRight
     ? "justify-items-end text-right"
@@ -100,21 +76,25 @@ export default function ProjectSection({
   );
   const lockupGap = getSpacingRem(design.lockupGap);
   const titleUnderlineOpticalPull = getSpacingRem(design.titleUnderlineOpticalPull);
-  const adjustedGap = `max(0px, calc(${lockupGap} - ${titleUnderlineOpticalPull}))`;
+  const underlineGap = `max(0px, calc(${lockupGap} - ${titleUnderlineOpticalPull}))`;
 
   return (
     <MotionLink
-      ref={containerRef}
       href={link || "#"}
       disabled={!isLinkEnabled}
       disabledElement="section"
       interactionPreset="blockLink"
-      aria-label={plainTitle ? `Open ${plainTitle}` : "Open project"}
+      aria-label={
+        plainTitle
+          ? `Open ${plainTitle}`
+          : PUBLIC_COPY.fallbacks.projectLinkLabel
+      }
       className={sectionClassName}
+      data-public-motion-kind={editMode ? undefined : "project"}
     >
-      <motion.div
+      <div
         className={`${mediaLayerClassName} bg-[#111]`}
-        style={editMode ? undefined : { y, scale }}
+        data-public-motion-media={editMode ? undefined : "true"}
       >
         {/* Environment ambient gradient/shadow to improve contrast */}
         <div className={`absolute inset-0 z-10 bg-black/[0.32] custom-blend ${motionClassNames.projectBackdrop} group-hover:bg-black/[0.24] group-focus-visible:bg-black/[0.24]`} />
@@ -125,7 +105,9 @@ export default function ProjectSection({
           <PresetImage
             src={imageSrc}
             alt={imageAlt}
-            priority={index === 0}
+            preload={publicMediaHint?.src === imageSrc && publicMediaHint.preload}
+            mediaProfile="full-bleed"
+            sizes={publicMediaHint?.src === imageSrc ? publicMediaHint.sizes : undefined}
             preset={imagePreset}
             fitMode={imageFitMode}
             fitModeByBreakpoint={{ base: "cover", lg: imageFitMode }}
@@ -138,10 +120,10 @@ export default function ProjectSection({
             imageClassName="select-none"
           />
         ) : null}
-      </motion.div>
+      </div>
 
-      <motion.div
-        style={editMode ? undefined : { opacity }}
+      <div
+        data-public-motion-content={editMode ? undefined : "true"}
         className={`absolute inset-0 z-20 grid content-center rhythm-section-normal ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}
       >
         <div className="grid-container relative w-full mix-blend-difference">
@@ -158,7 +140,7 @@ export default function ProjectSection({
                   wrapPolicy="label"
                   align={shouldAlignRight ? "right" : "left"}
                   className="text-textPrimary"
-                  style={{ marginBottom: adjustedGap }}
+                  style={{ marginBottom: lockupGap }}
                 >
                   {subtitle}
                 </Typography>
@@ -172,13 +154,12 @@ export default function ProjectSection({
                   wrapPolicy="heading"
                   align={shouldAlignRight ? "right" : "left"}
                   className="max-w-full text-white antialiased uppercase [transform:translateZ(0)] lg:whitespace-nowrap"
-                  style={{ marginTop: "-0.15em" }}
                 >
                   {title}
                 </Typography>
                 <div
                   className={`flex w-full ${underlineTrackClassName}`}
-                  style={{ marginTop: adjustedGap }}
+                  style={{ marginTop: underlineGap }}
                 >
                   <div className={`h-[2px] ${underlineFillClassName}`} />
                 </div>
@@ -186,7 +167,7 @@ export default function ProjectSection({
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </MotionLink>
   );
 }

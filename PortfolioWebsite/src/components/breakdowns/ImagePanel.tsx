@@ -18,6 +18,7 @@ import {
   toPlainText,
 } from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
+import type { PublicMediaHint } from "@/lib/media-layout";
 
 export type ImagePanelProps = {
   src: string;
@@ -27,6 +28,7 @@ export type ImagePanelProps = {
   preset?: ImagePreset;
   fitMode?: ImageFitMode;
   variant?: "content" | "large" | "fullscreen";
+  publicMediaHint?: PublicMediaHint;
 } & ComponentDesignOverride<"ImagePanel">;
 
 export default function ImagePanel({
@@ -37,6 +39,7 @@ export default function ImagePanel({
   preset,
   fitMode,
   variant = "content",
+  publicMediaHint,
   design,
 }: ImagePanelProps) {
   const resolvedDesign = resolveComponentDesign("ImagePanel", design);
@@ -58,8 +61,9 @@ export default function ImagePanel({
               base: preset === "native" ? "x" : "cover",
               lg: fitMode ?? "x",
             }}
-            priority
-            sizes="100vw"
+            preload={publicMediaHint?.src === src && publicMediaHint.preload}
+            mediaProfile="full-bleed"
+            sizes={publicMediaHint?.src === src ? publicMediaHint.sizes : undefined}
             lockFrame={false}
             frameClassName="h-full w-full pointer-events-none"
           />
@@ -89,8 +93,9 @@ export default function ImagePanel({
               src={src}
               preset={preset}
               fitMode={fitMode}
-              priority
-              sizes="(min-width: 1024px) 84vw, 92vw"
+              preload={publicMediaHint?.src === src && publicMediaHint.preload}
+              mediaProfile="grid-10"
+              sizes={publicMediaHint?.src === src ? publicMediaHint.sizes : undefined}
               frameClassName="w-full"
               imageClassName="select-none"
             />
@@ -115,7 +120,15 @@ export default function ImagePanel({
           { leftCol: 2, rightCol: 11 },
           resolvedDesign.contentBounds,
         ))} mx-auto w-full max-w-5xl overflow-hidden border border-white/15 bg-white/[0.03]`}>
-          <PresetImage alt={imageAlt} src={src} preset={preset} fitMode={fitMode} />
+          <PresetImage
+            alt={imageAlt}
+            src={src}
+            preset={preset}
+            fitMode={fitMode}
+            preload={publicMediaHint?.src === src && publicMediaHint.preload}
+            mediaProfile="grid-10"
+            sizes={publicMediaHint?.src === src ? publicMediaHint.sizes : undefined}
+          />
           {hasCaption ? (
             <figcaption className="border-t border-white/15 px-4 py-3">
               <Typography preset="sans-body" size="label" weight="semantic" wrapPolicy="prose" align={captionAlign} className="text-textPrimary">

@@ -14,11 +14,13 @@ export const render: ComponentConfig["render"] = ({
   imagePreset,
   mediaSrc,
   parameters,
+  publicMediaHint,
 }) => (
   <ParameterGrid
     imageFitMode={castImageFitMode(imageFitMode)}
     imagePreset={castImagePreset(imagePreset)}
     mediaSrc={mediaSrc}
     parameters={parameters as Parameters}
+    publicMediaHint={publicMediaHint}
   />
 );

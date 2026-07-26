@@ -2,14 +2,18 @@ import type { Data } from "@puckeditor/core";
 import { Render } from "@puckeditor/core/rsc";
 import { notFound } from "next/navigation";
 
+import PublicFontPreloads from "@/components/layout/PublicFontPreloads";
 import { readComponentDesignConfig } from "@/lib/component-design-config";
 import {
   ContentNotFoundError,
-  contentRepository,
 } from "@/lib/content-repository";
 import { normalizePuckSlugInput } from "@/lib/puck-slug";
 import { stripPageEditorMetadata } from "@/lib/page-document-contract";
 import { synchronizeNextProjectBlocks } from "@/lib/project-catalog";
+import {
+  readPublicPage,
+  readPublicProjectCatalog,
+} from "@/lib/public-content-service";
 import {
   createPublicRuntimeConfig,
   type PublicRendererLoader,
@@ -22,7 +26,7 @@ export async function renderPuckPage(
   try {
     const normalizedSlug = normalizePuckSlugInput(rawSlug);
     const [normalizedData, designDocument] = await Promise.all([
-      contentRepository.readPage(normalizedSlug.slugSegments),
+      readPublicPage(normalizedSlug.slugKey),
       readComponentDesignConfig(),
     ]);
     const currentProjectId =
@@ -33,7 +37,7 @@ export async function renderPuckPage(
       ? synchronizeNextProjectBlocks(
         normalizedData,
         currentProjectId,
-        await contentRepository.readProjectCatalog(),
+        await readPublicProjectCatalog(),
       )
       : normalizedData;
     const data = stripPageEditorMetadata(projectedData);
@@ -43,9 +47,12 @@ export async function renderPuckPage(
     });
 
     return (
-      <main className="min-h-screen bg-black text-white">
-        <Render config={runtimeConfig} data={data} />
-      </main>
+      <>
+        <PublicFontPreloads document={normalizedData} />
+        <main className="min-h-screen bg-black text-white">
+          <Render config={runtimeConfig} data={data} />
+        </main>
+      </>
     );
   } catch (error) {
     if (error instanceof ContentNotFoundError) {

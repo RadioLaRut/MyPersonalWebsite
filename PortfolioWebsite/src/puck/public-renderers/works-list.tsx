@@ -12,7 +12,12 @@ import {
 } from "./shared";
 import { castTypographyAlignment } from "../../lib/typography-alignment";
 
-export const render: ComponentConfig["render"] = ({ editMode, entries, heading, indexSummary }) => {
+export const render: ComponentConfig["render"] = ({
+  editMode,
+  entries,
+  heading,
+  indexSummary,
+}) => {
   const { items: works = [], SlotComponent: EntriesSlot } = readSlot(
     entries,
     (entry) => ({

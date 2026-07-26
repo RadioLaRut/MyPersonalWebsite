@@ -44,13 +44,6 @@ html {
 body {
   color: var(--foreground);
   background: var(--background);
-  --font-latin-sans: var(--font-futura);
-  --font-cjk-sans: var(--font-han-yi-qi-hei);
-  --font-latin-editorial: var(--font-luna);
-  --font-cjk-editorial: var(--font-noto-serif);
-  --font-latin-gothic: var(--font-gothic);
-  --font-latin-classical: var(--font-dm-serif);
-  --font-cjk-classical: var(--font-noto-serif);
 
   /* 字体渲染优化：开启抗锯齿，使文字在深色背景下更清晰 */
   -webkit-font-smoothing: antialiased;
@@ -63,6 +56,21 @@ body {
 
   /* 系统默认滚动条设置为自动 */
   scrollbar-width: auto;
+}
+
+/*
+ * 字体源现在由公开站点与创作工具各自提供，Typography 别名必须在同一
+ * 元素上解析。若只把别名留在 body，子级的 next/font 变量不会向上继承，
+ * 浏览器会把整条 font-family 判为无效并退回系统字体。
+ */
+[data-font-scope] {
+  --font-latin-sans: var(--font-futura);
+  --font-cjk-sans: var(--font-han-yi-qi-hei);
+  --font-latin-editorial: var(--font-luna);
+  --font-cjk-editorial: var(--font-noto-serif);
+  --font-latin-gothic: var(--font-gothic);
+  --font-latin-classical: var(--font-dm-serif);
+  --font-cjk-classical: var(--font-noto-serif);
 }
 
 body::before {
@@ -289,6 +297,44 @@ html[data-site-mode="normal"] {
   width: 100%;
   opacity: 0.3;
   transform: none;
+}
+
+/*
+ * Hero 入场从首帧起由 CSS 接管，避免延迟加载运行时时先显示、再隐藏重播。
+ * 编辑器不输出这些 data 属性，因此不会改变 Puck 中的排版与操作状态。
+ */
+@media (prefers-reduced-motion: no-preference) {
+  [data-public-motion-kind="hero"] [data-hero-lead] {
+    animation: public-hero-lead-enter 1100ms cubic-bezier(0.22, 1, 0.36, 1) 200ms both;
+  }
+
+  [data-public-motion-kind="hero"] [data-hero-supporting] {
+    animation: public-hero-supporting-enter 950ms cubic-bezier(0.22, 1, 0.36, 1) 380ms both;
+  }
+}
+
+@keyframes public-hero-lead-enter {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes public-hero-supporting-enter {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes image-loading-scan {

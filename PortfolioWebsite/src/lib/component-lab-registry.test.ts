@@ -3,6 +3,8 @@ import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
 
+import { PUCK_COMPONENT_DESCRIPTORS } from "../puck/component-manifest.ts";
+
 const registryPath = path.resolve(
   process.cwd(),
   "src/components/playground/component-lab-registry.tsx",
@@ -35,13 +37,13 @@ const EXPECTED_AUTHOR_COMPONENTS = [
 ] as const;
 
 test("ComponentLab 只向作者展示精简后的 17 个组件", () => {
-  const keyListMatch = source.match(
-    /export const COMPONENT_LAB_COMPONENT_KEYS = \[([\s\S]*?)\] as const/,
+  assert.match(
+    source,
+    /PUCK_COMPONENT_DESCRIPTORS[\s\S]*?filter\(\(descriptor\) => descriptor\.labVisibility === "author"\)[\s\S]*?map\(\(descriptor\) => descriptor\.type\)/,
   );
-  assert.ok(keyListMatch);
-
-  const actualKeys = [...keyListMatch[1].matchAll(/"([^"]+)"/g)]
-    .map((match) => match[1]);
+  const actualKeys = PUCK_COMPONENT_DESCRIPTORS
+    .filter((descriptor) => descriptor.labVisibility === "author")
+    .map((descriptor) => descriptor.type);
   assert.deepEqual(actualKeys, EXPECTED_AUTHOR_COMPONENTS);
 
   for (const hiddenType of [
@@ -49,7 +51,10 @@ test("ComponentLab 只向作者展示精简后的 17 个组件", () => {
     "MetadataListItem",
     "TextParagraphBlock",
   ]) {
-    assert.doesNotMatch(keyListMatch[1], new RegExp(`"${hiddenType}"`));
+    const descriptor = PUCK_COMPONENT_DESCRIPTORS.find(
+      (candidate) => candidate.type === hiddenType,
+    );
+    assert.equal(descriptor?.labVisibility, "internal");
   }
 });
 

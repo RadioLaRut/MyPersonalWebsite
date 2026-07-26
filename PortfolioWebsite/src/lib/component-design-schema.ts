@@ -1069,7 +1069,7 @@ export function createDefaultComponentDesignDocument(): ComponentDesignDocument 
       ProjectSection: {
         lockupGap: "12",
         titleSize: "display",
-        titleUnderlineOpticalPull: "56",
+        titleUnderlineOpticalPull: "12",
         textLeftBounds: createDefaultResponsiveBounds(1, 11, 1, 10, 2, 9),
         textRightBounds: createDefaultResponsiveBounds(2, 12, 3, 12, 5, 12),
       },
@@ -1099,11 +1099,11 @@ export function createDefaultComponentDesignDocument(): ComponentDesignDocument 
         stackBounds: createDefaultBounds(4, 9),
         stackHeadingSize: "display",
         stackImageTopSpacing: "64",
-        stackTextTopSpacing: "48",
+        stackTextTopSpacing: "24",
       },
       WorksList: {
         headingBounds: createDefaultBounds(2, 11),
-        headingBottomSpacing: "64",
+        headingBottomSpacing: "32",
         sectionSpacing: "section-normal",
       },
       WorksListEntry: {

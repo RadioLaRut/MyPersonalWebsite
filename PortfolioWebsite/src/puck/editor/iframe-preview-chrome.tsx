@@ -19,6 +19,7 @@ import {
   resolvePreviewViewportByWidth,
   SITE_VIEWPORT_UNIT_CSS_VAR,
 } from "@/lib/preview-viewports";
+import { coordinateImageLoading } from "@/lib/image-load-coordinator";
 import { PREVIEW_CONTENT_HEIGHT_EVENT } from "./preview-canvas-layout";
 
 const PREVIEW_CLONED_HEAD_ATTR = "data-puck-preview-font-clone";
@@ -75,7 +76,10 @@ function syncPreviewHeadNodes(
 function collectParentPreviewVars() {
   const nextVars: FontLabCssVars = {};
   const rootStyle = document.documentElement.style;
-  const bodyComputedStyle = window.getComputedStyle(document.body);
+  const fontScope =
+    document.querySelector<HTMLElement>('[data-font-scope="tools"]') ??
+    document.body;
+  const fontScopeComputedStyle = window.getComputedStyle(fontScope);
 
   for (let index = 0; index < rootStyle.length; index += 1) {
     const propertyName = rootStyle.item(index);
@@ -91,7 +95,7 @@ function collectParentPreviewVars() {
   }
 
   FONT_VARIABLE_NAMES.forEach((propertyName) => {
-    const propertyValue = bodyComputedStyle.getPropertyValue(propertyName).trim();
+    const propertyValue = fontScopeComputedStyle.getPropertyValue(propertyName).trim();
     if (propertyValue) {
       nextVars[propertyName] = propertyValue;
     }
@@ -122,6 +126,7 @@ function setupIframePreviewChrome(
       includeLang: true,
     });
     const previousBody = snapshotElement(bodyElement);
+    const stopImageLoadCoordination = coordinateImageLoading(frameDocument);
     let measurementFrameId = 0;
     let lastReportedContentHeight = 0;
 
@@ -237,6 +242,7 @@ function setupIframePreviewChrome(
 
     return () => {
       cancelAnimationFrame(measurementFrameId);
+      stopImageLoadCoordination();
       contentMutationObserver?.disconnect();
       contentResizeObserver.disconnect();
       window.removeEventListener(FONT_LAB_UPDATED_EVENT, handleFontLabUpdate as EventListener);

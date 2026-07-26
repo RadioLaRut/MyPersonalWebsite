@@ -32,6 +32,7 @@ import {
   classifyDirectionalIntent,
   clampPercent,
 } from "@/lib/motion/drag";
+import type { PublicMediaHint } from "@/lib/media-layout";
 
 function ChevronIcon({ direction }: { direction: "left" | "right" }) {
   return (
@@ -62,6 +63,7 @@ interface ImageSliderProps extends ComponentDesignOverride<"ImageSlider"> {
   rightLabel?: ReactNode;
   initialPosition?: number;
   editMode?: boolean;
+  publicMediaHint?: PublicMediaHint;
 }
 
 export default function ImageSlider({
@@ -76,6 +78,7 @@ export default function ImageSlider({
   rightLabel,
   initialPosition = 50,
   editMode = false,
+  publicMediaHint,
   design: designOverride,
 }: ImageSliderProps) {
   const design = resolveComponentDesign("ImageSlider", designOverride);
@@ -249,6 +252,9 @@ export default function ImageSlider({
                     alt={rightLabelText ? `${alt} ${rightLabelText}` : alt}
                     preset={resolvedPreset}
                     fitMode={resolvedFitMode}
+                    preload={publicMediaHint?.src === litSrc && publicMediaHint.preload}
+                    mediaProfile="grid-10"
+                    sizes={publicMediaHint?.src === litSrc ? publicMediaHint.sizes : undefined}
                     lockFrame={preservesNativeHeight}
                     frameClassName={imageFrameClassName}
                     imageClassName="select-none"
@@ -271,6 +277,9 @@ export default function ImageSlider({
                     alt={leftLabelText ? `${alt} ${leftLabelText}` : alt}
                     preset={resolvedPreset}
                     fitMode={resolvedFitMode}
+                    preload={publicMediaHint?.src === unlitSrc && publicMediaHint.preload}
+                    mediaProfile="grid-10"
+                    sizes={publicMediaHint?.src === unlitSrc ? publicMediaHint.sizes : undefined}
                     lockFrame={preservesNativeHeight}
                     frameClassName={imageFrameClassName}
                     imageClassName="select-none"

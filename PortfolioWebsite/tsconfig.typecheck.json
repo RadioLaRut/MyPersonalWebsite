@@ -12,6 +12,7 @@
   "exclude": [
     "node_modules",
     "node_modules.pnpm-backup",
+    ".next/types/app/**",
     ".next-dev-*",
     ".next.pre-next16",
     ".next.failed-*"

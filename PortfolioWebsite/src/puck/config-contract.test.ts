@@ -35,16 +35,26 @@ test("唯一渲染器清单与 Puck manifest 完全一致", () => {
 });
 
 test("编辑态只禁用 WorksListEntry 交互，不强制视觉激活", () => {
-  const source = fs.readFileSync(
+  const serverSource = fs.readFileSync(
     path.join(process.cwd(), "src/components/works/WorksListEntry.tsx"),
     "utf8",
   );
-
-  assert.match(
-    source,
-    /const active = isHovered \|\| isFocused \|\| isInsideCenterZone;/,
+  const islandSource = fs.readFileSync(
+    path.join(
+      process.cwd(),
+      "src/components/works/WorksListEntryActivation.tsx",
+    ),
+    "utf8",
   );
-  assert.doesNotMatch(source, /const active = editMode/);
+
+  assert.doesNotMatch(serverSource, /"use client"/);
+  assert.doesNotMatch(serverSource, /<PresetImage/);
+  assert.match(serverSource, /!editMode \? \(/);
+  assert.match(serverSource, /imageSrc=\{imageSrc\}/);
+  assert.match(islandSource, /hovered \|\| focused \|\| centered/);
+  assert.match(islandSource, /hasActivated && imageSrc/);
+  assert.match(islandSource, /<PresetImage/);
+  assert.doesNotMatch(islandSource, /\beditMode\b/);
 });
 
 test("搜索收录是全站策略，不允许在单页设置中覆盖", () => {

@@ -1,8 +1,5 @@
-"use client";
+import React, { type ReactNode } from "react";
 
-import React, { type ReactNode, useRef, useState } from "react";
-
-import { PresetImage } from "@/components/common/PresetImage";
 import Typography, {
   type TypographyAlignment,
 } from "@/components/common/Typography";
@@ -20,14 +17,7 @@ import {
   toPlainText,
 } from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
-import {
-  AnimatePresence,
-  imageSettleVariants,
-  motion,
-  motionTransitions,
-  useCenterZoneActivation,
-  useInputCapabilities,
-} from "@/lib/motion";
+import WorksListEntryActivation from "./WorksListEntryActivation";
 
 export type WorksListEntryAlias = {
   slug: string;
@@ -65,15 +55,7 @@ export default function WorksListEntry({
   const plainTitle = toPlainText(title);
   const plainCategory = toPlainText(category);
   const resolvedNumber = resolveEditableText(number, "00");
-  const [isHovered, setIsHovered] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
-  const entryRef = useRef<HTMLElement>(null);
-  const { supportsHoverIntent } = useInputCapabilities();
-  const isInsideCenterZone = useCenterZoneActivation(entryRef, {
-    enabled: !supportsHoverIntent && !editMode,
-  });
   const isLinkEnabled = !editMode && Boolean(href);
-  const active = isHovered || isFocused || isInsideCenterZone;
   const cursorClass = isLinkEnabled ? "cursor-pointer" : "cursor-default";
   const numberBoundsClassName = getResponsiveGridColumnClassName(design.numberBounds);
   const titleBoundsClassName = getResponsiveGridColumnClassName(
@@ -93,56 +75,19 @@ export default function WorksListEntry({
 
   return (
     <MotionLink
-      ref={entryRef}
       href={href || "#"}
       disabled={!isLinkEnabled}
       disabledElement="div"
       interactionPreset="blockLink"
       className={`group relative grid min-h-[calc(var(--site-viewport-unit)*26)] w-full content-center border-b border-white/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-2px] focus-visible:outline-white/70 ${cursorClass} sm:min-h-[calc(var(--site-viewport-unit)*30)] md:min-h-[calc(var(--site-viewport-unit)*34)] lg:min-h-[calc(var(--site-viewport-unit)*42)]`}
-      data-active={active ? "true" : "false"}
+      data-active="false"
+      data-works-entry=""
       aria-label={
         plainTitle
           ? `打开作品 ${plainTitle}${plainCategory ? `，${plainCategory}` : ""}`
           : "打开作品"
       }
-      onMouseEnter={() => supportsHoverIntent && !editMode && setIsHovered(true)}
-      onMouseLeave={() => supportsHoverIntent && !editMode && setIsHovered(false)}
-      onFocus={() => !editMode && setIsFocused(true)}
-      onBlur={() => !editMode && setIsFocused(false)}
     >
-      <AnimatePresence>
-        {active ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={motionTransitions.fade}
-            className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
-          >
-            <div className="absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.4)_0%,rgba(0,0,0,0.52)_40%,rgba(0,0,0,0.8)_100%)]" />
-            <motion.div
-              initial={editMode ? false : "hidden"}
-              animate={editMode ? undefined : "visible"}
-              variants={editMode ? undefined : imageSettleVariants}
-              className="h-full w-full"
-            >
-              <PresetImage
-                src={imageSrc}
-                alt={plainTitle ?? "Work entry"}
-                preset={imagePreset}
-                fitMode={imageFitMode}
-                fitModeByBreakpoint={{
-                  base: imagePreset === "native" ? "x" : "cover",
-                  lg: imageFitMode,
-                }}
-                lockFrame={false}
-                frameClassName="h-full w-full"
-              />
-            </motion.div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
-
       <div className={`grid-container relative z-10 items-baseline py-8 md:py-12 lg:py-16 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
         <div className="col-start-1 col-span-2 self-baseline md:hidden">
           <div className="relative grid w-fit">
@@ -151,12 +96,12 @@ export default function WorksListEntry({
               size="label"
               weight="semantic"
               wrapPolicy="label"
-              className={`transition-colors duration-700 ease-out ${active ? "text-white/[0.76]" : "text-textMuted"}`}
+              className="text-textMuted transition-colors duration-700 ease-out group-data-[active=true]:text-white/[0.76]"
             >
               {resolvedNumber}
             </Typography>
             <span
-              className={`absolute top-full mt-3 h-px bg-white/60 transition-[width,opacity] duration-700 ease-out ${active ? "w-4 opacity-100" : "w-2 opacity-40"}`}
+              className="absolute top-full mt-3 h-px w-2 bg-white/60 opacity-40 transition-[width,opacity] duration-700 ease-out group-data-[active=true]:w-4 group-data-[active=true]:opacity-100"
               aria-hidden="true"
             />
           </div>
@@ -169,12 +114,12 @@ export default function WorksListEntry({
               size="title-sm"
               weight="semantic"
               wrapPolicy="label"
-              className={`transition-colors duration-700 ease-out ${active ? "text-white/[0.76]" : "text-textMuted"}`}
+              className="text-textMuted transition-colors duration-700 ease-out group-data-[active=true]:text-white/[0.76]"
             >
               {resolvedNumber}
             </Typography>
             <span
-              className={`absolute top-full mt-3 h-px bg-white/60 transition-[width,opacity] duration-700 ease-out ${active ? "w-4 opacity-100" : "w-0 opacity-0"}`}
+              className="absolute top-full mt-3 h-px w-0 bg-white/60 opacity-0 transition-[width,opacity] duration-700 ease-out group-data-[active=true]:w-4 group-data-[active=true]:opacity-100"
               aria-hidden="true"
             />
           </div>
@@ -187,9 +132,7 @@ export default function WorksListEntry({
             size="title"
             weight="display"
             wrapPolicy="heading"
-            className={`break-words py-2 uppercase transition-all duration-700 ease-out ${active
-              ? "text-white/[0.92]"
-              : "text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.42)]"}`}
+            className="break-words py-2 uppercase text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.42)] transition-all duration-700 ease-out group-data-[active=true]:text-white/[0.92] group-data-[active=true]:[-webkit-text-stroke:1px_rgba(255,255,255,0)]"
           >
             {title}
           </Typography>
@@ -203,16 +146,11 @@ export default function WorksListEntry({
               size="label"
               weight="semantic"
               wrapPolicy="prose"
-              className={`uppercase transition-colors duration-700 ease-out ${active ? "text-textPrimary" : "text-textSecondary"}`}
+              className="text-textSecondary uppercase transition-colors duration-700 ease-out group-data-[active=true]:text-textPrimary"
             >
               {category}
             </Typography>
-            <motion.div
-              initial={false}
-              animate={{ opacity: active ? 1 : 0, x: active ? 0 : -10 }}
-              transition={motionTransitions.fade}
-              aria-hidden={!active}
-            >
+            <div className="-translate-x-2.5 opacity-0 transition-[opacity,transform] duration-700 ease-out group-data-[active=true]:translate-x-0 group-data-[active=true]:opacity-100">
               <Typography
                 as="p"
                 preset="sans-body"
@@ -224,10 +162,18 @@ export default function WorksListEntry({
               >
                 {desc}
               </Typography>
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>
+      {!editMode ? (
+        <WorksListEntryActivation
+          imageAlt={plainTitle ?? "Work entry"}
+          imageFitMode={imageFitMode}
+          imagePreset={imagePreset}
+          imageSrc={imageSrc}
+        />
+      ) : null}
     </MotionLink>
   );
 }

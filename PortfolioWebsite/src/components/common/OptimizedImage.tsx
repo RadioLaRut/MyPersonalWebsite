@@ -3,17 +3,17 @@ import type { ComponentProps } from "react";
 
 import { normalizeImageSrc } from "@/lib/public-paths";
 
-interface OptimizedImageProps extends Omit<ComponentProps<typeof Image>, "src" | "alt" | "quality" | "priority"> {
+interface OptimizedImageProps extends Omit<ComponentProps<typeof Image>, "src" | "alt" | "quality" | "preload"> {
   src: string;
   alt: string;
-  priority?: boolean;
+  preload?: boolean;
   quality?: number;
 }
 
 export function OptimizedImage({
   src,
   alt,
-  priority = false,
+  preload = false,
   quality = 95,
   unoptimized,
   className,
@@ -26,7 +26,7 @@ export function OptimizedImage({
     <Image
       src={normalizedSrc}
       alt={alt}
-      priority={priority}
+      preload={preload}
       quality={quality}
       unoptimized={shouldSkipOptimization}
       className={className}

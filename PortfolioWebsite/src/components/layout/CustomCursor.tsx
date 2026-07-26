@@ -1,10 +1,10 @@
 "use client";
 import React, { useEffect, useRef } from "react";
 import {
-  subscribeViewportRaf,
   supportsDesktopCustomCursorFromCapabilities,
   useInputCapabilities,
-} from "@/lib/motion";
+} from "@/lib/motion/input";
+import { subscribeViewportRaf } from "@/lib/motion/viewport-raf";
 
 type CustomCursorProps = {
   targetDocument?: Document;

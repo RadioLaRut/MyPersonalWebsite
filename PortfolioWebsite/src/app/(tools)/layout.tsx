@@ -3,6 +3,8 @@ import { connection } from "next/server";
 
 import ComponentDesignProvider from "@/components/layout/ComponentDesignProvider";
 import FontLabGlobalVars from "@/components/layout/FontLabGlobalVars";
+import ImageLoadCoordinator from "@/components/layout/ImageLoadCoordinator";
+import { FULL_FONT_VARIABLE_CLASS_NAME } from "@/app/fonts/full-fonts";
 import { readComponentDesignConfig } from "@/lib/component-design-config";
 import { buildFontLabDocumentCssVars } from "@/lib/font-lab-css-vars";
 import { readFontLabConfig } from "@/lib/font-lab-config";
@@ -23,7 +25,13 @@ export default async function ToolsLayout({ children }: Readonly<{ children: Rea
   return (
     <ComponentDesignProvider initialDocument={componentDesignDocument}>
       <FontLabGlobalVars initialVars={fontLabCssVars} />
-      {children}
+      <ImageLoadCoordinator />
+      <div
+        className={FULL_FONT_VARIABLE_CLASS_NAME}
+        data-font-scope="tools"
+      >
+        {children}
+      </div>
     </ComponentDesignProvider>
   );
 }

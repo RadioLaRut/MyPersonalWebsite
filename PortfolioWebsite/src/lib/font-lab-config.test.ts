@@ -5,6 +5,7 @@ import path from "node:path";
 import test from "node:test";
 
 import {
+  FONT_LAB_CONFIG_FILE,
   mergeFontLabPresetConfig,
   readFontLabConfig,
   writeFontLabConfig,
@@ -15,6 +16,45 @@ import {
   parseFontLabDocument,
   parseFontLabSavePayload,
 } from "./font-lab-config-schema.ts";
+import type {
+  TypographyPreset,
+  TypographySize,
+} from "./typography-tokens.ts";
+
+test("全局 FontLab 标题行高保持已确认的原版基准", async () => {
+  const config = await readFontLabConfig(FONT_LAB_CONFIG_FILE);
+  const expected = {
+    "sans-body": {
+      "title-sm": 1.05,
+      title: 0.92,
+      display: 0.88,
+      hero: 0.9,
+    },
+    "luna-editorial": {
+      "title-sm": 1.05,
+      title: 0.92,
+      display: 0.88,
+      hero: 0.9,
+    },
+    "gothic-editorial": {
+      "title-sm": 1.05,
+    },
+    "classical-display": {
+      menu: 1,
+    },
+  } as const;
+
+  for (const [preset, sizes] of Object.entries(expected)) {
+    for (const [size, lineHeight] of Object.entries(sizes)) {
+      assert.equal(
+        config.presets[preset as TypographyPreset].sizes[size as TypographySize]
+          ?.lineHeight,
+        lineHeight,
+        `${preset}/${size}`,
+      );
+    }
+  }
+});
 
 test("parseFontLabDocument rejects invalid payload", () => {
   const invalid = parseFontLabDocument({

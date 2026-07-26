@@ -12,12 +12,7 @@ import {
 } from "./content-repository.ts";
 import { isCreatePageRequest } from "./editor-page-contract.ts";
 import { isJsonValue, isPlainRecord } from "./json-utils.ts";
-import {
-  LOCAL_EDITOR_ACCESS_HEADER,
-  LOCAL_EDITOR_ACCESS_TOKEN_ENV,
-  LOCAL_EDITOR_ACCESS_TOKENS_ENV,
-} from "./local-editor-access.ts";
-import { evaluateLocalEditorApiAccess } from "./local-editor-policy.ts";
+import { LocalEditorRoutePolicy } from "./local-editor-route-policy.ts";
 import { PageDocumentValidationError } from "./page-document-contract.ts";
 import {
   readJsonWithLimit,
@@ -58,16 +53,10 @@ function errorResponse(
 }
 
 function authorize(request: Request, requireToken = false) {
-  const decision = evaluateLocalEditorApiAccess(request, { requireToken });
-  if (decision === "allowed") return null;
-
-  return decision === "token-required"
-    ? errorResponse(
-      403,
-      "EDITOR_TOKEN_REQUIRED",
-      `Set ${LOCAL_EDITOR_ACCESS_TOKENS_ENV} (or legacy ${LOCAL_EDITOR_ACCESS_TOKEN_ENV}) and send ${LOCAL_EDITOR_ACCESS_HEADER}`,
-    )
-    : errorResponse(403, "UNAUTHORIZED", "Editor access denied");
+  return LocalEditorRoutePolicy.authorizeApi(
+    request,
+    requireToken ? "write" : "read",
+  ) ?? null;
 }
 
 function normalizeSlugOrError(rawSlug: string | null) {

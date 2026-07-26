@@ -14,6 +14,8 @@ import {
   type ImagePreset,
 } from "@/lib/image-presentation";
 import { getGridColumnClassName } from "@/lib/component-design-style";
+import type { PublicMediaHint } from "@/lib/media-layout";
+import { PUBLIC_COPY } from "@/lib/public-copy";
 
 type HeroHeadlineBlockProps = {
   eyebrow?: ReactNode;
@@ -25,6 +27,7 @@ type HeroHeadlineBlockProps = {
   heroImageFitMode?: ImageFitMode;
   navLink?: string;
   navLinkLabel?: ReactNode;
+  publicMediaHint?: PublicMediaHint;
   editMode?: boolean;
 } & ComponentDesignOverride<"HeroHeadline">;
 
@@ -37,19 +40,26 @@ export default function HeroHeadlineBlock({
   heroImagePreset,
   heroImageFitMode,
   navLink,
-  navLinkLabel = "观看视频",
+  navLinkLabel = PUBLIC_COPY.fallbacks.heroVideoLabel,
+  publicMediaHint,
   editMode = false,
   design,
 }: HeroHeadlineBlockProps) {
   const resolvedDesign = resolveComponentDesign("HeroHeadline", design);
-  const resolvedEyebrow = resolveEditableText(eyebrow, "PROJECT");
-  const resolvedTitle = resolveEditableText(title, "PROJECT TITLE");
+  const resolvedEyebrow = resolveEditableText(
+    eyebrow,
+    PUBLIC_COPY.fallbacks.heroEyebrow,
+  );
+  const resolvedTitle = resolveEditableText(
+    title,
+    PUBLIC_COPY.fallbacks.heroTitle,
+  );
   const resolvedSubtitle = resolveEditableText(
     subtitle,
-    "Add a short project summary.",
+    PUBLIC_COPY.fallbacks.heroSummary,
   );
   const resolvedHeroImage = typeof heroImage === "string" ? heroImage.trim() : "";
-  const heroImageAlt = toPlainText(title) ?? "PROJECT TITLE";
+  const heroImageAlt = toPlainText(title) ?? PUBLIC_COPY.fallbacks.heroTitle;
   const contentBoundsClassName = getGridColumnClassName(resolvedDesign.contentBounds);
 
   return (
@@ -62,8 +72,9 @@ export default function HeroHeadlineBlock({
             preset={heroImagePreset}
             fitMode={heroImageFitMode}
             fitModeByBreakpoint={{ base: "cover", lg: heroImageFitMode ?? "x" }}
-            sizes="100vw"
-            priority
+            preload={publicMediaHint?.src === resolvedHeroImage && publicMediaHint.preload}
+            mediaProfile="full-bleed"
+            sizes={publicMediaHint?.src === resolvedHeroImage ? publicMediaHint.sizes : undefined}
             lockFrame={false}
             frameClassName="h-full w-full opacity-70"
           />
@@ -96,7 +107,7 @@ export default function HeroHeadlineBlock({
                 size="hero"
                 weight="semantic"
                 wrapPolicy="heading"
-                className="text-white uppercase leading-[0.9]"
+                className="text-white uppercase"
               >
                 {resolvedTitle}
               </Typography>

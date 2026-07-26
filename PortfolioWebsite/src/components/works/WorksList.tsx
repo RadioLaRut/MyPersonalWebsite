@@ -19,6 +19,7 @@ import WorksListEntry, {
 } from "@/components/works/WorksListEntry";
 import { hasEditableTextContent } from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
+import { PUBLIC_COPY } from "@/lib/public-copy";
 
 interface WorkItem {
     aliases?: WorksListEntryAlias[];
@@ -68,7 +69,7 @@ export default function WorksList({
                     align="center"
                     className="text-textMuted"
                 >
-                    No works available. Add some works to the list.
+                    {PUBLIC_COPY.fallbacks.worksEmpty}
                 </Typography>
             </div>
         );
@@ -110,7 +111,7 @@ export default function WorksList({
                 </div>
             </div>
 
-            {entriesContent ? (
+            {editMode && entriesContent ? (
                 <div className="grid w-full border-t border-white/10">{entriesContent}</div>
             ) : (
                 <div className="grid w-full border-t border-white/10">

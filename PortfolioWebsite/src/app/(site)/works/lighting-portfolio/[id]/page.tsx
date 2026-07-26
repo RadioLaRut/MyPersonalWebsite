@@ -1,7 +1,10 @@
 import { notFound } from "next/navigation";
 
-import { contentRepository } from "@/lib/content-repository";
 import { createPageMetadata } from "@/lib/page-metadata";
+import {
+  listPublicPages,
+  readPublicPage,
+} from "@/lib/public-content-service";
 import { renderPuckPage } from "@/lib/render-puck-page";
 import { loadLightingDetailPublicRenderer } from "@/puck/generated/lighting-detail-public-renderer-loaders";
 
@@ -14,7 +17,7 @@ type LightingCollectionPageProps = {
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  return (await contentRepository.listPages())
+  return (await listPublicPages())
     .filter((page) => {
       const segments = page.slug.split("/");
       return segments.length === 3 &&
@@ -27,7 +30,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: LightingCollectionPageProps) {
   const { id } = await params;
   return createPageMetadata(
-    await contentRepository.readPage(["works", "lighting-portfolio", id]),
+    await readPublicPage(`works/lighting-portfolio/${id}`),
   );
 }
 

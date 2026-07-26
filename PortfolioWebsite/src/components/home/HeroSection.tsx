@@ -1,5 +1,4 @@
-"use client";
-import React, { type ReactNode, useRef } from "react";
+import React, { type ReactNode } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import Typography, {
@@ -19,15 +18,8 @@ import {
   toPlainText,
 } from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
-import {
-  heroLeadVariants,
-  heroSupportingVariants,
-  motion,
-  motionClassNames,
-  motionScrollTokens,
-  useScroll,
-  useTransform,
-} from "@/lib/motion";
+import type { PublicMediaHint } from "@/lib/media-layout";
+import { motionClassNames } from "@/lib/motion/classes";
 
 function getPosterTitleLines(title: ReactNode) {
   const plainTitle = toPlainText(title);
@@ -61,6 +53,7 @@ export interface HeroSectionProps extends ComponentDesignOverride<"HeroSection">
   imageFitMode?: ImageFitMode;
   mobileImageFocalX?: number;
   mobileImageFocalY?: number;
+  publicMediaHint?: PublicMediaHint;
   editMode?: boolean;
 }
 
@@ -81,11 +74,11 @@ export default function HeroSection({
   imageFitMode = "x",
   mobileImageFocalX = 28,
   mobileImageFocalY = 50,
+  publicMediaHint,
   editMode = false,
   design: designOverride,
 }: HeroSectionProps) {
   const design = resolveComponentDesign("HeroSection", designOverride);
-  const containerRef = useRef<HTMLDivElement>(null);
   const contentBoundsClassName = getResponsiveGridColumnClassName(design.contentBounds);
   const hasSubtitle = hasEditableTextContent(subtitle);
   const hasPositioning = hasEditableTextContent(positioning);
@@ -110,36 +103,22 @@ export default function HeroSection({
   const outerSectionClassName = "relative min-h-[calc(var(--site-viewport-unit)*100)] w-full overflow-hidden bg-black px-0";
   const viewportWrapperClassName = "relative min-h-[calc(var(--site-viewport-unit)*100)] w-full overflow-hidden bg-black lg:border-y lg:border-white/5";
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-
-  const y = useTransform(
-    scrollYProgress,
-    motionScrollTokens.heroMedia.input,
-    motionScrollTokens.heroMedia.y,
-  );
-  const scale = useTransform(
-    scrollYProgress,
-    motionScrollTokens.heroMedia.input,
-    motionScrollTokens.heroMedia.scale,
-  );
-
   return (
     <section
-      ref={containerRef}
       className={outerSectionClassName}
+      data-public-motion-kind={editMode ? undefined : "hero"}
     >
       <div className={viewportWrapperClassName}>
-        <motion.div
+        <div
           className="absolute inset-x-0 -inset-y-[12%] overflow-hidden lg:inset-0"
-          style={editMode ? undefined : { y, scale }}
+          data-public-motion-media={editMode ? undefined : "true"}
         >
           <PresetImage
             src={imageSrc}
             alt={imageAlt}
-            priority
+            preload={publicMediaHint?.src === imageSrc && publicMediaHint.preload}
+            mediaProfile="full-bleed"
+            sizes={publicMediaHint?.src === imageSrc ? publicMediaHint.sizes : undefined}
             preset={imagePreset}
             fitMode={imageFitMode}
             fitModeByBreakpoint={{ base: "cover", lg: imageFitMode }}
@@ -152,16 +131,14 @@ export default function HeroSection({
             imageClassName="select-none"
             draggable={false}
           />
-        </motion.div>
+        </div>
 
         <div className={`absolute inset-0 z-20 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
           <div className="grid-container relative h-full items-end rhythm-section-hero lg:items-center">
             {posterMode ? (
-              <motion.div
+              <div
                 className={`${contentBoundsClassName} min-w-0 self-end grid auto-rows-max justify-items-end text-right text-edge-shadow lg:ml-auto lg:self-center`}
-                initial={editMode ? false : "hidden"}
-                animate={editMode ? undefined : "visible"}
-                variants={heroLeadVariants}
+                data-hero-lead={editMode ? undefined : "true"}
               >
                 {hasSubtitle ? (
                   <div className="relative w-fit">
@@ -199,7 +176,7 @@ export default function HeroSection({
                     weight="semantic"
                     wrapPolicy={hasStackedPosterTitle ? "heading" : "label"}
                     align="right"
-                    className={hasStackedPosterTitle ? "max-w-full text-white/92 leading-[0.92]" : "max-w-full text-white/92"}
+                    className="max-w-full text-white/92"
                   >
                     {hasStackedPosterTitle
                       ? (
@@ -245,13 +222,11 @@ export default function HeroSection({
                     {eyebrow}
                   </Typography>
                 ) : null}
-              </motion.div>
+              </div>
             ) : (
-              <motion.div
+              <div
                 className={`${contentBoundsClassName} self-center grid max-w-[28rem] auto-rows-max justify-items-start text-edge-shadow sm:max-w-[31rem] lg:ml-auto lg:max-w-[36rem]`}
-                initial={editMode ? false : "hidden"}
-                animate={editMode ? undefined : "visible"}
-                variants={heroLeadVariants}
+                data-hero-lead={editMode ? undefined : "true"}
               >
                 {hasEditableTextContent(eyebrow) ? (
                   <Typography
@@ -293,11 +268,9 @@ export default function HeroSection({
                   </div>
                 ) : null}
 
-                <motion.div
+                <div
                   className="grid auto-rows-max justify-items-start"
-                  initial={editMode ? false : "hidden"}
-                  animate={editMode ? undefined : "visible"}
-                  variants={heroSupportingVariants}
+                  data-hero-supporting={editMode ? undefined : "true"}
                 >
                   <div className="grid content-start justify-items-start">
                     {hasDescription ? (
@@ -359,8 +332,8 @@ export default function HeroSection({
                       </div>
                     ) : null}
                   </div>
-                </motion.div>
-              </motion.div>
+                </div>
+              </div>
             )}
           </div>
         </div>

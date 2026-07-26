@@ -1,3 +1,5 @@
+import { PUBLIC_COPY } from "./public-copy.ts";
+
 const BILIBILI_VIDEO_ID_PATTERN = /^BV[0-9A-Za-z]{10}$/;
 const BILIBILI_VIDEO_PATH_PATTERN = /^\/video\/(BV[0-9A-Za-z]{10})\/?$/;
 const BILIBILI_VIDEO_HOSTS = new Set([
@@ -15,9 +17,9 @@ export type BilibiliVideoSource = {
 };
 
 export function resolveBilibiliEmbedTitle(title: unknown) {
-  if (typeof title !== "string") return "哔哩哔哩视频";
+  if (typeof title !== "string") return PUBLIC_COPY.fallbacks.bilibiliTitle;
   const trimmed = title.trim();
-  return trimmed || "哔哩哔哩视频";
+  return trimmed || PUBLIC_COPY.fallbacks.bilibiliTitle;
 }
 
 function parseIntegerParameter(

@@ -22,6 +22,7 @@ export const render: ComponentConfig["render"] = ({
   mobileImageFocalX,
   mobileImageFocalY,
   number,
+  publicMediaHint,
   subtitle,
   title,
   variant,
@@ -37,6 +38,7 @@ export const render: ComponentConfig["render"] = ({
     mobileImageFocalX={mobileImageFocalX}
     mobileImageFocalY={mobileImageFocalY}
     number={number}
+    publicMediaHint={publicMediaHint}
     subtitle={subtitle}
     title={title}
     variant={castSelectValue(variant, VARIANT_VALUES, "immersive")}

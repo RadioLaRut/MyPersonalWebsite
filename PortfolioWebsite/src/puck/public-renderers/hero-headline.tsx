@@ -13,6 +13,7 @@ export const render: ComponentConfig["render"] = ({
   heroImagePreset,
   navLink,
   navLinkLabel,
+  publicMediaHint,
   subtitle,
   subtitleAlign,
   title,
@@ -25,6 +26,7 @@ export const render: ComponentConfig["render"] = ({
     heroImagePreset={castImagePreset(heroImagePreset)}
     navLink={toSafePuckHref(navLink)}
     navLinkLabel={navLinkLabel}
+    publicMediaHint={publicMediaHint}
     subtitle={subtitle}
     subtitleAlign={castTypographyAlignment(subtitleAlign)}
     title={title}

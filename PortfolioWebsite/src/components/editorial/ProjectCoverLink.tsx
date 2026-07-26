@@ -7,6 +7,7 @@ import type {
   ProjectSectionDesign,
 } from "@/lib/component-design-schema";
 import type { ImageFitMode, ImagePreset } from "@/lib/image-presentation";
+import type { PublicMediaHint } from "@/lib/media-layout";
 
 export type ProjectCoverLinkProps = {
   align?: "auto" | "left" | "right";
@@ -21,6 +22,7 @@ export type ProjectCoverLinkProps = {
   mobileImageFocalX?: number;
   mobileImageFocalY?: number;
   number?: ReactNode;
+  publicMediaHint?: PublicMediaHint;
   subtitle?: ReactNode;
   title: ReactNode;
   variant?: "card" | "immersive";
@@ -39,6 +41,7 @@ export default function ProjectCoverLink({
   mobileImageFocalX = 50,
   mobileImageFocalY = 50,
   number = "",
+  publicMediaHint,
   subtitle,
   title,
   variant = "immersive",
@@ -53,6 +56,7 @@ export default function ProjectCoverLink({
         imageFitMode={imageFitMode}
         imagePreset={imagePreset}
         number={number}
+        publicMediaHint={publicMediaHint}
         title={title}
       />
     );
@@ -70,6 +74,7 @@ export default function ProjectCoverLink({
       link={href}
       mobileImageFocalX={mobileImageFocalX}
       mobileImageFocalY={mobileImageFocalY}
+      publicMediaHint={publicMediaHint}
       subtitle={subtitle}
       title={title}
     />

@@ -25,7 +25,6 @@ import {
 import { collectPuckComponentTypes } from "./runtime-component-types.ts";
 import {
   createPublicRuntimeConfig,
-  shouldUseCompletePublicRendererRegistry,
 } from "./runtime-config-core.ts";
 
 const TEST_DIRECTORY = dirname(fileURLToPath(import.meta.url));
@@ -159,19 +158,14 @@ test("homepage loader generation automatically includes a newly added legal comp
   assert.match(source, /"StatementBlock"/);
 });
 
-test("testing development uses the complete renderer registry without changing production trimming", () => {
-  assert.equal(shouldUseCompletePublicRendererRegistry({
-    nodeEnv: "development",
-    siteMode: "testing",
-  }), true);
-  assert.equal(shouldUseCompletePublicRendererRegistry({
-    nodeEnv: "development",
-    siteMode: "normal",
-  }), false);
-  assert.equal(shouldUseCompletePublicRendererRegistry({
-    nodeEnv: "production",
-    siteMode: "testing",
-  }), false);
+test("public runtime never imports the complete renderer registry", () => {
+  const source = readFileSync(
+    join(TEST_DIRECTORY, "runtime-config-core.ts"),
+    "utf8",
+  );
+
+  assert.doesNotMatch(source, /public-renderer-loaders/);
+  assert.match(source, /await loadRenderer\(type\)/);
 });
 
 test("generated work alias resolver is pure, stable, and covers current aliases", () => {
@@ -220,6 +214,77 @@ test("runtime injects server-projected design only into non-atomic root componen
   assert.deepEqual(
     (worksList.props as { entryDesign?: unknown }).entryDesign,
     designDocument.components.WorksListEntry,
+  );
+});
+
+test("public runtime only preloads media declared visible in the first viewport", async () => {
+  const echoRender: ComponentConfig["render"] = (props) =>
+    createElement("div", props);
+  const heroDocument = asPageDocument({
+    content: [
+      {
+        props: {
+          id: "hero",
+          imageSrc: "/images/insight/InsightCover.webp",
+        },
+        type: "HeroSection",
+      },
+    ],
+    root: { props: { title: "Hero" } },
+    zones: {},
+  });
+  const heroConfig = await createPublicRuntimeConfig(heroDocument, {
+    loadRenderer: async () => echoRender,
+  });
+  const hero = (
+    heroConfig.components.HeroSection.render as unknown as (
+      props: Record<string, unknown>,
+    ) => ReturnType<typeof createElement>
+  )(heroDocument.content[0].props);
+  assert.deepEqual(
+    (hero.props as { publicMediaHint?: unknown }).publicMediaHint,
+    {
+      height: 900,
+      preload: true,
+      profile: "full-bleed",
+      sizes: "100vw",
+      src: "/images/insight/InsightCover.webp",
+      width: 1600,
+    },
+  );
+
+  const worksDocument = asPageDocument({
+    content: [
+      {
+        props: {
+          entries: [
+            {
+              props: {
+                id: "entry",
+                imageSrc: "/images/train-station/2Day.webp",
+              },
+              type: "WorksListEntry",
+            },
+          ],
+          id: "works",
+        },
+        type: "WorksList",
+      },
+    ],
+    root: { props: { title: "Works" } },
+    zones: {},
+  });
+  const worksConfig = await createPublicRuntimeConfig(worksDocument, {
+    loadRenderer: async () => echoRender,
+  });
+  const works = (
+    worksConfig.components.WorksList.render as unknown as (
+      props: Record<string, unknown>,
+    ) => ReturnType<typeof createElement>
+  )(worksDocument.content[0].props);
+  assert.equal(
+    (works.props as { publicMediaHint?: unknown }).publicMediaHint,
+    undefined,
   );
 });
 

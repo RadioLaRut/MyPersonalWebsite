@@ -5,6 +5,7 @@ import type {
   ComponentDesignComponentKey,
   ComponentDesignDocument,
 } from "@/lib/component-design-schema";
+import type { PublicMediaHint } from "@/lib/media-layout";
 import type { PuckComponentType } from "@/puck/component-manifest";
 
 export type RenderSurface = "public" | "editor" | "lab";
@@ -76,12 +77,14 @@ export function renderWithAdapter({
   designDocument,
   props,
   render,
+  publicMediaHint,
   surface,
   type,
 }: {
   designDocument?: ComponentDesignDocument;
   props?: GenericRenderProps;
   render: ComponentConfig["render"];
+  publicMediaHint?: PublicMediaHint;
   surface: RenderSurface;
   type: PuckComponentType;
 }) {
@@ -89,6 +92,7 @@ export function renderWithAdapter({
   const adaptedProps = {
     ...safeProps,
     editMode: surface !== "public",
+    ...(publicMediaHint ? { publicMediaHint } : {}),
   } as Parameters<ComponentConfig["render"]>[0];
   const rendered = render(adaptedProps);
   const designProps = resolveComponentDesignProps(type, designDocument);

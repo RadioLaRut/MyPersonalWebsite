@@ -10,12 +10,14 @@ import {
     getResponsiveGridColumnClassName,
     getSpacingRem,
 } from "@/lib/component-design-style";
+import type { PublicMediaHint } from "@/lib/media-layout";
 type NextProjectBlockProps = {
     nextId: string;
     href?: string;
     nextBg?: string;
     nextName?: string;
     editMode?: boolean;
+    publicMediaHint?: PublicMediaHint;
 } & ComponentDesignOverride<"NextProjectBlock">;
 
 export default function NextProjectBlock({
@@ -24,6 +26,7 @@ export default function NextProjectBlock({
     nextBg = "",
     nextName,
     editMode = false,
+    publicMediaHint,
     design,
 }: NextProjectBlockProps) {
     const resolvedDesign = resolveComponentDesign("NextProjectBlock", design);
@@ -44,8 +47,10 @@ export default function NextProjectBlock({
                         alt={`${destinationName} 封面`}
                         preset="ratio-21-9"
                         fitMode="cover"
+                        preload={publicMediaHint?.src === nextBg && publicMediaHint.preload}
+                        mediaProfile="full-bleed"
                         lockFrame={false}
-                        sizes="100vw"
+                        sizes={publicMediaHint?.src === nextBg ? publicMediaHint.sizes : "100vw"}
                         frameClassName="h-full w-full"
                         imageClassName="scale-100 opacity-40 transition-[filter,opacity,transform] duration-700 ease-out group-hover:scale-[1.025] group-hover:opacity-75 group-hover:contrast-[1.04] group-focus-visible:scale-[1.025] group-focus-visible:opacity-75 group-focus-visible:contrast-[1.04]"
                     />

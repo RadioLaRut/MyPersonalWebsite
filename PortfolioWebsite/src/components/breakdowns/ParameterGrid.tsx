@@ -17,6 +17,7 @@ import {
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 import { hasEditableTextContent } from "@/lib/editable-text";
 import { getParameterGridItemBounds } from "@/lib/parameter-grid-layout";
+import type { PublicMediaHint } from "@/lib/media-layout";
 
 interface Parameter {
   name: ReactNode;
@@ -30,6 +31,7 @@ type ParameterGridProps = {
   imagePreset?: ImagePreset;
   imageFitMode?: ImageFitMode;
   parameters?: Parameter[];
+  publicMediaHint?: PublicMediaHint;
 } & ComponentDesignOverride<"ParameterGrid">;
 
 export default function ParameterGrid({
@@ -37,6 +39,7 @@ export default function ParameterGrid({
   imagePreset = "ratio-21-9",
   imageFitMode = "x",
   parameters,
+  publicMediaHint,
   design,
 }: ParameterGridProps) {
   const resolvedDesign = resolveComponentDesign("ParameterGrid", design);
@@ -53,6 +56,9 @@ export default function ParameterGrid({
             alt="PCG Generation Overview"
             preset={imagePreset}
             fitMode={imageFitMode}
+            preload={publicMediaHint?.src === mediaSrc && publicMediaHint.preload}
+            mediaProfile="full-bleed"
+            sizes={publicMediaHint?.src === mediaSrc ? publicMediaHint.sizes : undefined}
             imageClassName="opacity-80"
           />
           <div className="absolute top-4 left-4 border border-white/10 bg-black/60 px-3 py-1 backdrop-blur-md">

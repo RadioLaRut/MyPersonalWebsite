@@ -266,7 +266,7 @@
     "ProjectSection": {
       "lockupGap": "12",
       "titleSize": "display",
-      "titleUnderlineOpticalPull": "56",
+      "titleUnderlineOpticalPull": "12",
       "textLeftBounds": {
         "base": {
           "leftCol": 1,
@@ -343,14 +343,14 @@
       },
       "stackHeadingSize": "display",
       "stackImageTopSpacing": "64",
-      "stackTextTopSpacing": "48"
+      "stackTextTopSpacing": "24"
     },
     "WorksList": {
       "headingBounds": {
         "leftCol": 2,
         "rightCol": 11
       },
-      "headingBottomSpacing": "64",
+      "headingBottomSpacing": "32",
       "sectionSpacing": "section-normal"
     },
     "WorksListEntry": {

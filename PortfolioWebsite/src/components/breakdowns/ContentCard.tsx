@@ -19,6 +19,7 @@ import {
   getSpacingRem,
 } from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
+import type { PublicMediaHint } from "@/lib/media-layout";
 
 type ContentCardProps = {
   title: ReactNode;
@@ -28,6 +29,7 @@ type ContentCardProps = {
   imagePreset?: ImagePreset;
   imageFitMode?: ImageFitMode;
   imagePosition?: "left" | "right";
+  publicMediaHint?: PublicMediaHint;
 } & ComponentDesignOverride<"ContentCard">;
 
 type StyleWithVars = CSSProperties & Record<string, string>;
@@ -40,6 +42,7 @@ export default function ContentCard({
   imagePreset = "ratio-16-9",
   imageFitMode = "x",
   imagePosition = "right",
+  publicMediaHint,
   design,
 }: ContentCardProps) {
   const resolvedDesign = resolveComponentDesign("ContentCard", design);
@@ -97,7 +100,9 @@ export default function ContentCard({
           alt={imageAlt}
           preset={imagePreset}
           fitMode={imageFitMode}
-          sizes="100vw"
+          preload={publicMediaHint?.src === imageSrc && publicMediaHint.preload}
+          mediaProfile="grid-6"
+          sizes={publicMediaHint?.src === imageSrc ? publicMediaHint.sizes : undefined}
         />
       </div>
     </div>

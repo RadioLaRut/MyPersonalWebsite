@@ -1,7 +1,10 @@
 import { redirect } from "next/navigation";
 
-import { contentRepository } from "@/lib/content-repository";
 import { normalizePuckSlugInput } from "@/lib/puck-slug";
+import {
+  listPublicPages,
+  readPublicProjectCatalog,
+} from "@/lib/public-content-service";
 import { toPublicPathFromSlugKey } from "@/lib/public-paths";
 
 type LegacyPuckPageParams = {
@@ -13,7 +16,7 @@ export const dynamicParams = false;
 export async function generateStaticParams() {
   return [
     { slug: [] },
-    ...(await contentRepository.listPages())
+    ...(await listPublicPages())
       .filter((page) => page.slug !== "index")
       .map((page) => ({ slug: page.slug.split("/") })),
   ];
@@ -38,7 +41,7 @@ function toCanonicalPublicSlug(
 export default async function LegacyPuckPage({ params }: { params: Promise<LegacyPuckPageParams> }) {
   const { slug } = await params;
   const normalizedSlug = normalizePuckSlugInput(slug);
-  const catalog = await contentRepository.readProjectCatalog();
+  const catalog = await readPublicProjectCatalog();
   const publicPath = toPublicPathFromSlugKey(toCanonicalPublicSlug(
     normalizedSlug.slugKey,
     (candidate) => catalog.getAliasTarget(candidate),

@@ -70,7 +70,7 @@
           "latinEdgeOffset": -0.05,
           "latinLetterSpacing": 0.025,
           "latinRelativeOffset": 0.05,
-          "lineHeight": 1.6,
+          "lineHeight": 1.05,
           "semanticWeight": "medium"
         },
         "title": {
@@ -81,7 +81,7 @@
           "latinEdgeOffset": -0.05,
           "latinLetterSpacing": 0.02,
           "latinRelativeOffset": 0.07,
-          "lineHeight": 1.55,
+          "lineHeight": 0.92,
           "semanticWeight": "medium"
         },
         "display": {
@@ -92,7 +92,7 @@
           "latinEdgeOffset": -0.05,
           "latinLetterSpacing": 0.008,
           "latinRelativeOffset": 0.07,
-          "lineHeight": 1.5,
+          "lineHeight": 0.88,
           "semanticWeight": "strong"
         },
         "hero": {
@@ -103,7 +103,7 @@
           "latinEdgeOffset": -0.04,
           "latinLetterSpacing": 0.005,
           "latinRelativeOffset": 0.07,
-          "lineHeight": 1.5,
+          "lineHeight": 0.9,
           "semanticWeight": "display"
         }
       }
@@ -121,7 +121,7 @@
           "latinEdgeOffset": 0,
           "latinLetterSpacing": 0.025,
           "latinRelativeOffset": 0.05,
-          "lineHeight": 1.6,
+          "lineHeight": 1.05,
           "semanticWeight": "medium"
         },
         "title": {
@@ -132,7 +132,7 @@
           "latinEdgeOffset": -0.07,
           "latinLetterSpacing": 0.02,
           "latinRelativeOffset": 0.07,
-          "lineHeight": 1.55,
+          "lineHeight": 0.92,
           "semanticWeight": "medium"
         },
         "display": {
@@ -143,7 +143,7 @@
           "latinEdgeOffset": -0.06,
           "latinLetterSpacing": 0.008,
           "latinRelativeOffset": 0.07,
-          "lineHeight": 1.5,
+          "lineHeight": 0.88,
           "semanticWeight": "strong"
         },
         "hero": {
@@ -154,7 +154,7 @@
           "latinEdgeOffset": -0.07,
           "latinLetterSpacing": 0.005,
           "latinRelativeOffset": 0.05,
-          "lineHeight": 1.5,
+          "lineHeight": 0.9,
           "semanticWeight": "strong"
         }
       }
@@ -194,7 +194,7 @@
           "latinEdgeOffset": -0.03,
           "latinLetterSpacing": 0.025,
           "latinRelativeOffset": 0.05,
-          "lineHeight": 1.6,
+          "lineHeight": 1.05,
           "semanticWeight": "strong"
         }
       }
@@ -212,7 +212,7 @@
           "latinEdgeOffset": -0.03,
           "latinLetterSpacing": 0.018,
           "latinRelativeOffset": 0.05,
-          "lineHeight": 1.5,
+          "lineHeight": 1,
           "semanticWeight": "display"
         }
       }

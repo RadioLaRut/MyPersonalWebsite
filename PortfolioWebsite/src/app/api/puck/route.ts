@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 
-import { contentRepository } from "@/lib/content-repository";
+import { localEditorContentService } from "@/lib/local-editor-content-service";
 import {
   handlePuckGet,
   handlePuckPost,
@@ -11,13 +11,13 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export function GET(request: NextRequest) {
-  return handlePuckGet(request, contentRepository);
+  return handlePuckGet(request, localEditorContentService);
 }
 
 export function POST(request: NextRequest) {
-  return handlePuckPost(request, contentRepository);
+  return handlePuckPost(request, localEditorContentService);
 }
 
 export function PUT(request: NextRequest) {
-  return handlePuckPut(request, contentRepository);
+  return handlePuckPut(request, localEditorContentService);
 }

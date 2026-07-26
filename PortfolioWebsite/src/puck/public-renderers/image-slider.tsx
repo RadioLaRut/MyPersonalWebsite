@@ -11,6 +11,7 @@ export const render: ComponentConfig["render"] = ({
   initialPosition,
   leftLabel,
   litSrc,
+  publicMediaHint,
   rightLabel,
   title,
   unlitSrc,
@@ -23,6 +24,7 @@ export const render: ComponentConfig["render"] = ({
     initialPosition={typeof initialPosition === "number" ? initialPosition : 50}
     leftLabel={leftLabel}
     litSrc={litSrc}
+    publicMediaHint={publicMediaHint}
     rightLabel={rightLabel}
     title={title}
     unlitSrc={unlitSrc}

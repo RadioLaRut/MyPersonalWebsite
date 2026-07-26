@@ -8,6 +8,7 @@ import type {
   TextSplitLayoutDesign,
 } from "@/lib/component-design-schema";
 import type { ImageFitMode, ImagePreset } from "@/lib/image-presentation";
+import type { PublicMediaHint } from "@/lib/media-layout";
 
 export type EditorialSplitProps = {
   body?: ReactNode;
@@ -21,6 +22,7 @@ export type EditorialSplitProps = {
   layout?: "media-left" | "media-right" | "stack";
   paragraphs?: ReactNode[];
   paragraphsContent?: ReactNode;
+  publicMediaHint?: PublicMediaHint;
   splitDesign?: TextSplitLayoutDesign;
 };
 
@@ -36,6 +38,7 @@ export default function EditorialSplit({
   layout = "media-right",
   paragraphs = [],
   paragraphsContent,
+  publicMediaHint,
   splitDesign,
 }: EditorialSplitProps) {
   if (bodyMode === "plain" && layout !== "stack") {
@@ -48,6 +51,7 @@ export default function EditorialSplit({
         imagePosition={layout === "media-left" ? "left" : "right"}
         imagePreset={imagePreset}
         imageSrc={imageSrc}
+        publicMediaHint={publicMediaHint}
         title={heading}
       />
     );
@@ -70,6 +74,7 @@ export default function EditorialSplit({
       layoutVariant={layoutVariant}
       paragraphs={bodyMode === "plain" ? [body] : paragraphs}
       paragraphsContent={bodyMode === "slot" ? paragraphsContent : undefined}
+      publicMediaHint={publicMediaHint}
     />
   );
 }

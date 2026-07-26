@@ -8,6 +8,7 @@ import type {
   HighDensityInfoBlockDesign,
 } from "@/lib/component-design-schema";
 import type { ImageFitMode, ImagePreset } from "@/lib/image-presentation";
+import type { PublicMediaHint } from "@/lib/media-layout";
 
 type ColumnContent = {
   body: ReactNode;
@@ -29,6 +30,7 @@ export type ThreeColumnSectionProps = {
   phaseDesign?: HighDensityInfoBlockDesign;
   rhythm?: "aligned" | "staggered";
   triptychDesign?: BreakdownTriptychDesign;
+  publicMediaHint?: PublicMediaHint;
   variant?: "evidence" | "phase" | "triptych";
 };
 
@@ -39,6 +41,7 @@ export default function ThreeColumnSection({
   phaseDesign,
   rhythm = "aligned",
   triptychDesign,
+  publicMediaHint,
   variant = "triptych",
 }: ThreeColumnSectionProps) {
   if (variant === "triptych") {
@@ -64,6 +67,7 @@ export default function ThreeColumnSection({
         col3Title={col3.title}
         design={triptychDesign}
         rhythm={rhythm}
+        publicMediaHint={publicMediaHint}
       />
     );
   }
@@ -100,6 +104,7 @@ export default function ThreeColumnSection({
         title: col3.title,
       }}
       rhythm={rhythm}
+      publicMediaHint={publicMediaHint}
     />
   );
 }

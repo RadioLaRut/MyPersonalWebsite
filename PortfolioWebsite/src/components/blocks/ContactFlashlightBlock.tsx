@@ -1,5 +1,5 @@
-"use client";
-import React, { type CSSProperties, type ReactNode, useEffect, useRef, useState } from "react";
+import React, { type CSSProperties, type ReactNode } from "react";
+import ContactFlashlightIsland from "./ContactFlashlightIsland";
 import Typography, {
     type TypographyAlignment,
 } from "@/components/common/Typography";
@@ -9,7 +9,7 @@ import {
     resolveComponentDesign,
 } from "@/lib/component-design-runtime";
 import { toPlainText } from "@/lib/editable-text";
-import { motion, useInputCapabilities } from "@/lib/motion";
+import { PUBLIC_COPY } from "@/lib/public-copy";
 
 export interface ContactFlashlightBlockProps extends ComponentDesignOverride<"ContactFlashlight"> {
     anchorId?: string;
@@ -45,9 +45,9 @@ export default function ContactFlashlightBlock({
     taglineSubAlign = "left",
     email,
     wechat,
-    copyLabel = "复制微信号",
-    copySuccessMessage = "微信号已复制",
-    copyErrorMessage = "复制失败，请手动选择微信号",
+    copyLabel = PUBLIC_COPY.contact.copyLabel,
+    copySuccessMessage = PUBLIC_COPY.contact.copySuccessMessage,
+    copyErrorMessage = PUBLIC_COPY.contact.copyErrorMessage,
     experienceHistory = [],
     creativeDirection = [],
     experienceContent,
@@ -56,127 +56,14 @@ export default function ContactFlashlightBlock({
     design: designOverride,
 }: ContactFlashlightBlockProps) {
     const design = resolveComponentDesign("ContactFlashlight", designOverride);
-    const containerRef = useRef<HTMLDivElement>(null);
-    const revealLayerRef = useRef<HTMLDivElement>(null);
-    const [detectedTouchDevice, setDetectedTouchDevice] = useState(false);
-    const [copyStatus, setCopyStatus] = useState<"idle" | "success" | "error">("idle");
-    const copyResetTimerRef = useRef<number | null>(null);
-    const { isTouchLike } = useInputCapabilities();
-    const disablesFlashlight = editMode || isTouchLike || detectedTouchDevice;
     const emailText = toPlainText(email) ?? "";
     const wechatText = toPlainText(wechat) ?? "";
-
-    useEffect(() => () => {
-        if (copyResetTimerRef.current !== null) {
-            window.clearTimeout(copyResetTimerRef.current);
-        }
-    }, []);
-
-    const copyWechat = async () => {
-        if (!wechatText || !navigator.clipboard) {
-            setCopyStatus("error");
-        } else {
-            try {
-                await navigator.clipboard.writeText(wechatText);
-                setCopyStatus("success");
-            } catch {
-                setCopyStatus("error");
-            }
-        }
-
-        if (copyResetTimerRef.current !== null) {
-            window.clearTimeout(copyResetTimerRef.current);
-        }
-        copyResetTimerRef.current = window.setTimeout(() => setCopyStatus("idle"), 3000);
-    };
-
-    useEffect(() => {
-        if (editMode) {
-            return;
-        }
-
-        const checkTouchDevice = () => {
-            const isCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
-            const isSmallScreen = window.innerWidth < 1024;
-            // 双保险策略：触摸设备或小屏幕都禁用探视灯效果
-            setDetectedTouchDevice(isCoarsePointer || isSmallScreen);
-        };
-        checkTouchDevice();
-        window.addEventListener("resize", checkTouchDevice);
-        return () => window.removeEventListener("resize", checkTouchDevice);
-    }, [editMode]);
-
-    useEffect(() => {
-        if (disablesFlashlight) {
-            return;
-        }
-
-        let lastClientX = window.innerWidth / 2;
-        let lastClientY = window.innerHeight / 2;
-        let frameId = 0;
-        let frameQueued = false;
-
-        const updatePosition = () => {
-            frameQueued = false;
-
-            if (!containerRef.current || !revealLayerRef.current) {
-                return;
-            }
-
-            const rect = containerRef.current.getBoundingClientRect();
-            const relativeX = lastClientX - rect.left;
-            const relativeY = lastClientY - rect.top;
-            const minX = -maskRadius;
-            const maxX = rect.width + maskRadius;
-            const minY = -maskRadius;
-            const maxY = rect.height + maskRadius;
-            const x = Math.min(Math.max(relativeX, minX), maxX);
-            const y = Math.min(Math.max(relativeY, minY), maxY);
-
-            revealLayerRef.current.style.setProperty("--flashlight-x", `${x}px`);
-            revealLayerRef.current.style.setProperty("--flashlight-y", `${y}px`);
-        };
-
-        const queueUpdate = () => {
-            if (frameQueued) {
-                return;
-            }
-
-            frameQueued = true;
-            frameId = window.requestAnimationFrame(updatePosition);
-        };
-
-        const handleMouseMove = (e: MouseEvent) => {
-            lastClientX = e.clientX;
-            lastClientY = e.clientY;
-            queueUpdate();
-        };
-
-        window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("scroll", queueUpdate, { passive: true });
-        window.addEventListener("resize", queueUpdate);
-
-        queueUpdate();
-
-        return () => {
-            window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("scroll", queueUpdate);
-            window.removeEventListener("resize", queueUpdate);
-
-            if (frameId) {
-                window.cancelAnimationFrame(frameId);
-            }
-        };
-    }, [disablesFlashlight, maskRadius]);
-
+    const maskImage =
+        `radial-gradient(${maskRadius}px circle at var(--flashlight-x, 50%) var(--flashlight-y, 50%), black 0%, black ${maskSmoothness}%, transparent 100%)`;
     const revealLayerStyle: CSSProperties = {
         color: lightTextColor,
-        WebkitMaskImage: disablesFlashlight
-            ? "none"
-            : `radial-gradient(${maskRadius}px circle at var(--flashlight-x, 50%) var(--flashlight-y, 50%), black 0%, black ${maskSmoothness}%, transparent 100%)`,
-        maskImage: disablesFlashlight
-            ? "none"
-            : `radial-gradient(${maskRadius}px circle at var(--flashlight-x, 50%) var(--flashlight-y, 50%), black 0%, black ${maskSmoothness}%, transparent 100%)`,
+        WebkitMaskImage: maskImage,
+        maskImage,
         WebkitMaskRepeat: "no-repeat",
         maskRepeat: "no-repeat",
     };
@@ -184,10 +71,8 @@ export default function ContactFlashlightBlock({
     const renderContentData = (interactive = true) => (
         <div className="grid-container w-full rhythm-section-spacious">
             <section className={`${getGridColumnClassName(design.heroBounds)} mb-16 grid rhythm-stack-3 lg:mb-32`}>
-                <motion.h1
-                    initial={editMode ? false : { opacity: 0, y: 20 }}
-                    animate={editMode ? undefined : { opacity: 1, y: 0 }}
-                    transition={editMode ? undefined : { duration: 1 }}
+                <h1
+                    data-contact-enter={editMode ? undefined : "0"}
                     className="mix-blend-normal"
                 >
                     <Typography
@@ -200,11 +85,9 @@ export default function ContactFlashlightBlock({
                     >
                         {name}
                     </Typography>
-                </motion.h1>
-                <motion.div
-                    initial={editMode ? false : { opacity: 0 }}
-                    animate={editMode ? undefined : { opacity: 1 }}
-                    transition={editMode ? undefined : { delay: 0.3, duration: 1 }}
+                </h1>
+                <div
+                    data-contact-enter={editMode ? undefined : "300"}
                     className="max-w-2xl text-left mix-blend-normal"
                 >
                     <Typography
@@ -229,13 +112,11 @@ export default function ContactFlashlightBlock({
                     >
                         {taglineSub}
                     </Typography>
-                </motion.div>
+                </div>
             </section>
 
-            <motion.section
-                initial={editMode ? false : { opacity: 0 }}
-                animate={editMode ? undefined : { opacity: 1 }}
-                transition={editMode ? undefined : { delay: 0.6, duration: 1 }}
+            <section
+                data-contact-enter={editMode ? undefined : "600"}
                 className={`${getGridColumnClassName(design.detailBounds)} grid grid-cols-1 gap-10 border-t border-current text-left rhythm-divider-top lg:grid-cols-2 lg:gap-16`}
             >
                 <div className="rhythm-stack-4">
@@ -323,12 +204,10 @@ export default function ContactFlashlightBlock({
                         )}
                     </div>
                 </div>
-            </motion.section>
+            </section>
 
-            <motion.section
-                initial={editMode ? false : { opacity: 0 }}
-                animate={editMode ? undefined : { opacity: 1 }}
-                transition={editMode ? undefined : { delay: 0.9, duration: 1 }}
+            <section
+                data-contact-enter={editMode ? undefined : "900"}
                 className={`${getGridColumnClassName(design.contactBounds)} mt-16 grid grid-cols-1 items-start gap-12 border-t border-current text-left rhythm-divider-top lg:mt-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-20`}
             >
                 <div className="rhythm-stack-3">
@@ -344,10 +223,14 @@ export default function ContactFlashlightBlock({
                     </Typography>
                     <button
                         type="button"
-                        onClick={copyWechat}
                         disabled={!wechatText || editMode || !interactive}
+                        data-contact-copy={!editMode && interactive ? "" : undefined}
                         className="copyable-contact group grid w-fit max-w-full gap-2 text-left mix-blend-normal focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-current disabled:cursor-text"
-                        aria-label={wechatText ? `复制微信号 ${wechatText}` : "微信号不可复制"}
+                        aria-label={
+                          wechatText
+                            ? `${PUBLIC_COPY.contact.copyLabel} ${wechatText}`
+                            : PUBLIC_COPY.contact.unavailableLabel
+                        }
                     >
                         <Typography
                             as="span"
@@ -367,19 +250,18 @@ export default function ContactFlashlightBlock({
                             wrapPolicy="label"
                             className="opacity-50 transition-opacity group-hover:opacity-80 group-focus-visible:opacity-80"
                         >
-                            {copyStatus === "success"
-                                ? copySuccessMessage
-                                : copyStatus === "error"
-                                  ? copyErrorMessage
-                                  : copyLabel}
+                            <span data-contact-copy-feedback={!editMode && interactive ? "" : undefined}>
+                                {copyLabel}
+                            </span>
                         </Typography>
                     </button>
-                    <span className="sr-only" role="status" aria-live="polite">
-                        {copyStatus === "success"
-                            ? copySuccessMessage
-                            : copyStatus === "error"
-                              ? copyErrorMessage
-                              : ""}
+                    <span
+                        className="sr-only"
+                        role="status"
+                        aria-live="polite"
+                        data-contact-copy-live={!editMode && interactive ? "" : undefined}
+                    >
+                        {""}
                     </span>
                 </div>
 
@@ -424,7 +306,7 @@ export default function ContactFlashlightBlock({
                         </Typography>
                     )}
                 </div>
-            </motion.section>
+            </section>
         </div>
     );
 
@@ -432,8 +314,9 @@ export default function ContactFlashlightBlock({
         <div
             id={anchorId || undefined}
             className="relative w-full scroll-mt-24 overflow-hidden selection:bg-white selection:text-black"
+            data-contact-flashlight={editMode ? undefined : ""}
         >
-            <div ref={containerRef} className="relative w-full mx-auto pb-16">
+            <div className="relative w-full mx-auto pb-16">
                 {editMode ? (
                     <div
                         className="z-10 transition-colors duration-300"
@@ -453,16 +336,26 @@ export default function ContactFlashlightBlock({
 
                 {/* Reveal Layer (White Text masked by cursor) */}
                 <div
-                    ref={revealLayerRef}
                     className="absolute inset-0 z-20 pointer-events-none drop-shadow-[0_0_15px_rgba(255,255,255,0.45)]"
                     aria-hidden="true"
                     style={revealLayerStyle}
+                    data-contact-reveal-layer=""
+                    data-mask-image={maskImage}
                 >
                     {renderContentData(false)}
                 </div>
                     </>
                 )}
             </div>
+            {!editMode ? (
+                <ContactFlashlightIsland
+                    copyErrorMessage={copyErrorMessage}
+                    copyLabel={toPlainText(copyLabel) ?? PUBLIC_COPY.contact.copyLabel}
+                    copySuccessMessage={copySuccessMessage}
+                    maskRadius={maskRadius}
+                    wechat={wechatText}
+                />
+            ) : null}
         </div>
     );
 }

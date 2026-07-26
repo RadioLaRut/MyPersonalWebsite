@@ -1,7 +1,10 @@
 import { notFound, redirect } from "next/navigation";
 
-import { contentRepository } from "@/lib/content-repository";
 import { createPageMetadata } from "@/lib/page-metadata";
+import {
+  readPublicPage,
+  readPublicProjectCatalog,
+} from "@/lib/public-content-service";
 import { renderPuckPage } from "@/lib/render-puck-page";
 import { loadWorkDetailPublicRenderer } from "@/puck/generated/work-detail-public-renderer-loaders";
 
@@ -14,7 +17,7 @@ type WorkDetailPageProps = {
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  const catalog = await contentRepository.readProjectCatalog();
+  const catalog = await readPublicProjectCatalog();
   return catalog.entries
     .filter((project) => project.id !== "lighting-portfolio")
     .flatMap((project) => [project.id, ...project.aliases])
@@ -23,10 +26,10 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: WorkDetailPageProps) {
   const { id } = await params;
-  const catalog = await contentRepository.readProjectCatalog();
+  const catalog = await readPublicProjectCatalog();
   const canonicalId = catalog.getCanonicalId(id);
   const [document, project] = await Promise.all([
-    contentRepository.readPage(["works", canonicalId]),
+    readPublicPage(`works/${canonicalId}`),
     Promise.resolve(catalog.resolveDestination(canonicalId)),
   ]);
 
@@ -43,7 +46,7 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
     notFound();
   }
 
-  const catalog = await contentRepository.readProjectCatalog();
+  const catalog = await readPublicProjectCatalog();
   const canonicalId = catalog.getCanonicalId(id);
   if (catalog.getAliasTarget(id)) {
     redirect(`/works/${canonicalId}`);

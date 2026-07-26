@@ -3,10 +3,17 @@ import path from "node:path";
 import zlib from "node:zlib";
 
 export const BUILD_REPORT_LIMITS = Object.freeze({
-  manifestBytes: 8 * 1024 * 1024,
+  assetBytes: 64 * 1024 * 1024,
   chunksPerRoute: 512,
   chunkBytes: 32 * 1024 * 1024,
+  manifestBytes: 8 * 1024 * 1024,
   routeChunkBytes: 256 * 1024 * 1024,
+});
+
+export const PUBLIC_PERFORMANCE_BUDGETS = Object.freeze({
+  fontPreloadBytes: 2.5 * 1024 * 1024,
+  fontPreloadCount: 4,
+  imagePreloadCount: 1,
 });
 
 export class BuildReportCompatibilityError extends Error {
@@ -30,10 +37,11 @@ function readFileWithLimit(filePath, maxBytes, label) {
     stat = fs.statSync(filePath);
   } catch (error) {
     throw new BuildReportCompatibilityError(
-      `${label} is missing or unreadable: ${error instanceof Error ? error.message : "unknown error"}`,
+      `${label} is missing or unreadable: ${
+        error instanceof Error ? error.message : "unknown error"
+      }`,
     );
   }
-
   if (!stat.isFile()) {
     throw new BuildReportCompatibilityError(`${label} must be a regular file`);
   }
@@ -42,7 +50,6 @@ function readFileWithLimit(filePath, maxBytes, label) {
       `${label} exceeds the ${maxBytes}-byte limit`,
     );
   }
-
   const content = fs.readFileSync(filePath);
   if (content.length > maxBytes) {
     throw new BuildReportCompatibilityError(
@@ -68,7 +75,10 @@ export function parseJsonManifest(buffer, label = "JSON manifest") {
 const CLIENT_REFERENCE_MANIFEST_PATTERN =
   /^\s*globalThis\.__RSC_MANIFEST\s*=\s*\(\s*globalThis\.__RSC_MANIFEST\s*\|\|\s*\{\s*\}\s*\)\s*;\s*globalThis\.__RSC_MANIFEST\[\s*("(?:\\.|[^"\\])*")\s*\]\s*=\s*(\{[\s\S]*\})\s*;?\s*$/u;
 
-export function parseClientReferenceManifest(buffer, label = "Client Reference Manifest") {
+export function parseClientReferenceManifest(
+  buffer,
+  label = "Client Reference Manifest",
+) {
   const source = buffer.toString("utf8");
   const match = CLIENT_REFERENCE_MANIFEST_PATTERN.exec(source);
   if (!match) {
@@ -87,14 +97,13 @@ export function parseClientReferenceManifest(buffer, label = "Client Reference M
       `${label} assignment must use a JSON string key and JSON object value`,
     );
   }
-
-  if (typeof manifestKey !== "string" || !isPlainRecord(manifest)) {
+  if (
+    typeof manifestKey !== "string" ||
+    !isPlainRecord(manifest) ||
+    !isPlainRecord(manifest.clientModules)
+  ) {
     throw new BuildReportCompatibilityError(`${label} has an invalid assignment shape`);
   }
-  if (!isPlainRecord(manifest.clientModules)) {
-    throw new BuildReportCompatibilityError(`${label} is missing clientModules`);
-  }
-
   return { manifest, manifestKey };
 }
 
@@ -108,68 +117,88 @@ function isContainedPath(rootPath, targetPath) {
   );
 }
 
-function validateChunkPath(relativePath) {
+function normalizeEncodedBrackets(relativePath) {
+  const normalizedPath = relativePath
+    .replaceAll(/%5B/giu, "[")
+    .replaceAll(/%5D/giu, "]");
+  if (normalizedPath.includes("%")) {
+    throw new BuildReportCompatibilityError(
+      `Unsupported percent-encoding in asset path: ${relativePath}`,
+    );
+  }
+  return normalizedPath;
+}
+
+function validateNextAssetPath(relativePath, extensions) {
   if (
     typeof relativePath !== "string" ||
     relativePath.includes("\\") ||
     path.posix.isAbsolute(relativePath) ||
     path.win32.isAbsolute(relativePath)
   ) {
-    throw new BuildReportCompatibilityError("Chunk paths must be forward relative paths");
-  }
-
-  const normalizedPath = relativePath
-    .replaceAll(/%5B/giu, "[")
-    .replaceAll(/%5D/giu, "]");
-  if (normalizedPath.includes("%")) {
     throw new BuildReportCompatibilityError(
-      `Unsupported percent-encoding in chunk path: ${relativePath}`,
+      "Next asset paths must be forward relative paths",
     );
   }
-
+  const normalizedPath = normalizeEncodedBrackets(relativePath);
   const segments = normalizedPath.split("/");
   if (
     segments.length < 3 ||
     segments[0] !== "static" ||
-    segments[1] !== "chunks" ||
-    segments.some((segment) => segment.length === 0 || segment === "." || segment === "..") ||
-    !normalizedPath.endsWith(".js")
+    segments.some(
+      (segment) =>
+        segment.length === 0 || segment === "." || segment === "..",
+    ) ||
+    !extensions.some((extension) => normalizedPath.endsWith(extension))
   ) {
     throw new BuildReportCompatibilityError(
-      `Unsupported chunk path: ${relativePath}`,
+      `Unsupported Next asset path: ${relativePath}`,
     );
   }
   return normalizedPath;
 }
 
-export function resolveChunkFile(nextRoot, relativePath, limits = {}) {
-  const effectiveLimits = withLimits(limits);
-  const normalizedPath = validateChunkPath(relativePath);
-
-  const rootPath = path.resolve(nextRoot);
-  const resolvedPath = path.resolve(rootPath, ...normalizedPath.split("/"));
-  if (!isContainedPath(rootPath, resolvedPath)) {
-    throw new BuildReportCompatibilityError(`Chunk escapes .next: ${relativePath}`);
+function resolveContainedFile(rootPath, relativePath, maxBytes, label) {
+  const absoluteRoot = path.resolve(rootPath);
+  const resolvedPath = path.resolve(
+    absoluteRoot,
+    ...relativePath.split("/"),
+  );
+  if (!isContainedPath(absoluteRoot, resolvedPath)) {
+    throw new BuildReportCompatibilityError(`${label} escapes its root`);
   }
 
   let realRoot;
   let realTarget;
   try {
-    realRoot = fs.realpathSync(rootPath);
+    realRoot = fs.realpathSync(absoluteRoot);
     realTarget = fs.realpathSync(resolvedPath);
   } catch (error) {
     throw new BuildReportCompatibilityError(
-      `Chunk is missing or unreadable (${relativePath}): ${
+      `${label} is missing or unreadable: ${
         error instanceof Error ? error.message : "unknown error"
       }`,
     );
   }
   if (!isContainedPath(realRoot, realTarget)) {
-    throw new BuildReportCompatibilityError(`Chunk resolves outside .next: ${relativePath}`);
+    throw new BuildReportCompatibilityError(`${label} resolves outside its root`);
   }
+  return {
+    content: readFileWithLimit(realTarget, maxBytes, label),
+    resolvedPath: realTarget,
+  };
+}
 
-  const content = readFileWithLimit(realTarget, effectiveLimits.chunkBytes, `Chunk ${relativePath}`);
-  return { content, normalizedPath, resolvedPath: realTarget };
+export function resolveChunkFile(nextRoot, relativePath, limits = {}) {
+  const effectiveLimits = withLimits(limits);
+  const normalizedPath = validateNextAssetPath(relativePath, [".js"]);
+  const result = resolveContainedFile(
+    nextRoot,
+    normalizedPath,
+    effectiveLimits.chunkBytes,
+    `Chunk ${relativePath}`,
+  );
+  return { ...result, normalizedPath };
 }
 
 function validateManifestKey(manifestKey) {
@@ -188,15 +217,9 @@ function validateManifestKey(manifestKey) {
 
 function clientReferenceManifestPath(nextRoot, manifestKey) {
   validateManifestKey(manifestKey);
-  const relativePath = `server/app/${manifestKey.slice(1)}_client-reference-manifest.js`;
-  const rootPath = path.resolve(nextRoot);
-  const resolvedPath = path.resolve(rootPath, ...relativePath.split("/"));
-  if (!isContainedPath(rootPath, resolvedPath)) {
-    throw new BuildReportCompatibilityError(
-      `Client Reference Manifest escapes .next: ${manifestKey}`,
-    );
-  }
-  return resolvedPath;
+  const relativePath =
+    `server/app/${manifestKey.slice(1)}_client-reference-manifest.js`;
+  return path.resolve(nextRoot, ...relativePath.split("/"));
 }
 
 export function toPublicRoute(manifestKey) {
@@ -207,25 +230,147 @@ export function toPublicRoute(manifestKey) {
 }
 
 function readJsonManifest(nextRoot, relativePath, limits, label) {
-  const manifestPath = path.resolve(nextRoot, ...relativePath.split("/"));
   return parseJsonManifest(
-    readFileWithLimit(manifestPath, limits.manifestBytes, label),
+    readFileWithLimit(
+      path.resolve(nextRoot, ...relativePath.split("/")),
+      limits.manifestBytes,
+      label,
+    ),
     label,
   );
 }
 
-function collectClientComponents(manifest) {
-  return [...new Set(
-    Object.keys(manifest.clientModules)
-      .filter((moduleName) => moduleName.includes("[project]/src/components/"))
-      .map((moduleName) => moduleName
-        .replace(/^.*src\/components\//u, "")
-        .replace(/ <module evaluation>$/u, "")),
-  )].sort();
+function parseTagAttributes(tag) {
+  const attributes = {};
+  const pattern =
+    /([A-Za-z_:][A-Za-z0-9_:.-]*)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/gu;
+  for (const match of tag.matchAll(pattern)) {
+    attributes[match[1].toLowerCase()] =
+      match[2] ?? match[3] ?? match[4] ?? "";
+  }
+  return attributes;
 }
 
-function collectClientChunkPaths(manifest, manifestKey) {
-  const chunkPaths = [];
+export function extractHtmlResourceSet(html) {
+  const scripts = [];
+  const styles = [];
+  const fontPreloads = [];
+  const imagePreloads = [];
+
+  for (const match of html.matchAll(/<script\b[^>]*>/giu)) {
+    const attributes = parseTagAttributes(match[0]);
+    if (attributes.src) scripts.push(attributes.src);
+  }
+  for (const match of html.matchAll(/<link\b[^>]*>/giu)) {
+    const attributes = parseTagAttributes(match[0]);
+    const relation = attributes.rel?.toLowerCase();
+    const assetType = attributes.as?.toLowerCase();
+    if (relation === "stylesheet" && attributes.href) {
+      styles.push(attributes.href);
+    } else if (relation === "preload" && assetType === "font" && attributes.href) {
+      fontPreloads.push({
+        href: attributes.href,
+        type: attributes.type ?? null,
+      });
+    } else if (relation === "preload" && assetType === "image") {
+      imagePreloads.push({
+        href: attributes.href ?? null,
+        imageSizes: attributes.imagesizes ?? null,
+        imageSrcSet: attributes.imagesrcset ?? null,
+      });
+    }
+  }
+
+  const uniqueByJson = (items) => [
+    ...new Map(items.map((item) => [JSON.stringify(item), item])).values(),
+  ];
+  return {
+    fontPreloads: uniqueByJson(fontPreloads),
+    imagePreloads: uniqueByJson(imagePreloads),
+    scripts: [...new Set(scripts)],
+    styles: [...new Set(styles)],
+  };
+}
+
+function toNextRelativeAssetPath(url, extensions) {
+  const pathname = url.split(/[?#]/u, 1)[0];
+  if (!pathname.startsWith("/_next/")) {
+    throw new BuildReportCompatibilityError(`Unsupported Next asset URL: ${url}`);
+  }
+  return validateNextAssetPath(pathname.slice("/_next/".length), extensions);
+}
+
+function summarizeBuffer(buffer, resourcePath) {
+  return {
+    gzipBytes: zlib.gzipSync(buffer).length,
+    path: resourcePath,
+    rawBytes: buffer.length,
+  };
+}
+
+function summarizeNextAssets(nextRoot, urls, extensions, limits) {
+  return [...new Set(urls)].map((url) => {
+    const relativePath = toNextRelativeAssetPath(url, extensions);
+    const maxBytes = extensions.includes(".js")
+      ? limits.chunkBytes
+      : limits.assetBytes;
+    const { content } = resolveContainedFile(
+      nextRoot,
+      relativePath,
+      maxBytes,
+      `Asset ${url}`,
+    );
+    return summarizeBuffer(content, relativePath);
+  });
+}
+
+function summarizeFontPreloads(nextRoot, fontPreloads, limits) {
+  const projectRoot = path.dirname(path.resolve(nextRoot));
+  return fontPreloads.map((font) => {
+    let root;
+    let relativePath;
+    if (font.href.startsWith("/_next/")) {
+      root = nextRoot;
+      relativePath = validateNextAssetPath(
+        font.href.slice("/_next/".length),
+        [".otf", ".ttf", ".woff", ".woff2"],
+      );
+    } else if (font.href.startsWith("/fonts/")) {
+      root = path.join(projectRoot, "public");
+      relativePath = font.href.slice(1);
+      if (
+        relativePath.includes("\\") ||
+        relativePath.split("/").some(
+          (segment) =>
+            segment.length === 0 || segment === "." || segment === "..",
+        ) ||
+        !/\.(?:otf|ttf|woff2?)$/iu.test(relativePath)
+      ) {
+        throw new BuildReportCompatibilityError(
+          `Unsupported public font URL: ${font.href}`,
+        );
+      }
+    } else {
+      throw new BuildReportCompatibilityError(
+        `Unsupported font preload URL: ${font.href}`,
+      );
+    }
+    const { content } = resolveContainedFile(
+      root,
+      relativePath,
+      limits.assetBytes,
+      `Font ${font.href}`,
+    );
+    return {
+      ...summarizeBuffer(content, relativePath),
+      href: font.href,
+      type: font.type,
+    };
+  });
+}
+
+function collectModuleChunkPaths(manifest, manifestKey) {
+  const pathsByModule = new Map();
   for (const [moduleName, moduleEntry] of Object.entries(manifest.clientModules)) {
     if (!isPlainRecord(moduleEntry) || !Array.isArray(moduleEntry.chunks)) {
       throw new BuildReportCompatibilityError(
@@ -238,6 +383,7 @@ function collectClientChunkPaths(manifest, manifestKey) {
       );
     }
 
+    const chunkPaths = [];
     for (let index = 0; index < moduleEntry.chunks.length; index += 2) {
       const chunkId = moduleEntry.chunks[index];
       const chunkPath = moduleEntry.chunks[index + 1];
@@ -250,62 +396,223 @@ function collectClientChunkPaths(manifest, manifestKey) {
           `${manifestKey} client module ${moduleName} has an invalid chunk pair`,
         );
       }
-      chunkPaths.push(chunkPath);
+      chunkPaths.push(validateNextAssetPath(chunkPath, [".js"]));
     }
+    pathsByModule.set(moduleName, chunkPaths);
   }
-  return chunkPaths;
+  return pathsByModule;
 }
 
-function readRouteReport(nextRoot, manifestKey, sharedChunkPaths, limits) {
-  validateManifestKey(manifestKey);
+function collectInitialClientComponents(manifest, manifestKey, initialChunkPaths) {
+  const chunks = new Set(initialChunkPaths);
+  const pathsByModule = collectModuleChunkPaths(manifest, manifestKey);
+  return [...new Set(
+    [...pathsByModule.entries()]
+      .filter(([moduleName, moduleChunks]) => (
+        /[/\\]src[/\\]components[/\\]/u.test(moduleName) &&
+        moduleChunks.some((chunkPath) => chunks.has(chunkPath))
+      ))
+      .map(([moduleName]) => moduleName
+        .replace(/^.*[/\\]src[/\\]components[/\\]/u, "")
+        .replace(/ <module evaluation>$/u, "")
+        .replaceAll("\\", "/")),
+  )].sort();
+}
 
-  const clientManifestPath = clientReferenceManifestPath(nextRoot, manifestKey);
-  const parsedClientManifest = parseClientReferenceManifest(
+function routeStemFromDataRoute(dataRoute) {
+  if (
+    typeof dataRoute !== "string" ||
+    !dataRoute.startsWith("/") ||
+    !dataRoute.endsWith(".rsc")
+  ) {
+    throw new BuildReportCompatibilityError(
+      `Public prerender route has an invalid dataRoute: ${String(dataRoute)}`,
+    );
+  }
+  const stem = dataRoute.slice(1, -".rsc".length);
+  if (
+    stem.includes("\\") ||
+    stem.split("/").some(
+      (segment) =>
+        segment.length === 0 || segment === "." || segment === "..",
+    )
+  ) {
+    throw new BuildReportCompatibilityError(
+      `Public prerender dataRoute is unsafe: ${dataRoute}`,
+    );
+  }
+  return stem;
+}
+
+function readClientManifest(nextRoot, manifestKey, limits) {
+  const label = `Client Reference Manifest for ${manifestKey}`;
+  const parsed = parseClientReferenceManifest(
     readFileWithLimit(
-      clientManifestPath,
+      clientReferenceManifestPath(nextRoot, manifestKey),
       limits.manifestBytes,
-      `Client Reference Manifest for ${manifestKey}`,
+      label,
     ),
-    `Client Reference Manifest for ${manifestKey}`,
+    label,
   );
-  if (parsedClientManifest.manifestKey !== manifestKey) {
+  if (parsed.manifestKey !== manifestKey) {
     throw new BuildReportCompatibilityError(
       `Client Reference Manifest key mismatch for ${manifestKey}`,
     );
   }
-  const chunkPaths = [...new Set([
-    ...sharedChunkPaths,
-    ...collectClientChunkPaths(parsedClientManifest.manifest, manifestKey),
-  ].map(validateChunkPath))];
-  if (chunkPaths.length > limits.chunksPerRoute) {
+  return parsed.manifest;
+}
+
+function addSummaries(summaries, key) {
+  return summaries.reduce((total, summary) => total + summary[key], 0);
+}
+
+function readConcreteRouteReport({
+  concreteRoute,
+  manifest,
+  manifestKey,
+  nextRoot,
+  prerenderEntry,
+  limits,
+}) {
+  const stem = routeStemFromDataRoute(prerenderEntry.dataRoute);
+  const htmlBuffer = readFileWithLimit(
+    path.join(nextRoot, "server", "app", `${stem}.html`),
+    limits.assetBytes,
+    `HTML for ${concreteRoute}`,
+  );
+  const rscBuffer = readFileWithLimit(
+    path.join(nextRoot, "server", "app", `${stem}.rsc`),
+    limits.assetBytes,
+    `RSC for ${concreteRoute}`,
+  );
+  const htmlResources = extractHtmlResourceSet(htmlBuffer.toString("utf8"));
+  const scripts = summarizeNextAssets(
+    nextRoot,
+    htmlResources.scripts.filter((url) => url.endsWith(".js")),
+    [".js"],
+    limits,
+  );
+  if (scripts.length > limits.chunksPerRoute) {
     throw new BuildReportCompatibilityError(
-      `${manifestKey} must list at most ${limits.chunksPerRoute} chunks`,
+      `${concreteRoute} must list at most ${limits.chunksPerRoute} script chunks`,
     );
   }
-
-  let routeRawBytes = 0;
-  const entryChunks = chunkPaths.map((relativePath) => {
-    const { content, normalizedPath } = resolveChunkFile(nextRoot, relativePath, limits);
-    routeRawBytes += content.length;
-    if (routeRawBytes > limits.routeChunkBytes) {
-      throw new BuildReportCompatibilityError(
-        `${manifestKey} exceeds the ${limits.routeChunkBytes}-byte route chunk limit`,
-      );
-    }
-    return {
-      gzipBytes: zlib.gzipSync(content).length,
-      path: normalizedPath,
-      rawBytes: content.length,
-    };
-  });
+  const scriptRawBytes = addSummaries(scripts, "rawBytes");
+  if (scriptRawBytes > limits.routeChunkBytes) {
+    throw new BuildReportCompatibilityError(
+      `${concreteRoute} exceeds the ${limits.routeChunkBytes}-byte route chunk limit`,
+    );
+  }
+  const styles = summarizeNextAssets(
+    nextRoot,
+    htmlResources.styles,
+    [".css"],
+    limits,
+  );
+  const fontPreloads = summarizeFontPreloads(
+    nextRoot,
+    htmlResources.fontPreloads,
+    limits,
+  );
+  const html = summarizeBuffer(htmlBuffer, `server/app/${stem}.html`);
+  const rsc = summarizeBuffer(rscBuffer, `server/app/${stem}.rsc`);
+  const fontPreloadBytes = addSummaries(fontPreloads, "rawBytes");
+  const jsGzipBytes = addSummaries(scripts, "gzipBytes");
+  const cssGzipBytes = addSummaries(styles, "gzipBytes");
+  const nonFontInitialGzipBytes =
+    html.gzipBytes + jsGzipBytes + cssGzipBytes;
+  const initialGzipBytes =
+    nonFontInitialGzipBytes + addSummaries(fontPreloads, "gzipBytes");
+  const initialChunkPaths = scripts.map((script) => script.path);
 
   return {
-    clientComponents: collectClientComponents(parsedClientManifest.manifest),
-    entryChunks,
-    gzipBytes: entryChunks.reduce((total, chunk) => total + chunk.gzipBytes, 0),
-    rawBytes: routeRawBytes,
-    route: toPublicRoute(manifestKey),
+    clientComponents: collectInitialClientComponents(
+      manifest,
+      manifestKey,
+      initialChunkPaths,
+    ),
+    css: {
+      files: styles,
+      gzipBytes: cssGzipBytes,
+      rawBytes: addSummaries(styles, "rawBytes"),
+    },
+    entryChunks: scripts,
+    fonts: {
+      files: fontPreloads,
+      preloadBytes: fontPreloadBytes,
+      preloadCount: fontPreloads.length,
+    },
+    gzipBytes: jsGzipBytes,
+    html,
+    images: {
+      preloadCount: htmlResources.imagePreloads.length,
+      preloads: htmlResources.imagePreloads,
+    },
+    initial: {
+      gzipBytes: initialGzipBytes,
+      nonFontGzipBytes: nonFontInitialGzipBytes,
+    },
+    js: {
+      files: scripts,
+      gzipBytes: jsGzipBytes,
+      rawBytes: scriptRawBytes,
+    },
+    performanceBudget: {
+      fontPreloadBytes: {
+        actual: fontPreloadBytes,
+        limit: PUBLIC_PERFORMANCE_BUDGETS.fontPreloadBytes,
+        pass: fontPreloadBytes <= PUBLIC_PERFORMANCE_BUDGETS.fontPreloadBytes,
+      },
+      fontPreloadCount: {
+        actual: fontPreloads.length,
+        limit: PUBLIC_PERFORMANCE_BUDGETS.fontPreloadCount,
+        pass: fontPreloads.length <= PUBLIC_PERFORMANCE_BUDGETS.fontPreloadCount,
+      },
+      imagePreloadCount: {
+        actual: htmlResources.imagePreloads.length,
+        limit: PUBLIC_PERFORMANCE_BUDGETS.imagePreloadCount,
+        pass:
+          htmlResources.imagePreloads.length <=
+          PUBLIC_PERFORMANCE_BUDGETS.imagePreloadCount,
+      },
+    },
+    rawBytes: scriptRawBytes,
+    routePattern: toPublicRoute(manifestKey),
+    rsc,
   };
+}
+
+function assertProxyTraceDoesNotShipContent(nextRoot, limits) {
+  const proxyTracePath = path.resolve(
+    nextRoot,
+    "server",
+    "middleware.js.nft.json",
+  );
+  const proxyTrace = fs.existsSync(proxyTracePath)
+    ? parseJsonManifest(
+      readFileWithLimit(
+        proxyTracePath,
+        limits.manifestBytes,
+        "Proxy trace",
+      ),
+      "Proxy trace",
+    )
+    : { files: [] };
+  const files = Array.isArray(proxyTrace.files) ? proxyTrace.files : [];
+  if (files.some((filePath) => typeof filePath !== "string")) {
+    throw new BuildReportCompatibilityError("Proxy trace files must be strings");
+  }
+  const tracedContentFiles = files.filter((filePath) =>
+    /(^|\/)(?:content|public)\//u.test(filePath.replaceAll("\\", "/")),
+  );
+  if (tracedContentFiles.length > 0) {
+    throw new BuildReportCompatibilityError(
+      `Proxy trace must not include runtime content or public assets: ${
+        tracedContentFiles.slice(0, 5).join(", ")
+      }`,
+    );
+  }
+  return files.length;
 }
 
 export function createBuildReport({
@@ -320,33 +627,6 @@ export function createBuildReport({
     limits,
     "App Paths Manifest",
   );
-  const buildManifest = readJsonManifest(
-    nextRoot,
-    "build-manifest.json",
-    limits,
-    "Build Manifest",
-  );
-  if (
-    !Array.isArray(buildManifest.rootMainFiles) ||
-    buildManifest.rootMainFiles.some((chunkPath) => typeof chunkPath !== "string")
-  ) {
-    throw new BuildReportCompatibilityError("Build Manifest is missing rootMainFiles");
-  }
-  const sharedChunkPaths = [...new Set(buildManifest.rootMainFiles)];
-
-  const routeReports = Object.fromEntries(
-    Object.keys(appPathsManifest)
-      .filter((manifestKey) => manifestKey.startsWith("/(site)/") && manifestKey.endsWith("/page"))
-      .map((manifestKey) => readRouteReport(
-        nextRoot,
-        manifestKey,
-        sharedChunkPaths,
-        limits,
-      ))
-      .sort((left, right) => left.route.localeCompare(right.route))
-      .map(({ route, ...report }) => [route, report]),
-  );
-
   const prerenderManifest = readJsonManifest(
     nextRoot,
     "prerender-manifest.json",
@@ -354,41 +634,74 @@ export function createBuildReport({
     "Prerender Manifest",
   );
   if (!isPlainRecord(prerenderManifest.routes)) {
-    throw new BuildReportCompatibilityError("Prerender Manifest is missing routes");
-  }
-
-  const proxyTracePath = path.resolve(nextRoot, "server", "middleware.js.nft.json");
-  const proxyTrace = fs.existsSync(proxyTracePath)
-    ? parseJsonManifest(
-      readFileWithLimit(proxyTracePath, limits.manifestBytes, "Proxy trace"),
-      "Proxy trace",
-    )
-    : { files: [] };
-  const proxyTraceFiles = Array.isArray(proxyTrace.files) ? proxyTrace.files : [];
-  if (proxyTraceFiles.some((filePath) => typeof filePath !== "string")) {
-    throw new BuildReportCompatibilityError("Proxy trace files must be strings");
-  }
-  const tracedContentFiles = proxyTraceFiles.filter((filePath) => (
-    /(^|\/)(?:content|public)\//u.test(filePath.replaceAll("\\", "/"))
-  ));
-  if (tracedContentFiles.length > 0) {
     throw new BuildReportCompatibilityError(
-      `Proxy trace must not include runtime content or public assets: ${
-        tracedContentFiles.slice(0, 5).join(", ")
-      }`,
+      "Prerender Manifest is missing routes",
     );
   }
 
+  const sourceRouteToManifestKey = new Map(
+    Object.keys(appPathsManifest)
+      .filter(
+        (manifestKey) =>
+          manifestKey.startsWith("/(site)/") &&
+          manifestKey.endsWith("/page"),
+      )
+      .map((manifestKey) => [toPublicRoute(manifestKey), manifestKey]),
+  );
+  const manifestCache = new Map();
+  const routeReports = {};
+
+  for (const [concreteRoute, prerenderEntry] of Object.entries(
+    prerenderManifest.routes,
+  ).sort(([left], [right]) => left.localeCompare(right))) {
+    if (!isPlainRecord(prerenderEntry)) continue;
+    const sourceRoute =
+      typeof prerenderEntry.srcRoute === "string"
+        ? prerenderEntry.srcRoute
+        : concreteRoute;
+    const manifestKey = sourceRouteToManifestKey.get(sourceRoute);
+    if (!manifestKey || prerenderEntry.dataRoute === null) continue;
+    let manifest = manifestCache.get(manifestKey);
+    if (!manifest) {
+      manifest = readClientManifest(nextRoot, manifestKey, limits);
+      manifestCache.set(manifestKey, manifest);
+    }
+    routeReports[concreteRoute] = readConcreteRouteReport({
+      concreteRoute,
+      manifest,
+      manifestKey,
+      nextRoot,
+      prerenderEntry,
+      limits,
+    });
+  }
+
+  const budgetFailures = Object.entries(routeReports).flatMap(
+    ([route, report]) =>
+      Object.entries(report.performanceBudget)
+        .filter(([, result]) => !result.pass)
+        .map(([budget, result]) => ({
+          actual: result.actual,
+          budget,
+          limit: result.limit,
+          route,
+        })),
+  );
+
   return {
-    schemaVersion: 2,
+    budgetFailures,
     generatedAt,
     prerenderedRoutes: Object.keys(prerenderManifest.routes).sort(),
-    proxyTraceFileCount: proxyTraceFiles.length,
+    proxyTraceFileCount: assertProxyTraceDoesNotShipContent(nextRoot, limits),
     routes: routeReports,
+    schemaVersion: 3,
   };
 }
 
-export function writeBuildReport(report, nextRoot = path.resolve(process.cwd(), ".next")) {
+export function writeBuildReport(
+  report,
+  nextRoot = path.resolve(process.cwd(), ".next"),
+) {
   fs.writeFileSync(
     path.join(nextRoot, "build-report.json"),
     `${JSON.stringify(report, null, 2)}\n`,

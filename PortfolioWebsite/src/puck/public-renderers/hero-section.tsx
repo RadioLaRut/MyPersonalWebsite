@@ -17,6 +17,7 @@ export const render: ComponentConfig["render"] = ({
   mobileImageFocalX,
   mobileImageFocalY,
   positioning,
+  publicMediaHint,
   primaryCtaHref,
   primaryCtaLabel,
   secondaryCtaHref,
@@ -36,6 +37,7 @@ export const render: ComponentConfig["render"] = ({
     mobileImageFocalX={mobileImageFocalX}
     mobileImageFocalY={mobileImageFocalY}
     positioning={positioning}
+    publicMediaHint={publicMediaHint}
     primaryCtaHref={toSafePuckHref(primaryCtaHref)}
     primaryCtaLabel={primaryCtaLabel}
     secondaryCtaHref={toSafePuckHref(secondaryCtaHref)}

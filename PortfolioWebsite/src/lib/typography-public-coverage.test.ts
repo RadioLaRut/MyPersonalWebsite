@@ -341,3 +341,34 @@ test("typography margin reset stays below alignment utility specificity", () => 
   assert.match(globalsCss, /:where\(\.typography-root\)\s*\{\s*margin:\s*0;/);
   assert.doesNotMatch(globalsCss, /(?:^|\n)\.typography-root\s*\{\s*margin:\s*0;/);
 });
+
+test("route font scopes resolve every Typography alias beside their font sources", () => {
+  const globalsCss = fs.readFileSync(
+    path.resolve(process.cwd(), "src/app/globals.css"),
+    "utf8",
+  );
+  const scopeBlock = globalsCss.match(/\[data-font-scope\]\s*\{([^}]*)\}/)?.[1];
+
+  assert.ok(
+    scopeBlock,
+    "公开站点与创作工具分离字体源后，必须在同级字体作用域重新解析 Typography 别名",
+  );
+
+  const expectedAliases = {
+    "--font-latin-sans": "--font-futura",
+    "--font-cjk-sans": "--font-han-yi-qi-hei",
+    "--font-latin-editorial": "--font-luna",
+    "--font-cjk-editorial": "--font-noto-serif",
+    "--font-latin-gothic": "--font-gothic",
+    "--font-latin-classical": "--font-dm-serif",
+    "--font-cjk-classical": "--font-noto-serif",
+  };
+
+  for (const [alias, source] of Object.entries(expectedAliases)) {
+    assert.match(
+      scopeBlock,
+      new RegExp(`${alias}:\\s*var\\(${source}\\)`),
+      `${alias} 必须在 data-font-scope 上解析 ${source}，否则浏览器会退回系统字体`,
+    );
+  }
+});

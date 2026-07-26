@@ -28,11 +28,58 @@ const child = spawn(process.execPath, [nextCliPath, ...effectiveNextArgs], {
   },
 });
 
+const fontWatcher = nextArgs[0] === "dev"
+  ? spawn(
+    process.execPath,
+    [fileURLToPath(new URL("./watch-font-subsets.mjs", import.meta.url))],
+    {
+      stdio: "inherit",
+      env: process.env,
+    },
+  )
+  : null;
+const publicRuntimeWatcher = nextArgs[0] === "dev"
+  ? spawn(
+    process.execPath,
+    [fileURLToPath(new URL("./watch-public-runtime.mjs", import.meta.url))],
+    {
+      stdio: "inherit",
+      env: process.env,
+    },
+  )
+  : null;
+let isShuttingDown = false;
+
+function stopChildren(signal = "SIGTERM") {
+  if (isShuttingDown) return;
+  isShuttingDown = true;
+  fontWatcher?.kill(signal);
+  publicRuntimeWatcher?.kill(signal);
+  child.kill(signal);
+}
+
+process.once("SIGINT", () => stopChildren("SIGINT"));
+process.once("SIGTERM", () => stopChildren("SIGTERM"));
+
+fontWatcher?.on("exit", (code, signal) => {
+  if (isShuttingDown || signal || code === 0) return;
+  console.error(`公开字体监听器异常退出，状态码 ${code ?? 1}`);
+  stopChildren();
+});
+
+publicRuntimeWatcher?.on("exit", (code, signal) => {
+  if (isShuttingDown || signal || code === 0) return;
+  console.error(`公开 renderer 清单监听器异常退出，状态码 ${code ?? 1}`);
+  stopChildren();
+});
+
 child.on("exit", (code, signal) => {
+  fontWatcher?.kill("SIGTERM");
+  publicRuntimeWatcher?.kill("SIGTERM");
   if (signal) {
-    process.kill(process.pid, signal);
+    process.exitCode = 1;
     return;
   }
 
-  process.exit(code ?? 1);
+  process.exitCode = code ?? 1;
 });

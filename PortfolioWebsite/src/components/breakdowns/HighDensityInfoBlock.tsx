@@ -19,6 +19,7 @@ import {
   toPlainText,
 } from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
+import type { PublicMediaHint } from "@/lib/media-layout";
 
 interface InfoItem {
   label: ReactNode;
@@ -32,6 +33,7 @@ type HighDensityInfoBlockProps = {
   phase1ItemsContent?: ReactNode;
   phase2ItemsContent?: ReactNode;
   rhythm?: "aligned" | "staggered";
+  publicMediaHint?: PublicMediaHint;
 } & ComponentDesignOverride<"HighDensityInfoBlock">;
 
 const DEFAULT_PHASE_LABELS = {
@@ -40,7 +42,16 @@ const DEFAULT_PHASE_LABELS = {
   phase3: "PHASE 03 / EXECUTION & RESULTS",
 } as const;
 
-export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1ItemsContent, phase2ItemsContent, rhythm = "aligned", design }: HighDensityInfoBlockProps) {
+export default function HighDensityInfoBlock({
+  phase1,
+  phase2,
+  phase3,
+  phase1ItemsContent,
+  phase2ItemsContent,
+  rhythm = "aligned",
+  publicMediaHint,
+  design,
+}: HighDensityInfoBlockProps) {
   const resolvedDesign = resolveComponentDesign("HighDensityInfoBlock", design);
   const phase3ImageAlt = toPlainText(phase3.title) ?? "Phase image";
   const phase1Label = hasEditableTextContent(phase1.label) ? phase1.label : DEFAULT_PHASE_LABELS.phase1;
@@ -140,6 +151,9 @@ export default function HighDensityInfoBlock({ phase1, phase2, phase3, phase1Ite
                                 alt={phase3ImageAlt}
                                 preset={phase3.imagePreset}
                                 fitMode={phase3.imageFitMode}
+                                preload={publicMediaHint?.src === phase3.imageSrc && publicMediaHint.preload}
+                                mediaProfile="grid-4"
+                                sizes={publicMediaHint?.src === phase3.imageSrc ? publicMediaHint.sizes : undefined}
                                 imageClassName="opacity-90 transition-all duration-700 hover:scale-105 hover:opacity-100"
                             />
                         </div>

@@ -14,6 +14,7 @@ import {
   getSpacingRem,
 } from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
+import type { PublicMediaHint } from "@/lib/media-layout";
 import {
   hasEditableTextContent,
   toPlainText,
@@ -39,6 +40,7 @@ type BreakdownTriptychProps = {
   col3Preset?: ImagePreset;
   col3FitMode?: ImageFitMode;
   rhythm?: "aligned" | "staggered";
+  publicMediaHint?: PublicMediaHint;
 } & ComponentDesignOverride<"BreakdownTriptych">;
 
 function TriptychColumn({
@@ -52,6 +54,7 @@ function TriptychColumn({
   fitMode = "x",
   className = "",
   style,
+  publicMediaHint,
 }: {
   title: ReactNode;
   text: ReactNode;
@@ -63,6 +66,7 @@ function TriptychColumn({
   fitMode?: ImageFitMode;
   className?: string;
   style?: CSSProperties;
+  publicMediaHint?: PublicMediaHint;
 }) {
   const hasTitle = hasEditableTextContent(title);
   const hasText = hasEditableTextContent(text);
@@ -82,7 +86,15 @@ function TriptychColumn({
       )}
       {img && (
         <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-          <PresetImage src={img} alt={alt} preset={preset} fitMode={fitMode} />
+          <PresetImage
+            src={img}
+            alt={alt}
+            preset={preset}
+            fitMode={fitMode}
+            preload={publicMediaHint?.src === img && publicMediaHint.preload}
+            mediaProfile="grid-4"
+            sizes={publicMediaHint?.src === img ? publicMediaHint.sizes : undefined}
+          />
         </div>
       )}
     </div>
@@ -109,6 +121,7 @@ export default function BreakdownTriptych({
   col3Preset = "ratio-16-9",
   col3FitMode = "x",
   rhythm = "staggered",
+  publicMediaHint,
   design,
 }: BreakdownTriptychProps) {
   const resolvedDesign = resolveComponentDesign("BreakdownTriptych", design);
@@ -142,6 +155,7 @@ export default function BreakdownTriptych({
           ))}
           preset={col1Preset}
           fitMode={col1FitMode}
+          publicMediaHint={publicMediaHint}
         />
         <TriptychColumn
           title={col2Title}
@@ -158,6 +172,7 @@ export default function BreakdownTriptych({
           fitMode={col2FitMode}
           className="mt-[var(--triptych-col-top-spacing)] md:mt-0"
           style={col2Style}
+          publicMediaHint={publicMediaHint}
         />
         <TriptychColumn
           title={col3Title}
@@ -174,6 +189,7 @@ export default function BreakdownTriptych({
           fitMode={col3FitMode}
           className="mt-[var(--triptych-col-top-spacing)] lg:mt-0"
           style={col3Style}
+          publicMediaHint={publicMediaHint}
         />
       </div>
     </section>

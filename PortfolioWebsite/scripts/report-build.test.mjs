@@ -7,6 +7,7 @@ import test from "node:test";
 import {
   BuildReportCompatibilityError,
   createBuildReport,
+  extractHtmlResourceSet,
   parseClientReferenceManifest,
   resolveChunkFile,
 } from "./report-build-lib.mjs";
@@ -14,9 +15,11 @@ import {
 const ROUTE_KEY = "/(site)/page";
 
 function makeTempRoot(t) {
-  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "portfolio-build-report-"));
-  t.after(() => fs.rmSync(tempRoot, { force: true, recursive: true }));
-  return tempRoot;
+  const projectRoot = fs.mkdtempSync(
+    path.join(os.tmpdir(), "portfolio-build-report-"),
+  );
+  t.after(() => fs.rmSync(projectRoot, { force: true, recursive: true }));
+  return path.join(projectRoot, ".next");
 }
 
 function writeJson(filePath, value) {
@@ -43,14 +46,17 @@ function clientManifestSource(manifestKey = ROUTE_KEY, manifest = {
 
 function writeFixture(nextRoot, {
   clientSource = clientManifestSource(),
-  rootMainFiles = [],
 } = {}) {
   writeJson(path.join(nextRoot, "server", "app-paths-manifest.json"), {
     [ROUTE_KEY]: "app/(site)/page.js",
   });
-  writeJson(path.join(nextRoot, "build-manifest.json"), { rootMainFiles });
   writeJson(path.join(nextRoot, "prerender-manifest.json"), {
-    routes: { "/": {} },
+    routes: {
+      "/": {
+        dataRoute: "/index.rsc",
+        srcRoute: "/",
+      },
+    },
   });
   writeJson(path.join(nextRoot, "server", "middleware.js.nft.json"), {
     files: ["../package.json"],
@@ -68,9 +74,33 @@ function writeFixture(nextRoot, {
   const chunkPath = path.join(nextRoot, "static", "chunks", "app", "home.js");
   fs.mkdirSync(path.dirname(chunkPath), { recursive: true });
   fs.writeFileSync(chunkPath, "console.log('fixture');\n");
+  const cssPath = path.join(nextRoot, "static", "css", "home.css");
+  fs.mkdirSync(path.dirname(cssPath), { recursive: true });
+  fs.writeFileSync(cssPath, "body{background:#000}\n");
+  const fontPath = path.join(path.dirname(nextRoot), "public", "fonts", "test.woff2");
+  fs.mkdirSync(path.dirname(fontPath), { recursive: true });
+  fs.writeFileSync(fontPath, "font-fixture");
+  const htmlPath = path.join(nextRoot, "server", "app", "index.html");
+  fs.mkdirSync(path.dirname(htmlPath), { recursive: true });
+  fs.writeFileSync(
+    htmlPath,
+    [
+      "<!doctype html><html><head>",
+      '<link rel="stylesheet" href="/_next/static/css/home.css"/>',
+      '<link rel="preload" as="font" href="/fonts/test.woff2" type="font/woff2"/>',
+      '<link rel="preload" as="image" imagesrcset="/_next/image?url=hero"/>',
+      "</head><body>",
+      '<script src="/_next/static/chunks/app/home.js"></script>',
+      "</body></html>",
+    ].join(""),
+  );
+  fs.writeFileSync(
+    path.join(nextRoot, "server", "app", "index.rsc"),
+    "rsc fixture",
+  );
 }
 
-test("current Next manifest fixture produces schema v2 and deduplicated route chunks", (t) => {
+test("current Next output fixture produces schema v3 from concrete HTML resources", (t) => {
   const nextRoot = makeTempRoot(t);
   writeFixture(nextRoot);
 
@@ -79,14 +109,36 @@ test("current Next manifest fixture produces schema v2 and deduplicated route ch
     nextRoot,
   });
 
-  assert.equal(report.schemaVersion, 2);
+  assert.equal(report.schemaVersion, 3);
   assert.equal(report.generatedAt, "2026-07-23T00:00:00.000Z");
   assert.deepEqual(report.prerenderedRoutes, ["/"]);
   assert.equal(report.routes["/"].entryChunks.length, 1);
   assert.equal(report.routes["/"].entryChunks[0].path, "static/chunks/app/home.js");
   assert.deepEqual(report.routes["/"].clientComponents, ["layout/Navigation.tsx"]);
+  assert.equal(report.routes["/"].css.files.length, 1);
+  assert.equal(report.routes["/"].fonts.preloadCount, 1);
+  assert.equal(report.routes["/"].images.preloadCount, 1);
+  assert.equal(report.routes["/"].performanceBudget.imagePreloadCount.pass, true);
+  assert.equal(report.budgetFailures.length, 0);
   assert.ok(report.routes["/"].rawBytes > 0);
   assert.ok(report.routes["/"].gzipBytes > 0);
+});
+
+test("HTML resource projection follows actual tags and ignores unrelated assets", () => {
+  assert.deepEqual(
+    extractHtmlResourceSet([
+      '<script src="/_next/static/chunks/a.js"></script>',
+      '<link as="script" rel="preload" href="/_next/static/chunks/not-executed.js"/>',
+      '<link href="/_next/static/css/a.css" rel="stylesheet"/>',
+      '<link href="/fonts/a.woff2" rel="preload" as="font"/>',
+    ].join("")),
+    {
+      fontPreloads: [{ href: "/fonts/a.woff2", type: null }],
+      imagePreloads: [],
+      scripts: ["/_next/static/chunks/a.js"],
+      styles: ["/_next/static/css/a.css"],
+    },
+  );
 });
 
 test("Client Reference Manifest parser rejects executable or non-JSON syntax", () => {
@@ -148,9 +200,8 @@ test("Next-encoded dynamic route brackets resolve to the literal filesystem path
 });
 
 test("realpath containment rejects a symlink or junction escape before reading it", (t) => {
-  const tempRoot = makeTempRoot(t);
-  const nextRoot = path.join(tempRoot, ".next");
-  const outsideRoot = path.join(tempRoot, "outside");
+  const nextRoot = makeTempRoot(t);
+  const outsideRoot = path.join(path.dirname(nextRoot), "outside");
   const linkPath = path.join(nextRoot, "static", "chunks", "linked");
   fs.mkdirSync(path.dirname(linkPath), { recursive: true });
   fs.mkdirSync(outsideRoot, { recursive: true });
@@ -168,7 +219,7 @@ test("realpath containment rejects a symlink or junction escape before reading i
 
   assert.throws(
     () => resolveChunkFile(nextRoot, "static/chunks/linked/outside.js"),
-    /outside \.next/u,
+    /resolves outside/u,
   );
 });
 
@@ -182,11 +233,11 @@ test("manifest, per-route count, per-chunk, and per-route byte limits fail close
   );
   assert.throws(
     () => createBuildReport({ nextRoot, limits: { chunksPerRoute: 0 } }),
-    /at most 0 chunks/u,
+    /at most 0 script chunks/u,
   );
   assert.throws(
     () => createBuildReport({ nextRoot, limits: { chunkBytes: 4 } }),
-    /Chunk .* exceeds/u,
+    /Asset .* exceeds/u,
   );
   assert.throws(
     () => createBuildReport({ nextRoot, limits: { routeChunkBytes: 4 } }),
@@ -204,7 +255,11 @@ test("invalid JSON manifests and mismatched client keys produce compatibility er
     BuildReportCompatibilityError,
   );
 
-  writeJson(path.join(nextRoot, "prerender-manifest.json"), { routes: { "/": {} } });
+  writeJson(path.join(nextRoot, "prerender-manifest.json"), {
+    routes: {
+      "/": { dataRoute: "/index.rsc", srcRoute: "/" },
+    },
+  });
   assert.throws(
     () => createBuildReport({ nextRoot }),
     /key mismatch/u,

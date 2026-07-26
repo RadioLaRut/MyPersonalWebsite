@@ -25,11 +25,13 @@ export const render: ComponentConfig["render"] = ({
   imageSrc,
   layout,
   paragraphs,
+  publicMediaHint,
 }) => {
   const { items: paragraphItems = [], SlotComponent: ParagraphsSlot } = readSlot(
     paragraphs,
     (item) => (
       <TextParagraphBlock
+        key={pickEntryField(item, "id") ?? pickEntryField(item, "text")}
         align={castTypographyAlignment(pickEntryField(item, "align"))}
         text={pickEntryField(item, "text") ?? ""}
       />
@@ -47,12 +49,15 @@ export const render: ComponentConfig["render"] = ({
       imageSrc={imageSrc}
       layout={castSelectValue(layout, LAYOUT_VALUES, "media-right")}
       paragraphs={paragraphItems}
+      publicMediaHint={publicMediaHint}
       paragraphsContent={ParagraphsSlot ? (
         <ParagraphsSlot
           allow={ALLOW_TEXT_PARAGRAPH_BLOCK}
           className="space-y-6"
           minEmptyHeight={24}
         />
+      ) : paragraphItems.length > 0 ? (
+        <div className="space-y-6">{paragraphItems}</div>
       ) : undefined}
     />
   );

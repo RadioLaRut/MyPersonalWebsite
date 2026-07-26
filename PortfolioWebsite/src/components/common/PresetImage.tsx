@@ -1,8 +1,5 @@
 import clsx from "clsx";
-import Image from "next/image";
 import type { CSSProperties } from "react";
-
-import ImageLoadObserver from "./ImageLoadObserver";
 
 import {
   type ImageBreakpointValue,
@@ -16,7 +13,12 @@ import {
   normalizeImageFitMode,
   normalizeImagePreset,
 } from "@/lib/image-presentation";
+import {
+  getMediaLayoutProfile,
+  type MediaLayoutProfileKey,
+} from "@/lib/media-layout";
 import { normalizeImageSrc } from "@/lib/public-paths";
+import { createResponsiveImageProps } from "@/lib/responsive-image-props";
 
 type PresetImageProps = {
   src: string;
@@ -25,8 +27,9 @@ type PresetImageProps = {
   fitMode?: ImageFitMode | string;
   fitModeByBreakpoint?: ImageBreakpointValue<ImageFitMode>;
   objectPositionByBreakpoint?: ImageBreakpointValue<ImageObjectPosition>;
-  priority?: boolean;
+  preload?: boolean;
   loading?: "eager" | "lazy";
+  mediaProfile?: MediaLayoutProfileKey;
   sizes?: string;
   draggable?: boolean;
   lockFrame?: boolean;
@@ -50,8 +53,9 @@ export function PresetImage({
   fitMode = "x",
   fitModeByBreakpoint,
   objectPositionByBreakpoint,
-  priority = false,
+  preload = false,
   loading,
+  mediaProfile = "grid-12",
   sizes,
   draggable,
   lockFrame = true,
@@ -68,8 +72,8 @@ export function PresetImage({
   const frameClasses = lockFrame
     ? getImagePresetFrameClassName(resolvedPreset)
     : "relative h-full w-full overflow-hidden bg-black";
-  const resolvedLoading = priority ? undefined : loading;
-  const resolvedSizes = sizes ?? "100vw";
+  const resolvedLoading = preload ? undefined : (loading ?? "lazy");
+  const resolvedSizes = sizes ?? getMediaLayoutProfile(mediaProfile).sizes;
   const imageClasses = clsx(
     fitModeByBreakpoint
       ? getResponsiveImageElementClassName(
@@ -93,6 +97,22 @@ export function PresetImage({
       } as CSSProperties)
     : undefined;
   const shouldUseImgFallback = resolvedPreset === "native" || isRemoteSrc;
+  const optimizedImageProps = shouldUseImgFallback
+    ? null
+    : createResponsiveImageProps({
+        src: normalizedSrc,
+        alt,
+        width: imageProps.width,
+        height: imageProps.height,
+        loading: resolvedLoading,
+        fetchPriority: preload ? "high" : "auto",
+        sizes: resolvedSizes,
+        unoptimized: isSvg,
+        draggable,
+        className: imageClasses,
+        style: imageStyle,
+      });
+
   return (
     <div
       className={clsx("preset-image-frame", frameClasses, frameClassName)}
@@ -111,32 +131,38 @@ export function PresetImage({
             <img
               src={normalizedSrc}
               alt={alt}
-              loading={loading ?? (priority ? "eager" : "lazy")}
-              fetchPriority={priority ? "high" : "auto"}
+              loading={preload ? "eager" : (loading ?? "lazy")}
+              fetchPriority={preload ? "high" : "auto"}
               decoding="async"
-              sizes={sizes}
+              sizes={resolvedSizes}
               draggable={draggable}
               className={imageClasses}
               style={imageStyle}
             />
           </>
         ) : (
-          <Image
-            src={normalizedSrc}
-            alt={alt}
-            width={imageProps.width}
-            height={imageProps.height}
-            priority={priority}
-            loading={resolvedLoading}
-            sizes={resolvedSizes}
-            unoptimized={isSvg}
-            draggable={draggable}
-            className={imageClasses}
-            style={imageStyle}
-          />
+          <>
+            {preload && optimizedImageProps ? (
+              <link
+                rel="preload"
+                as="image"
+                href={optimizedImageProps.srcSet ? undefined : optimizedImageProps.src}
+                imageSrcSet={optimizedImageProps.srcSet}
+                imageSizes={optimizedImageProps.sizes}
+                crossOrigin={optimizedImageProps.crossOrigin}
+                referrerPolicy={optimizedImageProps.referrerPolicy}
+                fetchPriority="high"
+              />
+            ) : null}
+            {/* Next 在服务端生成 srcset 与 sizes；页面级协调器负责加载完成状态。 */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              {...optimizedImageProps}
+              alt={optimizedImageProps?.alt ?? alt}
+            />
+          </>
         )}
       </div>
-      <ImageLoadObserver />
       <div className="image-loading-indicator" aria-hidden="true">
         <span className="image-loading-track">
           <span className="image-loading-progress" />
