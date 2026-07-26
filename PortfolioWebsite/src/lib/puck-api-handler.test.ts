@@ -16,6 +16,7 @@ import {
   LOCAL_EDITOR_ACCESS_TOKEN_ENV,
   LOCAL_EDITOR_ACCESS_TOKENS_ENV,
 } from "./local-editor-access.ts";
+import { PRODUCTION_ENV_BLOCKLIST } from "./local-editor-policy.ts";
 import { PageDocumentValidationError, type PageDocument } from "./page-document-contract.ts";
 import {
   handlePuckGet,
@@ -66,31 +67,30 @@ function createRepository(overrides: Record<string, unknown> = {}) {
 }
 
 function withEditorEnvironment(callback: () => Promise<void>) {
-  const previous = {
-    ci: process.env.CI,
-    mode: process.env.NEXT_PUBLIC_SITE_MODE,
-    nodeEnv: process.env.NODE_ENV,
-    token: process.env[LOCAL_EDITOR_ACCESS_TOKEN_ENV],
-    tokens: process.env[LOCAL_EDITOR_ACCESS_TOKENS_ENV],
-    vercel: process.env.VERCEL,
-  };
+  const environmentKeys = [
+    "NEXT_PUBLIC_SITE_MODE",
+    "NODE_ENV",
+    LOCAL_EDITOR_ACCESS_TOKEN_ENV,
+    LOCAL_EDITOR_ACCESS_TOKENS_ENV,
+    ...PRODUCTION_ENV_BLOCKLIST,
+  ] as const;
+  const previous = new Map(
+    environmentKeys.map((environmentKey) => [
+      environmentKey,
+      process.env[environmentKey],
+    ]),
+  );
+
   process.env.NEXT_PUBLIC_SITE_MODE = "testing";
   Reflect.set(process.env, "NODE_ENV", "development");
   delete process.env[LOCAL_EDITOR_ACCESS_TOKEN_ENV];
   process.env[LOCAL_EDITOR_ACCESS_TOKENS_ENV] = "other-computer-token,test-token";
-  delete process.env.CI;
-  delete process.env.VERCEL;
+  for (const environmentKey of PRODUCTION_ENV_BLOCKLIST) {
+    Reflect.deleteProperty(process.env, environmentKey);
+  }
 
   return callback().finally(() => {
-    for (const [key, value] of Object.entries(previous)) {
-      const environmentKey = {
-        ci: "CI",
-        mode: "NEXT_PUBLIC_SITE_MODE",
-        nodeEnv: "NODE_ENV",
-        token: LOCAL_EDITOR_ACCESS_TOKEN_ENV,
-        tokens: LOCAL_EDITOR_ACCESS_TOKENS_ENV,
-        vercel: "VERCEL",
-      }[key] as string;
+    for (const [environmentKey, value] of previous) {
       if (value === undefined) Reflect.deleteProperty(process.env, environmentKey);
       else Reflect.set(process.env, environmentKey, value);
     }
