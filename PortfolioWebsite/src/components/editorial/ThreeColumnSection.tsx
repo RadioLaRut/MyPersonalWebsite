@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import BreakdownTriptych from "@/components/breakdowns/BreakdownTriptych";
 import HighDensityInfoBlock from "@/components/breakdowns/HighDensityInfoBlock";
+import type { ComponentLayoutProps } from "@/components/common/ComponentLayoutNode";
 import type { TypographyAlignment } from "@/components/common/Typography";
 import type {
   BreakdownTriptychDesign,
@@ -32,12 +33,13 @@ export type ThreeColumnSectionProps = {
   triptychDesign?: BreakdownTriptychDesign;
   publicMediaHint?: PublicMediaHint;
   variant?: "evidence" | "phase" | "triptych";
-};
+} & ComponentLayoutProps;
 
 export default function ThreeColumnSection({
   col1,
   col2,
   col3,
+  componentLayout,
   phaseDesign,
   rhythm = "aligned",
   triptychDesign,
@@ -48,6 +50,7 @@ export default function ThreeColumnSection({
     return (
       <BreakdownTriptych
         col1BodyAlign={col1.bodyAlign}
+        componentLayout={componentLayout}
         col1FitMode={col1.fitMode}
         col1Img={col1.mediaSrc ?? ""}
         col1Preset={col1.preset}
@@ -75,6 +78,7 @@ export default function ThreeColumnSection({
   return (
     <HighDensityInfoBlock
       design={phaseDesign}
+      componentLayout={componentLayout}
       phase1={{
         bodyAlign: col1.bodyAlign,
         content: col1.body,

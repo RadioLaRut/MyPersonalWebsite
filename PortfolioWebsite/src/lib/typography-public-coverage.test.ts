@@ -180,6 +180,28 @@ function evaluateExpression(
     ];
   }
 
+  if (
+    ts.isBinaryExpression(expression) &&
+    expression.operatorToken.kind === ts.SyntaxKind.QuestionQuestionToken
+  ) {
+    return [
+      ...evaluateExpression(
+        expression.left,
+        sourceFile,
+        variables,
+        resolveProperty,
+        resolving,
+      ),
+      ...evaluateExpression(
+        expression.right,
+        sourceFile,
+        variables,
+        resolveProperty,
+        resolving,
+      ),
+    ];
+  }
+
   if (ts.isIdentifier(expression)) {
     if (resolving.has(expression.text)) return [];
     const initializer = variables.get(expression.text);

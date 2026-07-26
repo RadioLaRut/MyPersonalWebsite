@@ -1,105 +1,16 @@
-import path from "node:path";
-
 import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
-
 import {
-  COMPONENT_DESIGN_CONFIG_FILE,
-  hasComponentDesignConfig,
-  readComponentDesignConfig,
-  writeComponentDesignConfig,
-} from "@/lib/component-design-config";
-import { parseComponentDesignDocument } from "@/lib/component-design-schema";
-import { CONTENT_BUDGET_PROFILE_V1 } from "@/lib/content-budget";
-import {
-  readJsonWithLimit,
-  RequestBodyError,
-} from "@/lib/request-body-policy";
-import { assertLocalEditorApiAccess } from "@/lib/security";
+  handleComponentDesignGet,
+  handleComponentDesignPost,
+} from "@/lib/component-design-api-handler";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const NO_STORE_HEADER = {
-  "Cache-Control": "no-store",
-} as const;
-
-function jsonResponse(body: unknown, status = 200) {
-  return NextResponse.json(body, {
-    headers: NO_STORE_HEADER,
-    status,
-  });
-}
-
-function errorResponse(status: number, code: string, message: string) {
-  return jsonResponse(
-    {
-      error: {
-        code,
-        message,
-      },
-    },
-    status,
-  );
-}
-
 export async function GET(request: NextRequest) {
-  const denied = assertLocalEditorApiAccess(request);
-  if (denied) {
-    return denied;
-  }
-
-  try {
-    const hasSaved = await hasComponentDesignConfig();
-    const config = await readComponentDesignConfig();
-
-    return jsonResponse({
-      config,
-      hasSaved,
-      path: path.relative(process.cwd(), COMPONENT_DESIGN_CONFIG_FILE).replaceAll(path.sep, "/"),
-    });
-  } catch {
-    return errorResponse(500, "INTERNAL_ERROR", "Failed to load component design config");
-  }
+  return handleComponentDesignGet(request);
 }
 
 export async function POST(request: NextRequest) {
-  const denied = assertLocalEditorApiAccess(request, { requireToken: true });
-  if (denied) {
-    return denied;
-  }
-
-  let payload: unknown;
-  try {
-    payload = await readJsonWithLimit(
-      request,
-      CONTENT_BUDGET_PROFILE_V1.requestBytes.componentDesignJson,
-    );
-  } catch (error) {
-    if (error instanceof RequestBodyError) {
-      return errorResponse(error.status, error.code, error.message);
-    }
-    return errorResponse(400, "BAD_REQUEST", "Request body must be valid JSON");
-  }
-
-  const rawConfig =
-    payload && typeof payload === "object" && "config" in payload
-      ? (payload as { config?: unknown }).config
-      : payload;
-
-  const document = parseComponentDesignDocument(rawConfig);
-  if (!document) {
-    return errorResponse(400, "BAD_REQUEST", "Request body is invalid");
-  }
-
-  try {
-    await writeComponentDesignConfig(document);
-    return jsonResponse({
-      config: document,
-      ok: true,
-      path: path.relative(process.cwd(), COMPONENT_DESIGN_CONFIG_FILE).replaceAll(path.sep, "/"),
-    });
-  } catch {
-    return errorResponse(500, "INTERNAL_ERROR", "Failed to save component design config");
-  }
+  return handleComponentDesignPost(request);
 }

@@ -1,5 +1,10 @@
 import type { ReactNode } from "react";
 
+import ComponentLayoutNode, {
+  getComponentLayoutAlignment,
+  getComponentLayoutTypography,
+  type ComponentLayoutProps,
+} from "@/components/common/ComponentLayoutNode";
 import Typography, {
   type TypographyAlignment,
 } from "@/components/common/Typography";
@@ -9,6 +14,7 @@ import {
 } from "@/lib/bilibili-embed";
 import {
   createResponsiveGridBounds,
+  getComponentSectionProfileClassName,
   getResponsiveGridColumnClassName,
 } from "@/lib/component-design-style";
 import {
@@ -20,14 +26,17 @@ export type BilibiliEmbedProps = {
   caption?: ReactNode;
   captionAlign?: TypographyAlignment;
   editMode?: boolean;
+  externalLinkLabel?: ReactNode;
   source: string;
   title: ReactNode;
-};
+} & ComponentLayoutProps;
 
 export default function BilibiliEmbed({
   caption,
   captionAlign = "left",
+  componentLayout,
   editMode = false,
+  externalLinkLabel,
   source,
   title,
 }: BilibiliEmbedProps) {
@@ -76,6 +85,81 @@ export default function BilibiliEmbed({
               </Typography>
             </div>
           </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (componentLayout) {
+    const captionTypography = getComponentLayoutTypography(componentLayout, "caption");
+    const linkTypography = getComponentLayoutTypography(componentLayout, "externalLink");
+    return (
+      <section className={`w-full bg-black ${getComponentSectionProfileClassName(componentLayout)}`}>
+        <div className="grid-container items-start">
+          <ComponentLayoutNode
+            as="figure"
+            layout={componentLayout}
+            nodeId="player"
+            className="aspect-video w-full overflow-hidden bg-[#111]"
+          >
+            <iframe
+              src={video.embedUrl}
+              title={accessibleTitle}
+              loading="lazy"
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowFullScreen
+              referrerPolicy="strict-origin-when-cross-origin"
+              className="pointer-events-none h-full w-full border-0"
+            />
+          </ComponentLayoutNode>
+          {hasEditableTextContent(caption) ? (
+            <ComponentLayoutNode
+              gapFrom="player"
+              layout={componentLayout}
+              nodeId="caption"
+            >
+              <Typography
+                as="p"
+                preset={captionTypography?.preset ?? "sans-body"}
+                size={captionTypography?.size ?? "caption"}
+                weight="semantic"
+                wrapPolicy={captionTypography?.wrap ?? "prose"}
+                align={getComponentLayoutAlignment(componentLayout, "caption", captionAlign)}
+                className="text-textSecondary"
+              >
+                {caption}
+              </Typography>
+            </ComponentLayoutNode>
+          ) : null}
+          {hasEditableTextContent(externalLinkLabel) ? (
+            <ComponentLayoutNode
+              gapFrom={hasEditableTextContent(caption) ? "caption" : "player"}
+              layout={componentLayout}
+              nodeId="externalLink"
+            >
+              <a
+                href={editMode ? undefined : video.watchUrl}
+                target={editMode ? undefined : "_blank"}
+                rel={editMode ? undefined : "noopener noreferrer"}
+                aria-disabled={editMode || undefined}
+                className={editMode
+                  ? "cursor-default text-white/45"
+                  : "interactive text-white/55 transition-colors hover:text-white"}
+              >
+                <Typography
+                  as="span"
+                  preset={linkTypography?.preset ?? "sans-body"}
+                  size={linkTypography?.size ?? "label"}
+                  weight="semantic"
+                  wrapPolicy={linkTypography?.wrap ?? "label"}
+                  align={getComponentLayoutAlignment(componentLayout, "externalLink")}
+                  className="text-inherit"
+                >
+                  {externalLinkLabel}
+                </Typography>
+              </a>
+            </ComponentLayoutNode>
+          ) : null}
         </div>
       </section>
     );

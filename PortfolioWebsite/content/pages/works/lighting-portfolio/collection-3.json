@@ -8,7 +8,6 @@
         "ctaHref": "",
         "ctaLabel": "",
         "description": "以西部场景为基础，测试双重构图下的景深关系、天气层次与远景照明。",
-        "descriptionAlign": "right",
         "descriptionLine1": "",
         "descriptionLine2": "",
         "number": "03",
@@ -25,8 +24,7 @@
         "caption": "DAY",
         "preset": "ratio-21-9",
         "fitMode": "x",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -37,8 +35,7 @@
         "caption": "DUSK",
         "preset": "ratio-21-9",
         "fitMode": "x",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -49,8 +46,7 @@
         "caption": "NIGHT",
         "preset": "ratio-21-9",
         "fitMode": "x",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -76,8 +72,7 @@
         "caption": "DAY",
         "preset": "ratio-21-9",
         "fitMode": "x",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -88,8 +83,7 @@
         "caption": "DUSK",
         "preset": "ratio-21-9",
         "fitMode": "x",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -100,8 +94,7 @@
         "caption": "NIGHT",
         "preset": "ratio-21-9",
         "fitMode": "x",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -127,8 +120,7 @@
         "description": "\n",
         "buttonLabel": "ENTER",
         "buttonHref": "/works/lighting-portfolio/collection-4",
-        "id": "HomeEndcapSection-126ef42e-89cf-4e42-a9ef-5b99a0c8a838",
-        "descriptionAlign": "center"
+        "id": "HomeEndcapSection-126ef42e-89cf-4e42-a9ef-5b99a0c8a838"
       }
     }
   ],

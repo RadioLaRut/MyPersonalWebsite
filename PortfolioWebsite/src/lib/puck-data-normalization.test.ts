@@ -173,9 +173,9 @@ test("normalizePuckData deterministically merges all legacy top-level component 
   ]);
 
   assert.equal(nodes[0].props.variant, "index");
-  assert.equal(nodes[0].props.descriptionAlign, "left");
+  assert.equal("descriptionAlign" in nodes[0].props, false);
   assert.equal(nodes[1].props.variant, "collection");
-  assert.equal(nodes[1].props.descriptionAlign, "right");
+  assert.equal("descriptionAlign" in nodes[1].props, false);
 
   assert.equal(nodes[2].props.bodyMode, "plain");
   assert.equal(nodes[2].props.layout, "media-left");
@@ -184,7 +184,6 @@ test("normalizePuckData deterministically merges all legacy top-level component 
   assert.deepEqual(nodes[3].props.paragraphs, [
     {
       props: {
-        align: "center",
         id: "split-slot-paragraph-1",
         text: "First paragraph",
       },
@@ -193,21 +192,21 @@ test("normalizePuckData deterministically merges all legacy top-level component 
   ]);
 
   assert.equal(nodes[4].props.variant, "triptych");
-  assert.equal(nodes[4].props.rhythm, "staggered");
+  assert.equal("rhythm" in nodes[4].props, false);
   assert.equal(nodes[5].props.variant, "phase");
-  assert.equal(nodes[5].props.rhythm, "aligned");
+  assert.equal("rhythm" in nodes[5].props, false);
   assert.equal(
     nodes[5].props.col3MediaSrc,
     "/images/train-station/2Day.webp",
   );
 
-  assert.equal(nodes[6].props.variant, "immersive");
+  assert.equal(nodes[6].props.variant, "immersive-left");
   assert.equal(nodes[6].props.href, "/works/immersive");
   assert.equal(nodes[7].props.variant, "card");
   assert.equal(nodes[7].props.href, "/works/card");
 });
 
-test("normalizePuckData removes ParameterGrid local video state and hydrates description alignment", () => {
+test("normalizePuckData removes ParameterGrid local video state and ComponentLab-owned alignment", () => {
   const normalized = normalizePuckData({
     content: [
       {
@@ -239,10 +238,14 @@ test("normalizePuckData removes ParameterGrid local video state and hydrates des
   assert.deepEqual(parameterGrid.props.parameters, [
     {
       description: "Description",
-      descriptionAlign: "left",
       name: "Name",
     },
   ]);
+  assert.equal(parameterGrid.props.mediaAlt, "PCG Generation Overview");
+  assert.equal(
+    parameterGrid.props.mediaLabel,
+    "PROCEDURAL GENERATION PREVIEW",
+  );
 });
 
 test("normalizePuckData hydrates blank HeroHeadline props", () => {

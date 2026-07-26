@@ -1,5 +1,10 @@
 import React, { type ReactNode } from "react";
 
+import ComponentLayoutNode, {
+  getComponentLayoutAlignment,
+  getComponentLayoutTypography,
+  type ComponentLayoutProps,
+} from "@/components/common/ComponentLayoutNode";
 import Typography, {
   type TypographyAlignment,
 } from "@/components/common/Typography";
@@ -13,6 +18,7 @@ import {
   getResponsiveGridColumnClassName,
 } from "@/lib/component-design-style";
 import {
+  hasEditableTextContent,
   resolveEditableText,
   toPlainText,
 } from "@/lib/editable-text";
@@ -23,7 +29,7 @@ export type WorksListEntryAlias = {
   slug: string;
 };
 
-interface WorksListEntryProps extends ComponentDesignOverride<"WorksListEntry"> {
+interface WorksListEntryProps extends ComponentDesignOverride<"WorksListEntry">, ComponentLayoutProps {
   aliases?: WorksListEntryAlias[];
   id: string;
   number?: ReactNode;
@@ -39,6 +45,7 @@ interface WorksListEntryProps extends ComponentDesignOverride<"WorksListEntry"> 
 }
 
 export default function WorksListEntry({
+  componentLayout,
   number,
   href,
   title,
@@ -72,6 +79,100 @@ export default function WorksListEntry({
       design.sidebarBounds.lg,
     ),
   );
+
+  if (componentLayout) {
+    const numberTypography = getComponentLayoutTypography(componentLayout, "item.number");
+    const titleTypography = getComponentLayoutTypography(componentLayout, "item.title");
+    const categoryTypography = getComponentLayoutTypography(componentLayout, "item.category");
+    const descriptionTypography = getComponentLayoutTypography(componentLayout, "item.description");
+    return (
+      <MotionLink
+        href={href || "#"}
+        disabled={!isLinkEnabled}
+        disabledElement="div"
+        interactionPreset="blockLink"
+        className={`group relative grid min-h-[calc(var(--site-viewport-unit)*30)] w-full content-center border-b border-white/10 ${cursorClass}`}
+        data-active="false"
+        data-works-entry=""
+      >
+        <div className={`grid-container relative z-10 items-baseline py-8 md:py-12 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
+          <ComponentLayoutNode layout={componentLayout} nodeId="item.number">
+            <Typography
+              preset={numberTypography?.preset ?? "sans-body"}
+              size={numberTypography?.size ?? "label"}
+              weight="semantic"
+              wrapPolicy={numberTypography?.wrap ?? "label"}
+              align={getComponentLayoutAlignment(componentLayout, "item.number")}
+              className="text-textMuted"
+            >
+              {resolvedNumber}
+            </Typography>
+          </ComponentLayoutNode>
+          <ComponentLayoutNode layout={componentLayout} nodeId="item.title">
+            <Typography
+              as="h2"
+              preset={titleTypography?.preset ?? "luna-editorial"}
+              size={titleTypography?.size ?? "title"}
+              weight="display"
+              wrapPolicy={titleTypography?.wrap ?? "heading"}
+              align={getComponentLayoutAlignment(componentLayout, "item.title")}
+              className="break-words uppercase text-white"
+            >
+              {title}
+            </Typography>
+          </ComponentLayoutNode>
+          {hasEditableTextContent(category) ? (
+            <ComponentLayoutNode layout={componentLayout} nodeId="item.category">
+              <Typography
+                as="p"
+                preset={categoryTypography?.preset ?? "gothic-editorial"}
+                size={categoryTypography?.size ?? "label"}
+                weight="semantic"
+                wrapPolicy={categoryTypography?.wrap ?? "label"}
+                align={getComponentLayoutAlignment(componentLayout, "item.category")}
+                className="text-textSecondary uppercase"
+              >
+                {category}
+              </Typography>
+            </ComponentLayoutNode>
+          ) : null}
+          {hasEditableTextContent(desc) ? (
+            <ComponentLayoutNode
+              gapFrom={hasEditableTextContent(category) ? "item.category" : undefined}
+              layout={componentLayout}
+              nodeId="item.description"
+            >
+              <Typography
+                as="p"
+                preset={descriptionTypography?.preset ?? "sans-body"}
+                size={descriptionTypography?.size ?? "body-sm"}
+                weight="light"
+                wrapPolicy={descriptionTypography?.wrap ?? "prose"}
+                align={getComponentLayoutAlignment(
+                  componentLayout,
+                  "item.description",
+                  descriptionAlign,
+                )}
+                className="text-textSecondary"
+              >
+                {desc}
+              </Typography>
+            </ComponentLayoutNode>
+          ) : null}
+        </div>
+        {!editMode && imageSrc ? (
+          <div data-component-lab-node="item.media">
+            <WorksListEntryActivation
+              imageAlt={plainTitle ?? "Work entry"}
+              imageFitMode={imageFitMode}
+              imagePreset={imagePreset}
+              imageSrc={imageSrc}
+            />
+          </div>
+        ) : null}
+      </MotionLink>
+    );
+  }
 
   return (
     <MotionLink

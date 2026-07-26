@@ -2,7 +2,6 @@ import type { ComponentConfig } from "@puckeditor/core";
 
 import TextParagraphBlock from "../../components/common/TextParagraphBlock";
 import EditorialSplit from "../../components/editorial/EditorialSplit";
-import { castTypographyAlignment } from "../../lib/typography-alignment";
 import {
   ALLOW_TEXT_PARAGRAPH_BLOCK,
   castImageFitMode,
@@ -17,7 +16,6 @@ const LAYOUT_VALUES = ["media-left", "media-right", "stack"] as const;
 
 export const render: ComponentConfig["render"] = ({
   body,
-  bodyAlign,
   bodyMode,
   heading,
   imageFitMode,
@@ -32,7 +30,6 @@ export const render: ComponentConfig["render"] = ({
     (item) => (
       <TextParagraphBlock
         key={pickEntryField(item, "id") ?? pickEntryField(item, "text")}
-        align={castTypographyAlignment(pickEntryField(item, "align"))}
         text={pickEntryField(item, "text") ?? ""}
       />
     ),
@@ -41,7 +38,6 @@ export const render: ComponentConfig["render"] = ({
   return (
     <EditorialSplit
       body={body}
-      bodyAlign={castTypographyAlignment(bodyAlign)}
       bodyMode={castSelectValue(bodyMode, BODY_MODE_VALUES, "plain")}
       heading={heading}
       imageFitMode={castImageFitMode(imageFitMode)}

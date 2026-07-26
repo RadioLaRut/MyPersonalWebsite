@@ -1,4 +1,4 @@
-import type { ComponentDesignDocument } from "../lib/component-design-schema.ts";
+import type { ComponentDesignDocument } from "../lib/component-design-v2.ts";
 import type { PageDocument } from "../lib/page-document-contract.ts";
 import { loadPublicRenderer } from "./public-renderer-loaders.ts";
 import { createPublicRuntimeConfig as createRuntimeConfig } from "./runtime-config-core.ts";

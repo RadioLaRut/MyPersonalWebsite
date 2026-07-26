@@ -11,7 +11,6 @@ import {
   imageFitModeField,
   imagePresetField,
 } from "@/puck/fields/image-fields";
-import { createTextAlignmentField } from "@/puck/fields/text-alignment-field";
 
 const contentCardImageFields = buildImagePickerFieldTriple("imageSrc");
 const parameterGridImageFields = buildImagePickerFieldTriple("mediaSrc", {
@@ -162,6 +161,8 @@ export const worksComponents = {
       fields: {
         _g_media: createFieldGroup("可选图片"),
         ...parameterGridImageFields.fields,
+        mediaAlt: { type: "text", label: "媒体替代文本" },
+        mediaLabel: { type: "text", label: "媒体标签" },
         _g_params: createFieldGroup("参数列表"),
         parameters: {
           type: "array",
@@ -171,12 +172,13 @@ export const worksComponents = {
             name: { type: "text", label: "Name" },
             value: { type: "text", label: "Value" },
             description: { type: "textarea", label: "Description" },
-            descriptionAlign: createTextAlignmentField("说明对齐"),
           }
         }
       },
       defaultProps: {
         ...parameterGridImageFields.defaults,
+        mediaAlt: "",
+        mediaLabel: "",
         parameters: []
       },
     },
@@ -291,7 +293,6 @@ export const worksComponents = {
         title: { type: "text", label: "Title" },
         category: { type: "text", label: "Category" },
         desc: { type: "textarea", label: "Description" },
-        descriptionAlign: createTextAlignmentField("描述对齐"),
         aliases: {
           type: "array",
           label: "历史别名",
@@ -310,7 +311,6 @@ export const worksComponents = {
         category: "",
         ...worksListEntryImageFields.defaults,
         desc: "",
-        descriptionAlign: "left",
         aliases: [],
       },
     },
@@ -318,9 +318,15 @@ export const worksComponents = {
     NextProjectBlock: {
       fields: {
         nextId: { type: "text", label: "下一项目 ID" },
+        eyebrow: { type: "text", label: "眉题" },
+        footerLeft: { type: "text", label: "左页脚" },
+        footerRight: { type: "text", label: "右页脚" },
       },
       defaultProps: {
         nextId: "penguin",
+        eyebrow: "NEXT PROJECT",
+        footerLeft: "© 2026 江承彦 / JIANG CHENGYAN",
+        footerRight: "",
       },
     },
 } satisfies ComponentDefinitionRegistry;

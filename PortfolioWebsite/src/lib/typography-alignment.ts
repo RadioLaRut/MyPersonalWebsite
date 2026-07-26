@@ -6,6 +6,16 @@ export type TypographyAlignment =
   | "right"
   | "justify";
 
+export type ResponsiveTypographyAlignment = {
+  desktop: TypographyAlignment;
+  mobile: TypographyAlignment;
+  tablet: TypographyAlignment;
+};
+
+export type TypographyAlignmentValue =
+  | TypographyAlignment
+  | ResponsiveTypographyAlignment;
+
 export const TYPOGRAPHY_ALIGNMENT_VALUES = [
   "left",
   "center",
@@ -18,6 +28,21 @@ export function isTypographyAlignment(
 ): value is TypographyAlignment {
   return typeof value === "string" &&
     TYPOGRAPHY_ALIGNMENT_VALUES.includes(value as TypographyAlignment);
+}
+
+export function isResponsiveTypographyAlignment(
+  value: unknown,
+): value is ResponsiveTypographyAlignment {
+  return Boolean(
+    value &&
+    typeof value === "object" &&
+    "desktop" in value &&
+    isTypographyAlignment(value.desktop) &&
+    "mobile" in value &&
+    isTypographyAlignment(value.mobile) &&
+    "tablet" in value &&
+    isTypographyAlignment(value.tablet),
+  );
 }
 
 export function castTypographyAlignment(

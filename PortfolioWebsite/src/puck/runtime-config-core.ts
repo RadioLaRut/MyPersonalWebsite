@@ -1,6 +1,6 @@
 import type { ComponentConfig, Config } from "@puckeditor/core";
 
-import type { ComponentDesignDocument } from "../lib/component-design-schema.ts";
+import type { ComponentDesignDocument } from "../lib/component-design-v2.ts";
 import {
   findPublicMediaPreloadCandidate,
   getMediaLayoutProfile,

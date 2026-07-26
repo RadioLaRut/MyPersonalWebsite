@@ -77,12 +77,10 @@ const CHINESE_FIELD_LABELS: Record<string, string> = {
   backHref: "返回链接",
   backgroundColor: "背景颜色",
   body: "正文",
-  bodyAlign: "正文对齐",
   bodyMode: "正文模式",
   buttonHref: "按钮链接",
   buttonLabel: "按钮文案",
   caption: "图片说明",
-  captionAlign: "图片说明对齐",
   category: "分类",
   content: "正文",
   copyErrorMessage: "复制失败反馈",
@@ -93,7 +91,6 @@ const CHINESE_FIELD_LABELS: Record<string, string> = {
   darkTextColor: "暗部文字颜色",
   desc: "描述",
   description: "描述",
-  descriptionAlign: "描述对齐",
   descriptionLine1: "描述第一行",
   descriptionLine2: "描述第二行",
   email: "邮箱",
@@ -157,12 +154,11 @@ function getChineseFieldLabel(name: string, fallback?: string) {
     return `阶段 ${phaseMatch[1]} ${fieldLabel}|${name}`;
   }
   const columnMatch = name.match(
-    /^col([123])(Label|Title|Subtitle|Body|BodyAlign|Text|Items|Img|MediaSrc|MediaPreset|MediaFitMode|Preset|FitMode)$/,
+    /^col([123])(Label|Title|Subtitle|Body|Text|Items|Img|MediaSrc|MediaPreset|MediaFitMode|Preset|FitMode)$/,
   );
   if (columnMatch) {
     const fieldLabel = {
       Body: "正文",
-      BodyAlign: "正文对齐",
       FitMode: "适应方式",
       Img: "图片",
       Items: "条目",

@@ -44,9 +44,9 @@ const metadata = [
   {
     type: "ThreeColumnSection",
     label: "三栏内容区",
-    description: "三栏分解、叙事阶段或证据网格共用的内容区。",
+    description: "三栏分解或叙事阶段共用的内容区。",
     category: "layout",
-    searchAliases: ["三栏分解", "阶段信息", "triptych", "phase", "evidence"],
+    searchAliases: ["三栏分解", "阶段信息", "triptych", "phase"],
   },
   {
     type: "StatementBlock",

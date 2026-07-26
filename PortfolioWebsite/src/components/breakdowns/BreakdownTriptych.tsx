@@ -1,5 +1,10 @@
 import type { CSSProperties, ReactNode } from "react";
 import { PresetImage } from "@/components/common/PresetImage";
+import ComponentLayoutNode, {
+  getComponentLayoutAlignment,
+  getComponentLayoutTypography,
+  type ComponentLayoutProps,
+} from "@/components/common/ComponentLayoutNode";
 import Typography, {
   type TypographyAlignment,
 } from "@/components/common/Typography";
@@ -12,6 +17,7 @@ import {
   getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
   getSpacingRem,
+  getComponentSectionProfileClassName,
 } from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 import type { PublicMediaHint } from "@/lib/media-layout";
@@ -41,7 +47,7 @@ type BreakdownTriptychProps = {
   col3FitMode?: ImageFitMode;
   rhythm?: "aligned" | "staggered";
   publicMediaHint?: PublicMediaHint;
-} & ComponentDesignOverride<"BreakdownTriptych">;
+} & ComponentDesignOverride<"BreakdownTriptych"> & ComponentLayoutProps;
 
 function TriptychColumn({
   title,
@@ -120,6 +126,7 @@ export default function BreakdownTriptych({
   col3Img,
   col3Preset = "ratio-16-9",
   col3FitMode = "x",
+  componentLayout,
   rhythm = "staggered",
   publicMediaHint,
   design,
@@ -138,6 +145,114 @@ export default function BreakdownTriptych({
       ? getSpacingRem(resolvedDesign.col3TopSpacing)
       : "0rem",
   } as CSSProperties;
+
+  if (componentLayout) {
+    const columns = [
+      {
+        alt: col1Alt,
+        bodyAlign: col1BodyAlign,
+        fitMode: col1FitMode,
+        image: col1Img,
+        preset: col1Preset,
+        text: col1Text,
+        title: col1Title,
+      },
+      {
+        alt: col2Alt,
+        bodyAlign: col2BodyAlign,
+        fitMode: col2FitMode,
+        image: col2Img,
+        preset: col2Preset,
+        text: col2Text,
+        title: col2Title,
+      },
+      {
+        alt: col3Alt,
+        bodyAlign: col3BodyAlign,
+        fitMode: col3FitMode,
+        image: col3Img,
+        preset: col3Preset,
+        text: col3Text,
+        title: col3Title,
+      },
+    ];
+    return (
+      <section className={`relative z-20 w-full bg-black ${getComponentSectionProfileClassName(componentLayout)}`}>
+        <div className="grid-container w-full border-t border-white/10 rhythm-divider-top">
+          {columns.flatMap((column, index) => {
+            const prefix = `column${index + 1}`;
+            const titleTypography = getComponentLayoutTypography(componentLayout, `${prefix}.title`);
+            const bodyTypography = getComponentLayoutTypography(componentLayout, `${prefix}.body`);
+            return [
+              hasEditableTextContent(column.title) ? (
+                <ComponentLayoutNode
+                  key={`${prefix}.title`}
+                  layout={componentLayout}
+                  nodeId={`${prefix}.title`}
+                >
+                  <Typography
+                    as="h4"
+                    preset={titleTypography?.preset ?? "sans-body"}
+                    size={titleTypography?.size ?? "title-sm"}
+                    weight="semantic"
+                    wrapPolicy={titleTypography?.wrap ?? "heading"}
+                    align={getComponentLayoutAlignment(componentLayout, `${prefix}.title`)}
+                    className="border-l-2 border-white/80 pl-3 text-white"
+                  >
+                    {column.title}
+                  </Typography>
+                </ComponentLayoutNode>
+              ) : null,
+              hasEditableTextContent(column.text) ? (
+                <ComponentLayoutNode
+                  key={`${prefix}.body`}
+                  gapFrom={`${prefix}.title`}
+                  layout={componentLayout}
+                  nodeId={`${prefix}.body`}
+                >
+                  <Typography
+                    as="p"
+                    preset={bodyTypography?.preset ?? "sans-body"}
+                    size={bodyTypography?.size ?? "body"}
+                    weight="medium"
+                    wrapPolicy={bodyTypography?.wrap ?? "prose"}
+                    align={getComponentLayoutAlignment(
+                      componentLayout,
+                      `${prefix}.body`,
+                      column.bodyAlign,
+                    )}
+                    className="text-textPrimary"
+                  >
+                    {column.text}
+                  </Typography>
+                </ComponentLayoutNode>
+              ) : null,
+              column.image ? (
+                <ComponentLayoutNode
+                  key={`${prefix}.media`}
+                  gapFrom={`${prefix}.body`}
+                  layout={componentLayout}
+                  nodeId={`${prefix}.media`}
+                >
+                  <div className="relative w-full overflow-hidden border border-white/10">
+                    <PresetImage
+                      src={column.image}
+                      alt={column.alt}
+                      preset={column.preset}
+                      fitMode={column.fitMode}
+                      preload={publicMediaHint?.src === column.image && publicMediaHint.preload}
+                      mediaProfile="grid-4"
+                      sizes={publicMediaHint?.src === column.image ? publicMediaHint.sizes : undefined}
+                    />
+                  </div>
+                </ComponentLayoutNode>
+              ) : null,
+            ];
+          })}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className={`relative z-20 w-full bg-black ${getSectionSpacingClassName(resolvedDesign.sectionSpacing)}`}>

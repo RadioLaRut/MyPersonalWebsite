@@ -92,7 +92,7 @@ test("runtime next-project synchronization does not mutate stored project conten
   );
 });
 
-test("public next-project content stores only id and nextId outside the frozen penguin page", () => {
+test("public next-project content stores identity plus Puck-managed visible copy", () => {
   const worksContentRoot = path.resolve(process.cwd(), "content/pages/works");
   const detailFiles = fs.readdirSync(worksContentRoot, { withFileTypes: true })
     .filter((entry) => entry.isFile() && entry.name.endsWith(".json") && entry.name !== "penguin.json")
@@ -106,7 +106,7 @@ test("public next-project content stores only id and nextId outside the frozen p
     for (const block of nextBlocks) {
       assert.deepEqual(
         Object.keys(block.props ?? {}).sort(),
-        ["id", "nextId"],
+        ["eyebrow", "footerLeft", "footerRight", "id", "nextId"],
         path.basename(filePath),
       );
     }

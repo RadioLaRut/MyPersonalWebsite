@@ -8,7 +8,6 @@
         "ctaHref": "",
         "ctaLabel": "",
         "description": "日常的虚幻引擎写实环境与打光专项练习。",
-        "descriptionAlign": "right",
         "descriptionLine1": "",
         "descriptionLine2": "",
         "number": "04",
@@ -25,8 +24,7 @@
         "caption": "IMAGE",
         "preset": "ratio-16-9",
         "fitMode": "x",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -37,8 +35,7 @@
         "caption": "IMAGE",
         "preset": "native",
         "fitMode": "x",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -49,8 +46,7 @@
         "caption": "IMAGE",
         "preset": "ratio-16-9",
         "fitMode": "x",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -61,8 +57,7 @@
         "description": "",
         "buttonLabel": "enter",
         "buttonHref": "/works",
-        "id": "HomeEndcapSection-5ed9aa0c-9857-499a-83dd-ffc6184a5abc",
-        "descriptionAlign": "center"
+        "id": "HomeEndcapSection-5ed9aa0c-9857-499a-83dd-ffc6184a5abc"
       }
     }
   ],

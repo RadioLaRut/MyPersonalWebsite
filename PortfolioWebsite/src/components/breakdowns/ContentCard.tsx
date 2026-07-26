@@ -1,6 +1,11 @@
 import type { CSSProperties, ReactNode } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
+import ComponentLayoutNode, {
+  getComponentLayoutAlignment,
+  getComponentLayoutTypography,
+  type ComponentLayoutProps,
+} from "@/components/common/ComponentLayoutNode";
 import Typography, {
   type TypographyAlignment,
 } from "@/components/common/Typography";
@@ -17,6 +22,7 @@ import {
   getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
   getSpacingRem,
+  getComponentSectionProfileClassName,
 } from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 import type { PublicMediaHint } from "@/lib/media-layout";
@@ -30,7 +36,7 @@ type ContentCardProps = {
   imageFitMode?: ImageFitMode;
   imagePosition?: "left" | "right";
   publicMediaHint?: PublicMediaHint;
-} & ComponentDesignOverride<"ContentCard">;
+} & ComponentDesignOverride<"ContentCard"> & ComponentLayoutProps;
 
 type StyleWithVars = CSSProperties & Record<string, string>;
 
@@ -38,6 +44,7 @@ export default function ContentCard({
   title,
   description,
   bodyAlign = "left",
+  componentLayout,
   imageSrc,
   imagePreset = "ratio-16-9",
   imageFitMode = "x",
@@ -52,6 +59,69 @@ export default function ContentCard({
   const mobileMediaOffsetStyle: StyleWithVars = {
     "--content-card-mobile-media-top-spacing": getSpacingRem(resolvedDesign.mobileMediaTopSpacing),
   };
+
+  if (componentLayout) {
+    const headingTypography = getComponentLayoutTypography(componentLayout, "heading");
+    const bodyTypography = getComponentLayoutTypography(componentLayout, "body");
+    return (
+      <section className={`w-full ${getComponentSectionProfileClassName(componentLayout)}`}>
+        <div className="grid-container items-start">
+          <ComponentLayoutNode layout={componentLayout} nodeId="heading">
+            <Typography
+              as="h3"
+              preset={headingTypography?.preset ?? "sans-body"}
+              size={headingTypography?.size ?? "title-sm"}
+              weight="display"
+              wrapPolicy={headingTypography?.wrap ?? "heading"}
+              align={getComponentLayoutAlignment(componentLayout, "heading")}
+              className="text-white"
+            >
+              {title}
+            </Typography>
+          </ComponentLayoutNode>
+          {paragraphs.length > 0 ? (
+            <ComponentLayoutNode
+              gapFrom="heading"
+              layout={componentLayout}
+              nodeId="body"
+              className="grid"
+            >
+              {paragraphs.map((paragraph, index) => (
+                <Typography
+                  key={index}
+                  as="p"
+                  preset={bodyTypography?.preset ?? "sans-body"}
+                  size={bodyTypography?.size ?? "body"}
+                  weight="medium"
+                  wrapPolicy={bodyTypography?.wrap ?? "prose"}
+                  align={getComponentLayoutAlignment(componentLayout, "body", bodyAlign)}
+                  className="text-textSecondary"
+                  data-component-lab-node="body.item"
+                >
+                  {paragraph}
+                </Typography>
+              ))}
+            </ComponentLayoutNode>
+          ) : null}
+          {hasImage && imageSrc ? (
+            <ComponentLayoutNode layout={componentLayout} nodeId="media">
+              <div className="relative w-full overflow-hidden border border-white/10 bg-[#0a0a0a]">
+                <PresetImage
+                  src={imageSrc}
+                  alt={imageAlt}
+                  preset={imagePreset}
+                  fitMode={imageFitMode}
+                  preload={publicMediaHint?.src === imageSrc && publicMediaHint.preload}
+                  mediaProfile="grid-6"
+                  sizes={publicMediaHint?.src === imageSrc ? publicMediaHint.sizes : undefined}
+                />
+              </div>
+            </ComponentLayoutNode>
+          ) : null}
+        </div>
+      </section>
+    );
+  }
 
   const textContent = (
     <div

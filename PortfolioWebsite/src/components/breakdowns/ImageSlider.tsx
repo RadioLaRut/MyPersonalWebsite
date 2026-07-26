@@ -3,6 +3,11 @@
 import { type ReactNode, useId, useRef, useState } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
+import ComponentLayoutNode, {
+  getComponentLayoutAlignment,
+  getComponentLayoutTypography,
+  type ComponentLayoutProps,
+} from "@/components/common/ComponentLayoutNode";
 import Typography from "@/components/common/Typography";
 import {
   type ComponentDesignOverride,
@@ -12,6 +17,7 @@ import {
   getGridColumnClassName,
   getSectionSpacingClassName,
   getSpacingRem,
+  getComponentSectionProfileClassName,
 } from "@/lib/component-design-style";
 import {
   hasEditableTextContent,
@@ -51,7 +57,7 @@ function ChevronIcon({ direction }: { direction: "left" | "right" }) {
   );
 }
 
-interface ImageSliderProps extends ComponentDesignOverride<"ImageSlider"> {
+interface ImageSliderProps extends ComponentDesignOverride<"ImageSlider">, ComponentLayoutProps {
   title?: ReactNode;
   unlitSrc: string;
   litSrc: string;
@@ -67,6 +73,7 @@ interface ImageSliderProps extends ComponentDesignOverride<"ImageSlider"> {
 }
 
 export default function ImageSlider({
+  componentLayout,
   title,
   unlitSrc,
   litSrc,
@@ -108,6 +115,9 @@ export default function ImageSlider({
   const leftLabelText = toPlainText(leftLabel);
   const rightLabelText = toPlainText(rightLabel);
   const sliderDescriptionId = useId();
+  const titleTypography = getComponentLayoutTypography(componentLayout, "title");
+  const leftLabelTypography = getComponentLayoutTypography(componentLayout, "leftLabel");
+  const rightLabelTypography = getComponentLayoutTypography(componentLayout, "rightLabel");
 
   const updatePosition = (clientX: number) => {
     const container = containerRef.current;
@@ -198,9 +208,17 @@ export default function ImageSlider({
       : "cursor-ew-resize";
 
   return (
-    <div className={`w-full ${getSectionSpacingClassName(design.sectionSpacing)} ${className}`}>
+    <div className={`w-full ${
+      componentLayout
+        ? getComponentSectionProfileClassName(componentLayout)
+        : getSectionSpacingClassName(design.sectionSpacing)
+    } ${className}`}>
       <div className="grid-container">
-        <div className={getGridColumnClassName(design.contentBounds)}>
+        <ComponentLayoutNode
+          layout={componentLayout}
+          nodeId="media"
+          className={componentLayout ? undefined : getGridColumnClassName(design.contentBounds)}
+        >
           <div
             ref={containerRef}
             className={`${frameClassName} group select-none touch-pan-y focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80 ${cursorClass}`}
@@ -223,7 +241,7 @@ export default function ImageSlider({
             <span id={sliderDescriptionId} className="sr-only">
               使用左右或上下方向键微调，Page Up 和 Page Down 大幅调整，Home 和 End 跳到两端。
             </span>
-            {visibleTitle ? (
+            {visibleTitle && !componentLayout ? (
               <div className="pointer-events-none absolute left-5 top-5 z-20 md:left-6 md:top-6">
                 <div className="border border-white/12 bg-black/58 px-3 py-2 backdrop-blur-sm">
                   <Typography
@@ -305,7 +323,8 @@ export default function ImageSlider({
             </div>
           </div>
 
-          {hasEditableTextContent(leftLabel) || hasEditableTextContent(rightLabel) ? (
+          {!componentLayout &&
+          (hasEditableTextContent(leftLabel) || hasEditableTextContent(rightLabel)) ? (
             <div
               className="flex items-start justify-between gap-6"
               style={{ marginTop: getSpacingRem(design.labelsTopSpacing) }}
@@ -338,7 +357,60 @@ export default function ImageSlider({
               ) : null}
             </div>
           ) : null}
-        </div>
+        </ComponentLayoutNode>
+        {componentLayout && visibleTitle ? (
+          <ComponentLayoutNode layout={componentLayout} nodeId="title">
+            <Typography
+              as="span"
+              preset={titleTypography?.preset ?? "sans-body"}
+              size={titleTypography?.size ?? "title-sm"}
+              weight="semantic"
+              wrapPolicy={titleTypography?.wrap ?? "heading"}
+              align={getComponentLayoutAlignment(componentLayout, "title")}
+              className="text-white/88"
+            >
+              {visibleTitle}
+            </Typography>
+          </ComponentLayoutNode>
+        ) : null}
+        {componentLayout && hasEditableTextContent(leftLabel) ? (
+          <ComponentLayoutNode
+            gapFrom="media"
+            layout={componentLayout}
+            nodeId="leftLabel"
+          >
+            <Typography
+              as="span"
+              preset={leftLabelTypography?.preset ?? "sans-body"}
+              size={leftLabelTypography?.size ?? "caption"}
+              weight="semantic"
+              wrapPolicy={leftLabelTypography?.wrap ?? "label"}
+              align={getComponentLayoutAlignment(componentLayout, "leftLabel")}
+              className="text-white/82"
+            >
+              {leftLabel}
+            </Typography>
+          </ComponentLayoutNode>
+        ) : null}
+        {componentLayout && hasEditableTextContent(rightLabel) ? (
+          <ComponentLayoutNode
+            gapFrom="media"
+            layout={componentLayout}
+            nodeId="rightLabel"
+          >
+            <Typography
+              as="span"
+              preset={rightLabelTypography?.preset ?? "sans-body"}
+              size={rightLabelTypography?.size ?? "caption"}
+              weight="semantic"
+              wrapPolicy={rightLabelTypography?.wrap ?? "label"}
+              align={getComponentLayoutAlignment(componentLayout, "rightLabel", "right")}
+              className="text-white/82"
+            >
+              {rightLabel}
+            </Typography>
+          </ComponentLayoutNode>
+        ) : null}
       </div>
     </div>
   );

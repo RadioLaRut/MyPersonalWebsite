@@ -1,76 +1,47 @@
 import type { ComponentConfig, Config } from "@puckeditor/core";
 import { cloneElement, isValidElement, type ReactElement } from "react";
 
-import type {
-  ComponentDesignComponentKey,
-  ComponentDesignDocument,
-} from "@/lib/component-design-schema";
-import type { PublicMediaHint } from "@/lib/media-layout";
-import type { PuckComponentType } from "@/puck/component-manifest";
+import {
+  COMPONENT_DESIGN_AUTHOR_COMPONENTS,
+  type ComponentDesignAuthorComponent,
+} from "../lib/component-design-manifest.ts";
+import {
+  getComponentVariantLayout,
+  resolveComponentDesignVariant,
+  type ComponentDesignDocument,
+} from "../lib/component-design-v2.ts";
+import type { PublicMediaHint } from "../lib/media-layout.ts";
+import type { PuckComponentType } from "./component-manifest.ts";
 
 export type RenderSurface = "public" | "editor" | "lab";
 
-export const DESIGN_KEY_BY_COMPONENT = {
-  BreakdownHeadline: "BreakdownHeadline",
-  ContactFlashlight: "ContactFlashlight",
-  HeroHeadline: "HeroHeadline",
-  HeroSection: "HeroSection",
-  HomeEndcapSection: "HomeEndcapSection",
-  ImagePanel: "ImagePanel",
-  ImageSlider: "ImageSlider",
-  NextProjectBlock: "NextProjectBlock",
-  ParameterGrid: "ParameterGrid",
-  RichParagraph: "RichParagraph",
-  StatementBlock: "StatementBlock",
-  WorksList: "WorksList",
-  WorksListEntry: "WorksListEntry",
-} as const satisfies Partial<Record<PuckComponentType, ComponentDesignComponentKey>>;
-
 type GenericRenderProps = Record<string, unknown>;
+
+function isAuthorComponent(
+  type: PuckComponentType,
+): type is ComponentDesignAuthorComponent {
+  return (COMPONENT_DESIGN_AUTHOR_COMPONENTS as readonly string[]).includes(type);
+}
 
 export function resolveComponentDesignProps(
   type: PuckComponentType,
+  props: GenericRenderProps = {},
   designDocument?: ComponentDesignDocument,
 ): Record<string, unknown> | undefined {
-  const componentKey = DESIGN_KEY_BY_COMPONENT[type as keyof typeof DESIGN_KEY_BY_COMPONENT];
   if (!designDocument) return undefined;
-
-  if (type === "EditorialHeader") {
-    return {
-      collectionDesign: designDocument.components.LightingCollectionHeader,
-      indexDesign: designDocument.components.PortfolioHeroHeader,
-    };
-  }
-  if (type === "EditorialSplit") {
-    return {
-      cardDesign: designDocument.components.ContentCard,
-      splitDesign: designDocument.components.TextSplitLayout,
-    };
-  }
-  if (type === "ThreeColumnSection") {
-    return {
-      phaseDesign: designDocument.components.HighDensityInfoBlock,
-      triptychDesign: designDocument.components.BreakdownTriptych,
-    };
-  }
-  if (type === "ProjectCoverLink") {
-    return {
-      cardDesign: designDocument.components.LightingProjectCard,
-      immersiveDesign: designDocument.components.ProjectSection,
-    };
-  }
-
-  if (!componentKey) return undefined;
-
-  const design = designDocument.components[componentKey];
-  if (type === "WorksList") {
-    return {
-      design,
-      entryDesign: designDocument.components.WorksListEntry,
-    };
-  }
-
-  return { design };
+  const componentLayout = isAuthorComponent(type)
+    ? getComponentVariantLayout(designDocument, type, props)
+    : type === "WorksListEntry"
+      ? designDocument.components.WorksList.variants.default
+    : undefined;
+  const componentVariant = isAuthorComponent(type)
+    ? resolveComponentDesignVariant(type, props)
+    : type === "WorksListEntry"
+      ? "default"
+    : undefined;
+  return componentLayout
+    ? { componentLayout, componentVariant }
+    : undefined;
 }
 
 export function renderWithAdapter({
@@ -95,7 +66,7 @@ export function renderWithAdapter({
     ...(publicMediaHint ? { publicMediaHint } : {}),
   } as Parameters<ComponentConfig["render"]>[0];
   const rendered = render(adaptedProps);
-  const designProps = resolveComponentDesignProps(type, designDocument);
+  const designProps = resolveComponentDesignProps(type, safeProps, designDocument);
 
   if (!designProps || !isValidElement(rendered)) return rendered;
 

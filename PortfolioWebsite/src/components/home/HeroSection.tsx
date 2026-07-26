@@ -1,6 +1,11 @@
 import React, { type ReactNode } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
+import ComponentLayoutNode, {
+  getComponentLayoutAlignment,
+  getComponentLayoutTypography,
+  type ComponentLayoutProps,
+} from "@/components/common/ComponentLayoutNode";
 import Typography, {
   type TypographyAlignment,
 } from "@/components/common/Typography";
@@ -10,6 +15,7 @@ import {
   resolveComponentDesign,
 } from "@/lib/component-design-runtime";
 import {
+  getComponentSectionProfileClassName,
   getResponsiveGridColumnClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
@@ -36,7 +42,7 @@ function getPosterTitleLines(title: ReactNode) {
   return lines.length > 1 ? lines : null;
 }
 
-export interface HeroSectionProps extends ComponentDesignOverride<"HeroSection"> {
+export interface HeroSectionProps extends ComponentDesignOverride<"HeroSection">, ComponentLayoutProps {
   eyebrow?: ReactNode;
   positioning?: ReactNode;
   title: ReactNode;
@@ -55,10 +61,13 @@ export interface HeroSectionProps extends ComponentDesignOverride<"HeroSection">
   mobileImageFocalY?: number;
   publicMediaHint?: PublicMediaHint;
   editMode?: boolean;
+  variant?: "full" | "poster";
 }
 
 export default function HeroSection({
   eyebrow,
+  componentLayout,
+  componentVariant,
   positioning,
   title,
   subtitle,
@@ -76,6 +85,7 @@ export default function HeroSection({
   mobileImageFocalY = 50,
   publicMediaHint,
   editMode = false,
+  variant,
   design: designOverride,
 }: HeroSectionProps) {
   const design = resolveComponentDesign("HeroSection", designOverride);
@@ -102,6 +112,249 @@ export default function HeroSection({
 
   const outerSectionClassName = "relative min-h-[calc(var(--site-viewport-unit)*100)] w-full overflow-hidden bg-black px-0";
   const viewportWrapperClassName = "relative min-h-[calc(var(--site-viewport-unit)*100)] w-full overflow-hidden bg-black lg:border-y lg:border-white/5";
+
+  if (componentLayout) {
+    const resolvedVariant = componentVariant === "full" || componentVariant === "poster"
+      ? componentVariant
+      : variant ?? (posterMode ? "poster" : "full");
+    const typography = (nodeId: string) =>
+      getComponentLayoutTypography(componentLayout, nodeId);
+    const mediaLayer = (
+      <div
+        className="absolute inset-x-0 -inset-y-[12%] overflow-hidden lg:inset-0"
+        data-component-lab-node="media"
+        data-public-motion-media={editMode ? undefined : "true"}
+      >
+        <PresetImage
+          src={imageSrc}
+          alt={imageAlt}
+          preload={publicMediaHint?.src === imageSrc && publicMediaHint.preload}
+          mediaProfile="full-bleed"
+          sizes={publicMediaHint?.src === imageSrc ? publicMediaHint.sizes : undefined}
+          preset={imagePreset}
+          fitMode={imageFitMode}
+          fitModeByBreakpoint={{ base: "cover", lg: imageFitMode }}
+          objectPositionByBreakpoint={{
+            base: { x: mobileImageFocalX, y: mobileImageFocalY },
+            lg: { x: 50, y: 50 },
+          }}
+          lockFrame={false}
+          frameClassName="h-full w-full"
+          imageClassName="select-none"
+          draggable={false}
+        />
+      </div>
+    );
+    return (
+      <section
+        className={`relative min-h-[calc(var(--site-viewport-unit)*100)] w-full overflow-hidden bg-black ${
+          getComponentSectionProfileClassName(componentLayout)
+        }`}
+        data-public-motion-kind={editMode ? undefined : "hero"}
+      >
+        {mediaLayer}
+        <div className="absolute inset-0 z-20 grid content-center">
+          <div className="grid-container relative w-full text-edge-shadow">
+            {resolvedVariant === "poster" ? (
+              <>
+                <ComponentLayoutNode layout={componentLayout} nodeId="title">
+                  <Typography
+                    as="h1"
+                    preset={typography("title")?.preset ?? "luna-editorial"}
+                    size={typography("title")?.size ?? posterTitleSize}
+                    weight="semantic"
+                    wrapPolicy={typography("title")?.wrap ?? "heading"}
+                    align={getComponentLayoutAlignment(componentLayout, "title", "right")}
+                    className="text-white/92"
+                  >
+                    {title}
+                  </Typography>
+                </ComponentLayoutNode>
+                {hasSubtitle ? (
+                  <ComponentLayoutNode
+                    gapFrom="title"
+                    layout={componentLayout}
+                    nodeId="subtitle"
+                  >
+                    <Typography
+                      as="p"
+                      preset={typography("subtitle")?.preset ?? "sans-body"}
+                      size={typography("subtitle")?.size ?? "title"}
+                      weight="semantic"
+                      wrapPolicy={typography("subtitle")?.wrap ?? "label"}
+                      align={getComponentLayoutAlignment(componentLayout, "subtitle", "right")}
+                      className="text-white/88"
+                    >
+                      {subtitle}
+                    </Typography>
+                  </ComponentLayoutNode>
+                ) : null}
+                {hasPositioning ? (
+                  <ComponentLayoutNode
+                    gapFrom={hasSubtitle ? "subtitle" : "title"}
+                    layout={componentLayout}
+                    nodeId="positioning"
+                  >
+                    <Typography
+                      as="p"
+                      preset={typography("positioning")?.preset ?? "sans-body"}
+                      size={typography("positioning")?.size ?? "body-sm"}
+                      weight="semantic"
+                      wrapPolicy={typography("positioning")?.wrap ?? "prose"}
+                      align={getComponentLayoutAlignment(componentLayout, "positioning", "right")}
+                      className="text-white/76"
+                    >
+                      {positioning}
+                    </Typography>
+                  </ComponentLayoutNode>
+                ) : null}
+                {hasEditableTextContent(eyebrow) ? (
+                  <ComponentLayoutNode
+                    gapFrom={hasPositioning ? "positioning" : hasSubtitle ? "subtitle" : "title"}
+                    layout={componentLayout}
+                    nodeId="eyebrow"
+                  >
+                    <Typography
+                      as="p"
+                      preset={typography("eyebrow")?.preset ?? "sans-body"}
+                      size={typography("eyebrow")?.size ?? "caption"}
+                      weight="semantic"
+                      wrapPolicy={typography("eyebrow")?.wrap ?? "prose"}
+                      align={getComponentLayoutAlignment(componentLayout, "eyebrow", "right")}
+                      className="text-white/58"
+                    >
+                      {eyebrow}
+                    </Typography>
+                  </ComponentLayoutNode>
+                ) : null}
+              </>
+            ) : (
+              <>
+                {hasEditableTextContent(eyebrow) ? (
+                  <ComponentLayoutNode layout={componentLayout} nodeId="eyebrow">
+                    <Typography
+                      as="p"
+                      preset={typography("eyebrow")?.preset ?? "sans-body"}
+                      size={typography("eyebrow")?.size ?? "caption"}
+                      weight="semantic"
+                      wrapPolicy={typography("eyebrow")?.wrap ?? "label"}
+                      align={getComponentLayoutAlignment(componentLayout, "eyebrow")}
+                      className="text-white/56"
+                    >
+                      {eyebrow}
+                    </Typography>
+                  </ComponentLayoutNode>
+                ) : null}
+                <ComponentLayoutNode
+                  gapFrom={hasEditableTextContent(eyebrow) ? "eyebrow" : undefined}
+                  layout={componentLayout}
+                  nodeId="title"
+                >
+                  <Typography
+                    as="h1"
+                    preset={typography("title")?.preset ?? "luna-editorial"}
+                    size={typography("title")?.size ?? "display"}
+                    weight="semantic"
+                    wrapPolicy={typography("title")?.wrap ?? "heading"}
+                    align={getComponentLayoutAlignment(componentLayout, "title")}
+                    className="text-white"
+                  >
+                    {title}
+                  </Typography>
+                </ComponentLayoutNode>
+                {hasSubtitle ? (
+                  <ComponentLayoutNode gapFrom="title" layout={componentLayout} nodeId="subtitle">
+                    <Typography
+                      as="p"
+                      preset={typography("subtitle")?.preset ?? "sans-body"}
+                      size={typography("subtitle")?.size ?? "label"}
+                      weight="semantic"
+                      wrapPolicy={typography("subtitle")?.wrap ?? "label"}
+                      align={getComponentLayoutAlignment(componentLayout, "subtitle")}
+                      className="text-white/74"
+                    >
+                      {subtitle}
+                    </Typography>
+                  </ComponentLayoutNode>
+                ) : null}
+                {hasDescription ? (
+                  <ComponentLayoutNode
+                    gapFrom={hasSubtitle ? "subtitle" : "title"}
+                    layout={componentLayout}
+                    nodeId="description"
+                  >
+                    <Typography
+                      as="p"
+                      preset={typography("description")?.preset ?? "sans-body"}
+                      size={typography("description")?.size ?? "body"}
+                      weight="medium"
+                      wrapPolicy={typography("description")?.wrap ?? "prose"}
+                      align={getComponentLayoutAlignment(
+                        componentLayout,
+                        "description",
+                        descriptionAlign,
+                      )}
+                      className="text-white/66"
+                    >
+                      {description}
+                    </Typography>
+                  </ComponentLayoutNode>
+                ) : null}
+                {hasPrimaryCta && primaryCtaHref ? (
+                  <ComponentLayoutNode
+                    gapFrom={hasDescription ? "description" : hasSubtitle ? "subtitle" : "title"}
+                    layout={componentLayout}
+                    nodeId="primaryCta"
+                  >
+                    <MotionLink
+                      href={primaryCtaHref}
+                      disabled={editMode}
+                      className="interactive inline-grid border border-white/25 px-5 py-3 text-white hover:bg-white hover:text-black"
+                    >
+                      <Typography
+                        preset={typography("primaryCta")?.preset ?? "sans-body"}
+                        size={typography("primaryCta")?.size ?? "label"}
+                        weight="semantic"
+                        wrapPolicy={typography("primaryCta")?.wrap ?? "label"}
+                        align={getComponentLayoutAlignment(componentLayout, "primaryCta", "center")}
+                        className="text-inherit"
+                      >
+                        {primaryCtaLabel}
+                      </Typography>
+                    </MotionLink>
+                  </ComponentLayoutNode>
+                ) : null}
+                {hasSecondaryCta && secondaryCtaHref ? (
+                  <ComponentLayoutNode
+                    gapFrom={hasPrimaryCta ? "primaryCta" : hasDescription ? "description" : "title"}
+                    layout={componentLayout}
+                    nodeId="secondaryCta"
+                  >
+                    <MotionLink
+                      href={secondaryCtaHref}
+                      disabled={editMode}
+                      className="interactive inline-grid border-b border-white/35 py-3 text-white"
+                    >
+                      <Typography
+                        preset={typography("secondaryCta")?.preset ?? "sans-body"}
+                        size={typography("secondaryCta")?.size ?? "label"}
+                        weight="semantic"
+                        wrapPolicy={typography("secondaryCta")?.wrap ?? "label"}
+                        align={getComponentLayoutAlignment(componentLayout, "secondaryCta")}
+                        className="text-inherit"
+                      >
+                        {secondaryCtaLabel}
+                      </Typography>
+                    </MotionLink>
+                  </ComponentLayoutNode>
+                ) : null}
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section

@@ -7,7 +7,7 @@ import type { ComponentConfig } from "@puckeditor/core";
 import { createElement } from "react";
 import ts from "typescript";
 
-import { createDefaultComponentDesignDocument } from "../lib/component-design-schema.ts";
+import { createDefaultComponentDesignDocument } from "../lib/component-design-v2.ts";
 import {
   migrateLegacyPageDocument,
   parsePageDocument,
@@ -187,7 +187,7 @@ test("generated homepage loader stays aligned with the authoritative homepage do
   assert.deepEqual([...HOME_PUBLIC_RENDERER_TYPES], expectedTypes);
 });
 
-test("runtime injects server-projected design only into non-atomic root components", async () => {
+test("runtime injects V2 layout only into author components", async () => {
   const document = asPageDocument({
     content: [
       { props: { id: "statement" }, type: "StatementBlock" },
@@ -207,13 +207,16 @@ test("runtime injects server-projected design only into non-atomic root componen
   const metadata = (runtimeConfig.components.MetadataListItem.render as unknown as () => ReturnType<typeof createElement>)();
   const worksList = (runtimeConfig.components.WorksList.render as unknown as () => ReturnType<typeof createElement>)();
   assert.deepEqual(
-    (statement.props as { design?: unknown }).design,
-    designDocument.components.StatementBlock,
+    (statement.props as { componentLayout?: unknown }).componentLayout,
+    designDocument.components.StatementBlock.variants.medium,
   );
-  assert.equal((metadata.props as { design?: unknown }).design, undefined);
+  assert.equal(
+    (metadata.props as { componentLayout?: unknown }).componentLayout,
+    undefined,
+  );
   assert.deepEqual(
-    (worksList.props as { entryDesign?: unknown }).entryDesign,
-    designDocument.components.WorksListEntry,
+    (worksList.props as { componentLayout?: unknown }).componentLayout,
+    designDocument.components.WorksList.variants.default,
   );
 });
 

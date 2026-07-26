@@ -8,7 +8,6 @@
         "ctaHref": "#contact",
         "ctaLabel": "查看联系方式",
         "description": "",
-        "descriptionAlign": "left",
         "descriptionLine1": "LIGHTING / TECH ART / GAME DESIGN",
         "descriptionLine2": "我更关心如何让氛围、系统和落地流程一起服务体验，而不是把这些能力拆成孤立条目。我目前的创作重心是把灯光氛围、技术美术思维和游戏设计组织成同一个叙事系统。对我来说，灯光不是最后的美术修饰，而是空间秩序、节奏控制与信息引导的一部分；技术美术也不仅是工具实现，而是把团队协作、编辑效率与视觉质量放进同一条生产链。",
         "number": "",
@@ -23,10 +22,8 @@
         "id": "about-info-1",
         "col1Items": [],
         "col2Items": [],
-        "rhythm": "aligned",
         "variant": "phase",
         "col1Body": "以灯光与氛围塑造为入口，同时延伸到技术美术、工具链和交互叙事设计。近期的重点在于：让视觉氛围服务可读性，让系统设计服务情绪，让生产流程支持更稳定的创作输出。",
-        "col1BodyAlign": "left",
         "col1Label": "",
         "col1MediaFitMode": "x",
         "col1MediaPreset": "ratio-16-9",
@@ -34,7 +31,6 @@
         "col1Subtitle": "Current Focus",
         "col1Title": "我在做什么",
         "col2Body": "我习惯先拆出项目真正需要解决的问题，再回到版式、机制、工具或流程层面做收束。面对多人协作，我会优先建立命名、资产、版本控制与验证标准；面对单人项目，我会把交互、视觉与叙事节奏放在同一条设计链路里反复迭代。",
-        "col2BodyAlign": "left",
         "col2Label": "",
         "col2MediaFitMode": "x",
         "col2MediaPreset": "ratio-16-9",
@@ -42,7 +38,6 @@
         "col2Subtitle": "How I Work",
         "col2Title": "我如何推进项目",
         "col3Body": "我能在策划、美术、程序之间进行翻译和推进，也能直接动手实现关键节点。无论是灯具蓝图、编辑器控件、版本控制辅助、UE 蓝图逻辑，还是项目级的视觉和信息组织，我都更关注它们最终是否让体验更完整、团队更顺畅。",
-        "col3BodyAlign": "left",
         "col3Label": "",
         "col3MediaFitMode": "cover",
         "col3MediaPreset": "ratio-16-9",
@@ -117,7 +112,10 @@
             }
           }
         ],
-        "taglineSubAlign": "left"
+        "clientsHeading": "Experience History",
+        "employmentHeading": "Creative Direction",
+        "contactHeading": "WeChat / Social",
+        "emailHeading": "Email / Contact"
       }
     },
     {
@@ -128,8 +126,7 @@
         "title": "RETURN TO WORKS",
         "description": "继续看完整项目、拆解页和灯光集合。",
         "buttonLabel": "进入作品归档",
-        "buttonHref": "/works",
-        "descriptionAlign": "center"
+        "buttonHref": "/works"
       }
     }
   ],

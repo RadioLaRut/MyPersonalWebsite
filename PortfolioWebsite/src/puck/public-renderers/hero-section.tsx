@@ -3,11 +3,9 @@ import type { ComponentConfig } from "@puckeditor/core";
 import HeroSection from "../../components/home/HeroSection";
 import { toSafePuckHref } from "../../lib/puck-href";
 import { castImageFitMode, castImagePreset } from "./shared";
-import { castTypographyAlignment } from "../../lib/typography-alignment";
 
 export const render: ComponentConfig["render"] = ({
   description,
-  descriptionAlign,
   editMode,
   eyebrow,
   imageAlt,
@@ -24,10 +22,10 @@ export const render: ComponentConfig["render"] = ({
   secondaryCtaLabel,
   subtitle,
   title,
+  variant,
 }) => (
   <HeroSection
     description={description}
-    descriptionAlign={castTypographyAlignment(descriptionAlign)}
     editMode={editMode}
     eyebrow={eyebrow}
     imageAlt={imageAlt}
@@ -44,5 +42,6 @@ export const render: ComponentConfig["render"] = ({
     secondaryCtaLabel={secondaryCtaLabel}
     subtitle={subtitle}
     title={title}
+    variant={variant === "full" ? "full" : "poster"}
   />
 );

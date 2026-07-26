@@ -38,6 +38,13 @@ export const COMPONENT_DESIGN_SPACING_TOKENS = [
   "64",
 ] as const;
 
+export const COMPONENT_DESIGN_OPTICAL_PULL_TOKENS = [
+  "0",
+  "4",
+  "8",
+  "12",
+] as const;
+
 export const COMPONENT_DESIGN_SECTION_SPACING_TOKENS = [
   "section-normal",
   "section-spacious",
@@ -59,6 +66,9 @@ export type ComponentDesignComponentKey =
 
 export type ComponentDesignSpacingToken =
   (typeof COMPONENT_DESIGN_SPACING_TOKENS)[number];
+
+export type ComponentDesignOpticalPullToken =
+  (typeof COMPONENT_DESIGN_OPTICAL_PULL_TOKENS)[number];
 
 export type ComponentDesignSectionSpacingToken =
   (typeof COMPONENT_DESIGN_SECTION_SPACING_TOKENS)[number];
@@ -182,7 +192,8 @@ export type ParameterGridDesign = {
 export type ProjectSectionDesign = {
   lockupGap: ComponentDesignSpacingToken;
   titleSize: TypographySize;
-  titleUnderlineOpticalPull: ComponentDesignSpacingToken;
+  titleUnderlineCjkMetricClearance: ComponentDesignOpticalPullToken;
+  titleUnderlineOpticalPull: ComponentDesignOpticalPullToken;
   textLeftBounds: ComponentResponsiveGridBounds;
   textRightBounds: ComponentResponsiveGridBounds;
 };
@@ -298,6 +309,15 @@ function isSpacingToken(value: unknown): value is ComponentDesignSpacingToken {
     COMPONENT_DESIGN_SPACING_TOKENS.includes(value as ComponentDesignSpacingToken);
 }
 
+function isOpticalPullToken(
+  value: unknown,
+): value is ComponentDesignOpticalPullToken {
+  return typeof value === "string" &&
+    COMPONENT_DESIGN_OPTICAL_PULL_TOKENS.includes(
+      value as ComponentDesignOpticalPullToken,
+    );
+}
+
 function isSectionSpacingToken(
   value: unknown,
 ): value is ComponentDesignSectionSpacingToken {
@@ -406,6 +426,13 @@ function normalizeSpacingToken(
   fallback: ComponentDesignSpacingToken,
 ) {
   return isSpacingToken(value) ? value : fallback;
+}
+
+function normalizeOpticalPullToken(
+  value: unknown,
+  fallback: ComponentDesignOpticalPullToken,
+) {
+  return isOpticalPullToken(value) ? value : fallback;
 }
 
 function normalizeSectionSpacingToken(
@@ -748,7 +775,11 @@ function normalizeProjectSectionDesign(value: unknown): ProjectSectionDesign {
       defaults.lockupGap,
     ),
     titleSize: normalizeTypographySize(value.titleSize, defaults.titleSize),
-    titleUnderlineOpticalPull: normalizeSpacingToken(
+    titleUnderlineCjkMetricClearance: normalizeOpticalPullToken(
+      value.titleUnderlineCjkMetricClearance,
+      defaults.titleUnderlineCjkMetricClearance,
+    ),
+    titleUnderlineOpticalPull: normalizeOpticalPullToken(
       value.titleUnderlineOpticalPull,
       defaults.titleUnderlineOpticalPull,
     ),
@@ -1069,7 +1100,8 @@ export function createDefaultComponentDesignDocument(): ComponentDesignDocument 
       ProjectSection: {
         lockupGap: "12",
         titleSize: "display",
-        titleUnderlineOpticalPull: "12",
+        titleUnderlineCjkMetricClearance: "12",
+        titleUnderlineOpticalPull: "0",
         textLeftBounds: createDefaultResponsiveBounds(1, 11, 1, 10, 2, 9),
         textRightBounds: createDefaultResponsiveBounds(2, 12, 3, 12, 5, 12),
       },
@@ -1205,6 +1237,16 @@ export const COMPONENT_DESIGN_SPACING_LABELS: Record<
   "48": "48px",
   "56": "56px",
   "64": "64px",
+};
+
+export const COMPONENT_DESIGN_OPTICAL_PULL_LABELS: Record<
+  ComponentDesignOpticalPullToken,
+  string
+> = {
+  "0": "不上提",
+  "4": "4px",
+  "8": "8px",
+  "12": "12px",
 };
 
 export const COMPONENT_DESIGN_SECTION_SPACING_LABELS: Record<

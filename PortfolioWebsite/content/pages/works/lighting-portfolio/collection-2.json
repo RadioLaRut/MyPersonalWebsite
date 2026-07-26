@@ -8,7 +8,6 @@
         "ctaHref": "",
         "ctaLabel": "",
         "description": "围绕同一场景在白昼、黄昏与夜晚之间的色温、可读性与情绪切换练习。",
-        "descriptionAlign": "right",
         "descriptionLine1": "",
         "descriptionLine2": "",
         "number": "02",
@@ -25,8 +24,7 @@
         "caption": "DAY",
         "preset": "native",
         "fitMode": "x",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -37,8 +35,7 @@
         "caption": "DUSK",
         "preset": "native",
         "fitMode": "x",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -49,8 +46,7 @@
         "caption": "FOG",
         "preset": "native",
         "fitMode": "x",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -61,8 +57,7 @@
         "caption": "NIGHT",
         "preset": "native",
         "fitMode": "x",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -88,8 +83,7 @@
         "caption": "DAY",
         "preset": "native",
         "fitMode": "x",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -100,8 +94,7 @@
         "caption": "DUSK",
         "preset": "native",
         "fitMode": "x",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -112,8 +105,7 @@
         "caption": "NIGHT",
         "preset": "native",
         "fitMode": "x",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -139,8 +131,7 @@
         "description": "",
         "buttonLabel": "ENTER",
         "buttonHref": "/works/lighting-portfolio/collection-3",
-        "id": "HomeEndcapSection-9e12cb17-4a02-4831-942c-ec8c0709dcc4",
-        "descriptionAlign": "center"
+        "id": "HomeEndcapSection-9e12cb17-4a02-4831-942c-ec8c0709dcc4"
       }
     }
   ],

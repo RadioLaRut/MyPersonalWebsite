@@ -11,16 +11,14 @@
         "navLink": "",
         "heroImagePreset": "ratio-21-9",
         "heroImageFitMode": "x",
-        "navLinkLabel": "观看视频",
-        "subtitleAlign": "left"
+        "navLinkLabel": "观看视频"
       }
     },
     {
       "type": "RichParagraph",
       "props": {
         "id": "desc-1",
-        "content": "使用轨迹球进行叙事交互的互动叙事游戏。玩家扮演行动不便者，在充满敌意的城市空间中生存与前进。游戏抛弃传统键鼠，完全绑定实体「轨迹球」模拟轮椅推移操作，将玩家的操作难度与角色身体残障体验深度绑定，在无声处实现通感共鸣。灵感源自《Florence》，以极简而精准的交互语言，探讨城市建筑「无障碍」命题背后的隐性敌意。",
-        "align": "justify"
+        "content": "使用轨迹球进行叙事交互的互动叙事游戏。玩家扮演行动不便者，在充满敌意的城市空间中生存与前进。游戏抛弃传统键鼠，完全绑定实体「轨迹球」模拟轮椅推移操作，将玩家的操作难度与角色身体残障体验深度绑定，在无声处实现通感共鸣。灵感源自《Florence》，以极简而精准的交互语言，探讨城市建筑「无障碍」命题背后的隐性敌意。"
       }
     },
     {
@@ -29,10 +27,8 @@
         "id": "triptych-1",
         "col1Items": [],
         "col2Items": [],
-        "rhythm": "staggered",
         "variant": "triptych",
         "col1Body": "对比键鼠与轨迹球输入差异，提出并落地轨迹球交互方案，将「轮椅操控感」精准映射为游戏的核心操作体验。",
-        "col1BodyAlign": "left",
         "col1Label": "",
         "col1MediaFitMode": "x",
         "col1MediaPreset": "ratio-16-9",
@@ -40,7 +36,6 @@
         "col1Subtitle": "",
         "col1Title": "交互方案设计",
         "col2Body": "围绕轨迹球的物理阻力操控体验设计交互逻辑，使玩法机制直接服务于情绪表达与叙事目标。",
-        "col2BodyAlign": "left",
         "col2Label": "",
         "col2MediaFitMode": "x",
         "col2MediaPreset": "ratio-16-9",
@@ -48,7 +43,6 @@
         "col2Subtitle": "",
         "col2Title": "机制服务叙事",
         "col3Body": "针对带有显性恶意的公共城市建筑体系，通过游戏语言发起系统性探究与社会批判。",
-        "col3BodyAlign": "left",
         "col3Label": "",
         "col3MediaFitMode": "x",
         "col3MediaPreset": "ratio-16-9",
@@ -61,7 +55,10 @@
       "type": "NextProjectBlock",
       "props": {
         "id": "next-1",
-        "nextId": "im-explode"
+        "nextId": "im-explode",
+        "eyebrow": "NEXT PROJECT",
+        "footerLeft": "© 2026 江承彦 / JIANG CHENGYAN",
+        "footerRight": ""
       }
     }
   ],

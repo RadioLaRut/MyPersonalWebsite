@@ -1,6 +1,5 @@
 import type { ComponentDefinitionRegistry } from "./component-definition";
 import { createFieldGroup } from "@/puck/fields/field-groups";
-import { createTextAlignmentField } from "@/puck/fields/text-alignment-field";
 
 // defaultProps 仅服务 Admin 新建节点；ComponentLab 的演示内容统一来自页面实例与预设文件。
 export const contactCommonComponents = {
@@ -16,13 +15,16 @@ export const contactCommonComponents = {
         name: { type: "text", label: "Name" },
         taglineText: { type: "text", label: "Tagline Text" },
         taglineSub: { type: "text", label: "Tagline Sub" },
-        taglineSubAlign: createTextAlignmentField("Tagline Sub 对齐"),
         _g_contact: createFieldGroup("联系方式"),
         email: { type: "text", label: "Email" },
         wechat: { type: "text", label: "WeChat" },
         copyLabel: { type: "text", label: "复制按钮文案" },
         copySuccessMessage: { type: "text", label: "复制成功反馈" },
         copyErrorMessage: { type: "text", label: "复制失败反馈" },
+        clientsHeading: { type: "text", label: "经历栏目标题" },
+        employmentHeading: { type: "text", label: "创作方向栏目标题" },
+        contactHeading: { type: "text", label: "微信栏目标题" },
+        emailHeading: { type: "text", label: "邮箱栏目标题" },
         _g_slots: createFieldGroup("内容槽"),
         experienceHistory: {
           type: "slot",
@@ -44,12 +46,15 @@ export const contactCommonComponents = {
         name: "JIANG CHENGYAN",
         taglineText: "艺术与科技 / 交互叙事设计 / 游戏设计",
         taglineSub: "CUC '2028",
-        taglineSubAlign: "left",
         email: "hello@example.com",
         wechat: "wechat_id",
         copyLabel: "复制微信号",
         copySuccessMessage: "微信号已复制",
         copyErrorMessage: "复制失败，请手动选择微信号",
+        clientsHeading: "Experience History",
+        employmentHeading: "Creative Direction",
+        contactHeading: "WeChat / Social",
+        emailHeading: "Email / Contact",
         experienceHistory: [],
         creativeDirection: []
       },
@@ -59,29 +64,18 @@ export const contactCommonComponents = {
       fields: {
         label: { type: "text", label: "Label" },
         value: { type: "text", label: "Value" },
-        align: {
-          type: "select",
-          label: "Align",
-          options: [
-            { label: "Start", value: "start" },
-            { label: "End", value: "end" },
-          ],
-        },
       },
       defaultProps: {
         label: "Role",
         value: "Designer",
-        align: "start",
       },
     },
 
     TextParagraphBlock: {
       fields: {
         text: { type: "textarea", label: "Text" },
-        align: createTextAlignmentField("段落对齐"),
       },
       defaultProps: {
-        align: "left",
         text: "Sample paragraph text.",
       },
     },

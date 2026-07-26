@@ -8,39 +8,36 @@ import {
   castSelectValue,
 } from "./shared";
 
-const ALIGN_VALUES = ["auto", "left", "right"] as const;
-const VARIANT_VALUES = ["immersive", "card"] as const;
+const VARIANT_VALUES = ["immersive-left", "immersive-right", "card"] as const;
 
 export const render: ComponentConfig["render"] = ({
-  align,
   editMode,
   href,
   imageFitMode,
   imagePreset,
-  index,
   mediaSrc,
   mobileImageFocalX,
   mobileImageFocalY,
   number,
+  prompt,
   publicMediaHint,
   subtitle,
   title,
   variant,
 }) => (
   <ProjectCoverLink
-    align={castSelectValue(align, ALIGN_VALUES, "auto")}
     editMode={editMode}
     href={toSafePuckHref(href)}
     imageFitMode={castImageFitMode(imageFitMode)}
     imagePreset={castImagePreset(imagePreset)}
-    index={typeof index === "number" ? index : 0}
     mediaSrc={mediaSrc}
     mobileImageFocalX={mobileImageFocalX}
     mobileImageFocalY={mobileImageFocalY}
     number={number}
+    prompt={prompt}
     publicMediaHint={publicMediaHint}
     subtitle={subtitle}
     title={title}
-    variant={castSelectValue(variant, VARIANT_VALUES, "immersive")}
+    variant={castSelectValue(variant, VARIANT_VALUES, "immersive-left")}
   />
 );

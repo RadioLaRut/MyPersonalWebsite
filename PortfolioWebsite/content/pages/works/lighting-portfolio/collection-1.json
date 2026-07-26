@@ -8,7 +8,6 @@
         "ctaHref": "",
         "ctaLabel": "",
         "description": "基于现有资产独立完成构图、镜头推进与电影化灯光塑形的系列练习。",
-        "descriptionAlign": "right",
         "descriptionLine1": "",
         "descriptionLine2": "",
         "number": "01",
@@ -24,8 +23,7 @@
         "src": "/images/city-2026/001.webp",
         "caption": "",
         "preset": "native",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -35,8 +33,7 @@
         "src": "/images/city-2026/002.webp",
         "caption": "",
         "preset": "native",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -46,8 +43,7 @@
         "src": "/images/city-2026/003.webp",
         "caption": "",
         "preset": "native",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -57,8 +53,7 @@
         "src": "/images/rainforest/Version2Output.0029.webp",
         "caption": "",
         "preset": "native",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -68,8 +63,7 @@
         "src": "/images/rainforest/Output.0050.webp",
         "caption": "",
         "preset": "native",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -79,8 +73,7 @@
         "src": "/images/rainforest/Output.0101.webp",
         "caption": "",
         "preset": "native",
-        "variant": "large",
-        "captionAlign": "left"
+        "variant": "large"
       }
     },
     {
@@ -91,8 +84,7 @@
         "description": "\n",
         "buttonLabel": "ENTER",
         "buttonHref": "/works/lighting-portfolio/collection-2",
-        "id": "HomeEndcapSection-8ad2878f-002b-426e-8c93-993529b54abc",
-        "descriptionAlign": "center"
+        "id": "HomeEndcapSection-8ad2878f-002b-426e-8c93-993529b54abc"
       }
     }
   ],

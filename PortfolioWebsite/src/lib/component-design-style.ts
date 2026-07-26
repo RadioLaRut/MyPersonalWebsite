@@ -1,13 +1,27 @@
 import type { CSSProperties } from "react";
 
 import type {
+  ComponentDesignOpticalPullToken,
   ComponentDesignSectionSpacingToken,
   ComponentDesignSpacingToken,
   ComponentGridBounds,
   ComponentResponsiveGridBounds,
 } from "@/lib/component-design-schema";
+import type {
+  ComponentGridPlacement,
+  ComponentLayoutNode,
+  ComponentResponsiveValue,
+  ComponentVariantLayout,
+  ComponentDesignRhythmToken,
+} from "@/lib/component-design-v2";
 
-const SPACING_REM_MAP: Record<ComponentDesignSpacingToken, number> = {
+const SPACING_REM_MAP: Record<
+  ComponentDesignSpacingToken | ComponentDesignOpticalPullToken,
+  number
+> = {
+  "0": 0,
+  "4": 0.25,
+  "8": 0.5,
   "12": 0.75,
   "16": 1,
   "20": 1.25,
@@ -119,7 +133,7 @@ function getGridSpan(bounds: ComponentGridBounds) {
 }
 
 export function getSpacingRem(
-  token: ComponentDesignSpacingToken,
+  token: ComponentDesignSpacingToken | ComponentDesignOpticalPullToken,
 ): string {
   return `${SPACING_REM_MAP[token]}rem`;
 }
@@ -174,4 +188,61 @@ export function getSectionSpacingClassName(
     default:
       return "rhythm-block";
   }
+}
+
+function getPlacementClassName(
+  placement: ComponentGridPlacement,
+): string {
+  return `${GRID_START_CLASS_BY_COL[placement.start]} ${GRID_SPAN_CLASS_BY_SPAN[placement.span]}`;
+}
+
+export function getResponsiveGridPlacementClassName(
+  placement: ComponentResponsiveValue<ComponentGridPlacement>,
+): string {
+  return [
+    getPlacementClassName(placement.mobile),
+    GRID_MD_START_CLASS_BY_COL[placement.tablet.start],
+    GRID_MD_SPAN_CLASS_BY_SPAN[placement.tablet.span],
+    GRID_LG_START_CLASS_BY_COL[placement.desktop.start],
+    GRID_LG_SPAN_CLASS_BY_SPAN[placement.desktop.span],
+  ].join(" ");
+}
+
+export function getComponentLayoutNodeClassName(
+  node: ComponentLayoutNode | undefined,
+): string {
+  return node ? getResponsiveGridPlacementClassName(node.placement) : "";
+}
+
+type ResponsiveGapStyle = CSSProperties & {
+  "--component-gap-desktop"?: string;
+  "--component-gap-mobile"?: string;
+  "--component-gap-tablet"?: string;
+};
+
+export function getResponsiveGapStyle(
+  value: ComponentResponsiveValue<ComponentDesignRhythmToken> | undefined,
+): ResponsiveGapStyle | undefined {
+  if (!value) return undefined;
+  return {
+    "--component-gap-desktop": `${value.desktop}px`,
+    "--component-gap-mobile": `${value.mobile}px`,
+    "--component-gap-tablet": `${value.tablet}px`,
+  };
+}
+
+export function getComponentLayoutGap(
+  layout: ComponentVariantLayout | undefined,
+  from: string,
+  to: string,
+) {
+  return layout?.gaps[`${from}>${to}`];
+}
+
+export function getComponentSectionProfileClassName(
+  layout: ComponentVariantLayout | undefined,
+): string {
+  return layout
+    ? `component-section-profile component-section-profile--${layout.sectionProfile}`
+    : "";
 }

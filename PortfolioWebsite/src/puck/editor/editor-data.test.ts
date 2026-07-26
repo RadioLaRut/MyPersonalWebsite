@@ -266,14 +266,11 @@ test("页面树会为缺失的中间路径创建不可选分组", () => {
   );
 });
 
-test("属性字段按语义分组，文字对齐跟随对应内容", () => {
+test("属性字段按内容、媒体、链接、布局与高级设置分组", () => {
   assert.equal(getEditorFieldGroup("_g_text"), null);
   assert.equal(getEditorFieldGroup("__group_Text"), null);
   assert.equal(getEditorFieldGroup("title"), "content");
-  assert.equal(getEditorFieldGroup("descriptionAlign"), "content");
-  assert.equal(getEditorFieldGroup("subtitleAlign"), "content");
   assert.equal(getEditorFieldGroup("align"), "content");
-  assert.equal(getEditorFieldGroup("captionAlign"), "media");
   assert.equal(getEditorFieldGroup("mobileImageFocalX"), "media");
   assert.equal(getEditorFieldGroup("primaryCtaHref"), "link");
   assert.equal(getEditorFieldGroup("layoutVariant"), "layout");

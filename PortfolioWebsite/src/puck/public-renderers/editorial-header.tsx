@@ -2,7 +2,6 @@ import type { ComponentConfig } from "@puckeditor/core";
 
 import EditorialHeader from "../../components/editorial/EditorialHeader";
 import { toSafePuckHref } from "../../lib/puck-href";
-import { castTypographyAlignment } from "../../lib/typography-alignment";
 import { castSelectValue } from "./shared";
 
 const VARIANT_VALUES = ["index", "collection"] as const;
@@ -12,7 +11,6 @@ export const render: ComponentConfig["render"] = ({
   ctaHref,
   ctaLabel,
   description,
-  descriptionAlign,
   descriptionLine1,
   descriptionLine2,
   editMode,
@@ -26,7 +24,6 @@ export const render: ComponentConfig["render"] = ({
     ctaHref={toSafePuckHref(ctaHref)}
     ctaLabel={ctaLabel}
     description={description}
-    descriptionAlign={castTypographyAlignment(descriptionAlign)}
     descriptionLine1={descriptionLine1}
     descriptionLine2={descriptionLine2}
     editMode={editMode}

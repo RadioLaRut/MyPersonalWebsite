@@ -1,5 +1,11 @@
 import React, { type ReactNode } from "react";
 import { PresetImage } from "@/components/common/PresetImage";
+import ComponentLayoutNode, {
+  getComponentLayoutAlignment,
+  getComponentLayoutOpticalPull,
+  getComponentLayoutTypography,
+  type ComponentLayoutProps,
+} from "@/components/common/ComponentLayoutNode";
 import Typography from "@/components/common/Typography";
 import { MotionLink } from "@/components/motion/MotionLink";
 import {
@@ -7,6 +13,7 @@ import {
   resolveComponentDesign,
 } from "@/lib/component-design-runtime";
 import {
+  getComponentSectionProfileClassName,
   getResponsiveGridColumnClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
@@ -18,8 +25,9 @@ import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 import type { PublicMediaHint } from "@/lib/media-layout";
 import { PUBLIC_COPY } from "@/lib/public-copy";
 import { motionClassNames } from "@/lib/motion/classes";
+import { segmentTypographyText } from "@/lib/typography";
 
-interface ProjectSectionProps extends ComponentDesignOverride<"ProjectSection"> {
+interface ProjectSectionProps extends ComponentDesignOverride<"ProjectSection">, ComponentLayoutProps {
   title: ReactNode;
   imageSrc?: string;
   subtitle?: ReactNode;
@@ -41,6 +49,7 @@ export default function ProjectSection({
   link,
   index = 0,
   align = "auto",
+  componentLayout,
   imagePreset = "ratio-16-9",
   imageFitMode = "x",
   mobileImageFocalX = 50,
@@ -75,8 +84,19 @@ export default function ProjectSection({
     shouldAlignRight ? design.textRightBounds : design.textLeftBounds,
   );
   const lockupGap = getSpacingRem(design.lockupGap);
+  const titleHasCjkRun = segmentTypographyText(plainTitle ?? "").some(
+    (run) => run.type === "text" && run.script === "cjk",
+  );
+  const titleUnderlineCjkMetricClearance = titleHasCjkRun
+    ? getSpacingRem(design.titleUnderlineCjkMetricClearance)
+    : "0rem";
   const titleUnderlineOpticalPull = getSpacingRem(design.titleUnderlineOpticalPull);
-  const underlineGap = `max(0px, calc(${lockupGap} - ${titleUnderlineOpticalPull}))`;
+  const layoutOpticalPull = `${getComponentLayoutOpticalPull(componentLayout, "title")}px`;
+  const underlineOffset = `max(0px, calc(${lockupGap} + ${titleUnderlineCjkMetricClearance} - ${
+    componentLayout ? layoutOpticalPull : titleUnderlineOpticalPull
+  }))`;
+  const subtitleTypography = getComponentLayoutTypography(componentLayout, "subtitle");
+  const titleTypography = getComponentLayoutTypography(componentLayout, "title");
 
   return (
     <MotionLink
@@ -94,6 +114,7 @@ export default function ProjectSection({
     >
       <div
         className={`${mediaLayerClassName} bg-[#111]`}
+        data-component-lab-node="media"
         data-public-motion-media={editMode ? undefined : "true"}
       >
         {/* Environment ambient gradient/shadow to improve contrast */}
@@ -124,12 +145,75 @@ export default function ProjectSection({
 
       <div
         data-public-motion-content={editMode ? undefined : "true"}
-        className={`absolute inset-0 z-20 grid content-center rhythm-section-normal ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}
+        className={`absolute inset-0 z-20 grid content-center ${
+          componentLayout
+            ? getComponentSectionProfileClassName(componentLayout)
+            : "rhythm-section-normal"
+        } ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}
       >
         <div className="grid-container relative w-full mix-blend-difference">
-          <div
-            className={`${textBoundsClassName} grid content-start ${textColumnClassName}`}
-          >
+          {componentLayout ? (
+            <>
+              {hasEditableTextContent(subtitle) ? (
+                <ComponentLayoutNode layout={componentLayout} nodeId="subtitle">
+                  <Typography
+                    as="p"
+                    preset={subtitleTypography?.preset ?? "sans-body"}
+                    size={subtitleTypography?.size ?? "label"}
+                    weight="semantic"
+                    wrapPolicy={subtitleTypography?.wrap ?? "label"}
+                    align={getComponentLayoutAlignment(
+                      componentLayout,
+                      "subtitle",
+                      shouldAlignRight ? "right" : "left",
+                    )}
+                    className="text-textPrimary"
+                  >
+                    {subtitle}
+                  </Typography>
+                </ComponentLayoutNode>
+              ) : null}
+              <ComponentLayoutNode
+                gapFrom={hasEditableTextContent(subtitle) ? "subtitle" : undefined}
+                layout={componentLayout}
+                nodeId="title"
+                className={`relative grid w-fit max-w-full auto-rows-max gap-y-0 ${
+                  getComponentLayoutAlignment(componentLayout, "title") === "right"
+                    ? "justify-self-end justify-items-end"
+                    : "justify-self-start justify-items-start"
+                }`}
+              >
+                <Typography
+                  as="h2"
+                  preset={titleTypography?.preset ?? "luna-editorial"}
+                  size={titleTypography?.size ?? "display"}
+                  weight="semantic"
+                  wrapPolicy={titleTypography?.wrap ?? "heading"}
+                  align={getComponentLayoutAlignment(
+                    componentLayout,
+                    "title",
+                    shouldAlignRight ? "right" : "left",
+                  )}
+                  className="max-w-full text-white antialiased uppercase [transform:translateZ(0)] lg:whitespace-nowrap"
+                >
+                  {title}
+                </Typography>
+                <div
+                  aria-hidden="true"
+                  data-component-lab-node="underline"
+                  className={`pointer-events-none absolute inset-x-0 flex ${
+                    getComponentLayoutAlignment(componentLayout, "title") === "right"
+                      ? "justify-end"
+                      : "justify-start"
+                  }`}
+                  style={{ top: `calc(100% + ${underlineOffset})` }}
+                >
+                  <div className={`h-[2px] ${underlineFillClassName}`} />
+                </div>
+              </ComponentLayoutNode>
+            </>
+          ) : (
+          <div className={`${textBoundsClassName} grid content-start ${textColumnClassName}`}>
             <div className={`grid max-w-full auto-rows-max gap-y-0 ${lockupClassName}`}>
               {hasEditableTextContent(subtitle) && (
                 <Typography
@@ -145,7 +229,7 @@ export default function ProjectSection({
                   {subtitle}
                 </Typography>
               )}
-              <div className={`grid w-fit max-w-full auto-rows-max gap-y-0 ${titleLockupClassName}`}>
+              <div className={`relative grid w-fit max-w-full auto-rows-max gap-y-0 ${titleLockupClassName}`}>
                 <Typography
                   as="h2"
                   preset="luna-editorial"
@@ -158,14 +242,16 @@ export default function ProjectSection({
                   {title}
                 </Typography>
                 <div
-                  className={`flex w-full ${underlineTrackClassName}`}
-                  style={{ marginTop: underlineGap }}
+                  aria-hidden="true"
+                  className={`pointer-events-none absolute inset-x-0 flex ${underlineTrackClassName}`}
+                  style={{ top: `calc(100% + ${underlineOffset})` }}
                 >
                   <div className={`h-[2px] ${underlineFillClassName}`} />
                 </div>
               </div>
             </div>
           </div>
+          )}
         </div>
       </div>
     </MotionLink>

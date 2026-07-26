@@ -14,61 +14,58 @@
         "imageFitMode": "x",
         "mobileImageFocalX": 28,
         "mobileImageFocalY": 50,
-        "descriptionAlign": "left"
+        "variant": "poster"
       }
     },
     {
       "type": "ProjectCoverLink",
       "props": {
         "id": "proj-1",
-        "align": "auto",
         "href": "/works/lighting-portfolio",
         "imageFitMode": "x",
         "imagePreset": "ratio-16-9",
-        "index": 0,
         "mediaSrc": "/images/train-station/2Day.webp",
         "mobileImageFocalX": 55,
         "mobileImageFocalY": 50,
         "number": "",
         "subtitle": "镜头 / 氛围 / 空间叙事",
         "title": "LIGHTING",
-        "variant": "immersive"
+        "variant": "immersive-left",
+        "prompt": "Enter"
       }
     },
     {
       "type": "ProjectCoverLink",
       "props": {
         "id": "proj-2",
-        "align": "left",
         "href": "/works/penguin",
         "imageFitMode": "x",
         "imagePreset": "ratio-16-9",
-        "index": 1,
         "mediaSrc": "/images/penguin-trade-company/Poster.png",
         "mobileImageFocalX": 50,
         "mobileImageFocalY": 50,
         "number": "",
         "subtitle": "全栈制作人 / 主策划 / PM / TA",
         "title": "企鹅贸易公司",
-        "variant": "immersive"
+        "variant": "immersive-left",
+        "prompt": "Enter"
       }
     },
     {
       "type": "ProjectCoverLink",
       "props": {
         "id": "proj-3",
-        "align": "auto",
         "href": "/works/insight",
         "imageFitMode": "x",
         "imagePreset": "ratio-16-9",
-        "index": 2,
         "mediaSrc": "/images/insight/InsightOnlyCover.webp",
         "mobileImageFocalX": 82,
         "mobileImageFocalY": 50,
         "number": "",
         "subtitle": "舆情监管 / 互动叙事 / 道德选择",
         "title": "INSIGHT",
-        "variant": "immersive"
+        "variant": "immersive-left",
+        "prompt": "Enter"
       }
     },
     {
@@ -79,8 +76,7 @@
         "title": "WATCH MORE",
         "description": "从互动叙事、系统设计到灯光研究，查看完整项目归档。",
         "buttonLabel": "进入作品归档",
-        "buttonHref": "/works",
-        "descriptionAlign": "center"
+        "buttonHref": "/works"
       }
     }
   ],

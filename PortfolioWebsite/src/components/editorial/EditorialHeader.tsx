@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import type { ComponentLayoutProps } from "@/components/common/ComponentLayoutNode";
 import type { TypographyAlignment } from "@/components/common/Typography";
 import LightingCollectionHeader from "@/components/works/LightingCollectionHeader";
 import PortfolioHeroHeader from "@/components/works/PortfolioHeroHeader";
@@ -23,11 +24,12 @@ export type EditorialHeaderProps = {
   subtitle?: ReactNode;
   title: ReactNode;
   variant?: "collection" | "index";
-};
+} & ComponentLayoutProps;
 
 export default function EditorialHeader({
   backHref,
   collectionDesign,
+  componentLayout,
   ctaHref,
   ctaLabel,
   description,
@@ -45,6 +47,7 @@ export default function EditorialHeader({
     return (
       <LightingCollectionHeader
         backHref={backHref}
+        componentLayout={componentLayout}
         description={description}
         descriptionAlign={descriptionAlign ?? "right"}
         design={collectionDesign}
@@ -62,6 +65,7 @@ export default function EditorialHeader({
       descriptionAlign={descriptionAlign ?? "left"}
       descriptionLine1={descriptionLine1}
       descriptionLine2={descriptionLine2}
+      componentLayout={componentLayout}
       design={indexDesign}
       editMode={editMode}
       subtitle={subtitle}

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import type { ComponentLayoutProps } from "@/components/common/ComponentLayoutNode";
 import type { TypographyAlignment } from "@/components/common/Typography";
 import ContentCard from "@/components/breakdowns/ContentCard";
 import TextSplitLayout from "@/components/breakdowns/TextSplitLayout";
@@ -24,13 +25,14 @@ export type EditorialSplitProps = {
   paragraphsContent?: ReactNode;
   publicMediaHint?: PublicMediaHint;
   splitDesign?: TextSplitLayoutDesign;
-};
+} & ComponentLayoutProps;
 
 export default function EditorialSplit({
   body,
   bodyAlign = "left",
   bodyMode = "plain",
   cardDesign,
+  componentLayout,
   heading,
   imageFitMode,
   imagePreset,
@@ -45,6 +47,7 @@ export default function EditorialSplit({
     return (
       <ContentCard
         bodyAlign={bodyAlign}
+        componentLayout={componentLayout}
         description={body}
         design={cardDesign}
         imageFitMode={imageFitMode}
@@ -66,6 +69,7 @@ export default function EditorialSplit({
   return (
     <TextSplitLayout
       bodyAlign={bodyAlign}
+      componentLayout={componentLayout}
       design={splitDesign}
       heading={heading}
       imageFitMode={imageFitMode}

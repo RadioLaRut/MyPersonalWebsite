@@ -1,17 +1,25 @@
 import React, { type CSSProperties, type ReactNode } from "react";
 import ContactFlashlightIsland from "./ContactFlashlightIsland";
+import ComponentLayoutNode, {
+    getComponentLayoutAlignment,
+    getComponentLayoutTypography,
+    type ComponentLayoutProps,
+} from "@/components/common/ComponentLayoutNode";
 import Typography, {
     type TypographyAlignment,
 } from "@/components/common/Typography";
-import { getGridColumnClassName } from "@/lib/component-design-style";
+import {
+    getComponentSectionProfileClassName,
+    getGridColumnClassName,
+} from "@/lib/component-design-style";
 import {
     type ComponentDesignOverride,
     resolveComponentDesign,
 } from "@/lib/component-design-runtime";
-import { toPlainText } from "@/lib/editable-text";
+import { hasEditableTextContent, toPlainText } from "@/lib/editable-text";
 import { PUBLIC_COPY } from "@/lib/public-copy";
 
-export interface ContactFlashlightBlockProps extends ComponentDesignOverride<"ContactFlashlight"> {
+export interface ContactFlashlightBlockProps extends ComponentDesignOverride<"ContactFlashlight">, ComponentLayoutProps {
     anchorId?: string;
     maskRadius?: number;
     maskSmoothness?: number;
@@ -26,6 +34,10 @@ export interface ContactFlashlightBlockProps extends ComponentDesignOverride<"Co
     copyLabel?: ReactNode;
     copySuccessMessage?: string;
     copyErrorMessage?: string;
+    clientsHeading?: ReactNode;
+    employmentHeading?: ReactNode;
+    contactHeading?: ReactNode;
+    emailHeading?: ReactNode;
     experienceHistory?: { company: ReactNode; role: ReactNode }[];
     creativeDirection?: { title: ReactNode; subtitle: ReactNode }[];
     experienceContent?: ReactNode;
@@ -48,6 +60,11 @@ export default function ContactFlashlightBlock({
     copyLabel = PUBLIC_COPY.contact.copyLabel,
     copySuccessMessage = PUBLIC_COPY.contact.copySuccessMessage,
     copyErrorMessage = PUBLIC_COPY.contact.copyErrorMessage,
+    clientsHeading,
+    employmentHeading,
+    contactHeading,
+    emailHeading,
+    componentLayout,
     experienceHistory = [],
     creativeDirection = [],
     experienceContent,
@@ -68,7 +85,274 @@ export default function ContactFlashlightBlock({
         maskRepeat: "no-repeat",
     };
 
-    const renderContentData = (interactive = true) => (
+    const renderV2ContentData = (interactive = true) => {
+        if (!componentLayout) return null;
+        const typography = (nodeId: string) =>
+            getComponentLayoutTypography(componentLayout, nodeId);
+        return (
+            <div className={`grid-container w-full ${getComponentSectionProfileClassName(componentLayout)}`}>
+                {hasEditableTextContent(name) ? (
+                    <ComponentLayoutNode layout={componentLayout} nodeId="name">
+                        <Typography
+                            as="h1"
+                            preset={typography("name")?.preset ?? "luna-editorial"}
+                            size={typography("name")?.size ?? "display"}
+                            weight="semantic"
+                            wrapPolicy={typography("name")?.wrap ?? "heading"}
+                            align={getComponentLayoutAlignment(componentLayout, "name")}
+                            className="text-inherit"
+                        >
+                            {name}
+                        </Typography>
+                    </ComponentLayoutNode>
+                ) : null}
+                {hasEditableTextContent(taglineText) ? (
+                    <ComponentLayoutNode
+                        gapFrom="name"
+                        layout={componentLayout}
+                        nodeId="tagline"
+                    >
+                        <Typography
+                            as="p"
+                            preset={typography("tagline")?.preset ?? "sans-body"}
+                            size={typography("tagline")?.size ?? "title-sm"}
+                            weight="semantic"
+                            wrapPolicy={typography("tagline")?.wrap ?? "heading"}
+                            align={getComponentLayoutAlignment(componentLayout, "tagline")}
+                            className="text-inherit"
+                        >
+                            {taglineText}
+                        </Typography>
+                    </ComponentLayoutNode>
+                ) : null}
+                {hasEditableTextContent(taglineSub) ? (
+                    <ComponentLayoutNode
+                        gapFrom={hasEditableTextContent(taglineText) ? "tagline" : "name"}
+                        layout={componentLayout}
+                        nodeId="taglineSub"
+                    >
+                        <Typography
+                            as="p"
+                            preset={typography("taglineSub")?.preset ?? "sans-body"}
+                            size={typography("taglineSub")?.size ?? "body"}
+                            weight="semantic"
+                            wrapPolicy={typography("taglineSub")?.wrap ?? "prose"}
+                            align={getComponentLayoutAlignment(
+                                componentLayout,
+                                "taglineSub",
+                                taglineSubAlign,
+                            )}
+                            className="opacity-50"
+                        >
+                            {taglineSub}
+                        </Typography>
+                    </ComponentLayoutNode>
+                ) : null}
+                {hasEditableTextContent(clientsHeading) ? (
+                    <ComponentLayoutNode layout={componentLayout} nodeId="clientsHeading">
+                        <Typography
+                            as="h2"
+                            preset={typography("clientsHeading")?.preset ?? "sans-body"}
+                            size={typography("clientsHeading")?.size ?? "label"}
+                            weight="semantic"
+                            wrapPolicy={typography("clientsHeading")?.wrap ?? "label"}
+                            align={getComponentLayoutAlignment(componentLayout, "clientsHeading")}
+                            className="opacity-40"
+                        >
+                            {clientsHeading}
+                        </Typography>
+                    </ComponentLayoutNode>
+                ) : null}
+                {(experienceContent || experienceHistory.length > 0) ? (
+                    <ComponentLayoutNode
+                        gapFrom="clientsHeading"
+                        layout={componentLayout}
+                        nodeId="clients.item"
+                    >
+                        {experienceContent ?? experienceHistory.map((item, index) => (
+                            <div key={index} className="grid gap-1">
+                                <Typography
+                                    as="span"
+                                    preset={typography("clients.item")?.preset ?? "sans-body"}
+                                    size={typography("clients.item")?.size ?? "body-sm"}
+                                    weight="strong"
+                                    wrapPolicy={typography("clients.item")?.wrap ?? "prose"}
+                                    align={getComponentLayoutAlignment(componentLayout, "clients.item")}
+                                    className="text-inherit"
+                                >
+                                    {item.company}
+                                </Typography>
+                                <Typography
+                                    as="span"
+                                    preset={typography("clients.item")?.preset ?? "sans-body"}
+                                    size={typography("clients.item")?.size ?? "body-sm"}
+                                    weight="semantic"
+                                    wrapPolicy={typography("clients.item")?.wrap ?? "prose"}
+                                    align={getComponentLayoutAlignment(componentLayout, "clients.item")}
+                                    className="opacity-50"
+                                >
+                                    {item.role}
+                                </Typography>
+                            </div>
+                        ))}
+                    </ComponentLayoutNode>
+                ) : null}
+                {hasEditableTextContent(employmentHeading) ? (
+                    <ComponentLayoutNode layout={componentLayout} nodeId="employmentHeading">
+                        <Typography
+                            as="h2"
+                            preset={typography("employmentHeading")?.preset ?? "sans-body"}
+                            size={typography("employmentHeading")?.size ?? "label"}
+                            weight="semantic"
+                            wrapPolicy={typography("employmentHeading")?.wrap ?? "label"}
+                            align={getComponentLayoutAlignment(componentLayout, "employmentHeading")}
+                            className="opacity-40"
+                        >
+                            {employmentHeading}
+                        </Typography>
+                    </ComponentLayoutNode>
+                ) : null}
+                {(creativeContent || creativeDirection.length > 0) ? (
+                    <ComponentLayoutNode
+                        gapFrom="employmentHeading"
+                        layout={componentLayout}
+                        nodeId="employment.item"
+                    >
+                        {creativeContent ?? creativeDirection.map((item, index) => (
+                            <div key={index} className="grid gap-1">
+                                <Typography
+                                    as="span"
+                                    preset={typography("employment.item")?.preset ?? "sans-body"}
+                                    size={typography("employment.item")?.size ?? "body-sm"}
+                                    weight="strong"
+                                    wrapPolicy={typography("employment.item")?.wrap ?? "prose"}
+                                    align={getComponentLayoutAlignment(componentLayout, "employment.item")}
+                                    className="text-inherit"
+                                >
+                                    {item.title}
+                                </Typography>
+                                <Typography
+                                    as="span"
+                                    preset={typography("employment.item")?.preset ?? "sans-body"}
+                                    size={typography("employment.item")?.size ?? "body-sm"}
+                                    weight="semantic"
+                                    wrapPolicy={typography("employment.item")?.wrap ?? "prose"}
+                                    align={getComponentLayoutAlignment(componentLayout, "employment.item")}
+                                    className="opacity-50"
+                                >
+                                    {item.subtitle}
+                                </Typography>
+                            </div>
+                        ))}
+                    </ComponentLayoutNode>
+                ) : null}
+                {hasEditableTextContent(contactHeading) ? (
+                    <ComponentLayoutNode layout={componentLayout} nodeId="contactHeading">
+                        <Typography
+                            preset={typography("contactHeading")?.preset ?? "sans-body"}
+                            size={typography("contactHeading")?.size ?? "label"}
+                            weight="semantic"
+                            wrapPolicy={typography("contactHeading")?.wrap ?? "label"}
+                            align={getComponentLayoutAlignment(componentLayout, "contactHeading")}
+                            className="opacity-40"
+                        >
+                            {contactHeading}
+                        </Typography>
+                    </ComponentLayoutNode>
+                ) : null}
+                {wechatText ? (
+                    <ComponentLayoutNode
+                        gapFrom="contactHeading"
+                        layout={componentLayout}
+                        nodeId="wechat"
+                    >
+                        <button
+                            type="button"
+                            disabled={editMode || !interactive}
+                            data-contact-copy={!editMode && interactive ? "" : undefined}
+                            className="copyable-contact grid w-fit max-w-full text-left"
+                        >
+                            <Typography
+                                as="span"
+                                preset={typography("wechat")?.preset ?? "gothic-editorial"}
+                                size={typography("wechat")?.size ?? "body-lg"}
+                                weight="semantic"
+                                wrapPolicy={typography("wechat")?.wrap ?? "url"}
+                                align={getComponentLayoutAlignment(componentLayout, "wechat")}
+                                className="break-all text-inherit"
+                            >
+                                {wechat}
+                            </Typography>
+                        </button>
+                    </ComponentLayoutNode>
+                ) : null}
+                {hasEditableTextContent(copyLabel) ? (
+                    <ComponentLayoutNode
+                        gapFrom="wechat"
+                        layout={componentLayout}
+                        nodeId="copyPrompt"
+                    >
+                        <Typography
+                            as="span"
+                            preset={typography("copyPrompt")?.preset ?? "sans-body"}
+                            size={typography("copyPrompt")?.size ?? "caption"}
+                            weight="semantic"
+                            wrapPolicy={typography("copyPrompt")?.wrap ?? "label"}
+                            align={getComponentLayoutAlignment(componentLayout, "copyPrompt")}
+                            className="opacity-50"
+                        >
+                            <span data-contact-copy-feedback={!editMode && interactive ? "" : undefined}>
+                                {copyLabel}
+                            </span>
+                        </Typography>
+                    </ComponentLayoutNode>
+                ) : null}
+                {hasEditableTextContent(emailHeading) ? (
+                    <ComponentLayoutNode layout={componentLayout} nodeId="emailHeading">
+                        <Typography
+                            preset={typography("emailHeading")?.preset ?? "sans-body"}
+                            size={typography("emailHeading")?.size ?? "label"}
+                            weight="semantic"
+                            wrapPolicy={typography("emailHeading")?.wrap ?? "label"}
+                            align={getComponentLayoutAlignment(componentLayout, "emailHeading")}
+                            className="opacity-40"
+                        >
+                            {emailHeading}
+                        </Typography>
+                    </ComponentLayoutNode>
+                ) : null}
+                {emailText ? (
+                    <ComponentLayoutNode
+                        gapFrom="emailHeading"
+                        layout={componentLayout}
+                        nodeId="email"
+                    >
+                        <a
+                            href={`mailto:${emailText}`}
+                            tabIndex={interactive ? undefined : -1}
+                            className="copyable-contact block w-fit max-w-full break-all"
+                        >
+                            <Typography
+                                as="span"
+                                preset={typography("email")?.preset ?? "gothic-editorial"}
+                                size={typography("email")?.size ?? "body-lg"}
+                                weight="semantic"
+                                wrapPolicy={typography("email")?.wrap ?? "url"}
+                                align={getComponentLayoutAlignment(componentLayout, "email")}
+                                className="text-inherit"
+                            >
+                                {email}
+                            </Typography>
+                        </a>
+                    </ComponentLayoutNode>
+                ) : null}
+            </div>
+        );
+    };
+
+    const renderContentData = (interactive = true) => componentLayout
+      ? renderV2ContentData(interactive)
+      : (
         <div className="grid-container w-full rhythm-section-spacious">
             <section className={`${getGridColumnClassName(design.heroBounds)} mb-16 grid rhythm-stack-3 lg:mb-32`}>
                 <h1
@@ -308,7 +592,7 @@ export default function ContactFlashlightBlock({
                 </div>
             </section>
         </div>
-    );
+      );
 
     return (
         <div

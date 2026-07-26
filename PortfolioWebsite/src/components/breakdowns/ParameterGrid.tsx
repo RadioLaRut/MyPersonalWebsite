@@ -1,6 +1,11 @@
 import type { ReactNode } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
+import ComponentLayoutNode, {
+  getComponentLayoutAlignment,
+  getComponentLayoutTypography,
+  type ComponentLayoutProps,
+} from "@/components/common/ComponentLayoutNode";
 import Typography, {
   type TypographyAlignment,
 } from "@/components/common/Typography";
@@ -13,6 +18,7 @@ import {
   getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
   getSpacingRem,
+  getComponentSectionProfileClassName,
 } from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 import { hasEditableTextContent } from "@/lib/editable-text";
@@ -27,14 +33,19 @@ interface Parameter {
 }
 
 type ParameterGridProps = {
+  mediaAlt?: string;
+  mediaLabel?: ReactNode;
   mediaSrc?: string;
   imagePreset?: ImagePreset;
   imageFitMode?: ImageFitMode;
   parameters?: Parameter[];
   publicMediaHint?: PublicMediaHint;
-} & ComponentDesignOverride<"ParameterGrid">;
+} & ComponentDesignOverride<"ParameterGrid"> & ComponentLayoutProps;
 
 export default function ParameterGrid({
+  componentLayout,
+  mediaAlt = "",
+  mediaLabel,
   mediaSrc,
   imagePreset = "ratio-21-9",
   imageFitMode = "x",
@@ -43,6 +54,119 @@ export default function ParameterGrid({
   design,
 }: ParameterGridProps) {
   const resolvedDesign = resolveComponentDesign("ParameterGrid", design);
+
+  if (componentLayout) {
+    const mediaLabelTypography = getComponentLayoutTypography(componentLayout, "mediaLabel");
+    const nameTypography = getComponentLayoutTypography(componentLayout, "item.name");
+    const valueTypography = getComponentLayoutTypography(componentLayout, "item.value");
+    const descriptionTypography = getComponentLayoutTypography(componentLayout, "item.description");
+    return (
+      <section className={`w-full ${getComponentSectionProfileClassName(componentLayout)}`}>
+        {mediaSrc ? (
+          <div className="relative w-full overflow-hidden bg-[#050505]">
+            <div data-component-lab-node="media">
+              <PresetImage
+                src={mediaSrc}
+                alt={mediaAlt}
+                preset={imagePreset}
+                fitMode={imageFitMode}
+                preload={publicMediaHint?.src === mediaSrc && publicMediaHint.preload}
+                mediaProfile="full-bleed"
+                sizes={publicMediaHint?.src === mediaSrc ? publicMediaHint.sizes : undefined}
+                imageClassName="opacity-80"
+              />
+            </div>
+            {hasEditableTextContent(mediaLabel) ? (
+              <div className="grid-container absolute inset-x-0 top-4 z-10">
+                <ComponentLayoutNode layout={componentLayout} nodeId="mediaLabel">
+                  <Typography
+                    as="span"
+                    preset={mediaLabelTypography?.preset ?? "sans-body"}
+                    size={mediaLabelTypography?.size ?? "label"}
+                    weight="semantic"
+                    wrapPolicy={mediaLabelTypography?.wrap ?? "label"}
+                    align={getComponentLayoutAlignment(componentLayout, "mediaLabel")}
+                    className="bg-black/60 px-3 py-1 text-white"
+                  >
+                    {mediaLabel}
+                  </Typography>
+                </ComponentLayoutNode>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+        {parameters && parameters.length > 0 ? (
+          <div className="grid-container">
+            {parameters.flatMap((parameter, index) => [
+              <ComponentLayoutNode
+                key={`name-${index}`}
+                gapFrom={index === 0 && mediaSrc ? "media" : undefined}
+                layout={componentLayout}
+                nodeId="item.name"
+                className="border-t border-white/20 pt-6"
+              >
+                <Typography
+                  as="h4"
+                  preset={nameTypography?.preset ?? "sans-body"}
+                  size={nameTypography?.size ?? "label"}
+                  weight="semantic"
+                  wrapPolicy={nameTypography?.wrap ?? "label"}
+                  align={getComponentLayoutAlignment(componentLayout, "item.name")}
+                  className="text-textMuted"
+                >
+                  {parameter.name}
+                </Typography>
+              </ComponentLayoutNode>,
+              hasEditableTextContent(parameter.value) ? (
+                <ComponentLayoutNode
+                  key={`value-${index}`}
+                  gapFrom="item.name"
+                  layout={componentLayout}
+                  nodeId="item.value"
+                >
+                  <Typography
+                    as="div"
+                    preset={valueTypography?.preset ?? "sans-body"}
+                    size={valueTypography?.size ?? "body"}
+                    weight="display"
+                    wrapPolicy={valueTypography?.wrap ?? "label"}
+                    align={getComponentLayoutAlignment(componentLayout, "item.value")}
+                    className="text-white"
+                  >
+                    {parameter.value}
+                  </Typography>
+                </ComponentLayoutNode>
+              ) : null,
+              hasEditableTextContent(parameter.description) ? (
+                <ComponentLayoutNode
+                  key={`description-${index}`}
+                  gapFrom={hasEditableTextContent(parameter.value) ? "item.value" : "item.name"}
+                  layout={componentLayout}
+                  nodeId="item.description"
+                >
+                  <Typography
+                    as="p"
+                    preset={descriptionTypography?.preset ?? "sans-body"}
+                    size={descriptionTypography?.size ?? "body-sm"}
+                    weight="light"
+                    wrapPolicy={descriptionTypography?.wrap ?? "prose"}
+                    align={getComponentLayoutAlignment(
+                      componentLayout,
+                      "item.description",
+                      parameter.descriptionAlign ?? "left",
+                    )}
+                    className="text-textSecondary"
+                  >
+                    {parameter.description}
+                  </Typography>
+                </ComponentLayoutNode>
+              ) : null,
+            ])}
+          </div>
+        ) : null}
+      </section>
+    );
+  }
 
   return (
     <div className={`w-full ${getSectionSpacingClassName(resolvedDesign.sectionSpacing)}`}>

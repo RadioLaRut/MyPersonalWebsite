@@ -6,24 +6,26 @@ import {
   pickEntryField,
   readSlot,
 } from "./shared";
-import { castTypographyAlignment } from "../../lib/typography-alignment";
 
 export const render: ComponentConfig["render"] = ({
   anchorId,
+  clientsHeading,
+  contactHeading,
   copyErrorMessage,
   copyLabel,
   copySuccessMessage,
   creativeDirection,
   darkTextColor,
   editMode,
+  emailHeading,
   email,
   experienceHistory,
+  employmentHeading,
   lightTextColor,
   maskRadius,
   maskSmoothness,
   name,
   taglineSub,
-  taglineSubAlign,
   taglineText,
   wechat,
 }) => {
@@ -45,6 +47,8 @@ export const render: ComponentConfig["render"] = ({
   return (
     <ContactFlashlightBlock
       anchorId={anchorId}
+      clientsHeading={clientsHeading}
+      contactHeading={contactHeading}
       copyErrorMessage={copyErrorMessage}
       copyLabel={copyLabel}
       copySuccessMessage={copySuccessMessage}
@@ -58,6 +62,7 @@ export const render: ComponentConfig["render"] = ({
       creativeDirection={creativeItems}
       darkTextColor={darkTextColor}
       editMode={editMode}
+      emailHeading={emailHeading}
       email={email}
       experienceContent={ExperienceSlot ? (
         <ExperienceSlot
@@ -67,12 +72,12 @@ export const render: ComponentConfig["render"] = ({
         />
       ) : undefined}
       experienceHistory={experienceItems}
+      employmentHeading={employmentHeading}
       lightTextColor={lightTextColor}
       maskRadius={maskRadius}
       maskSmoothness={maskSmoothness}
       name={name}
       taglineSub={taglineSub}
-      taglineSubAlign={castTypographyAlignment(taglineSubAlign)}
       taglineText={taglineText}
       wechat={wechat}
     />

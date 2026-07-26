@@ -27,15 +27,21 @@ import { getTypographyEdgeScripts, segmentTypographyText } from "@/lib/typograph
 import {
   getTypographyAlignmentStyle,
   type TypographyAlignment,
+  type TypographyAlignmentValue,
+  isResponsiveTypographyAlignment,
 } from "@/lib/typography-alignment";
 import { getInlineEditableTextValue } from "@/lib/editable-text";
 
-export type { TypographyAlignment } from "@/lib/typography-alignment";
+export type {
+  ResponsiveTypographyAlignment,
+  TypographyAlignment,
+  TypographyAlignmentValue,
+} from "@/lib/typography-alignment";
 
 type TypographyWeightMode = TypographyWeight | "semantic";
 
 type BaseTypographyProps = {
-  align?: TypographyAlignment;
+  align?: TypographyAlignmentValue;
   autospace?: TypographyAutospace;
   children: ReactNode;
   className?: string;
@@ -265,13 +271,19 @@ export default function Typography<T extends ElementType = "span">({
   const leadingEdgeOffset = getEdgeOffset(edgeScripts.leading);
   const trailingEdgeOffset = getEdgeOffset(edgeScripts.trailing);
 
-  function getTranslateX(): string {
-    if (align === "right") return `calc(var(--typography-trailing-edge-offset, 0em) * -1)`;
-    if (align === "center" || align === "justify") return "0em";
+  function getTranslateX(value: TypographyAlignment): string {
+    if (value === "right") return `calc(var(--typography-trailing-edge-offset, 0em) * -1)`;
+    if (value === "center" || value === "justify") return "0em";
     return `var(--typography-leading-edge-offset, 0em)`;
   }
 
-  const translateX = getTranslateX();
+  const responsiveAlignment = isResponsiveTypographyAlignment(align)
+    ? align
+    : null;
+  const baseAlignment: TypographyAlignment = responsiveAlignment
+    ? responsiveAlignment.mobile
+    : align as TypographyAlignment;
+  const translateX = getTranslateX(baseAlignment);
 
   function getTextWrap(): "balance" | "pretty" | undefined {
     if (wrapPolicy === "heading") return "balance";
@@ -280,7 +292,9 @@ export default function Typography<T extends ElementType = "span">({
   }
 
   const Component = (as ?? "span") as ElementType;
-  const alignmentStyle = getTypographyAlignmentStyle(align);
+  const alignmentStyle = responsiveAlignment
+    ? {}
+    : getTypographyAlignmentStyle(baseAlignment);
   const baseStyle: StyleWithVars = {
     ...rootTypographyFallbackStyle,
     fontSize: `var(--typography-${preset}-${resolvedSize}-font-size, var(--typography-size-${resolvedSize}-font-size, ${sizeToken.fontSize}))`,
@@ -291,12 +305,36 @@ export default function Typography<T extends ElementType = "span">({
     overflowWrap: wrapToken.overflowWrap,
     ...alignmentStyle,
     textWrapStyle: getTextWrap(),
-    transform: translateX === "0em" ? undefined : `translateX(${translateX})`,
+    transform: responsiveAlignment || translateX === "0em"
+      ? undefined
+      : `translateX(${translateX})`,
     whiteSpace: wrapToken.whiteSpace,
     wordBreak: wrapToken.wordBreak,
     "--typography-autospace": autospace,
     "--typography-leading-edge-offset": leadingEdgeOffset,
     "--typography-trailing-edge-offset": trailingEdgeOffset,
+    ...(responsiveAlignment
+      ? {
+        "--typography-align-desktop": responsiveAlignment.desktop,
+        "--typography-align-last-desktop":
+          responsiveAlignment.desktop === "justify" ? "justify" : "auto",
+        "--typography-align-mobile": responsiveAlignment.mobile,
+        "--typography-align-last-mobile":
+          responsiveAlignment.mobile === "justify" ? "justify" : "auto",
+        "--typography-align-tablet": responsiveAlignment.tablet,
+        "--typography-align-last-tablet":
+          responsiveAlignment.tablet === "justify" ? "justify" : "auto",
+        "--typography-translate-desktop": getTranslateX(
+          responsiveAlignment.desktop,
+        ),
+        "--typography-translate-mobile": getTranslateX(
+          responsiveAlignment.mobile,
+        ),
+        "--typography-translate-tablet": getTranslateX(
+          responsiveAlignment.tablet,
+        ),
+      }
+      : {}),
   };
 
   return (
@@ -305,6 +343,7 @@ export default function Typography<T extends ElementType = "span">({
       className={twMerge(
         clsx(
           "typography-root",
+          responsiveAlignment && "typography-responsive-alignment",
           align === "center" && "mx-auto text-center",
           align === "right" && "ml-auto text-right",
           wrapPolicy === "label" && "uppercase",
@@ -316,7 +355,7 @@ export default function Typography<T extends ElementType = "span">({
       data-typography-size={resolvedSize}
       data-typography-weight={weight}
       data-typography-autospace={autospace}
-      data-typography-align={align}
+      data-typography-align={baseAlignment}
       data-typography-numeric={numericStyle}
       data-typography-wrap={wrapPolicy}
       data-typography-leading-script={edgeScripts.leading ?? "none"}

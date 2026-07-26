@@ -5,6 +5,9 @@ import { toSafePuckHref } from "../../lib/puck-href";
 
 export const render: ComponentConfig["render"] = ({
   editMode,
+  eyebrow,
+  footerLeft,
+  footerRight,
   href,
   nextBg,
   nextId,
@@ -13,6 +16,9 @@ export const render: ComponentConfig["render"] = ({
 }) => (
   <NextProjectBlock
     editMode={editMode}
+    eyebrow={eyebrow}
+    footerLeft={footerLeft}
+    footerRight={footerRight}
     href={toSafePuckHref(href)}
     nextBg={nextBg}
     nextId={nextId}

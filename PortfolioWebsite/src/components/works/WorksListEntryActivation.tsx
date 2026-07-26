@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import type { ImageFitMode, ImagePreset } from "@/lib/image-presentation";
@@ -25,7 +25,6 @@ export default function WorksListEntryActivation({
   imageSrc: string;
 }) {
   const markerRef = useRef<HTMLSpanElement>(null);
-  const [hasActivated, setHasActivated] = useState(false);
   const inputCapabilities = useInputCapabilities();
 
   useEffect(() => {
@@ -39,9 +38,6 @@ export default function WorksListEntryActivation({
     const synchronize = () => {
       const isActive = hovered || focused || centered;
       entry.dataset.active = isActive ? "true" : "false";
-      if (isActive) {
-        setHasActivated(true);
-      }
     };
     const handlePointerEnter = () => {
       if (!supportsHoverIntent) return;
@@ -93,7 +89,7 @@ export default function WorksListEntryActivation({
 
   return (
     <>
-      {hasActivated && imageSrc ? (
+      {imageSrc ? (
         <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden opacity-0 transition-opacity duration-700 ease-out group-data-[active=true]:opacity-100">
           <div className="absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.4)_0%,rgba(0,0,0,0.52)_40%,rgba(0,0,0,0.8)_100%)]" />
           <div className="h-full w-full scale-[1.025] transition-transform duration-[5000ms] ease-out group-data-[active=true]:scale-100">

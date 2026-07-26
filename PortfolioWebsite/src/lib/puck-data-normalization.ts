@@ -17,19 +17,21 @@ const COMPONENT_TYPE_ALIASES: Record<string, string> = {
 const ITEM_DEFAULT_PROPS: Record<string, Record<string, unknown>> = {
   BilibiliEmbed: {
     caption: "",
-    captionAlign: "left",
+    externalLinkLabel: "在哔哩哔哩观看",
     source: "",
     title: "B 站视频",
   },
   ContactFlashlight: {
-    taglineSubAlign: "left",
+    clientsHeading: "Experience History",
+    contactHeading: "WeChat / Social",
+    emailHeading: "Email / Contact",
+    employmentHeading: "Creative Direction",
   },
   EditorialHeader: {
     backHref: "",
     ctaHref: "",
     ctaLabel: "",
     description: "",
-    descriptionAlign: "left",
     descriptionLine1: "",
     descriptionLine2: "",
     number: "",
@@ -39,7 +41,6 @@ const ITEM_DEFAULT_PROPS: Record<string, Record<string, unknown>> = {
   },
   EditorialSplit: {
     body: "",
-    bodyAlign: "left",
     bodyMode: "plain",
     heading: "",
     imageFitMode: "x",
@@ -52,7 +53,6 @@ const ITEM_DEFAULT_PROPS: Record<string, Record<string, unknown>> = {
     eyebrow: "PROJECT",
     title: "PROJECT TITLE",
     subtitle: "Add a short project summary.",
-    subtitleAlign: "left",
     heroImage: "/images/train-station/2Day.webp",
     heroImagePreset: "ratio-21-9",
     heroImageFitMode: "x",
@@ -60,45 +60,47 @@ const ITEM_DEFAULT_PROPS: Record<string, Record<string, unknown>> = {
     navLinkLabel: "观看视频",
   },
   HeroSection: {
-    descriptionAlign: "left",
+    variant: "poster",
   },
-  HomeEndcapSection: {
-    descriptionAlign: "center",
+  NextProjectBlock: {
+    eyebrow: "NEXT PROJECT",
+    footerLeft: "© 2026 江承彦 / JIANG CHENGYAN",
+    footerRight: "",
   },
-  ImagePanel: {
-    captionAlign: "left",
+  ParameterGrid: {
+    mediaAlt: "PCG Generation Overview",
+    mediaLabel: "PROCEDURAL GENERATION PREVIEW",
   },
   ProjectCoverLink: {
-    align: "auto",
     href: "",
     imageFitMode: "x",
     imagePreset: "ratio-21-9",
-    index: 0,
     mediaSrc: "",
     mobileImageFocalX: 50,
     mobileImageFocalY: 50,
     number: "",
+    prompt: "Enter",
     subtitle: "",
     title: "",
-    variant: "immersive",
-  },
-  RichParagraph: {
-    align: "justify",
-  },
-  TextParagraphBlock: {
-    align: "left",
+    variant: "immersive-left",
   },
   ThreeColumnSection: {
-    col1BodyAlign: "left",
-    col2BodyAlign: "left",
-    col3BodyAlign: "left",
-    rhythm: "aligned",
     variant: "triptych",
   },
-  WorksListEntry: {
-    descriptionAlign: "left",
-  },
 };
+
+const COMPONENT_LAB_OWNED_PROPS = [
+  "align",
+  "bodyAlign",
+  "captionAlign",
+  "descriptionAlign",
+  "subtitleAlign",
+  "taglineSubAlign",
+  "col1BodyAlign",
+  "col2BodyAlign",
+  "col3BodyAlign",
+  "rhythm",
+] as const;
 
 export { isPlainRecord };
 
@@ -146,7 +148,6 @@ function applyLegacyPropAliases(type: string, props: Record<string, unknown>, ra
       ctaHref: props.ctaHref ?? "",
       ctaLabel: props.ctaLabel ?? "",
       description: "",
-      descriptionAlign: "left",
       descriptionLine1: props.descriptionLine1 ?? "",
       descriptionLine2: props.descriptionLine2 ?? "",
       number: "",
@@ -163,7 +164,6 @@ function applyLegacyPropAliases(type: string, props: Record<string, unknown>, ra
       ctaHref: "",
       ctaLabel: "",
       description: props.description ?? "",
-      descriptionAlign: "right",
       descriptionLine1: "",
       descriptionLine2: "",
       number: props.number ?? "",
@@ -177,7 +177,6 @@ function applyLegacyPropAliases(type: string, props: Record<string, unknown>, ra
     return {
       ...metadata,
       body: props.description ?? "",
-      bodyAlign: "left",
       bodyMode: "plain",
       heading: props.title ?? "",
       imageFitMode: props.imageFitMode ?? "x",
@@ -200,7 +199,6 @@ function applyLegacyPropAliases(type: string, props: Record<string, unknown>, ra
         typeof paragraph === "string"
           ? {
             props: {
-              align: layout === "stack" ? "center" : "left",
               id: `${parentId}-paragraph-${index + 1}`,
               text: paragraph,
             },
@@ -212,7 +210,6 @@ function applyLegacyPropAliases(type: string, props: Record<string, unknown>, ra
     return {
       ...metadata,
       body: "",
-      bodyAlign: layout === "stack" ? "center" : "left",
       bodyMode: "slot",
       heading: props.heading ?? "",
       imageFitMode: props.imageFitMode ?? "x",
@@ -228,12 +225,10 @@ function applyLegacyPropAliases(type: string, props: Record<string, unknown>, ra
       ...metadata,
       col1Items: [],
       col2Items: [],
-      rhythm: "staggered",
       variant: "triptych",
     };
     for (const column of [1, 2, 3] as const) {
       migrated[`col${column}Body`] = props[`col${column}Text`] ?? "";
-      migrated[`col${column}BodyAlign`] = "left";
       migrated[`col${column}Label`] = "";
       migrated[`col${column}MediaFitMode`] =
         props[`col${column}FitMode`] ?? "x";
@@ -251,12 +246,10 @@ function applyLegacyPropAliases(type: string, props: Record<string, unknown>, ra
       ...metadata,
       col1Items: props.phase1Items ?? [],
       col2Items: props.phase2Items ?? [],
-      rhythm: "aligned",
       variant: "phase",
     };
     for (const column of [1, 2, 3] as const) {
       migrated[`col${column}Body`] = props[`phase${column}Content`] ?? "";
-      migrated[`col${column}BodyAlign`] = "left";
       migrated[`col${column}Label`] = props[`phase${column}Label`] ?? "";
       migrated[`col${column}MediaFitMode`] = column === 3
         ? props.phase3ImageFitMode ?? "x"
@@ -275,35 +268,37 @@ function applyLegacyPropAliases(type: string, props: Record<string, unknown>, ra
   }
 
   if (rawType === "ProjectSection") {
+    const right = props.align === "right" ||
+      (props.align !== "left" &&
+        typeof props.index === "number" &&
+        props.index % 2 !== 0);
     return {
       ...metadata,
-      align: props.align ?? "auto",
       href: props.link ?? "",
       imageFitMode: props.imageFitMode ?? "x",
       imagePreset: props.imagePreset ?? "ratio-16-9",
-      index: props.index ?? 0,
       mediaSrc: props.imageSrc ?? "",
       mobileImageFocalX: props.mobileImageFocalX ?? 50,
       mobileImageFocalY: props.mobileImageFocalY ?? 50,
       number: "",
+      prompt: props.prompt ?? "Enter",
       subtitle: props.subtitle ?? "",
       title: props.title ?? "",
-      variant: "immersive",
+      variant: right ? "immersive-right" : "immersive-left",
     };
   }
 
   if (rawType === "LightingProjectCard") {
     return {
       ...metadata,
-      align: "auto",
       href: props.href ?? "",
       imageFitMode: props.imageFitMode ?? "cover",
       imagePreset: props.imagePreset ?? "ratio-21-9",
-      index: 0,
       mediaSrc: props.coverImage ?? "",
       mobileImageFocalX: 50,
       mobileImageFocalY: 50,
       number: props.number ?? "",
+      prompt: props.prompt ?? "Enter",
       subtitle: "",
       title: props.title ?? "",
       variant: "card",
@@ -339,15 +334,65 @@ function applyLegacyPropAliases(type: string, props: Record<string, unknown>, ra
     if (Array.isArray(nextProps.parameters)) {
       nextProps.parameters = nextProps.parameters.map((parameter) => {
         if (!isPlainRecord(parameter)) return parameter;
-        return {
-          ...parameter,
-          descriptionAlign:
-            typeof parameter.descriptionAlign === "string"
-              ? parameter.descriptionAlign
-              : "left",
-        };
+        const nextParameter = { ...parameter };
+        delete nextParameter.descriptionAlign;
+        return nextParameter;
       });
     }
+  }
+
+  return nextProps;
+}
+
+function normalizeComponentLabV2Props(
+  type: string,
+  props: Record<string, unknown>,
+) {
+  const nextProps = { ...props };
+  for (const key of COMPONENT_LAB_OWNED_PROPS) {
+    delete nextProps[key];
+  }
+
+  if (type === "HeroSection") {
+    if (nextProps.variant !== "poster" && nextProps.variant !== "full") {
+      nextProps.variant = [
+        nextProps.description,
+        nextProps.primaryCtaLabel,
+        nextProps.secondaryCtaLabel,
+      ].some((value) => isNonEmptyString(value))
+        ? "full"
+        : "poster";
+    }
+  }
+
+  if (type === "ProjectCoverLink") {
+    const legacyAlign = props.align;
+    const legacyIndex = props.index;
+    if (
+      nextProps.variant !== "card" &&
+      nextProps.variant !== "immersive-left" &&
+      nextProps.variant !== "immersive-right"
+    ) {
+      const right = legacyAlign === "right" ||
+        (legacyAlign !== "left" &&
+          typeof legacyIndex === "number" &&
+          legacyIndex % 2 !== 0);
+      nextProps.variant = right ? "immersive-right" : "immersive-left";
+    }
+    delete nextProps.index;
+  }
+
+  if (type === "ThreeColumnSection" && nextProps.variant === "evidence") {
+    nextProps.variant = "phase";
+  }
+
+  if (type === "ParameterGrid" && Array.isArray(nextProps.parameters)) {
+    nextProps.parameters = nextProps.parameters.map((parameter) => {
+      if (!isPlainRecord(parameter)) return parameter;
+      const nextParameter = { ...parameter };
+      delete nextParameter.descriptionAlign;
+      return nextParameter;
+    });
   }
 
   return nextProps;
@@ -410,7 +455,10 @@ function normalizeNode(value: unknown, pathParts: string[] = []): unknown {
   normalizedRecord.type = normalizedType;
   const nextProps = hydrateMissingProps(
     normalizedType,
-    applyLegacyPropAliases(normalizedType, normalizedProps, rawType),
+    normalizeComponentLabV2Props(
+      normalizedType,
+      applyLegacyPropAliases(normalizedType, normalizedProps, rawType),
+    ),
   );
 
   if (isBlankText(nextProps.id)) {

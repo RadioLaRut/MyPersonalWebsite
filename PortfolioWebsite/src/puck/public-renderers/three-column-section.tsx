@@ -1,7 +1,6 @@
 import type { ComponentConfig } from "@puckeditor/core";
 
 import ThreeColumnSection from "../../components/editorial/ThreeColumnSection";
-import { castTypographyAlignment } from "../../lib/typography-alignment";
 import {
   ALLOW_METADATA_LIST_ITEM,
   castImageFitMode,
@@ -11,13 +10,12 @@ import {
   readSlot,
 } from "./shared";
 
-const RHYTHM_VALUES = ["aligned", "staggered"] as const;
-const VARIANT_VALUES = ["triptych", "phase", "evidence"] as const;
+const VARIANT_VALUES = ["triptych", "phase"] as const;
 
 function readColumn(props: Record<string, unknown>, column: 1 | 2 | 3) {
   return {
     body: props[`col${column}Body`] as string,
-    bodyAlign: castTypographyAlignment(props[`col${column}BodyAlign`]),
+    bodyAlign: "left" as const,
     fitMode: castImageFitMode(props[`col${column}MediaFitMode`]),
     label: props[`col${column}Label`] as string,
     mediaSrc: props[`col${column}MediaSrc`] as string,
@@ -68,7 +66,6 @@ export const render: ComponentConfig["render"] = (props) => {
         ) : undefined,
       }}
       col3={readColumn(props, 3)}
-      rhythm={castSelectValue(props.rhythm, RHYTHM_VALUES, "aligned")}
       publicMediaHint={props.publicMediaHint}
       variant={castSelectValue(props.variant, VARIANT_VALUES, "triptych")}
     />

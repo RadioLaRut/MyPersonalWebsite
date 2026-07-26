@@ -41,7 +41,7 @@ import {
   type ReactNode,
 } from "react";
 
-import type { ComponentDesignDocument } from "@/lib/component-design-schema";
+import type { ComponentDesignDocument } from "@/lib/component-design-v2";
 import type { ComponentLabNode } from "@/lib/component-lab-presets";
 import type { PageSummary } from "@/lib/editor-page-contract";
 import {

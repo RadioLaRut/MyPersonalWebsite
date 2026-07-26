@@ -1,6 +1,11 @@
 import type { CSSProperties, ReactNode } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
+import ComponentLayoutNode, {
+  getComponentLayoutAlignment,
+  getComponentLayoutTypography,
+  type ComponentLayoutProps,
+} from "@/components/common/ComponentLayoutNode";
 import Typography, {
   type TypographyAlignment,
 } from "@/components/common/Typography";
@@ -13,6 +18,7 @@ import {
   getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
   getSpacingRem,
+  getComponentSectionProfileClassName,
 } from "@/lib/component-design-style";
 import { toPlainText } from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
@@ -28,7 +34,7 @@ type TextSplitLayoutProps = {
   layoutVariant?: "split-left" | "split-right" | "stack";
   paragraphsContent?: ReactNode;
   publicMediaHint?: PublicMediaHint;
-} & ComponentDesignOverride<"TextSplitLayout">;
+} & ComponentDesignOverride<"TextSplitLayout"> & ComponentLayoutProps;
 
 type StyleWithVars = CSSProperties & Record<string, string>;
 
@@ -36,6 +42,7 @@ export default function TextSplitLayout({
   heading,
   paragraphs,
   bodyAlign = "left",
+  componentLayout,
   imageSrc,
   imagePreset = "ratio-16-9",
   imageFitMode = "x",
@@ -70,6 +77,75 @@ export default function TextSplitLayout({
       ))}
     </div>
   );
+
+  if (componentLayout) {
+    const headingTypography = getComponentLayoutTypography(componentLayout, "heading");
+    const bodyTypography = getComponentLayoutTypography(componentLayout, "body");
+    return (
+      <section className={`w-full ${getComponentSectionProfileClassName(componentLayout)}`}>
+        <div className="grid-container items-start">
+          <ComponentLayoutNode layout={componentLayout} nodeId="heading">
+            <Typography
+              as="h3"
+              preset={headingTypography?.preset ?? "sans-body"}
+              size={headingTypography?.size ?? "title-sm"}
+              weight="semantic"
+              wrapPolicy={headingTypography?.wrap ?? "heading"}
+              align={getComponentLayoutAlignment(componentLayout, "heading")}
+              className="text-white uppercase"
+            >
+              {heading}
+            </Typography>
+          </ComponentLayoutNode>
+          <ComponentLayoutNode
+            gapFrom="heading"
+            layout={componentLayout}
+            nodeId="body"
+            className="grid"
+          >
+            {paragraphsContent ? (
+              <div data-component-lab-node="body.item">{paragraphsContent}</div>
+            ) : (
+              paragraphs.map((paragraph, index) => (
+                <Typography
+                  key={index}
+                  as="p"
+                  preset={bodyTypography?.preset ?? "sans-body"}
+                  size={bodyTypography?.size ?? "body"}
+                  weight="semantic"
+                  wrapPolicy={bodyTypography?.wrap ?? "prose"}
+                  align={getComponentLayoutAlignment(componentLayout, "body", bodyAlign)}
+                  className="text-textSecondary"
+                  data-component-lab-node="body.item"
+                >
+                  {paragraph}
+                </Typography>
+              ))
+            )}
+          </ComponentLayoutNode>
+          {imageSrc ? (
+            <ComponentLayoutNode
+              gapFrom="body"
+              layout={componentLayout}
+              nodeId="media"
+            >
+              <div className="relative w-full opacity-90">
+                <PresetImage
+                  src={imageSrc}
+                  alt={imageAlt}
+                  preset={imagePreset}
+                  fitMode={imageFitMode}
+                  mediaProfile={layoutVariant === "stack" ? "grid-10" : "grid-6"}
+                  preload={publicMediaHint?.src === imageSrc && publicMediaHint.preload}
+                  sizes={publicMediaHint?.src === imageSrc ? publicMediaHint.sizes : undefined}
+                />
+              </div>
+            </ComponentLayoutNode>
+          ) : null}
+        </div>
+      </section>
+    );
+  }
 
     return (
         <div className={`w-full ${getSectionSpacingClassName(resolvedDesign.sectionSpacing)}`}>

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  COMPONENT_DESIGN_OPTICAL_PULL_TOKENS,
   createDefaultComponentDesignDocument,
   normalizeComponentDesignDocument,
   parseComponentDesignDocument,
@@ -125,6 +126,26 @@ test("normalizeComponentDesignDocument hydrates newly added component defaults",
   );
 });
 
+test("ProjectSection underline corrections use a dedicated small scale", () => {
+  assert.deepEqual(COMPONENT_DESIGN_OPTICAL_PULL_TOKENS, ["0", "4", "8", "12"]);
+
+  const normalized = normalizeComponentDesignDocument({
+    components: {
+      ProjectSection: {
+        titleUnderlineCjkMetricClearance: "56",
+        titleUnderlineOpticalPull: "56",
+      },
+    },
+    version: 1,
+  });
+
+  assert.equal(
+    normalized.components.ProjectSection.titleUnderlineCjkMetricClearance,
+    "12",
+  );
+  assert.equal(normalized.components.ProjectSection.titleUnderlineOpticalPull, "0");
+});
+
 test("createDefaultComponentDesignDocument preserves legacy BreakdownTriptych spacing defaults", () => {
   const defaults = createDefaultComponentDesignDocument();
 
@@ -153,7 +174,11 @@ test("parseComponentDesignDocument accepts valid component config", () => {
   assert.equal(parsed.components.HeroSection.eyebrowTopSpacing, "12");
   assert.equal(parsed.components.ProjectSection.lockupGap, "12");
   assert.equal(parsed.components.ProjectSection.titleSize, "display");
-  assert.equal(parsed.components.ProjectSection.titleUnderlineOpticalPull, "12");
+  assert.equal(
+    parsed.components.ProjectSection.titleUnderlineCjkMetricClearance,
+    "12",
+  );
+  assert.equal(parsed.components.ProjectSection.titleUnderlineOpticalPull, "0");
   assert.equal(parsed.components.WorksList.headingBottomSpacing, "32");
   assert.equal(parsed.components.HomeEndcapSection.titleSize, "display");
 });

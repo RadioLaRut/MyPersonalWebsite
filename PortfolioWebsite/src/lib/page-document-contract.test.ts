@@ -63,7 +63,6 @@ test("legacy documents migrate explicitly to the current SEO contract", () => {
 test("ThreeColumnSection images validate non-empty paths while preserving optional empty images", () => {
   const triptychProps = {
     col1Body: "One",
-    col1BodyAlign: "left",
     col1Items: [],
     col1Label: "",
     col1MediaFitMode: "x",
@@ -72,7 +71,6 @@ test("ThreeColumnSection images validate non-empty paths while preserving option
     col1Subtitle: "",
     col1Title: "One",
     col2Body: "Two",
-    col2BodyAlign: "left",
     col2Items: [],
     col2Label: "",
     col2MediaFitMode: "x",
@@ -81,7 +79,6 @@ test("ThreeColumnSection images validate non-empty paths while preserving option
     col2Subtitle: "",
     col2Title: "Two",
     col3Body: "Three",
-    col3BodyAlign: "left",
     col3Label: "",
     col3MediaFitMode: "x",
     col3MediaPreset: "ratio-16-9",
@@ -89,7 +86,6 @@ test("ThreeColumnSection images validate non-empty paths while preserving option
     col3Subtitle: "",
     col3Title: "Three",
     id: "triptych-1",
-    rhythm: "staggered",
     variant: "triptych",
   };
   assert.throws(
@@ -133,7 +129,6 @@ test("DisplayName 可选、允许重复、规范化空白并限制为 80 字符"
     {
       props: {
         content: "First",
-        align: "justify",
         editorDisplayName: "重复名称",
         id: "paragraph-1",
       },
@@ -142,7 +137,6 @@ test("DisplayName 可选、允许重复、规范化空白并限制为 80 字符"
     {
       props: {
         content: "Second",
-        align: "justify",
         editorDisplayName: "重复名称",
         id: "paragraph-2",
       },
@@ -155,7 +149,6 @@ test("DisplayName 可选、允许重复、规范化空白并限制为 80 字符"
     {
       props: {
         content: "Trimmed",
-        align: "justify",
         editorDisplayName: "  自定义名称  ",
         id: "paragraph-1",
       },
@@ -164,7 +157,6 @@ test("DisplayName 可选、允许重复、规范化空白并限制为 80 字符"
     {
       props: {
         content: "Empty",
-        align: "justify",
         editorDisplayName: "   ",
         id: "paragraph-2",
       },
@@ -178,7 +170,6 @@ test("DisplayName 可选、允许重复、规范化空白并限制为 80 字符"
     {
       props: {
         content: "Too long",
-        align: "justify",
         editorDisplayName: "名".repeat(81),
         id: "paragraph-1",
       },
@@ -312,14 +303,19 @@ test("current documents require every declared prop and canonical image settings
     props: { content: "Hello", id: "paragraph-1" },
     type: "StatementBlock",
   }]));
-  assert.ok(missingPropIssues.some((issue) => issue.path.endsWith(".align")));
+  assert.ok(
+    missingPropIssues.some((issue) => issue.path.endsWith(".backgroundColor")),
+  );
+  assert.ok(
+    missingPropIssues.some((issue) => issue.path.endsWith(".minHeight")),
+  );
 });
 
-test("BilibiliEmbed contract accepts only canonical sources and alignment enums", () => {
+test("BilibiliEmbed contract keeps copy in Puck and alignment out of Puck", () => {
   const valid = createDocument([{
     props: {
       caption: "项目演示",
-      captionAlign: "justify",
+      externalLinkLabel: "在哔哩哔哩观看",
       id: "bilibili-1",
       source: "https://www.bilibili.com/video/BV1DNwUeDEos?p=2&t=30",
       title: "项目演示视频",
@@ -331,14 +327,21 @@ test("BilibiliEmbed contract accepts only canonical sources and alignment enums"
   const issues = validateCurrentPageDocument(createDocument([{
     props: {
       caption: "",
-      captionAlign: "fill",
+      captionAlign: "justify",
+      externalLinkLabel: "打开视频",
       id: "bilibili-1",
       source: "https://example.com/video/BV1DNwUeDEos",
       title: " ",
     },
     type: "BilibiliEmbed",
   }]));
-  assert.ok(issues.some((issue) => issue.path.endsWith(".captionAlign")));
+  assert.ok(
+    issues.some(
+      (issue) =>
+        issue.path.endsWith(".captionAlign") &&
+        issue.message.includes("unknown prop"),
+    ),
+  );
   assert.ok(issues.some((issue) => issue.path.endsWith(".source")));
   assert.ok(issues.some((issue) => issue.path.endsWith(".title")));
 });
@@ -347,7 +350,6 @@ test("current documents accept safe Unicode image names and reject non-relative 
   const imageProps = {
     alt: "",
     caption: "",
-    captionAlign: "left",
     fitMode: "x",
     id: "image-unicode",
     preset: "ratio-16-9",

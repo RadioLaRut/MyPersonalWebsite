@@ -50,7 +50,6 @@ const threeColumnContract = Object.fromEntries(
     [`col${column}Title`, string],
     [`col${column}Subtitle`, string],
     [`col${column}Body`, string],
-    [`col${column}BodyAlign`, string],
     [`col${column}MediaSrc`, string],
     [`col${column}MediaPreset`, string],
     [`col${column}MediaFitMode`, string],
@@ -61,26 +60,29 @@ const threeColumnContract = Object.fromEntries(
 export const PAGE_COMPONENT_PROP_CONTRACTS = {
   BilibiliEmbed: withId({
     caption: string,
-    captionAlign: string,
+    externalLinkLabel: string,
     source: string,
     title: string,
   }),
   BreakdownHeadline: withId({ indexLabel: string, title: string, variant: string }),
   ContactFlashlight: withId({
     anchorId: string,
+    clientsHeading: string,
+    contactHeading: string,
     copyErrorMessage: string,
     copyLabel: string,
     copySuccessMessage: string,
     creativeDirection: array,
     darkTextColor: string,
     email: string,
+    emailHeading: string,
+    employmentHeading: string,
     experienceHistory: array,
     lightTextColor: string,
     maskRadius: number,
     maskSmoothness: number,
     name: string,
     taglineSub: string,
-    taglineSubAlign: string,
     taglineText: string,
     wechat: string,
   }),
@@ -89,7 +91,6 @@ export const PAGE_COMPONENT_PROP_CONTRACTS = {
     ctaHref: string,
     ctaLabel: string,
     description: string,
-    descriptionAlign: string,
     descriptionLine1: string,
     descriptionLine2: string,
     number: string,
@@ -99,7 +100,6 @@ export const PAGE_COMPONENT_PROP_CONTRACTS = {
   }),
   EditorialSplit: withId({
     body: string,
-    bodyAlign: string,
     bodyMode: string,
     heading: string,
     imageFitMode: string,
@@ -116,12 +116,10 @@ export const PAGE_COMPONENT_PROP_CONTRACTS = {
     navLink: string,
     navLinkLabel: string,
     subtitle: string,
-    subtitleAlign: string,
     title: string,
   }),
   HeroSection: withId({
     description: string,
-    descriptionAlign: string,
     eyebrow: string,
     imageAlt: string,
     imageFitMode: string,
@@ -136,19 +134,18 @@ export const PAGE_COMPONENT_PROP_CONTRACTS = {
     secondaryCtaLabel: string,
     subtitle: string,
     title: string,
+    variant: string,
   }),
   HomeEndcapSection: withId({
     buttonHref: string,
     buttonLabel: string,
     description: string,
-    descriptionAlign: string,
     eyebrow: string,
     title: string,
   }),
   ImagePanel: withId({
     alt: string,
     caption: string,
-    captionAlign: string,
     fitMode: string,
     preset: string,
     src: string,
@@ -165,41 +162,43 @@ export const PAGE_COMPONENT_PROP_CONTRACTS = {
     title: string,
     unlitSrc: string,
   }),
-  MetadataListItem: withId({ align: string, label: string, value: string }),
+  MetadataListItem: withId({ label: string, value: string }),
   NextProjectBlock: withId({
+    eyebrow: string,
+    footerLeft: string,
+    footerRight: string,
     nextId: string,
   }),
   ParameterGrid: withId({
     imageFitMode: string,
     imagePreset: string,
+    mediaAlt: string,
+    mediaLabel: string,
     mediaSrc: string,
     parameters: array,
   }),
   ProjectCoverLink: withId({
-    align: string,
     href: string,
     imageFitMode: string,
     imagePreset: string,
-    index: number,
     mediaSrc: string,
     mobileImageFocalX: number,
     mobileImageFocalY: number,
     number: string,
+    prompt: string,
     subtitle: string,
     title: string,
     variant: string,
   }),
-  RichParagraph: withId({ align: string, content: string }),
+  RichParagraph: withId({ content: string }),
   StatementBlock: withId({
-    align: string,
     backgroundColor: string,
     content: string,
     minHeight: string,
   }),
-  TextParagraphBlock: withId({ align: string, text: string }),
+  TextParagraphBlock: withId({ text: string }),
   ThreeColumnSection: withId({
     ...threeColumnContract,
-    rhythm: string,
     variant: string,
   }),
   WorksList: withId({ entries: array, heading: string, indexSummary: string }),
@@ -207,7 +206,6 @@ export const PAGE_COMPONENT_PROP_CONTRACTS = {
     aliases: array,
     category: string,
     desc: string,
-    descriptionAlign: string,
     href: string,
     imageFitMode: string,
     imagePreset: string,
@@ -241,58 +239,27 @@ const SLOT_COMPONENTS: Partial<Record<PuckComponentType, Readonly<Record<string,
 const PROP_ENUMS: Partial<Record<PuckComponentType, Readonly<Record<string, readonly unknown[]>>>> = {
   BreakdownHeadline: { variant: ["chapter", "section"] },
   EditorialHeader: {
-    descriptionAlign: ["left", "center", "right", "justify"],
     variant: ["index", "collection"],
   },
   EditorialSplit: {
-    bodyAlign: ["left", "center", "right", "justify"],
     bodyMode: ["plain", "slot"],
     layout: ["media-left", "media-right", "stack"],
   },
-  HeroHeadline: {
-    subtitleAlign: ["left", "center", "right", "justify"],
-  },
   HeroSection: {
-    descriptionAlign: ["left", "center", "right", "justify"],
-  },
-  HomeEndcapSection: {
-    descriptionAlign: ["left", "center", "right", "justify"],
+    variant: ["poster", "full"],
   },
   ImagePanel: {
-    captionAlign: ["left", "center", "right", "justify"],
     variant: ["content", "large", "fullscreen"],
   },
-  MetadataListItem: { align: ["start", "end"] },
   ProjectCoverLink: {
-    align: ["auto", "left", "right"],
-    variant: ["immersive", "card"],
-  },
-  RichParagraph: {
-    align: ["left", "center", "right", "justify"],
+    variant: ["immersive-left", "immersive-right", "card"],
   },
   StatementBlock: {
-    align: ["left", "center", "right"],
     backgroundColor: ["black", "dark-gray"],
     minHeight: ["small", "medium", "large"],
   },
-  TextParagraphBlock: {
-    align: ["left", "center", "right", "justify"],
-  },
   ThreeColumnSection: {
-    col1BodyAlign: ["left", "center", "right", "justify"],
-    col2BodyAlign: ["left", "center", "right", "justify"],
-    col3BodyAlign: ["left", "center", "right", "justify"],
-    rhythm: ["aligned", "staggered"],
-    variant: ["triptych", "phase", "evidence"],
-  },
-  WorksListEntry: {
-    descriptionAlign: ["left", "center", "right", "justify"],
-  },
-  BilibiliEmbed: {
-    captionAlign: ["left", "center", "right", "justify"],
-  },
-  ContactFlashlight: {
-    taglineSubAlign: ["left", "center", "right", "justify"],
+    variant: ["triptych", "phase"],
   },
 };
 
@@ -320,7 +287,6 @@ const OPTIONAL_COMPONENT_PROPS: Partial<Record<PuckComponentType, readonly strin
   ],
   ImagePanel: ["alt", "caption", "fitMode", "preset"],
   ImageSlider: ["imageFitMode", "imagePreset"],
-  MetadataListItem: ["align"],
   ParameterGrid: ["imageFitMode", "imagePreset", "mediaSrc", "parameters"],
   ProjectCoverLink: ["imageFitMode", "imagePreset", "mediaSrc"],
   ThreeColumnSection: ["col1Items", "col2Items"],
@@ -440,28 +406,17 @@ function validateStructuredArray(
         return;
       }
       for (const parameterKey of Object.keys(parameter)) {
-        if (!["description", "descriptionAlign", "name", "value"].includes(parameterKey)) {
+        if (!["description", "name", "value"].includes(parameterKey)) {
           issues.push(makeIssue(
             `${parameterPath}.${parameterKey}`,
             `unknown parameter field "${parameterKey}"`,
           ));
         }
       }
-      for (const requiredKey of ["description", "descriptionAlign", "name"] as const) {
+      for (const requiredKey of ["description", "name"] as const) {
         if (typeof parameter[requiredKey] !== "string") {
           issues.push(makeIssue(`${parameterPath}.${requiredKey}`, "must be string"));
         }
-      }
-      if (
-        typeof parameter.descriptionAlign === "string" &&
-        !["left", "center", "right", "justify"].includes(
-          parameter.descriptionAlign,
-        )
-      ) {
-        issues.push(makeIssue(
-          `${parameterPath}.descriptionAlign`,
-          "must be one of left, center, right, justify",
-        ));
       }
       if (parameter.value !== undefined && typeof parameter.value !== "string") {
         issues.push(makeIssue(`${parameterPath}.value`, "must be string when provided"));

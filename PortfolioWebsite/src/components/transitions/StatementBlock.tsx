@@ -1,12 +1,20 @@
 import type { ReactNode } from "react";
 
 import Typography from "@/components/common/Typography";
+import ComponentLayoutNode, {
+  getComponentLayoutAlignment,
+  getComponentLayoutTypography,
+  type ComponentLayoutProps,
+} from "@/components/common/ComponentLayoutNode";
 import {
   type ComponentDesignOverride,
   resolveComponentDesign,
 } from "@/lib/component-design-runtime";
 import { Reveal } from "@/components/motion/Reveal";
-import { getGridColumnClassName } from "@/lib/component-design-style";
+import {
+  getComponentSectionProfileClassName,
+  getGridColumnClassName,
+} from "@/lib/component-design-style";
 
 type StatementBlockProps = {
   content: ReactNode;
@@ -14,12 +22,13 @@ type StatementBlockProps = {
   backgroundColor?: "black" | "dark-gray";
   minHeight?: "small" | "medium" | "large";
   editMode?: boolean;
-} & ComponentDesignOverride<"StatementBlock">;
+} & ComponentDesignOverride<"StatementBlock"> & ComponentLayoutProps;
 
 export default function StatementBlock({
   content,
   align = "center",
   backgroundColor = "black",
+  componentLayout,
   minHeight = "medium",
   editMode = false,
   design,
@@ -48,24 +57,36 @@ export default function StatementBlock({
   }[minHeight];
 
   return (
-    <section className={`relative z-20 grid w-full ${heightClass} ${bgClass} ${rhythmClass} content-center`}>
+    <section className={`relative z-20 grid w-full ${heightClass} ${bgClass} ${
+      componentLayout
+        ? getComponentSectionProfileClassName(componentLayout)
+        : rhythmClass
+    } content-center`}>
       <div className="grid-container w-full">
-        <Reveal
-          className={`${getGridColumnClassName(resolvedDesign.contentBounds)} grid ${alignClass} ${editMode ? "pointer-events-auto" : ""}`}
-          disabled={editMode}
+        <ComponentLayoutNode
+          layout={componentLayout}
+          nodeId="content"
+          className={!componentLayout
+            ? getGridColumnClassName(resolvedDesign.contentBounds)
+            : undefined}
         >
-          <Typography
-            as="p"
-            preset="sans-body"
-            size={resolvedDesign.bodySize}
-            weight="light"
-            wrapPolicy={resolvedDesign.bodyAutoWrap ? "prose" : "nowrap"}
-            className="max-w-4xl text-textPrimary"
-            align={align}
+          <Reveal
+            className={`grid ${alignClass} ${editMode ? "pointer-events-auto" : ""}`}
+            disabled={editMode}
           >
-            {content}
-          </Typography>
-        </Reveal>
+            <Typography
+              as="p"
+              preset={getComponentLayoutTypography(componentLayout, "content")?.preset ?? "sans-body"}
+              size={getComponentLayoutTypography(componentLayout, "content")?.size ?? resolvedDesign.bodySize}
+              weight="light"
+              wrapPolicy={getComponentLayoutTypography(componentLayout, "content")?.wrap ?? (resolvedDesign.bodyAutoWrap ? "prose" : "nowrap")}
+              className="max-w-4xl text-textPrimary"
+              align={getComponentLayoutAlignment(componentLayout, "content", align)}
+            >
+              {content}
+            </Typography>
+          </Reveal>
+        </ComponentLayoutNode>
       </div>
     </section>
   );

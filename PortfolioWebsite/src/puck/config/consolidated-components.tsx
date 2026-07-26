@@ -11,7 +11,6 @@ import {
   imageFitModeField,
   imagePresetField,
 } from "@/puck/fields/image-fields";
-import { createTextAlignmentField } from "@/puck/fields/text-alignment-field";
 
 const editorialSplitImageFields = buildImagePickerFieldTriple("imageSrc");
 const projectCoverImageFields = buildImagePickerFieldTriple("mediaSrc", {
@@ -40,7 +39,6 @@ function buildColumnFields(
     [`col${column}Title`]: { type: "text", label: "标题" },
     [`col${column}Subtitle`]: { type: "text", label: "副标题" },
     [`col${column}Body`]: { type: "textarea", label: "正文" },
-    [`col${column}BodyAlign`]: createTextAlignmentField("正文对齐"),
     ...itemSlot,
     [`col${column}MediaSrc`]: createImageSourceField("可选图片"),
     [`col${column}MediaPreset`]: {
@@ -57,7 +55,6 @@ function buildColumnFields(
 function buildColumnDefaults(column: 1 | 2 | 3) {
   return {
     [`col${column}Body`]: "",
-    [`col${column}BodyAlign`]: "left",
     ...(column < 3 ? { [`col${column}Items`]: [] } : {}),
     [`col${column}Label`]: "",
     [`col${column}MediaFitMode`]: "x",
@@ -85,11 +82,14 @@ export const consolidatedComponents = {
         type: "textarea",
         label: "图注（可选）",
       },
-      captionAlign: createTextAlignmentField("图注对齐"),
+      externalLinkLabel: {
+        type: "text",
+        label: "外部播放入口文案",
+      },
     },
     defaultProps: {
       caption: "",
-      captionAlign: "left",
+      externalLinkLabel: "在哔哩哔哩观看",
       source: "",
       title: "B 站视频",
     },
@@ -111,7 +111,6 @@ export const consolidatedComponents = {
       descriptionLine1: { type: "text", label: "说明眉题（索引）" },
       descriptionLine2: { type: "textarea", label: "说明正文（索引）" },
       description: { type: "textarea", label: "合集说明" },
-      descriptionAlign: createTextAlignmentField("说明正文对齐"),
       number: { type: "text", label: "合集编号" },
       _g_links: createFieldGroup("链接"),
       ctaLabel: { type: "text", label: "CTA 文案（索引）" },
@@ -123,7 +122,6 @@ export const consolidatedComponents = {
       ctaHref: "",
       ctaLabel: "",
       description: "",
-      descriptionAlign: "left",
       descriptionLine1: "",
       descriptionLine2: "",
       number: "01",
@@ -156,7 +154,6 @@ export const consolidatedComponents = {
       _g_text: createFieldGroup("文本内容"),
       heading: { type: "text", label: "标题" },
       body: { type: "textarea", label: "单一正文" },
-      bodyAlign: createTextAlignmentField("正文对齐"),
       paragraphs: {
         type: "slot",
         label: "段落 Slot",
@@ -167,7 +164,6 @@ export const consolidatedComponents = {
     },
     defaultProps: {
       body: "",
-      bodyAlign: "left",
       bodyMode: "plain",
       heading: "Section Title",
       ...editorialSplitImageFields.defaults,
@@ -185,15 +181,6 @@ export const consolidatedComponents = {
         options: [
           { label: "独立图文", value: "triptych" },
           { label: "叙事阶段", value: "phase" },
-          { label: "证据网格", value: "evidence" },
-        ],
-      },
-      rhythm: {
-        type: "select",
-        label: "纵向节奏",
-        options: [
-          { label: "顶端齐平", value: "aligned" },
-          { label: "错落排列", value: "staggered" },
         ],
       },
       ...buildColumnFields(1),
@@ -204,7 +191,6 @@ export const consolidatedComponents = {
       ...buildColumnDefaults(1),
       ...buildColumnDefaults(2),
       ...buildColumnDefaults(3),
-      rhythm: "aligned",
       variant: "triptych",
     },
   },
@@ -216,7 +202,8 @@ export const consolidatedComponents = {
         type: "select",
         label: "样式",
         options: [
-          { label: "沉浸式全屏封面", value: "immersive" },
+          { label: "沉浸式左侧", value: "immersive-left" },
+          { label: "沉浸式右侧", value: "immersive-right" },
           { label: "卡片式封面", value: "card" },
         ],
       },
@@ -224,34 +211,24 @@ export const consolidatedComponents = {
       title: { type: "text", label: "标题" },
       subtitle: { type: "text", label: "副标题" },
       number: { type: "text", label: "编号" },
+      prompt: { type: "text", label: "进入提示" },
       _g_image: createFieldGroup("可选封面"),
       ...projectCoverImageFields.fields,
       mobileImageFocalX: { type: "number", label: "移动端焦点 X (%)" },
       mobileImageFocalY: { type: "number", label: "移动端焦点 Y (%)" },
       _g_link: createFieldGroup("链接与排版"),
       href: { type: "text", label: "链接" },
-      index: { type: "number", label: "排序索引" },
-      align: {
-        type: "select",
-        label: "标题方向",
-        options: [
-          { label: "自动交替", value: "auto" },
-          { label: "左侧", value: "left" },
-          { label: "右侧", value: "right" },
-        ],
-      },
     },
     defaultProps: {
-      align: "auto",
       href: "",
       ...projectCoverImageFields.defaults,
-      index: 0,
       mobileImageFocalX: 50,
       mobileImageFocalY: 50,
       number: "01",
+      prompt: "Enter",
       subtitle: "",
       title: "Project Name",
-      variant: "immersive",
+      variant: "immersive-left",
     },
   },
 } satisfies ComponentDefinitionRegistry;

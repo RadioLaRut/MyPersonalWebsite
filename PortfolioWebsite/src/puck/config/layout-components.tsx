@@ -8,7 +8,6 @@ import {
   imageFitModeField,
   imagePresetField,
 } from "@/puck/fields/image-fields";
-import { createTextAlignmentField } from "@/puck/fields/text-alignment-field";
 
 const heroHeadlineImageFields = buildImagePickerFieldTriple("heroImage", {
   defaultPreset: "ratio-21-9",
@@ -25,15 +24,6 @@ export const layoutComponents = {
         _g_content: createFieldGroup("文本内容"),
         content: { type: "textarea", label: "Content" },
         _g_style: createFieldGroup("样式设置"),
-        align: {
-          type: "select",
-          label: "Align",
-          options: [
-            { label: "Left", value: "left" },
-            { label: "Center", value: "center" },
-            { label: "Right", value: "right" },
-          ],
-        },
         backgroundColor: {
           type: "select",
           label: "Background Color",
@@ -54,7 +44,6 @@ export const layoutComponents = {
       },
       defaultProps: {
         content: "We blur the lines between virtual and reality.",
-        align: "center",
         backgroundColor: "black",
         minHeight: "medium",
       },
@@ -67,7 +56,6 @@ export const layoutComponents = {
         eyebrow: { type: "text", label: "Eyebrow" },
         title: { type: "textarea", label: "Title" },
         subtitle: { type: "textarea", label: "Subtitle" },
-        subtitleAlign: createTextAlignmentField("副标题对齐"),
         _g_image: createFieldGroup("Hero 图片"),
         ...heroHeadlineImageFields.fields,
         _g_link: createFieldGroup("导航链接"),
@@ -78,7 +66,6 @@ export const layoutComponents = {
         eyebrow: "PROJECT",
         title: "PROJECT TITLE",
         subtitle: "Add a short project summary.",
-        subtitleAlign: "left",
         ...heroHeadlineImageFields.defaults,
         navLink: "",
         navLinkLabel: "观看视频",
@@ -87,10 +74,8 @@ export const layoutComponents = {
     RichParagraph: {
       fields: {
         content: { type: "textarea", label: "Content" },
-        align: createTextAlignmentField("正文对齐"),
       },
       defaultProps: {
-        align: "justify",
         content: "Enter your paragraph text here.",
       },
     },
@@ -100,7 +85,6 @@ export const layoutComponents = {
         src: createImageSourceField("Image Source"),
         alt: { type: "text", label: "Alt Text" },
         caption: { type: "text", label: "Caption" },
-        captionAlign: createTextAlignmentField("图注对齐"),
         _g_display: createFieldGroup("显示设置"),
         preset: { ...imagePresetField, label: "Preset" },
         fitMode: { ...imageFitModeField, label: "Fit Mode" },
@@ -118,7 +102,6 @@ export const layoutComponents = {
         src: "",
         alt: "",
         caption: "Enter an image caption",
-        captionAlign: "left",
         preset: "ratio-16-9",
         fitMode: "x",
         variant: "content",
@@ -157,13 +140,20 @@ export const layoutComponents = {
 
     HeroSection: {
       fields: {
+        variant: {
+          type: "select",
+          label: "结构变体",
+          options: [
+            { label: "海报", value: "poster" },
+            { label: "完整信息", value: "full" },
+          ],
+        },
         _g_text: createFieldGroup("文本内容"),
         eyebrow: { type: "text", label: "Eyebrow" },
         title: { type: "textarea", label: "Title" },
         positioning: { type: "text", label: "定位文案" },
         subtitle: { type: "text", label: "Subtitle" },
         description: { type: "textarea", label: "Description" },
-        descriptionAlign: createTextAlignmentField("描述对齐"),
         _g_cta: createFieldGroup("行动按钮 (CTA)"),
         primaryCtaLabel: { type: "text", label: "Primary CTA Label" },
         primaryCtaHref: { type: "text", label: "Primary CTA Href" },
@@ -178,12 +168,12 @@ export const layoutComponents = {
         mobileImageFocalY: { type: "number", label: "移动端焦点 Y (%)" },
       },
       defaultProps: {
+        variant: "poster",
         eyebrow: "LIGHTING / TECH ART / GAME DESIGN",
         title: "JIANG\nCHENGYAN",
         positioning: "让氛围、系统与落地流程共同服务体验。",
         subtitle: "",
         description: "",
-        descriptionAlign: "left",
         primaryCtaLabel: "",
         primaryCtaHref: "",
         secondaryCtaLabel: "",
@@ -203,7 +193,6 @@ export const layoutComponents = {
         eyebrow: { type: "text", label: "Eyebrow" },
         title: { type: "text", label: "Title" },
         description: { type: "textarea", label: "Description" },
-        descriptionAlign: createTextAlignmentField("描述对齐"),
         _g_button: createFieldGroup("按钮设置"),
         buttonLabel: { type: "text", label: "Button Label" },
         buttonHref: { type: "text", label: "Button Href" },
@@ -212,7 +201,6 @@ export const layoutComponents = {
         eyebrow: "NEXT STEP",
         title: "Ready to start a project?",
         description: "Let's create something amazing together.",
-        descriptionAlign: "center",
         buttonLabel: "About Me",
         buttonHref: "/about",
       },

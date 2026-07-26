@@ -5,10 +5,11 @@ import path from "node:path";
 import test from "node:test";
 
 import {
+  getComponentDesignRevision,
   readComponentDesignConfig,
   writeComponentDesignConfig,
 } from "./component-design-config.ts";
-import { createDefaultComponentDesignDocument } from "./component-design-schema.ts";
+import { createDefaultComponentDesignDocument } from "./component-design-v2.ts";
 
 test("readComponentDesignConfig falls back to defaults when file is missing", async () => {
   const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "component-design-read-"));
@@ -24,21 +25,55 @@ test("writeComponentDesignConfig persists normalized JSON", async () => {
   const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "component-design-write-"));
   const filePath = path.join(tempRoot, "component-design.json");
   const document = createDefaultComponentDesignDocument();
-  document.components.RichParagraph.bodySize = "body";
-  document.components.ContentCard.textOnlyBounds.leftCol = 2;
-  document.components.HeroSection.contentBounds.lg.leftCol = 3;
-  document.components.HeroSection.eyebrowTopSpacing = "20";
-  document.components.ProjectSection.lockupGap = "16";
-  document.components.ProjectSection.titleUnderlineOpticalPull = "24";
+  document.components.RichParagraph.variants.default.nodes.body.typography!.size =
+    "body-lg";
+  document.components.HeroSection.variants.full.nodes.title.placement.desktop = {
+    span: 8,
+    start: 3,
+  };
+  document.components.HeroSection.variants.full.gaps["eyebrow>title"].desktop = 24;
+  document.components.ProjectCoverLink.variants["immersive-left"].nodes.title
+    .opticalPull = 8;
 
   await writeComponentDesignConfig(document, filePath);
   const readBack = await readComponentDesignConfig(filePath);
 
-  assert.equal(readBack.components.RichParagraph.bodySize, "body");
-  assert.equal(readBack.components.ContentCard.textOnlyBounds.leftCol, 2);
-  assert.equal(readBack.components.HeroSection.contentBounds.lg.leftCol, 3);
-  assert.equal(readBack.components.HeroSection.eyebrowTopSpacing, "20");
-  assert.equal(readBack.components.ProjectSection.lockupGap, "16");
-  assert.equal(readBack.components.ProjectSection.titleUnderlineOpticalPull, "24");
+  assert.equal(
+    readBack.components.RichParagraph.variants.default.nodes.body.typography!.size,
+    "body-lg",
+  );
+  assert.deepEqual(
+    readBack.components.HeroSection.variants.full.nodes.title.placement.desktop,
+    { span: 8, start: 3 },
+  );
+  assert.equal(
+    readBack.components.HeroSection.variants.full.gaps["eyebrow>title"].desktop,
+    24,
+  );
+  assert.equal(
+    readBack.components.ProjectCoverLink.variants["immersive-left"].nodes.title
+      .opticalPull,
+    8,
+  );
+  assert.deepEqual(await fs.readdir(tempRoot), ["component-design.json"]);
   await fs.rm(tempRoot, { force: true, recursive: true });
+});
+
+test("component design revision is stable and changes with design values", () => {
+  const first = createDefaultComponentDesignDocument();
+  const equivalent = structuredClone(first);
+  const changed = structuredClone(first);
+  changed.components.HeroSection.variants.full.nodes.title.placement.desktop = {
+    span: 9,
+    start: 2,
+  };
+
+  assert.equal(
+    getComponentDesignRevision(first),
+    getComponentDesignRevision(equivalent),
+  );
+  assert.notEqual(
+    getComponentDesignRevision(first),
+    getComponentDesignRevision(changed),
+  );
 });

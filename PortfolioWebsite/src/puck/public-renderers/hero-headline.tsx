@@ -3,7 +3,6 @@ import type { ComponentConfig } from "@puckeditor/core";
 import HeroHeadlineBlock from "../../components/common/HeroHeadlineBlock";
 import { toSafePuckHref } from "../../lib/puck-href";
 import { castImageFitMode, castImagePreset } from "./shared";
-import { castTypographyAlignment } from "../../lib/typography-alignment";
 
 export const render: ComponentConfig["render"] = ({
   eyebrow,
@@ -15,7 +14,6 @@ export const render: ComponentConfig["render"] = ({
   navLinkLabel,
   publicMediaHint,
   subtitle,
-  subtitleAlign,
   title,
 }) => (
   <HeroHeadlineBlock
@@ -28,7 +26,6 @@ export const render: ComponentConfig["render"] = ({
     navLinkLabel={navLinkLabel}
     publicMediaHint={publicMediaHint}
     subtitle={subtitle}
-    subtitleAlign={castTypographyAlignment(subtitleAlign)}
     title={title}
   />
 );

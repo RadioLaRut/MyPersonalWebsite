@@ -1,15 +1,15 @@
 import {
   normalizeComponentDesignDocument,
   type ComponentDesignDocument,
-} from "./component-design-schema.ts";
+} from "./component-design-v2.ts";
 
-export const COMPONENT_DESIGN_COMMIT_CHANNEL = "component-design-committed-v1";
+export const COMPONENT_DESIGN_COMMIT_CHANNEL = "component-design-committed-v2";
 export const COMPONENT_DESIGN_COMMIT_MESSAGE_TYPE = "component-design-committed";
 
 export type CommittedComponentDesignMessage = {
   document: ComponentDesignDocument;
   type: typeof COMPONENT_DESIGN_COMMIT_MESSAGE_TYPE;
-  version: 1;
+  version: 2;
 };
 
 export function areComponentDesignDocumentsEqual(
@@ -43,7 +43,7 @@ export function isCommittedComponentDesignMessage(
     "type" in value &&
     value.type === COMPONENT_DESIGN_COMMIT_MESSAGE_TYPE &&
     "version" in value &&
-    value.version === 1 &&
+    value.version === 2 &&
     "document" in value &&
     value.document &&
     typeof value.document === "object",

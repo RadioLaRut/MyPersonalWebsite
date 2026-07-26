@@ -11,17 +11,16 @@
         "navLink": "",
         "heroImagePreset": "ratio-21-9",
         "heroImageFitMode": "x",
-        "navLinkLabel": "",
-        "subtitleAlign": "left"
+        "navLinkLabel": ""
       }
     },
     {
       "props": {
         "caption": "",
-        "captionAlign": "left",
         "id": "bilibili-works-holy-tank",
         "source": "https://www.bilibili.com/video/BV1GqkRYxEWM",
-        "title": "帅油桶 (HOLY TANK)项目视频"
+        "title": "帅油桶 (HOLY TANK)项目视频",
+        "externalLinkLabel": "在哔哩哔哩观看"
       },
       "type": "BilibiliEmbed"
     },
@@ -30,7 +29,6 @@
       "props": {
         "id": "holytank-card-2",
         "body": "敌意建筑是在建筑环境中故意用一些设计要素来引导或限制某些行为，例如阻止人们躺下或坐下、玩滑板、乱丢垃圾、游荡和随地小便。受影响的大多是时常使用或依赖公共空间的人，例如年轻人、穷人、和露宿者。\n\n最典型的敌意建筑即“反游民尖刺”——嵌在平坦表面上的螺柱等结构会使之变得粗糙，无法在上面睡觉。",
-        "bodyAlign": "left",
         "bodyMode": "plain",
         "heading": "敌意建筑",
         "imageFitMode": "x",
@@ -46,10 +44,8 @@
         "id": "holytank-info-1",
         "col1Items": [],
         "col2Items": [],
-        "rhythm": "aligned",
         "variant": "phase",
         "col1Body": "敌意建筑充斥在日常公共空间，它们在维持秩序的同时，也给城市添上了一层尖锐和冷漠的质感。我们想通过游戏探讨：这些设计是否真的让城市变得更安全，还是仅仅让弱势群体更难生存。",
-        "col1BodyAlign": "left",
         "col1Label": "Phase 01",
         "col1MediaFitMode": "x",
         "col1MediaPreset": "ratio-16-9",
@@ -57,7 +53,6 @@
         "col1Subtitle": "Context",
         "col1Title": "项目背景",
         "col2Body": "轨迹球原生映射鼠标输入，手握原地旋转的操作方式天然对应轮椅遥杆体感。操作本身的阻力与不便，和角色身体残障形成通感，让玩家切身体会敌意建筑对行动不便者的影响。",
-        "col2BodyAlign": "left",
         "col2Label": "Phase 02",
         "col2MediaFitMode": "x",
         "col2MediaPreset": "ratio-16-9",
@@ -65,7 +60,6 @@
         "col2Subtitle": "Innovation",
         "col2Title": "核心创新",
         "col3Body": "负责主题设定、交互实现和整体系统设计。轨迹球与轮椅操作的映射采用原生方案，没有额外物理参数调整，轨迹球本身的阻力就是叙事。同时负责将敌意建筑概念转化为具体的关卡障碍和空间设计。",
-        "col3BodyAlign": "left",
         "col3Label": "Phase 03",
         "col3MediaFitMode": "x",
         "col3MediaPreset": "ratio-16-9",
@@ -86,7 +80,6 @@
       "props": {
         "id": "holytank-card-1",
         "body": "游戏抛弃了传统的键鼠操作，完全使用实体轨迹球进行控制。轨迹球最大的交互优势在于：用户可以用手握住轨迹球，像是拧一颗球一样进行操作。轨迹球移动鼠标时本身是固定的，将其放在座椅扶手后进行操作，这种操作与角色形成了强烈的通感，让玩家能够切身体验到残疾人的日常困难。",
-        "bodyAlign": "left",
         "bodyMode": "plain",
         "heading": "轨迹球交互设计",
         "imageFitMode": "x",
@@ -100,7 +93,10 @@
       "type": "NextProjectBlock",
       "props": {
         "id": "next-1",
-        "nextId": "houdini-pcg"
+        "nextId": "houdini-pcg",
+        "eyebrow": "NEXT PROJECT",
+        "footerLeft": "© 2026 江承彦 / JIANG CHENGYAN",
+        "footerRight": ""
       }
     }
   ],

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import type { ComponentLayoutProps } from "@/components/common/ComponentLayoutNode";
 import ProjectSection from "@/components/home/ProjectSection";
 import LightingProjectCard from "@/components/works/LightingProjectCard";
 import type {
@@ -10,52 +11,53 @@ import type { ImageFitMode, ImagePreset } from "@/lib/image-presentation";
 import type { PublicMediaHint } from "@/lib/media-layout";
 
 export type ProjectCoverLinkProps = {
-  align?: "auto" | "left" | "right";
   cardDesign?: LightingProjectCardDesign;
   editMode?: boolean;
   href?: string;
   imageFitMode?: ImageFitMode;
   imagePreset?: ImagePreset;
   immersiveDesign?: ProjectSectionDesign;
-  index?: number;
   mediaSrc?: string;
   mobileImageFocalX?: number;
   mobileImageFocalY?: number;
   number?: ReactNode;
+  prompt?: ReactNode;
   publicMediaHint?: PublicMediaHint;
   subtitle?: ReactNode;
   title: ReactNode;
-  variant?: "card" | "immersive";
-};
+  variant?: "card" | "immersive-left" | "immersive-right";
+} & ComponentLayoutProps;
 
 export default function ProjectCoverLink({
-  align = "auto",
   cardDesign,
+  componentLayout,
   editMode = false,
   href,
   imageFitMode,
   imagePreset,
   immersiveDesign,
-  index = 0,
   mediaSrc,
   mobileImageFocalX = 50,
   mobileImageFocalY = 50,
   number = "",
+  prompt,
   publicMediaHint,
   subtitle,
   title,
-  variant = "immersive",
+  variant = "immersive-left",
 }: ProjectCoverLinkProps) {
   if (variant === "card") {
     return (
       <LightingProjectCard
         coverImage={mediaSrc}
+        componentLayout={componentLayout}
         design={cardDesign}
         editMode={editMode}
         href={href}
         imageFitMode={imageFitMode}
         imagePreset={imagePreset}
         number={number}
+        prompt={prompt}
         publicMediaHint={publicMediaHint}
         title={title}
       />
@@ -64,13 +66,13 @@ export default function ProjectCoverLink({
 
   return (
     <ProjectSection
-      align={align}
+      align={variant === "immersive-right" ? "right" : "left"}
+      componentLayout={componentLayout}
       design={immersiveDesign}
       editMode={editMode}
       imageFitMode={imageFitMode}
       imagePreset={imagePreset}
       imageSrc={mediaSrc}
-      index={index}
       link={href}
       mobileImageFocalX={mobileImageFocalX}
       mobileImageFocalY={mobileImageFocalY}

@@ -1,13 +1,14 @@
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
 import {
   createDefaultComponentDesignDocument,
+  parseCurrentComponentDesignDocument,
   parseComponentDesignDocument,
   type ComponentDesignDocument,
-} from "./component-design-schema.ts";
+} from "./component-design-v2.ts";
 
 export const COMPONENT_DESIGN_CONFIG_ROOT = path.resolve(
   process.cwd(),
@@ -90,7 +91,7 @@ export async function writeComponentDesignConfig(
   document: ComponentDesignDocument,
   filePath = COMPONENT_DESIGN_CONFIG_FILE,
 ) {
-  const strictDocument = parseComponentDesignDocument(document);
+  const strictDocument = parseCurrentComponentDesignDocument(document);
   if (!strictDocument) {
     throw new TypeError("Invalid current component design document");
   }
@@ -100,4 +101,12 @@ export async function writeComponentDesignConfig(
     filePath,
     `${JSON.stringify(strictDocument, null, 2).replace(/\n/g, lineEnding)}${lineEnding}`,
   );
+}
+
+export function getComponentDesignRevision(
+  document: ComponentDesignDocument,
+): string {
+  return createHash("sha256")
+    .update(JSON.stringify(document))
+    .digest("hex");
 }

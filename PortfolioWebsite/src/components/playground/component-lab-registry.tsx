@@ -1,6 +1,8 @@
 "use client";
 
 import {
+  COMPONENT_DESIGN_OPTICAL_PULL_LABELS,
+  COMPONENT_DESIGN_OPTICAL_PULL_TOKENS,
   COMPONENT_DESIGN_PARAMETER_ITEM_SPANS,
   COMPONENT_DESIGN_PARAMETER_ITEM_SPAN_LABELS,
   COMPONENT_DESIGN_SECTION_SPACING_LABELS,
@@ -113,6 +115,11 @@ function createTypographyOptions(
 
 const SPACING_OPTIONS = COMPONENT_DESIGN_SPACING_TOKENS.map((token) => ({
   label: COMPONENT_DESIGN_SPACING_LABELS[token],
+  value: token,
+}));
+
+const OPTICAL_PULL_OPTIONS = COMPONENT_DESIGN_OPTICAL_PULL_TOKENS.map((token) => ({
+  label: COMPONENT_DESIGN_OPTICAL_PULL_LABELS[token],
   value: token,
 }));
 
@@ -1126,11 +1133,22 @@ const COMPONENT_DESIGN_LAB_REGISTRY: Record<
           {
             type: "select",
             label: "底线光学上提",
-            options: SPACING_OPTIONS,
+            options: OPTICAL_PULL_OPTIONS,
             getValue: (document) => document.components.ProjectSection.titleUnderlineOpticalPull,
             setValue: (document, value) => {
               document.components.ProjectSection.titleUnderlineOpticalPull =
                 value as ComponentDesignDocument["components"]["ProjectSection"]["titleUnderlineOpticalPull"];
+            },
+          },
+          {
+            type: "select",
+            label: "底线 CJK 字形下沿补偿",
+            options: OPTICAL_PULL_OPTIONS,
+            getValue: (document) =>
+              document.components.ProjectSection.titleUnderlineCjkMetricClearance,
+            setValue: (document, value) => {
+              document.components.ProjectSection.titleUnderlineCjkMetricClearance =
+                value as ComponentDesignDocument["components"]["ProjectSection"]["titleUnderlineCjkMetricClearance"];
             },
           },
         ],

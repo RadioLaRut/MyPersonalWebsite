@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createElement, type ReactElement } from "react";
 
-import { createDefaultComponentDesignDocument } from "../lib/component-design-schema.ts";
+import { createDefaultComponentDesignDocument } from "../lib/component-design-v2.ts";
 import {
   renderWithAdapter,
   resolveComponentDesignProps,
@@ -51,7 +51,7 @@ test("公开媒体提示只注入公开渲染表面", () => {
   assert.deepEqual(element.props.publicMediaHint, publicMediaHint);
 });
 
-test("统一适配器注入组件设计与 WorksList 子项设计", () => {
+test("统一适配器注入作者组件的 V2 变体布局", () => {
   const designDocument = createDefaultComponentDesignDocument();
   const hero = renderWithAdapter({
     designDocument,
@@ -68,40 +68,48 @@ test("统一适配器注入组件设计与 WorksList 子项设计", () => {
     type: "WorksList",
   }) as ReactElement<Record<string, unknown>>;
 
-  assert.deepEqual(hero.props.design, designDocument.components.HeroSection);
-  assert.deepEqual(worksList.props.design, designDocument.components.WorksList);
-  assert.deepEqual(worksList.props.entryDesign, designDocument.components.WorksListEntry);
+  assert.deepEqual(
+    hero.props.componentLayout,
+    designDocument.components.HeroSection.variants.poster,
+  );
+  assert.equal(hero.props.componentVariant, "poster");
+  assert.deepEqual(
+    worksList.props.componentLayout,
+    designDocument.components.WorksList.variants.default,
+  );
+  assert.equal(worksList.props.componentVariant, "default");
 });
 
-test("合并组件注入其两套内部设计作用域", () => {
+test("合并组件只暴露作者组件变体，不创建内部顶层作用域", () => {
   const designDocument = createDefaultComponentDesignDocument();
 
-  assert.deepEqual(
-    resolveComponentDesignProps("EditorialHeader", designDocument),
-    {
-      collectionDesign: designDocument.components.LightingCollectionHeader,
-      indexDesign: designDocument.components.PortfolioHeroHeader,
-    },
+  const header = resolveComponentDesignProps(
+    "EditorialHeader",
+    { variant: "collection" },
+    designDocument,
   );
-  assert.deepEqual(
-    resolveComponentDesignProps("EditorialSplit", designDocument),
-    {
-      cardDesign: designDocument.components.ContentCard,
-      splitDesign: designDocument.components.TextSplitLayout,
-    },
+  const split = resolveComponentDesignProps(
+    "EditorialSplit",
+    { layout: "media-left" },
+    designDocument,
   );
-  assert.deepEqual(
-    resolveComponentDesignProps("ThreeColumnSection", designDocument),
-    {
-      phaseDesign: designDocument.components.HighDensityInfoBlock,
-      triptychDesign: designDocument.components.BreakdownTriptych,
-    },
+  const columns = resolveComponentDesignProps(
+    "ThreeColumnSection",
+    { variant: "triptych" },
+    designDocument,
   );
+  const project = resolveComponentDesignProps(
+    "ProjectCoverLink",
+    { variant: "immersive-right" },
+    designDocument,
+  );
+
+  assert.equal(header?.componentVariant, "collection");
+  assert.equal(split?.componentVariant, "media-left");
+  assert.equal(columns?.componentVariant, "triptych");
+  assert.equal(project?.componentVariant, "immersive-right");
   assert.deepEqual(
-    resolveComponentDesignProps("ProjectCoverLink", designDocument),
-    {
-      cardDesign: designDocument.components.LightingProjectCard,
-      immersiveDesign: designDocument.components.ProjectSection,
-    },
+    header?.componentLayout,
+    designDocument.components.EditorialHeader.variants.collection,
   );
 });

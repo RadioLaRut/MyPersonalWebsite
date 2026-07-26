@@ -1,6 +1,11 @@
 import { type ReactNode } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
+import ComponentLayoutNode, {
+  getComponentLayoutAlignment,
+  getComponentLayoutTypography,
+  type ComponentLayoutProps,
+} from "@/components/common/ComponentLayoutNode";
 import Typography from "@/components/common/Typography";
 import {
   type ComponentDesignOverride,
@@ -9,6 +14,7 @@ import {
 import { MotionLink } from "@/components/motion/MotionLink";
 import {
   createResponsiveGridBounds,
+  getComponentSectionProfileClassName,
   getResponsiveGridColumnClassName,
 } from "@/lib/component-design-style";
 import {
@@ -20,6 +26,7 @@ import type { PublicMediaHint } from "@/lib/media-layout";
 
 export type LightingProjectCardProps = {
   number: ReactNode;
+  prompt?: ReactNode;
   title: ReactNode;
   coverImage?: string;
   href?: string;
@@ -27,12 +34,14 @@ export type LightingProjectCardProps = {
   imageFitMode?: ImageFitMode;
   editMode?: boolean;
   publicMediaHint?: PublicMediaHint;
-} & ComponentDesignOverride<"LightingProjectCard">;
+} & ComponentDesignOverride<"LightingProjectCard"> & ComponentLayoutProps;
 
 export default function LightingProjectCard({
   number,
+  prompt,
   title,
   coverImage,
+  componentLayout,
   href,
   imagePreset = "ratio-21-9",
   imageFitMode = "cover",
@@ -43,6 +52,103 @@ export default function LightingProjectCard({
   const resolvedDesign = resolveComponentDesign("LightingProjectCard", design);
   const hasTitle = hasEditableTextContent(title);
   const imageAlt = toPlainText(title) ?? `Lighting collection ${toPlainText(number) ?? ""}`;
+
+  if (componentLayout) {
+    const numberTypography = getComponentLayoutTypography(componentLayout, "number");
+    const promptTypography = getComponentLayoutTypography(componentLayout, "prompt");
+    const titleTypography = getComponentLayoutTypography(componentLayout, "title");
+    const card = (
+      <article className={`group relative w-full overflow-hidden ${getComponentSectionProfileClassName(componentLayout)}`}>
+        <div className="grid-container relative min-h-[18rem] items-start md:min-h-[30rem]">
+          <ComponentLayoutNode
+            layout={componentLayout}
+            nodeId="media"
+            className="relative row-span-3 h-full min-h-[18rem] overflow-hidden border border-white/10 md:min-h-[30rem]"
+          >
+            <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/10 to-black/80" />
+            {coverImage ? (
+              <PresetImage
+                src={coverImage}
+                alt={imageAlt}
+                preload={publicMediaHint?.src === coverImage && publicMediaHint.preload}
+                mediaProfile="grid-10"
+                sizes={publicMediaHint?.src === coverImage ? publicMediaHint.sizes : undefined}
+                preset={imagePreset === "native" ? "ratio-16-9" : imagePreset}
+                fitMode={imageFitMode}
+                lockFrame={false}
+                frameClassName="h-full w-full"
+              />
+            ) : null}
+          </ComponentLayoutNode>
+          {hasEditableTextContent(number) ? (
+            <ComponentLayoutNode
+              layout={componentLayout}
+              nodeId="number"
+              className="relative z-20 self-start pt-5"
+            >
+              <Typography
+                preset={numberTypography?.preset ?? "sans-body"}
+                size={numberTypography?.size ?? "label"}
+                weight="semantic"
+                wrapPolicy={numberTypography?.wrap ?? "label"}
+                align={getComponentLayoutAlignment(componentLayout, "number")}
+                className="text-white/48"
+              >
+                {number}
+              </Typography>
+            </ComponentLayoutNode>
+          ) : null}
+          {hasEditableTextContent(prompt) ? (
+            <ComponentLayoutNode
+              layout={componentLayout}
+              nodeId="prompt"
+              className="relative z-20 self-start pt-5"
+            >
+              <Typography
+                preset={promptTypography?.preset ?? "sans-body"}
+                size={promptTypography?.size ?? "caption"}
+                weight="semantic"
+                wrapPolicy={promptTypography?.wrap ?? "label"}
+                align={getComponentLayoutAlignment(componentLayout, "prompt")}
+                className="text-white/48"
+              >
+                {prompt}
+              </Typography>
+            </ComponentLayoutNode>
+          ) : null}
+          {hasTitle ? (
+            <ComponentLayoutNode
+              layout={componentLayout}
+              nodeId="title"
+              className="relative z-20 self-end pb-5"
+            >
+              <Typography
+                as="h2"
+                preset={titleTypography?.preset ?? "luna-editorial"}
+                size={titleTypography?.size ?? "title"}
+                weight="display"
+                wrapPolicy={titleTypography?.wrap ?? "heading"}
+                align={getComponentLayoutAlignment(componentLayout, "title")}
+                className="text-white"
+              >
+                {title}
+              </Typography>
+            </ComponentLayoutNode>
+          ) : null}
+        </div>
+      </article>
+    );
+    return href ? (
+      <MotionLink
+        href={href}
+        disabled={editMode}
+        interactionPreset="blockLink"
+        className={editMode ? "block cursor-default" : "interactive block"}
+      >
+        {card}
+      </MotionLink>
+    ) : card;
+  }
 
   const content = (
     <article className="group glass-panel relative h-full w-full overflow-hidden rounded-none">

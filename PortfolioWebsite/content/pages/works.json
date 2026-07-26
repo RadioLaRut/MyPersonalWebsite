@@ -13,8 +13,7 @@
               "title": "LIGHTING",
               "category": "Lighting Art",
               "imageSrc": "/images/train-station/2Day.webp",
-              "desc": "从城市夜景到站台晨昏，用光线、天气与镜头节奏搭建情绪场。",
-              "descriptionAlign": "left"
+              "desc": "从城市夜景到站台晨昏，用光线、天气与镜头节奏搭建情绪场。"
             }
           },
           {
@@ -31,8 +30,7 @@
               "title": "PENGUIN TRADING CO.",
               "category": "全栈制作人 / 主策划 / PM / TA",
               "imageSrc": "/images/penguin/CyberRestaurant.webp",
-              "desc": "从整体玩法与核心循环，到阻塞任务、跨专业协作和 UE 生产工作流，我把项目推进到核心循环可完整体验。",
-              "descriptionAlign": "left"
+              "desc": "从整体玩法与核心循环，到阻塞任务、跨专业协作和 UE 生产工作流，我把项目推进到核心循环可完整体验。"
             }
           },
           {
@@ -44,8 +42,7 @@
               "title": "INSIGHT",
               "category": "主策划 / 程序",
               "imageSrc": "/images/insight/InsightOnlyCover.webp",
-              "desc": "你要删掉谁的发言、相信谁的私语，并在舆情秩序与个人伦理之间做决定。",
-              "descriptionAlign": "left"
+              "desc": "你要删掉谁的发言、相信谁的私语，并在舆情秩序与个人伦理之间做决定。"
             }
           },
           {
@@ -57,8 +54,7 @@
               "title": "SLAY THE VIRUS",
               "category": "策划 / UI设计 / 制作人",
               "imageSrc": "/images/slay-the-virus/STVTitle.webp",
-              "desc": "把卡牌像俄罗斯方块一样塞进有限空间，每一步排布都在决定这回合能否活下来。",
-              "descriptionAlign": "left"
+              "desc": "把卡牌像俄罗斯方块一样塞进有限空间，每一步排布都在决定这回合能否活下来。"
             }
           },
           {
@@ -70,8 +66,7 @@
               "title": "THE PROMETHEUS",
               "category": "关卡策划 / 灯光",
               "imageSrc": "/images/prometheus/PrometheusTitle.webp",
-              "desc": "在有限胶卷、巡逻路线与高价值目标之间取舍，像记者一样潜入并偷拍真相。",
-              "descriptionAlign": "left"
+              "desc": "在有限胶卷、巡逻路线与高价值目标之间取舍，像记者一样潜入并偷拍真相。"
             }
           },
           {
@@ -88,8 +83,7 @@
                   "slug": "holy-tank"
                 }
               ],
-              "desc": "把轨迹球变成轮椅般的身体延伸，让操作阻力本身成为叙事的一部分。",
-              "descriptionAlign": "left"
+              "desc": "把轨迹球变成轮椅般的身体延伸，让操作阻力本身成为叙事的一部分。"
             }
           },
           {
@@ -106,8 +100,7 @@
               "title": "I'M EXPLODE WITH U",
               "category": "主策划",
               "imageSrc": "/images/exploding/Title.webp",
-              "desc": "你不是靠走位移动，而是靠每一次开枪的后坐力把自己和对手推向危险边缘。",
-              "descriptionAlign": "left"
+              "desc": "你不是靠走位移动，而是靠每一次开枪的后坐力把自己和对手推向危险边缘。"
             }
           },
           {
@@ -124,8 +117,7 @@
               "title": "HOUDINI PCG",
               "category": "程序化生成",
               "imageSrc": "/images/penguin/PCG/PCG01.webp",
-              "desc": "从道路、水域到房屋密度，用一套 Houdini 管线把小镇生成变成可控的场景搭建流程。",
-              "descriptionAlign": "left"
+              "desc": "从道路、水域到房屋密度，用一套 Houdini 管线把小镇生成变成可控的场景搭建流程。"
             }
           },
           {
@@ -137,8 +129,7 @@
               "title": "EPIC ",
               "category": "舞台灯光设计",
               "imageSrc": "/images/penguin/Epic.webp",
-              "desc": "为音乐剧《Epic》设计一套会说话的灯光语言，让神性、冲突与舞台纵深同时成立。",
-              "descriptionAlign": "left"
+              "desc": "为音乐剧《Epic》设计一套会说话的灯光语言，让神性、冲突与舞台纵深同时成立。"
             }
           }
         ],
@@ -155,8 +146,7 @@
         "description": "想继续聊项目、流程或合作方式，可以从这里进入。",
         "buttonLabel": "查看介绍与联系方式",
         "buttonHref": "/about#contact",
-        "id": "HomeEndcapSection-04d186c3-f24c-4767-bf9c-533ff520fe87",
-        "descriptionAlign": "center"
+        "id": "HomeEndcapSection-04d186c3-f24c-4767-bf9c-533ff520fe87"
       }
     }
   ],

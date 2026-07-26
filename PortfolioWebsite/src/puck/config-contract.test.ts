@@ -34,7 +34,7 @@ test("唯一渲染器清单与 Puck manifest 完全一致", () => {
   }
 });
 
-test("编辑态只禁用 WorksListEntry 交互，不强制视觉激活", () => {
+test("WorksListEntry 初始声明懒加载图片且不强制视觉激活", () => {
   const serverSource = fs.readFileSync(
     path.join(process.cwd(), "src/components/works/WorksListEntry.tsx"),
     "utf8",
@@ -52,7 +52,9 @@ test("编辑态只禁用 WorksListEntry 交互，不强制视觉激活", () => {
   assert.match(serverSource, /!editMode \? \(/);
   assert.match(serverSource, /imageSrc=\{imageSrc\}/);
   assert.match(islandSource, /hovered \|\| focused \|\| centered/);
-  assert.match(islandSource, /hasActivated && imageSrc/);
+  assert.match(islandSource, /\{imageSrc \? \(/);
+  assert.match(islandSource, /loading="lazy"/);
+  assert.doesNotMatch(islandSource, /hasActivated/);
   assert.match(islandSource, /<PresetImage/);
   assert.doesNotMatch(islandSource, /\beditMode\b/);
 });

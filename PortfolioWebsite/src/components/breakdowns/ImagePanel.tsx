@@ -1,6 +1,11 @@
 import type { ReactNode } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
+import ComponentLayoutNode, {
+  getComponentLayoutAlignment,
+  getComponentLayoutTypography,
+  type ComponentLayoutProps,
+} from "@/components/common/ComponentLayoutNode";
 import Typography, {
   type TypographyAlignment,
 } from "@/components/common/Typography";
@@ -12,6 +17,7 @@ import {
   createResponsiveGridBounds,
   getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
+  getComponentSectionProfileClassName,
 } from "@/lib/component-design-style";
 import {
   hasEditableTextContent,
@@ -29,13 +35,14 @@ export type ImagePanelProps = {
   fitMode?: ImageFitMode;
   variant?: "content" | "large" | "fullscreen";
   publicMediaHint?: PublicMediaHint;
-} & ComponentDesignOverride<"ImagePanel">;
+} & ComponentDesignOverride<"ImagePanel"> & ComponentLayoutProps;
 
 export default function ImagePanel({
   src,
   alt,
   caption,
   captionAlign = "left",
+  componentLayout,
   preset,
   fitMode,
   variant = "content",
@@ -47,6 +54,92 @@ export default function ImagePanel({
 
   const imageAlt = alt || toPlainText(caption) || "Image";
   const hasCaption = hasEditableTextContent(caption);
+
+  if (componentLayout) {
+    const captionTypography = getComponentLayoutTypography(componentLayout, "caption");
+    const media = (
+      <PresetImage
+        alt={imageAlt}
+        src={src}
+        preset={preset}
+        fitMode={fitMode}
+        fitModeByBreakpoint={variant === "fullscreen"
+          ? {
+            base: preset === "native" ? "x" : "cover",
+            lg: fitMode ?? "x",
+          }
+          : undefined}
+        preload={publicMediaHint?.src === src && publicMediaHint.preload}
+        mediaProfile={variant === "fullscreen" ? "full-bleed" : "grid-10"}
+        sizes={publicMediaHint?.src === src ? publicMediaHint.sizes : undefined}
+        lockFrame={variant === "fullscreen" ? false : undefined}
+        frameClassName={variant === "fullscreen" ? "h-full w-full" : "w-full"}
+        imageClassName="select-none"
+      />
+    );
+    if (variant === "fullscreen") {
+      return (
+        <section className={`relative min-h-[calc(var(--site-viewport-unit)*100)] w-full bg-black ${getComponentSectionProfileClassName(componentLayout)}`}>
+          <div
+            className="absolute inset-0"
+            data-component-lab-node="media"
+          >
+            {media}
+          </div>
+          {hasCaption ? (
+            <div className="grid-container absolute inset-x-0 bottom-6 z-10">
+              <ComponentLayoutNode layout={componentLayout} nodeId="caption">
+                <Typography
+                  as="p"
+                  preset={captionTypography?.preset ?? "sans-body"}
+                  size={captionTypography?.size ?? "caption"}
+                  weight="semantic"
+                  wrapPolicy={captionTypography?.wrap ?? "prose"}
+                  align={getComponentLayoutAlignment(componentLayout, "caption", captionAlign)}
+                  className="bg-black/65 px-4 py-2 text-textPrimary"
+                >
+                  {caption}
+                </Typography>
+              </ComponentLayoutNode>
+            </div>
+          ) : null}
+        </section>
+      );
+    }
+    return (
+      <section className={`w-full ${getComponentSectionProfileClassName(componentLayout)}`}>
+        <div className="grid-container items-start">
+          <ComponentLayoutNode
+            as="figure"
+            layout={componentLayout}
+            nodeId="media"
+            className="overflow-hidden border border-white/10 bg-white/[0.02]"
+          >
+            {media}
+          </ComponentLayoutNode>
+          {hasCaption ? (
+            <ComponentLayoutNode
+              gapFrom="media"
+              layout={componentLayout}
+              nodeId="caption"
+            >
+              <Typography
+                as="figcaption"
+                preset={captionTypography?.preset ?? "sans-body"}
+                size={captionTypography?.size ?? "caption"}
+                weight="semantic"
+                wrapPolicy={captionTypography?.wrap ?? "prose"}
+                align={getComponentLayoutAlignment(componentLayout, "caption", captionAlign)}
+                className="text-textPrimary"
+              >
+                {caption}
+              </Typography>
+            </ComponentLayoutNode>
+          ) : null}
+        </div>
+      </section>
+    );
+  }
 
   if (variant === "fullscreen") {
     return (

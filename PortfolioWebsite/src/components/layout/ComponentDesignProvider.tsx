@@ -13,8 +13,8 @@ import {
   createDefaultComponentDesignDocument,
   normalizeComponentDesignDocument,
   type ComponentDesignDocument,
-  type ComponentDesignComponentKey,
-} from "@/lib/component-design-schema";
+} from "@/lib/component-design-v2";
+import type { ComponentDesignAuthorComponent } from "@/lib/component-design-manifest";
 import {
   COMPONENT_DESIGN_COMMIT_CHANNEL,
   COMPONENT_DESIGN_COMMIT_MESSAGE_TYPE,
@@ -96,7 +96,7 @@ export function useComponentDesignDocument() {
   return useContext(ComponentDesignContext);
 }
 
-export function useComponentDesign<ComponentKey extends ComponentDesignComponentKey>(
+export function useComponentDesign<ComponentKey extends ComponentDesignAuthorComponent>(
   componentKey: ComponentKey,
 ) {
   const document = useComponentDesignDocument();
@@ -121,7 +121,7 @@ export function dispatchComponentDesignUpdated(
     const message: CommittedComponentDesignMessage = {
       document: normalizedDocument,
       type: COMPONENT_DESIGN_COMMIT_MESSAGE_TYPE,
-      version: 1,
+      version: 2,
     };
     channel.postMessage(message);
     channel.close();

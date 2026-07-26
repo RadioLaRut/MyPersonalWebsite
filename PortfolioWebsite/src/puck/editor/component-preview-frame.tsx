@@ -3,7 +3,7 @@
 import type { Data } from "@puckeditor/core";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import type { ComponentDesignDocument } from "@/lib/component-design-schema";
+import type { ComponentDesignDocument } from "@/lib/component-design-v2";
 import {
   COMPONENT_LAB_PREVIEW_READY_MESSAGE,
   COMPONENT_LAB_PREVIEW_RENDER_MESSAGE,

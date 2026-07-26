@@ -14,7 +14,7 @@
         "props": {
           "eyebrow": "LIGHTING / TECH ART / SYSTEM DESIGN / INTERACTIVE NARRATIVE",
           "title": "JIANG\nCHENGYAN",
-          "descriptionAlign": "left"
+          "variant": "poster"
         }
       }
     },
@@ -33,7 +33,6 @@
           "title": "EPIC STAGE LIGHTING AND INTERACTIVE ENVIRONMENT",
           "subtitle": "A deliberately extended project summary for validating editorial wrapping, media framing, and grid alignment.",
           "eyebrow": "PROJECT",
-          "subtitleAlign": "left",
           "heroImage": "/images/train-station/2Day.webp",
           "heroImagePreset": "ratio-21-9",
           "heroImageFitMode": "x",
@@ -58,7 +57,6 @@
           "ctaHref": "",
           "ctaLabel": "",
           "description": "",
-          "descriptionAlign": "left",
           "descriptionLine1": "",
           "descriptionLine2": "这是一段用于验证长文本、跨语言字形、栅格边界与按钮关系的压力样本文案。它只存在于 ComponentLab 预设中，不进入页面内容。",
           "number": "",
@@ -81,7 +79,6 @@
         "kind": "derived",
         "props": {
           "body": "A deliberately long bilingual description，用于检查图文比例、标题换行、段落节奏以及左右图片布局在三档视口中的一致性。",
-          "bodyAlign": "left",
           "bodyMode": "plain",
           "heading": "SYSTEM CONSTRAINTS AND HUMAN CONSEQUENCES",
           "imageFitMode": "x",
@@ -106,10 +103,8 @@
         "props": {
           "col1Items": [],
           "col2Items": [],
-          "rhythm": "aligned",
           "variant": "phase",
           "col1Body": "",
-          "col1BodyAlign": "left",
           "col1Label": "",
           "col1MediaFitMode": "x",
           "col1MediaPreset": "ratio-16-9",
@@ -117,7 +112,6 @@
           "col1Subtitle": "",
           "col1Title": "DISCOVERY / CONSTRAINTS / DIRECTION",
           "col2Body": "",
-          "col2BodyAlign": "left",
           "col2Label": "",
           "col2MediaFitMode": "x",
           "col2MediaPreset": "ratio-16-9",
@@ -125,7 +119,6 @@
           "col2Subtitle": "",
           "col2Title": "PRODUCTION SYSTEMS AND COLLABORATION",
           "col3Body": "压力样本通过更长的标题与正文检查三栏信息密度、条目 Slot、图片落位以及小屏堆叠后的阅读顺序。",
-          "col3BodyAlign": "left",
           "col3Label": "",
           "col3MediaFitMode": "x",
           "col3MediaPreset": "ratio-16-9",
@@ -144,7 +137,6 @@
           "props": {
             "id": "component-lab-statement",
             "content": "We connect atmosphere, interaction, production constraints, and technical systems without sacrificing clarity.",
-            "align": "center",
             "backgroundColor": "black",
             "minHeight": "medium"
           }
@@ -163,8 +155,7 @@
         },
         "kind": "derived",
         "props": {
-          "content": "这是一段用于测试中文、Latin words、数字 2028 与长句标点混排的压力文本。它需要在既定阅读宽度内保持稳定的字重、行高和段落节奏，并避免编辑器包装节点改变 Typography 的语言分段判断。\n\n第二段继续验证自然换行、显式换段与窄屏可读性。",
-          "align": "justify"
+          "content": "这是一段用于测试中文、Latin words、数字 2028 与长句标点混排的压力文本。它需要在既定阅读宽度内保持稳定的字重、行高和段落节奏，并避免编辑器包装节点改变 Typography 的语言分段判断。\n\n第二段继续验证自然换行、显式换段与窄屏可读性。"
         }
       }
     },
@@ -180,8 +171,7 @@
         },
         "kind": "derived",
         "props": {
-          "caption": "Houdini procedural generation study / extended technical caption / 2026",
-          "captionAlign": "left"
+          "caption": "Houdini procedural generation study / extended technical caption / 2026"
         }
       }
     },
@@ -195,10 +185,10 @@
         "node": {
           "props": {
             "caption": "跨语言长图注测试：A Bilibili project film with mixed Chinese and English copy.",
-            "captionAlign": "justify",
             "id": "component-lab-stress-BilibiliEmbed",
             "source": "BV1DNwUeDEos",
-            "title": "ComponentLab B 站播放器压力样本"
+            "title": "ComponentLab B 站播放器压力样本",
+            "externalLinkLabel": "在哔哩哔哩观看"
           },
           "type": "BilibiliEmbed"
         }
@@ -216,18 +206,17 @@
         },
         "kind": "derived",
         "props": {
-          "align": "auto",
           "href": "",
           "imageFitMode": "x",
           "imagePreset": "ratio-16-9",
-          "index": 0,
           "mediaSrc": "",
           "mobileImageFocalX": 50,
           "mobileImageFocalY": 50,
           "number": "",
           "subtitle": "Environment / Narrative / Technical Art / Production",
           "title": "INTERACTIVE LIGHTING SYSTEMS",
-          "variant": "immersive"
+          "variant": "immersive-left",
+          "prompt": "Enter"
         }
       }
     },
@@ -264,28 +253,26 @@
             {
               "name": "Primary Atmosphere Density",
               "value": "0.175",
-              "description": "Controls the global volumetric response across the complete sequence.",
-              "descriptionAlign": "left"
+              "description": "Controls the global volumetric response across the complete sequence."
             },
             {
               "name": "Directional Contrast",
               "value": "1.85",
-              "description": "Balances subject readability against the background lighting hierarchy.",
-              "descriptionAlign": "left"
+              "description": "Balances subject readability against the background lighting hierarchy."
             },
             {
               "name": "Interactive Transition Duration",
               "value": "2400ms",
-              "description": "Stress-tests long labels and descriptions inside the parameter grid.",
-              "descriptionAlign": "left"
+              "description": "Stress-tests long labels and descriptions inside the parameter grid."
             },
             {
               "name": "Fallback Quality Tier",
               "value": "Medium",
-              "description": "Verifies dense wrapping without changing the configured item span.",
-              "descriptionAlign": "left"
+              "description": "Verifies dense wrapping without changing the configured item span."
             }
-          ]
+          ],
+          "mediaAlt": "PCG Generation Overview",
+          "mediaLabel": "PROCEDURAL GENERATION PREVIEW"
         }
       }
     },
@@ -334,7 +321,11 @@
           "componentId": "next-1"
         },
         "kind": "derived",
-        "props": {}
+        "props": {
+          "eyebrow": "NEXT PROJECT",
+          "footerLeft": "© 2026 江承彦 / JIANG CHENGYAN",
+          "footerRight": ""
+        }
       }
     },
     "HomeEndcapSection": {
@@ -350,8 +341,7 @@
         "kind": "derived",
         "props": {
           "title": "ALL WORKS / COMPLETE PRODUCTION ARCHIVE",
-          "description": "A longer closing statement spanning interactive narrative, technical systems, lighting studies, and production experiments.",
-          "descriptionAlign": "center"
+          "description": "A longer closing statement spanning interactive narrative, technical systems, lighting studies, and production experiments."
         }
       }
     },
@@ -369,7 +359,10 @@
         "props": {
           "taglineText": "艺术与科技 / 交互叙事设计 / 游戏设计 / 技术美术 / 系统化生产流程",
           "taglineSub": "CUC '2028 / AVAILABLE FOR COLLABORATION",
-          "taglineSubAlign": "left"
+          "clientsHeading": "Experience History",
+          "employmentHeading": "Creative Direction",
+          "contactHeading": "WeChat / Social",
+          "emailHeading": "Email / Contact"
         }
       }
     },
@@ -387,8 +380,7 @@
         "props": {
           "title": "PENGUIN INTERSTELLAR TRADING COMPANY",
           "category": "FULL-STACK PRODUCTION / SYSTEM DESIGN / TECH ART",
-          "desc": "A deliberately expanded archive description used to validate the active image layer, title wrapping, and responsive sidebar geometry.",
-          "descriptionAlign": "left"
+          "desc": "A deliberately expanded archive description used to validate the active image layer, title wrapping, and responsive sidebar geometry."
         }
       }
     },
@@ -404,8 +396,7 @@
           "props": {
             "id": "component-lab-metadata-list-item",
             "label": "ROLE / RESPONSIBILITY / COLLABORATION",
-            "value": "CREATIVE TECHNOLOGIST AND INTERACTION DESIGNER",
-            "align": "start"
+            "value": "CREATIVE TECHNOLOGIST AND INTERACTION DESIGNER"
           }
         }
       }
@@ -421,8 +412,7 @@
           "type": "TextParagraphBlock",
           "props": {
             "id": "component-lab-text-paragraph-block",
-            "text": "这是一段用于检查长文本、中文与 Latin 字符混排，以及窄栏自然换行表现的原子段落样本。",
-            "align": "left"
+            "text": "这是一段用于检查长文本、中文与 Latin 字符混排，以及窄栏自然换行表现的原子段落样本。"
           }
         }
       }

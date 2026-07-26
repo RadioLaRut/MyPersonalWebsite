@@ -194,7 +194,7 @@ export default function NavigationDrawer({
                 <svg
                   aria-hidden="true"
                   viewBox="0 0 24 24"
-                  className={`h-5 w-5 text-white/50 ${motionClassNames.fastColors} group-hover:text-white md:h-6 md:w-6`}
+                  className={`h-5 w-5 text-white/50 ${motionClassNames.fastColors} group-hover:text-white`}
                 >
                   <path
                     d="M6 6L18 18M18 6L6 18"
@@ -209,7 +209,7 @@ export default function NavigationDrawer({
             <div className="grid w-full content-center justify-items-start">
               <nav
                 aria-label={PUBLIC_COPY.navigation.navLabel}
-                className="grid justify-items-start gap-0.5 md:gap-1"
+                className="grid justify-items-start gap-6"
               >
                 {menuItems.map((item, index) => {
                   const isActive = isNavigationItemActive(pathname, item.href);

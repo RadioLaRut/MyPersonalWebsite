@@ -1,5 +1,10 @@
 import { type ReactNode } from "react";
 
+import ComponentLayoutNode, {
+    getComponentLayoutAlignment,
+    getComponentLayoutTypography,
+    type ComponentLayoutProps,
+} from "@/components/common/ComponentLayoutNode";
 import Typography, {
     type TypographyAlignment,
 } from "@/components/common/Typography";
@@ -13,6 +18,7 @@ import {
     getResponsiveGridColumnClassName,
     getSectionSpacingClassName,
     getSpacingRem,
+    getComponentSectionProfileClassName,
 } from "@/lib/component-design-style";
 import WorksListEntry, {
     type WorksListEntryAlias,
@@ -42,9 +48,10 @@ export type WorksListProps = {
     entriesContent?: ReactNode;
     entryDesign?: ComponentDesignDocument["components"]["WorksListEntry"];
     editMode?: boolean;
-} & ComponentDesignOverride<"WorksList">;
+} & ComponentDesignOverride<"WorksList"> & ComponentLayoutProps;
 
 export default function WorksList({
+    componentLayout,
     heading = "All Selected Works",
     indexSummary,
     works = [],
@@ -72,6 +79,72 @@ export default function WorksList({
                     {PUBLIC_COPY.fallbacks.worksEmpty}
                 </Typography>
             </div>
+        );
+    }
+
+    if (componentLayout) {
+        const headingTypography = getComponentLayoutTypography(componentLayout, "heading");
+        const summaryTypography = getComponentLayoutTypography(componentLayout, "indexSummary");
+        return (
+            <section className={`grid w-full content-center text-white ${getComponentSectionProfileClassName(componentLayout)}`}>
+                {(hasEditableTextContent(heading) || hasEditableTextContent(indexSummary)) ? (
+                    <div className={`grid-container relative z-20 border-b border-white/10 pb-8 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
+                        {hasEditableTextContent(heading) ? (
+                            <ComponentLayoutNode layout={componentLayout} nodeId="heading">
+                                <Typography
+                                    as="h1"
+                                    preset={headingTypography?.preset ?? "sans-body"}
+                                    size={headingTypography?.size ?? "title-sm"}
+                                    weight="semantic"
+                                    wrapPolicy={headingTypography?.wrap ?? "heading"}
+                                    align={getComponentLayoutAlignment(componentLayout, "heading")}
+                                    className="text-white"
+                                >
+                                    {heading}
+                                </Typography>
+                            </ComponentLayoutNode>
+                        ) : null}
+                        {hasEditableTextContent(indexSummary) ? (
+                            <ComponentLayoutNode layout={componentLayout} nodeId="indexSummary">
+                                <Typography
+                                    as="p"
+                                    preset={summaryTypography?.preset ?? "sans-body"}
+                                    size={summaryTypography?.size ?? "body-sm"}
+                                    weight="semantic"
+                                    wrapPolicy={summaryTypography?.wrap ?? "prose"}
+                                    align={getComponentLayoutAlignment(componentLayout, "indexSummary", "right")}
+                                    className="text-textMuted"
+                                >
+                                    {indexSummary}
+                                </Typography>
+                            </ComponentLayoutNode>
+                        ) : null}
+                    </div>
+                ) : null}
+                <div className="grid w-full border-t border-white/10">
+                    {editMode && entriesContent
+                      ? entriesContent
+                      : works.map((work, index) => (
+                        <WorksListEntry
+                            key={work.id || index}
+                            id={work.id}
+                            aliases={work.aliases}
+                            number={work.number ?? `0${index + 1}`}
+                            href={work.href ?? `/works/${work.id}`}
+                            title={work.title}
+                            category={work.category}
+                            imageSrc={work.imageSrc}
+                            imagePreset={work.imagePreset}
+                            imageFitMode={work.imageFitMode}
+                            desc={work.desc}
+                            descriptionAlign={work.descriptionAlign}
+                            editMode={editMode}
+                            design={entryDesign}
+                            componentLayout={componentLayout}
+                        />
+                      ))}
+                </div>
+            </section>
         );
     }
 

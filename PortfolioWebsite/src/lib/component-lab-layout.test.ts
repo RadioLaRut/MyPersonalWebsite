@@ -11,49 +11,47 @@ const componentLabSource = fs.readFileSync(
   "utf8",
 );
 
-test("ComponentLab uses a top context selector instead of a component catalog", () => {
+test("ComponentLab uses direct component, instance, variant, and node controls", () => {
   assert.doesNotMatch(componentLabSource, /type="search"/);
   assert.doesNotMatch(componentLabSource, /filteredComponentKeys/);
-  assert.doesNotMatch(componentLabSource, /grid-cols-2 gap-2/);
 
-  const contextStart = componentLabSource.indexOf(
-    'data-component-lab-region="context"',
-  );
-  const settingsStart = componentLabSource.indexOf(
-    'data-component-lab-region="settings"',
-  );
-
-  assert.notEqual(contextStart, -1);
-  assert.notEqual(settingsStart, -1);
-  assert.ok(contextStart < settingsStart);
-
-  const contextSource = componentLabSource.slice(contextStart, settingsStart);
-  assert.match(contextSource, /value=\{selectedComponent\}/);
-  assert.match(contextSource, /options=\{componentOptions\}/);
-  assert.match(contextSource, /value=\{selectedInstance\.id\}/);
-  assert.match(contextSource, /options=\{instanceOptions\}/);
-  assert.match(contextSource, /\{selectedInstanceSource\}/);
-});
-
-test("ComponentLab settings and canvas are peer desktop workspaces", () => {
-  const settingsStart = componentLabSource.indexOf(
-    'data-component-lab-region="settings"',
+  const inspectorStart = componentLabSource.indexOf(
+    'data-component-lab-region="inspector"',
   );
   const canvasStart = componentLabSource.indexOf(
     'data-component-lab-region="canvas"',
   );
 
-  assert.notEqual(settingsStart, -1);
+  assert.notEqual(inspectorStart, -1);
   assert.notEqual(canvasStart, -1);
-  assert.ok(settingsStart < canvasStart);
+  assert.ok(inspectorStart < canvasStart);
 
-  const settingsSource = componentLabSource.slice(settingsStart, canvasStart);
+  const inspectorSource = componentLabSource.slice(inspectorStart, canvasStart);
+  assert.match(inspectorSource, /label="作者组件"/);
+  assert.match(inspectorSource, /label="真实内容实例"/);
+  assert.match(inspectorSource, /label="结构变体"/);
+  assert.match(inspectorSource, /<NodeInspector/);
+});
+
+test("ComponentLab inspector and canonical canvas are peer 4/8 desktop workspaces", () => {
+  const inspectorStart = componentLabSource.indexOf(
+    'data-component-lab-region="inspector"',
+  );
+  const canvasStart = componentLabSource.indexOf(
+    'data-component-lab-region="canvas"',
+  );
+
+  assert.notEqual(inspectorStart, -1);
+  assert.notEqual(canvasStart, -1);
+  assert.ok(inspectorStart < canvasStart);
+
+  const inspectorSource = componentLabSource.slice(inspectorStart, canvasStart);
   const canvasSource = componentLabSource.slice(canvasStart);
 
-  assert.match(settingsSource, /lg:col-span-4/);
-  assert.match(settingsSource, /COMPONENT SETTINGS/);
-  assert.match(settingsSource, /overflow-y-auto/);
-  assert.match(canvasSource, /lg:col-span-8/);
-  assert.match(canvasSource, /LIVE CANVAS/);
+  assert.match(componentLabSource, /lg:col-span-4/);
+  assert.match(inspectorSource, /overflow-y-auto/);
+  assert.match(inspectorSource, /保存全部更改/);
+  assert.match(componentLabSource, /lg:col-span-8/);
+  assert.match(canvasSource, /CANONICAL RENDERER/);
   assert.match(canvasSource, /previewFrameRef/);
 });

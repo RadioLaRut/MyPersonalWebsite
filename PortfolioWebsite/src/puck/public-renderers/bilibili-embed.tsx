@@ -1,19 +1,18 @@
 import type { ComponentConfig } from "@puckeditor/core";
 
 import BilibiliEmbed from "../../components/media/BilibiliEmbed";
-import { castTypographyAlignment } from "../../lib/typography-alignment";
 
 export const render: ComponentConfig["render"] = ({
   caption,
-  captionAlign,
   editMode,
+  externalLinkLabel,
   source,
   title,
 }) => (
   <BilibiliEmbed
     caption={caption}
-    captionAlign={castTypographyAlignment(captionAlign)}
     editMode={editMode}
+    externalLinkLabel={externalLinkLabel}
     source={source}
     title={title}
   />

@@ -1,5 +1,6 @@
 import DeferredPublicRuntime from "@/components/layout/DeferredPublicRuntime";
 import Navigation from "@/components/layout/Navigation";
+import { SiteOpening } from "@/components/layout/SiteOpening";
 import { PUBLIC_ON_DEMAND_FONT_VARIABLE_CLASS_NAME } from "@/app/fonts/public-on-demand-fonts";
 import {
   COMPONENT_DESIGN_COMMIT_CHANNEL,
@@ -7,6 +8,8 @@ import {
 } from "@/lib/component-design-commit";
 import { isTestingMode } from "@/lib/site-mode";
 import "../fonts/generated/public-fonts.css";
+
+const PUBLIC_SITE_ROOT_ID = "public-site-root";
 
 export default function SiteLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const testingMode = isTestingMode();
@@ -40,10 +43,24 @@ export default function SiteLayout({ children }: Readonly<{ children: React.Reac
           </div>
         </>
       ) : null}
+      <noscript>
+        <style>{`
+          [data-site-opening-overlay] { display: none !important; }
+          [data-site-opening-state="loading"] [data-hero-lead],
+          [data-site-opening-state="loading"] [data-hero-supporting],
+          [data-site-opening-state="complete"] [data-hero-lead],
+          [data-site-opening-state="complete"] [data-hero-supporting] {
+            animation-play-state: running !important;
+          }
+        `}</style>
+      </noscript>
       <div
+        id={PUBLIC_SITE_ROOT_ID}
         className={`public-font-scope ${PUBLIC_ON_DEMAND_FONT_VARIABLE_CLASS_NAME}`}
         data-font-scope="public"
+        data-site-opening-state="loading"
       >
+        <SiteOpening rootId={PUBLIC_SITE_ROOT_ID} />
         <DeferredPublicRuntime />
         <Navigation testingMode={testingMode} />
         {children}

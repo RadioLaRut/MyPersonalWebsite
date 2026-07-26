@@ -3,6 +3,11 @@ export const PUBLIC_COPY = {
     title: "JIANG CHENGYAN",
     description: "江承彦作品集：灯光、技术美术、游戏设计与交互叙事案例。",
   },
+  opening: {
+    title: "JIANG\nCHENGYAN",
+    status: "LOADING VISUALS",
+    statusLabel: "Loading page visuals",
+  },
   navigation: {
     trigger: "MENU",
     triggerLabel: "Menu",

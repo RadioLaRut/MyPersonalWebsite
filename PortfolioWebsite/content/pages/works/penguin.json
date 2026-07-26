@@ -11,16 +11,14 @@
         "heroImagePreset": "ratio-21-9",
         "heroImageFitMode": "x",
         "navLink": "https://pan.baidu.com/s/1FSpd75VGEuJpnZHLOnEWHw?pwd=aavq",
-        "navLinkLabel": "下载可玩版本",
-        "subtitleAlign": "left"
+        "navLinkLabel": "下载可玩版本"
       }
     },
     {
       "type": "RichParagraph",
       "props": {
         "id": "penguin-intro",
-        "content": "这里的“全栈”并不是独自包办所有工作，而是我在玩法方向、制作管理和技术生产之间承担连续责任：定义整体体验，建立协作机制，把反复出现的生产问题转化为可验证的工具需求，并将项目推进到核心循环可完整体验。",
-        "align": "justify"
+        "content": "这里的“全栈”并不是独自包办所有工作，而是我在玩法方向、制作管理和技术生产之间承担连续责任：定义整体体验，建立协作机制，把反复出现的生产问题转化为可验证的工具需求，并将项目推进到核心循环可完整体验。"
       }
     },
     {
@@ -29,10 +27,8 @@
         "id": "penguin-role-map",
         "col1Items": [],
         "col2Items": [],
-        "rhythm": "staggered",
         "variant": "triptych",
         "col1Body": "我负责整体玩法概念、核心循环、系统关系和主题方向；具体数值配置与平衡由其他策划成员完成。",
-        "col1BodyAlign": "left",
         "col1Label": "",
         "col1MediaFitMode": "x",
         "col1MediaPreset": "ratio-16-9",
@@ -40,7 +36,6 @@
         "col1Subtitle": "",
         "col1Title": "主策划",
         "col2Body": "围绕可玩交付组织双周迭代与评审，搭建阻塞任务机制，并推动命名、导入、备份、版本控制等跨专业规范进入日常协作。",
-        "col2BodyAlign": "left",
         "col2Label": "",
         "col2MediaFitMode": "x",
         "col2MediaPreset": "ratio-16-9",
@@ -48,7 +43,6 @@
         "col2Subtitle": "",
         "col2Title": "制作人 / PM",
         "col3Body": "识别会阻塞生产的问题，定义工具的产品与行为需求，完成验收测试、项目接入，并根据团队实际使用反馈持续调整。",
-        "col3BodyAlign": "left",
         "col3Label": "",
         "col3MediaFitMode": "x",
         "col3MediaPreset": "ratio-16-9",
@@ -61,8 +55,7 @@
       "type": "RichParagraph",
       "props": {
         "id": "penguin-ai-disclosure",
-        "content": "实现说明：本案例展示的 IcebergEditor C++ 代码及具体技术架构均由 AI 生成；我负责生产问题定义、产品与行为需求、方案方向取舍、提示与反馈、验收测试、项目接入与团队使用反馈。",
-        "align": "justify"
+        "content": "实现说明：本案例展示的 IcebergEditor C++ 代码及具体技术架构均由 AI 生成；我负责生产问题定义、产品与行为需求、方案方向取舍、提示与反馈、验收测试、项目接入与团队使用反馈。"
       }
     },
     {
@@ -77,7 +70,6 @@
       "props": {
         "id": "penguin-card-core-loop",
         "body": "玩家作为企鹅太空殖民地的总督，繁育企鹅并依据性状分配工作，采集和转化资源，扩建由蒸汽朋克机器驱动的冰山基地，再通过交易与公司目标维持运转。\n\n循环的关键不是单纯积累更多单位，而是在保留、吃掉、出售或作为燃料燃烧之间做出选择。资源与性状结果会进入下一轮繁育，个别性状还会让企鹅被吃掉后为其他企鹅提供增益，使黑色幽默直接参与策略判断，而不只是停留在世界观文本里。",
-        "bodyAlign": "left",
         "bodyMode": "plain",
         "heading": "让“企鹅是消耗品”成为真正的经营选择",
         "imageFitMode": "x",
@@ -93,10 +85,8 @@
         "id": "penguin-triptych-gameplay",
         "col1Items": [],
         "col2Items": [],
-        "rhythm": "staggered",
         "variant": "triptych",
         "col1Body": "不同性状组合影响企鹅的外观与使用价值。繁育决定下一轮可用单位，消耗决定当下资源，玩家需要在长期培育与短期收益之间取舍。",
-        "col1BodyAlign": "left",
         "col1Label": "",
         "col1MediaFitMode": "x",
         "col1MediaPreset": "ratio-16-9",
@@ -104,7 +94,6 @@
         "col1Subtitle": "",
         "col1Title": "遗传与消耗",
         "col2Body": "工作分配、资源采集、热能转化和基地扩建形成经营骨架，让每只企鹅的去留都与当前生产能力发生关系。",
-        "col2BodyAlign": "left",
         "col2Label": "",
         "col2MediaFitMode": "x",
         "col2MediaPreset": "ratio-16-9",
@@ -112,7 +101,6 @@
         "col2Subtitle": "",
         "col2Title": "基地与资源",
         "col3Body": "交易、公司指标和荒诞事件把资本主义剥削逻辑转化为玩家必须亲自执行的制度，而不是旁观式讽刺。具体数值与平衡由其他策划成员完成。",
-        "col3BodyAlign": "left",
         "col3Label": "",
         "col3MediaFitMode": "x",
         "col3MediaPreset": "ratio-16-9",
@@ -134,10 +122,8 @@
         "id": "penguin-triptych-production",
         "col1Items": [],
         "col2Items": [],
-        "rhythm": "staggered",
         "variant": "triptych",
         "col1Body": "以两周为一个迭代周期，用可见的游戏内容回顾本轮结果，再共同确认下一轮目标、依赖关系和优先级，让讨论始终围绕实际构建展开。",
-        "col1BodyAlign": "left",
         "col1Label": "",
         "col1MediaFitMode": "x",
         "col1MediaPreset": "ratio-16-9",
@@ -145,7 +131,6 @@
         "col1Subtitle": "",
         "col1Title": "双周迭代与展示",
         "col2Body": "任何成员都可以记录具体阻塞现象；阻塞项进入高优先级视野，便于尽早确认负责人、依赖和状态，让问题可追踪、可置顶、可闭环。",
-        "col2BodyAlign": "left",
         "col2Label": "",
         "col2MediaFitMode": "x",
         "col2MediaPreset": "ratio-16-9",
@@ -153,7 +138,6 @@
         "col2Subtitle": "",
         "col2Title": "阻塞任务置顶",
         "col3Body": "把命名、导入、源文件备份、版本控制和资产检查写成共同约定；高频故障在评审中复盘，能规则化的部分再进入检查器或工具流程。",
-        "col3BodyAlign": "left",
         "col3Label": "",
         "col3MediaFitMode": "x",
         "col3MediaPreset": "ratio-16-9",
@@ -167,7 +151,6 @@
       "props": {
         "id": "penguin-split-blockers",
         "body": "",
-        "bodyAlign": "center",
         "bodyMode": "slot",
         "heading": "让阻塞从口头反馈变成可追踪入口",
         "imageFitMode": "x",
@@ -179,16 +162,14 @@
             "type": "TextParagraphBlock",
             "props": {
               "id": "penguin-blocker-paragraph-1",
-              "text": "飞书多维表格不只是排期表。成员可以直接写明被什么阻塞、需要谁协助和当前处理状态，阻塞任务会被置顶，而不是埋在普通任务或聊天记录中。",
-              "align": "left"
+              "text": "飞书多维表格不只是排期表。成员可以直接写明被什么阻塞、需要谁协助和当前处理状态，阻塞任务会被置顶，而不是埋在普通任务或聊天记录中。"
             }
           },
           {
             "type": "TextParagraphBlock",
             "props": {
               "id": "penguin-blocker-paragraph-2",
-              "text": "我把这套入口与双周评审结合：先让问题变得可见，再判断它需要调整优先级、补充规范，还是转化为新的编辑器能力。",
-              "align": "left"
+              "text": "我把这套入口与双周评审结合：先让问题变得可见，再判断它需要调整优先级、补充规范，还是转化为新的编辑器能力。"
             }
           }
         ]
@@ -206,7 +187,6 @@
       "props": {
         "id": "penguin-card-incident-version",
         "body": "现象：一次项目模块误删进入版本库，二进制资产的占用关系也无法从 UE 内直接判断，恢复和继续工作的风险同时上升。\n\n根因：分支权限、恢复路径和日常锁状态缺少共同边界；仅依赖成员记住操作规范，无法在高风险动作发生前给出反馈。\n\n当下处理：恢复受影响模块，将美术工作收敛到独立分支，并收紧程序主分支权限。\n\n长期机制：把腾讯 Git 文件锁接入 UE，通过锁拥有者提示、只读保护、自定义 ChangeList 和更新风险检查，让协作状态进入成员每天工作的界面。\n\n反思：权限控制负责限制少数高风险操作，工具负责解释大量日常状态；两者缺一不可。",
-        "bodyAlign": "left",
         "bodyMode": "plain",
         "heading": "版本事故：权限边界与锁状态必须同时可见",
         "imageFitMode": "x",
@@ -221,7 +201,6 @@
       "props": {
         "id": "penguin-card-incident-orm",
         "body": "现象：模型在游戏中异常死黑，继续追查时又发现部分源文件缺失，恢复成本被进一步放大。\n\n根因：ORM 通道顺序与项目约定不一致，同时缺少稳定的源文件备份与导入检查。\n\n当下处理：沿材质输入和纹理通道逐层定位问题，重新整理可恢复的源文件与导出结果。\n\n长期机制：补充源文件备份规范，并让 TextureValidator 根据 BaseColor、Normal、ORM 后缀检查 sRGB、压缩格式和 MipMap；安全的设置项可在编辑器内修正。\n\n反思：只有写进可执行检查的知识，才能在下一批资产进入项目时继续发挥作用。",
-        "bodyAlign": "left",
         "bodyMode": "plain",
         "heading": "ORM 故障：把一次排错变成可执行资产规则",
         "imageFitMode": "x",
@@ -236,7 +215,6 @@
       "props": {
         "id": "penguin-card-incident-build",
         "body": "现象：更新代码后，本地模块没有同步编译，蓝图功能因此缺失；另一次启动崩溃则来自刚进入项目但尚未完成的 EditorSubsystem。\n\n根因：代码、二进制和本地缓存没有保持同一版本，排查时也没有先划清最近变更与原有系统的边界。\n\n当下处理：重新对齐模块构建、启动日志和最近提交，必要时清理缓存并重新生成项目文件。\n\n长期机制：建立调用 UBT 的编译入口、更新后的触发流程和完整恢复脚本，让常见故障有稳定的处理顺序。\n\n反思：制作流程不仅要减少故障，也要让故障发生后能够恢复、复现并基于证据定位。",
-        "bodyAlign": "left",
         "bodyMode": "plain",
         "heading": "构建与启动故障：先建立可恢复路径",
         "imageFitMode": "x",
@@ -258,7 +236,6 @@
       "props": {
         "id": "penguin-card-gitlock",
         "body": "针对版本事故暴露的问题，我先定义团队真正需要的协作行为：已被 Git 跟踪的资产进入修改或删除状态时尝试申请锁，被他人锁定时明确只读，集中查看本地变化与锁拥有者，并在远端更新可能影响本地工作时要求明确确认，无法安全继续时停止操作。\n\n这些需求通过 AI 生成的 IcebergEditor 代码落地为 UE Source Control 工作流。我使用实际资产和团队操作路径验收状态、锁定、解锁、更新与异常恢复，再把结果接入项目并根据使用反馈调整。GitLock 最终进入团队的日常协作，而不是停留在独立工具演示中。",
-        "bodyAlign": "left",
         "bodyMode": "plain",
         "heading": "GitLock：让二进制资产协作在 UE 内可见",
         "imageFitMode": "x",
@@ -274,10 +251,8 @@
         "id": "penguin-triptych-gitlock",
         "col1Items": [],
         "col2Items": [],
-        "rhythm": "staggered",
         "variant": "triptych",
         "col1Body": "把腾讯 Git 文件锁转换为 UE 能理解的锁拥有者、资产状态与操作反馈，让 Content Browser 和资产编辑器显示同一套协作事实。",
-        "col1BodyAlign": "left",
         "col1Label": "",
         "col1MediaFitMode": "x",
         "col1MediaPreset": "ratio-16-9",
@@ -285,7 +260,6 @@
         "col1Subtitle": "",
         "col1Title": "接入 Source Control",
         "col2Body": "已跟踪资产进入修改或删除状态时申请锁；他人持锁或存在远端更新风险时，磁盘文件、Blueprint 与 Widget Designer 进入只读并显示原因。",
-        "col2BodyAlign": "left",
         "col2Label": "",
         "col2MediaFitMode": "x",
         "col2MediaPreset": "ratio-16-9",
@@ -293,7 +267,6 @@
         "col2Subtitle": "",
         "col2Title": "自动锁与编辑保护",
         "col3Body": "窗口集中呈现本地变化、锁拥有者和远端风险；当前分支只执行 fast-forward，遇到重叠修改或未保存资源时要求明确二次确认，未跟踪文件重叠、分支分叉或状态异常则停止操作。",
-        "col3BodyAlign": "left",
         "col3Label": "",
         "col3MediaFitMode": "x",
         "col3MediaPreset": "ratio-16-9",
@@ -313,8 +286,7 @@
       "type": "RichParagraph",
       "props": {
         "id": "penguin-tools-entry",
-        "content": "我为高频编辑器操作建立了配置驱动的 MagicToolBar；通用维护工具从这里统一进入，GitLock、Validation、图鉴捕获等专项能力分别嵌入 Source Control、Data Validation、Details 和任务系统。MagicToolBar 并不是所有工具的统一壳层，而是让通用入口可配置；专项能力仍出现在最接近使用情境的 UE 原生界面中。",
-        "align": "justify"
+        "content": "我为高频编辑器操作建立了配置驱动的 MagicToolBar；通用维护工具从这里统一进入，GitLock、Validation、图鉴捕获等专项能力分别嵌入 Source Control、Data Validation、Details 和任务系统。MagicToolBar 并不是所有工具的统一壳层，而是让通用入口可配置；专项能力仍出现在最接近使用情境的 UE 原生界面中。"
       }
     },
     {
@@ -323,10 +295,8 @@
         "id": "penguin-triptych-tools",
         "col1Items": [],
         "col2Items": [],
-        "rhythm": "staggered",
         "variant": "triptych",
         "col1Body": "命名和纹理检查覆盖项目规则、尺寸、sRGB、压缩与 MipMap。编辑器可以事务化修正部分纹理设置；Commandlet 支持变更文件列表、指定资产类型或全量扫描，并可作为提交检查或持续集成门禁。",
-        "col1BodyAlign": "left",
         "col1Label": "",
         "col1MediaFitMode": "x",
         "col1MediaPreset": "ratio-16-9",
@@ -334,7 +304,6 @@
         "col1Subtitle": "",
         "col1Title": "资产质量",
         "col2Body": "企鹅图鉴工具从数据表构建捕获队列，通过专用 Preview Rig 处理颜色、Alpha 与深度，生成正式图和缩略图并回写；地下基地预览把房间数据转换为可刷新的关卡实例。",
-        "col2BodyAlign": "left",
         "col2Label": "",
         "col2MediaFitMode": "x",
         "col2MediaPreset": "ratio-16-9",
@@ -342,7 +311,6 @@
         "col2Subtitle": "",
         "col2Title": "内容生产",
         "col3Body": "作弊命令预设、蓝图结构与 MVVM 引用修复、材质实例批处理，以及动画物理资产工具，减少重复配置并让常见问题拥有明确入口。",
-        "col3BodyAlign": "left",
         "col3Label": "",
         "col3MediaFitMode": "x",
         "col3MediaPreset": "ratio-16-9",
@@ -356,7 +324,6 @@
       "props": {
         "id": "penguin-card-delivery",
         "body": "企鹅贸易公司已经能够完整体验繁育、分工、资源转化、基地扩建、交易与企鹅消耗构成的核心循环。这里的成果不只是一组玩法功能，也包括让跨专业成员持续推进这些功能的生产机制。\n\n这个项目最终证明的不是我拥有多少职位标签，而是我能连续承担关键问题：定义玩法方向，让阻塞变得可见，把事故转化为长期机制，明确 AI 实现的边界，并通过验收、接入和团队反馈推动工具真正进入生产。",
-        "bodyAlign": "left",
         "bodyMode": "plain",
         "heading": "交付：核心循环可完整体验",
         "imageFitMode": "x",
@@ -374,15 +341,17 @@
         "title": "亲自体验这套核心循环",
         "description": "下载可玩版本，查看繁育、经营、交易与消耗如何共同构成企鹅贸易公司的黑色幽默循环。",
         "buttonLabel": "下载可玩版本",
-        "buttonHref": "https://pan.baidu.com/s/1FSpd75VGEuJpnZHLOnEWHw?pwd=aavq",
-        "descriptionAlign": "center"
+        "buttonHref": "https://pan.baidu.com/s/1FSpd75VGEuJpnZHLOnEWHw?pwd=aavq"
       }
     },
     {
       "type": "NextProjectBlock",
       "props": {
         "id": "penguin-next-project",
-        "nextId": "lighting-portfolio"
+        "nextId": "lighting-portfolio",
+        "eyebrow": "NEXT PROJECT",
+        "footerLeft": "© 2026 江承彦 / JIANG CHENGYAN",
+        "footerRight": ""
       }
     }
   ],

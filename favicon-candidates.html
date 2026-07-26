@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>标签页图标候选方案 — 第三版</title>
+<style>
+  :root {
+    --bg: #050505;
+    --fg: rgba(255,255,255,0.9);
+    --fg-75: rgba(255,255,255,0.75);
+    --fg-62: rgba(255,255,255,0.62);
+    --fg-50: rgba(255,255,255,0.50);
+    --fg-30: rgba(255,255,255,0.30);
+    --border: rgba(255,255,255,0.1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { background: var(--bg); }
+  body {
+    background:
+      radial-gradient(1200px 600px at 70% -10%, rgba(255,255,255,0.05), transparent 60%),
+      var(--bg);
+    color: var(--fg-75);
+    font-family: "Futura", "Century Gothic", "PingFang SC", "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding: 96px 4vw 128px;
+  }
+  .wrap { width: min(92vw, 1080px); margin: 0 auto; }
+
+  .eyebrow {
+    font-size: 12px; letter-spacing: 0.35em; text-transform: uppercase;
+    color: var(--fg-50); margin-bottom: 24px;
+  }
+  h1 {
+    font-family: "Didot", "Bodoni MT", "Songti SC", Georgia, serif;
+    font-weight: 400; font-size: clamp(40px, 6vw, 72px);
+    line-height: 1.05; color: var(--fg); margin-bottom: 24px;
+  }
+  .lede { max-width: 620px; font-size: 15px; line-height: 1.9; color: var(--fg-62); margin-bottom: 32px; }
+  .rule { border: none; border-top: 1px solid var(--border); margin: 56px 0; }
+
+  h2 {
+    font-family: "Didot", "Bodoni MT", "Songti SC", Georgia, serif;
+    font-weight: 400; font-size: 26px; color: var(--fg); margin-bottom: 8px;
+  }
+  .section-note { font-size: 13px; color: var(--fg-50); margin-bottom: 32px; line-height: 1.8; }
+
+  /* 总览条 */
+  .strip { display: flex; flex-direction: column; gap: 12px; }
+  .strip-row { display: flex; align-items: center; gap: 2px; flex-wrap: wrap; }
+  .strip-cell {
+    width: 64px; height: 52px; display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border);
+  }
+  .strip-cell.dark { background: #17171a; }
+  .strip-cell.light { background: #e6e6ea; }
+  .strip-label { width: 64px; font-size: 11px; color: var(--fg-50); letter-spacing: 0.08em; }
+
+  /* 候选行 */
+  .candidate { border-top: 1px solid var(--border); padding: 48px 0; display: grid; grid-template-columns: 200px 1fr; gap: 48px; }
+  @media (max-width: 720px) { .candidate { grid-template-columns: 1fr; gap: 24px; } }
+  .c-left { display: flex; flex-direction: column; gap: 12px; }
+  .num { font-size: 12px; letter-spacing: 0.2em; color: var(--fg-50); }
+  .candidate h3 {
+    font-family: "Didot", "Bodoni MT", "Songti SC", Georgia, serif;
+    font-weight: 400; font-size: 22px; color: var(--fg);
+  }
+  .concept { font-size: 13px; line-height: 1.9; color: var(--fg-62); max-width: 340px; }
+  .c-right { display: flex; flex-direction: column; gap: 24px; }
+
+  .preview-row { display: flex; align-items: flex-end; gap: 32px; flex-wrap: wrap; }
+  .pv { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .pv svg { display: block; }
+  .pv .size { font-size: 11px; color: var(--fg-30); }
+
+  .tabs { display: flex; gap: 24px; flex-wrap: wrap; }
+  .tab-wrap { display: flex; flex-direction: column; gap: 6px; }
+  .tabbar { display: flex; align-items: flex-end; height: 34px; padding: 0 10px; }
+  .tabbar.light { background: #d8d8dd; }
+  .tabbar.dark  { background: #131316; }
+  .tab {
+    display: flex; align-items: center; gap: 8px;
+    height: 27px; padding: 0 12px; width: 224px;
+    font-size: 12px; white-space: nowrap; overflow: hidden;
+    border-radius: 6px 6px 0 0;
+  }
+  .tabbar.light .tab { background: #f4f4f6; color: #333; }
+  .tabbar.dark  .tab { background: #1f1f24; color: rgba(255,255,255,0.8); }
+  .tab svg { flex: none; }
+  .chrome-note { font-size: 11px; color: var(--fg-30); }
+
+  details { max-width: 640px; }
+  summary { font-size: 12px; letter-spacing: 0.15em; color: var(--fg-50); cursor: pointer; user-select: none; }
+  summary:hover { color: var(--fg-75); }
+  pre {
+    margin-top: 12px; padding: 16px; overflow-x: auto;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    font-size: 11px; line-height: 1.7; color: var(--fg-62);
+    font-family: "SF Mono", Menlo, monospace;
+  }
+  .hint { font-size: 12px; line-height: 1.8; color: var(--fg-50); }
+  .hint code { color: var(--fg-62); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="eyebrow">Favicon Candidates — Round 3</p>
+  <h1>标签页图标候选方案</h1>
+  <p class="lede">第三版。这一版的每个方案都经过位图级自检：先在 64 px 和 16 px 两个尺寸真实渲染，逐像素检查辨识度后再收录。五个方向互不重复：字母、机械、电影、诗性、切工。</p>
+
+  <hr class="rule">
+
+  <h2>16 px 总览对比</h2>
+  <p class="section-note">favicon 的生死在 16 px。先看这一排，再往下翻细节。</p>
+  <div class="strip" id="strip"></div>
+
+  <hr class="rule">
+
+  <h2>候选方案</h2>
+  <p class="section-note">全部为路径绘制的矢量图形，零字体依赖，导出任意尺寸字形不变。</p>
+  <div id="list"></div>
+
+  <hr class="rule">
+  <p class="hint">落地方式：定稿后将 SVG 保存为 <code>PortfolioWebsite/src/app/icon.svg</code>（Next.js 自动作为 favicon 输出），并生成 16 / 32 / 180 px PNG 与 ICO 备用，替换现有 <code>favicon.ico</code>。</p>
+
+</div>
+
+<script>
+const CANDIDATES = [
+  {
+    name: 'JC 花押',
+    concept: '把名字首字母当作字体设计来做：C 的笔画从 6 px 到 4.5 px 有真实的粗细变化，J 带衬板和收紧的弯钩，两字共享基线。五个方案里最「署名」的一个，像画册扉页上的花押。（已按反馈修正重心：衬线加宽加厚压住右上，钩部加重加长稳住右下。）',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#050505"/><g fill="#ffffff"><path d="M 40.72 40.5 A 17 17 0 1 1 40.72 23.5 L 38 26 A 12.5 12.5 0 1 0 38 38 Z"/><path d="M 47 14.8 H 52.5 V 35.5 A 10 10 0 0 1 42.5 45.5 V 41 A 5.5 5.5 0 0 0 47 35.5 Z"/><rect x="44.75" y="12.2" width="10" height="2.6"/></g></svg>`
+  },
+  {
+    name: '旋叶',
+    concept: '六段弧线绕中心旋转，像光圈叶片正在收拢的瞬间，外圈一道细环收边。比上一版的光圈多了动势和精密感，偏技术美术的气质。',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#050505"/><circle cx="32" cy="32" r="24.5" fill="none" stroke="#ffffff" stroke-width="3.5"/><g fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round"><path d="M 29.02 32.61 A 11.5 11.5 0 0 1 43.5 21.5"/><path d="M 31.04 34.88 A 11.5 11.5 0 0 1 28.66 16.79"/><path d="M 34.01 34.27 A 11.5 11.5 0 0 1 17.16 27.29"/><path d="M 34.98 31.39 A 11.5 11.5 0 0 1 20.5 42.5"/><path d="M 32.96 29.12 A 11.5 11.5 0 0 1 35.34 47.21"/><path d="M 29.99 29.73 A 11.5 11.5 0 0 1 46.84 36.71"/></g></svg>`
+  },
+  {
+    name: '光斑',
+    concept: '变形宽银幕镜头拉出的一道水平光晕，中央一枚带芯的环。电影感最直白的一个：一条横线、一只眼睛。横向构图在标签页里非常稳。',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#050505"/><polygon points="4,32 32,28.5 60,32 32,35.5" fill="#ffffff"/><circle cx="32" cy="32" r="9" fill="#050505" stroke="#ffffff" stroke-width="3.2"/><circle cx="32" cy="32" r="2.6" fill="#ffffff"/></svg>`
+  },
+  {
+    name: '星月',
+    concept: '一轮 45 度倾斜的新月，远处一颗小星。两个圆相切出来的形，没有任何多余笔画。最安静、最诗性的一个，呼应「镜头 / 氛围 / 空间叙事」。',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#050505"/><circle cx="27" cy="33" r="14.5" fill="#ffffff"/><circle cx="32" cy="28" r="12.8" fill="#050505"/><circle cx="46" cy="18.5" r="2.4" fill="#ffffff"/></svg>`
+  },
+  {
+    name: '切面',
+    concept: '宝石台面俯视：外八边、内八边、八根放射辐条，光线被切成八个刻面。线稿的精密感对应「把光当材料来打磨」的意思。',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#050505"/><g fill="none" stroke="#ffffff"><polygon points="50.48,24.35 39.65,13.52 24.35,13.52 13.52,24.35 13.52,39.65 24.35,50.48 39.65,50.48 50.48,39.65" stroke-width="3"/><polygon points="40.78,28.36 35.64,23.22 28.36,23.22 23.22,28.36 23.22,35.64 28.36,40.78 35.64,40.78 40.78,35.64" stroke-width="2.2"/><g stroke-width="2.2"><line x1="50.48" y1="24.35" x2="40.78" y2="28.36"/><line x1="39.65" y1="13.52" x2="35.64" y2="23.22"/><line x1="24.35" y1="13.52" x2="28.36" y2="23.22"/><line x1="13.52" y1="24.35" x2="23.22" y2="28.36"/><line x1="13.52" y1="39.65" x2="23.22" y2="35.64"/><line x1="24.35" y1="50.48" x2="28.36" y2="40.78"/><line x1="39.65" y1="50.48" x2="35.64" y2="40.78"/><line x1="50.48" y1="39.65" x2="40.78" y2="35.64"/></g></g></svg>`
+  },
+];
+
+const at = (svg, size) => svg.replace('<svg ', `<svg width="${size}" height="${size}" `);
+
+// 总览条
+const strip = document.getElementById('strip');
+[['light', '浅色主题'], ['dark', '深色主题']].forEach(([theme, labelText]) => {
+  const row = document.createElement('div');
+  row.className = 'strip-row';
+  row.innerHTML = `<div class="strip-label">${labelText}</div>` +
+    CANDIDATES.map((c, i) =>
+      `<div class="strip-cell ${theme}" title="${String(i+1).padStart(2,'0')} ${c.name}">${at(c.svg, 16)}</div>`
+    ).join('');
+  strip.appendChild(row);
+});
+const numRow = document.createElement('div');
+numRow.className = 'strip-row';
+numRow.innerHTML = '<div class="strip-label">编号</div>' +
+  CANDIDATES.map((c, i) => `<div class="strip-label" style="text-align:center">${String(i+1).padStart(2,'0')}</div>`).join('');
+strip.appendChild(numRow);
+
+// 候选列表
+const list = document.getElementById('list');
+CANDIDATES.forEach((c, i) => {
+  const num = String(i + 1).padStart(2, '0');
+  const el = document.createElement('section');
+  el.className = 'candidate';
+  el.innerHTML = `
+    <div class="c-left">
+      <span class="num">${num}</span>
+      <h3>${c.name}</h3>
+      <p class="concept">${c.concept}</p>
+    </div>
+    <div class="c-right">
+      <div class="preview-row">
+        <div class="pv">${at(c.svg, 144)}<span class="size">144 px</span></div>
+        <div class="pv">${at(c.svg, 48)}<span class="size">48 px</span></div>
+        <div class="pv">${at(c.svg, 32)}<span class="size">32 px</span></div>
+        <div class="pv">${at(c.svg, 16)}<span class="size">16 px</span></div>
+      </div>
+      <div class="tabs">
+        <div class="tab-wrap">
+          <div class="tabbar light"><div class="tab">${at(c.svg, 16)}<span>JIANG CHENGYAN — Portfolio</span></div></div>
+          <span class="chrome-note">浅色主题</span>
+        </div>
+        <div class="tab-wrap">
+          <div class="tabbar dark"><div class="tab">${at(c.svg, 16)}<span>JIANG CHENGYAN — Portfolio</span></div></div>
+          <span class="chrome-note">深色主题</span>
+        </div>
+      </div>
+      <details><summary>SVG 源码</summary><pre></pre></details>
+    </div>`;
+  el.querySelector('pre').textContent = c.svg;
+  list.appendChild(el);
+});
+</script>
+</body>
+</html>
