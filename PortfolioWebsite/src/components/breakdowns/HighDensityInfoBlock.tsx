@@ -1,4 +1,10 @@
-import { Fragment, type ReactNode } from "react";
+import React, {
+  Fragment,
+  type CSSProperties,
+  type ElementType,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import ComponentLayoutNode, {
@@ -6,6 +12,10 @@ import ComponentLayoutNode, {
   getComponentLayoutTypography,
   type ComponentLayoutProps,
 } from "@/components/common/ComponentLayoutNode";
+import {
+  MetadataListItemLayoutProvider,
+  MetadataListItemSlotRoot,
+} from "@/components/common/MetadataListItemLayoutContext";
 import Typography, {
   type TypographyAlignment,
 } from "@/components/common/Typography";
@@ -13,12 +23,14 @@ import {
   type ComponentDesignOverride,
   resolveComponentDesign,
 } from "@/lib/component-design-runtime";
+import { createNestedComponentVariantLayout } from "@/lib/component-design-nested-grid";
 import {
   createResponsiveGridBounds,
   getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
   getSpacingRem,
   getComponentSectionProfileClassName,
+  getComponentSectionStyle,
 } from "@/lib/component-design-style";
 import {
   hasEditableTextContent,
@@ -47,6 +59,24 @@ const DEFAULT_PHASE_LABELS = {
   phase2: "PHASE 02 / SYSTEM ARCHITECTURE",
   phase3: "PHASE 03 / EXECUTION & RESULTS",
 } as const;
+
+type SlotElementProps = {
+  allow?: readonly string[];
+  as?: ElementType;
+  className?: string;
+  minEmptyHeight?: CSSProperties["minHeight"] | number;
+  style?: CSSProperties;
+};
+
+function isPuckSlotElement(
+  node: ReactNode,
+): node is ReactElement<SlotElementProps> {
+  if (!React.isValidElement(node) || typeof node.type === "string") {
+    return false;
+  }
+  const props = node.props as SlotElementProps;
+  return props.allow !== undefined || props.minEmptyHeight !== undefined;
+}
 
 export default function HighDensityInfoBlock({
   phase1,
@@ -85,11 +115,18 @@ export default function HighDensityInfoBlock({
     ];
 
     return (
-      <section className={`w-full ${getComponentSectionProfileClassName(componentLayout)}`}>
+      <section
+        className={`w-full ${getComponentSectionProfileClassName(componentLayout)}`}
+        style={getComponentSectionStyle(componentLayout)}
+      >
         <div className="grid-container border-t border-white/20 rhythm-divider-top">
           {phases.map((phase, phaseIndex) => {
             const column = phaseIndex + 1;
             const prefix = `column${column}`;
+            const columnLayout = createNestedComponentVariantLayout(
+              componentLayout,
+              prefix,
+            );
             const labelTypography = getComponentLayoutTypography(componentLayout, `${prefix}.label`);
             const titleTypography = getComponentLayoutTypography(componentLayout, `${prefix}.title`);
             const subtitleTypography = getComponentLayoutTypography(componentLayout, `${prefix}.subtitle`);
@@ -98,10 +135,20 @@ export default function HighDensityInfoBlock({
             const itemValueTypography = getComponentLayoutTypography(componentLayout, `${prefix}.item.value`);
             const items = "items" in phase ? phase.items : undefined;
             const imageSrc = "imageSrc" in phase ? phase.imageSrc : undefined;
+            const itemGapFrom = hasEditableTextContent(phase.content)
+              ? `${prefix}.body`
+              : hasEditableTextContent(phase.subtitle)
+                ? `${prefix}.subtitle`
+                : `${prefix}.title`;
             return (
-              <Fragment key={prefix}>
+              <ComponentLayoutNode
+                key={prefix}
+                className="relative grid grid-cols-12 content-start"
+                layout={componentLayout}
+                nodeId={prefix}
+              >
                 {hasEditableTextContent(phase.label) ? (
-                  <ComponentLayoutNode layout={componentLayout} nodeId={`${prefix}.label`}>
+                  <ComponentLayoutNode layout={columnLayout} nodeId={`${prefix}.label`}>
                     <Typography
                       as="div"
                       preset={labelTypography?.preset ?? "sans-body"}
@@ -117,7 +164,7 @@ export default function HighDensityInfoBlock({
                 ) : null}
                 <ComponentLayoutNode
                   gapFrom={`${prefix}.label`}
-                  layout={componentLayout}
+                  layout={columnLayout}
                   nodeId={`${prefix}.title`}
                 >
                   <Typography
@@ -135,7 +182,7 @@ export default function HighDensityInfoBlock({
                 {hasEditableTextContent(phase.subtitle) ? (
                   <ComponentLayoutNode
                     gapFrom={`${prefix}.title`}
-                    layout={componentLayout}
+                    layout={columnLayout}
                     nodeId={`${prefix}.subtitle`}
                   >
                     <Typography
@@ -156,7 +203,7 @@ export default function HighDensityInfoBlock({
                     gapFrom={hasEditableTextContent(phase.subtitle)
                       ? `${prefix}.subtitle`
                       : `${prefix}.title`}
-                    layout={componentLayout}
+                    layout={columnLayout}
                     nodeId={`${prefix}.body`}
                   >
                     <Typography
@@ -179,8 +226,10 @@ export default function HighDensityInfoBlock({
                 {items?.map((item, itemIndex) => (
                   <Fragment key={`${prefix}-item-${itemIndex}`}>
                     <ComponentLayoutNode
-                      gapFrom={`${prefix}.body`}
-                      layout={componentLayout}
+                      gapFrom={itemIndex === 0
+                        ? itemGapFrom
+                        : `${prefix}.item.value`}
+                      layout={columnLayout}
                       nodeId={`${prefix}.item.label`}
                     >
                       <Typography
@@ -197,7 +246,7 @@ export default function HighDensityInfoBlock({
                     </ComponentLayoutNode>
                     <ComponentLayoutNode
                       gapFrom={`${prefix}.item.label`}
-                      layout={componentLayout}
+                      layout={columnLayout}
                       nodeId={`${prefix}.item.value`}
                     >
                       <Typography
@@ -214,19 +263,42 @@ export default function HighDensityInfoBlock({
                     </ComponentLayoutNode>
                   </Fragment>
                 ))}
-                {phase.itemsContent ? (
-                  <ComponentLayoutNode
-                    gapFrom={`${prefix}.body`}
-                    layout={componentLayout}
-                    nodeId={`${prefix}.item.value`}
-                  >
-                    {phase.itemsContent}
-                  </ComponentLayoutNode>
-                ) : null}
+                {phase.itemsContent
+                  ? React.Children.toArray(phase.itemsContent).map((child) =>
+                    isPuckSlotElement(child) ? (
+                      <MetadataListItemLayoutProvider
+                        key={child.key ?? `${prefix}.items`}
+                        firstGapFrom={itemGapFrom}
+                        labelNodeId={`${prefix}.item.label`}
+                        layout={columnLayout}
+                        valueNodeId={`${prefix}.item.value`}
+                      >
+                        {React.cloneElement(child, {
+                          as: MetadataListItemSlotRoot,
+                          className: [
+                            child.props.className ?? "",
+                            "col-span-12",
+                          ].filter(Boolean).join(" "),
+                        })}
+                      </MetadataListItemLayoutProvider>
+                    ) : (
+                      <ComponentLayoutNode
+                        key={React.isValidElement(child) && child.key !== null
+                          ? child.key
+                          : `${prefix}.items`}
+                        gapFrom={itemGapFrom}
+                        layout={columnLayout}
+                        nodeId={`${prefix}.item.value`}
+                      >
+                        {child}
+                      </ComponentLayoutNode>
+                    )
+                  )
+                  : null}
                 {imageSrc ? (
                   <ComponentLayoutNode
                     gapFrom={`${prefix}.body`}
-                    layout={componentLayout}
+                    layout={columnLayout}
                     nodeId={`${prefix}.media`}
                   >
                     <div className="relative w-full overflow-hidden border border-white/10 bg-neutral-900">
@@ -242,7 +314,7 @@ export default function HighDensityInfoBlock({
                     </div>
                   </ComponentLayoutNode>
                 ) : null}
-              </Fragment>
+              </ComponentLayoutNode>
             );
           })}
         </div>

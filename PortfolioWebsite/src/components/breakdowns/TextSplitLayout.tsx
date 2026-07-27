@@ -1,8 +1,16 @@
-import type { CSSProperties, ReactNode } from "react";
+import React, {
+  type ComponentPropsWithRef,
+  type CSSProperties,
+  type ElementType,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import ComponentLayoutNode, {
+  getComponentLabNodeAttributes,
   getComponentLayoutAlignment,
+  getComponentLayoutNode,
   getComponentLayoutTypography,
   type ComponentLayoutProps,
 } from "@/components/common/ComponentLayoutNode";
@@ -15,10 +23,15 @@ import {
 } from "@/lib/component-design-runtime";
 import {
   createResponsiveGridBounds,
+  getComponentLayoutGap,
+  getComponentLayoutNodeClassName,
+  getComponentLayoutNodeStyle,
   getResponsiveGridColumnClassName,
+  getResponsiveGapStyle,
   getSectionSpacingClassName,
   getSpacingRem,
   getComponentSectionProfileClassName,
+  getComponentSectionStyle,
 } from "@/lib/component-design-style";
 import { toPlainText } from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
@@ -38,6 +51,126 @@ type TextSplitLayoutProps = {
 
 type StyleWithVars = CSSProperties & Record<string, string>;
 
+type SlotElementProps = {
+  allow?: readonly string[];
+  as?: ElementType;
+  className?: string;
+  componentLabAnnotations?: true;
+  minEmptyHeight?: CSSProperties["minHeight"] | number;
+  style?: CSSProperties;
+};
+
+type RepeatedSlotStyle = CSSProperties & {
+  "--component-gap-desktop"?: string;
+  "--component-gap-mobile"?: string;
+  "--component-gap-tablet"?: string;
+  "--component-repeated-gap-desktop"?: string;
+  "--component-repeated-gap-mobile"?: string;
+  "--component-repeated-gap-tablet"?: string;
+};
+
+function isPuckSlotElement(
+  node: ReactNode,
+): node is ReactElement<SlotElementProps> {
+  if (!React.isValidElement(node) || typeof node.type === "string") {
+    return false;
+  }
+  const props = node.props as SlotElementProps;
+  return props.allow !== undefined || props.minEmptyHeight !== undefined;
+}
+
+function getRepeatedItemStyle(
+  style: CSSProperties | undefined,
+  occurrence: number,
+): RepeatedSlotStyle | undefined {
+  if (occurrence === 0) return style;
+  const repeatedStyle = style as RepeatedSlotStyle | undefined;
+  return {
+    ...style,
+    "--component-gap-desktop":
+      repeatedStyle?.["--component-repeated-gap-desktop"] ?? "0px",
+    "--component-gap-mobile":
+      repeatedStyle?.["--component-repeated-gap-mobile"] ?? "0px",
+    "--component-gap-tablet":
+      repeatedStyle?.["--component-repeated-gap-tablet"] ?? "0px",
+  };
+}
+
+function RepeatedBodySlotRoot({
+  children,
+  className,
+  componentLabAnnotations,
+  style,
+  ...rootProps
+}: ComponentPropsWithRef<"div"> & {
+  componentLabAnnotations?: true;
+}) {
+  const items = React.Children.toArray(children);
+  const isPuckEditor = Boolean(
+    (rootProps as Record<string, unknown>)["data-puck-dropzone"],
+  );
+  return (
+    <div
+      {...rootProps}
+      className={isPuckEditor ? className : "contents"}
+      style={isPuckEditor ? style : undefined}
+    >
+      {items.map((child, occurrence) => (
+        <div
+          key={React.isValidElement(child) && child.key !== null
+            ? child.key
+            : occurrence}
+          className={isPuckEditor ? undefined : className}
+          {...(componentLabAnnotations
+            ? {
+              "data-component-lab-node": "body.item",
+              "data-component-lab-occurrence": occurrence,
+            }
+            : {})}
+          style={isPuckEditor
+            ? undefined
+            : getRepeatedItemStyle(style, occurrence)}
+        >
+          {child}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function getRepeatedSlotLayoutProps(
+  layout: NonNullable<ComponentLayoutProps["componentLayout"]>,
+  nodeId: string,
+  gapFrom: string,
+) {
+  const node = getComponentLayoutNode(layout, nodeId);
+  const firstGapStyle = getResponsiveGapStyle(
+    getComponentLayoutGap(layout, gapFrom, nodeId),
+  );
+  const repeatedGapStyle = getResponsiveGapStyle(
+    getComponentLayoutGap(layout, nodeId, nodeId),
+  );
+  const nodeStyle = getComponentLayoutNodeStyle(node, layout.section);
+  const hasGap = Boolean(firstGapStyle || repeatedGapStyle);
+  const style: RepeatedSlotStyle = {
+    ...firstGapStyle,
+    ...nodeStyle,
+    "--component-repeated-gap-desktop":
+      repeatedGapStyle?.["--component-gap-desktop"] ?? "0px",
+    "--component-repeated-gap-mobile":
+      repeatedGapStyle?.["--component-gap-mobile"] ?? "0px",
+    "--component-repeated-gap-tablet":
+      repeatedGapStyle?.["--component-gap-tablet"] ?? "0px",
+  };
+  return {
+    className: [
+      getComponentLayoutNodeClassName(node),
+      hasGap ? "component-layout-node-gap" : "",
+    ].filter(Boolean).join(" "),
+    style,
+  };
+}
+
 export default function TextSplitLayout({
   heading,
   paragraphs,
@@ -56,33 +189,78 @@ export default function TextSplitLayout({
   const splitHeadingGapStyle: StyleWithVars = {
     "--text-split-heading-image-gap": getSpacingRem(resolvedDesign.headingImageGap),
   };
-  const paragraphContent = paragraphsContent ?? (
+  const paragraphContentItems = React.Children.toArray(paragraphsContent);
+  const paragraphContent = paragraphContentItems.length > 0
+    ? paragraphContentItems.map((child, occurrence) =>
+      isPuckSlotElement(child)
+        ? React.cloneElement(child, {
+          as: RepeatedBodySlotRoot,
+          componentLabAnnotations:
+            componentLayout?.componentLabAnnotations,
+        })
+        : (
+          <div
+            key={React.isValidElement(child) && child.key !== null
+              ? child.key
+              : occurrence}
+            {...getComponentLabNodeAttributes(
+              componentLayout,
+              "body.item",
+              occurrence,
+            )}
+          >
+            {child}
+          </div>
+        )
+    )
+    : (
     <div
       className="grid"
       style={{ rowGap: getSpacingRem(resolvedDesign.paragraphGap) }}
     >
       {paragraphs.map((p, i) => (
-        <Typography
+        <div
           key={i}
-          as="p"
-          preset="sans-body"
-          size={resolvedDesign.bodySize}
-          weight="semantic"
-          wrapPolicy={resolvedDesign.bodyAutoWrap ? "prose" : "nowrap"}
-          align={bodyAlign}
-          className="text-textSecondary"
+          {...getComponentLabNodeAttributes(
+            componentLayout,
+            "body.item",
+            i,
+          )}
         >
-          {p}
-        </Typography>
+          <Typography
+            as="p"
+            preset="sans-body"
+            size={resolvedDesign.bodySize}
+            weight="semantic"
+            wrapPolicy={resolvedDesign.bodyAutoWrap ? "prose" : "nowrap"}
+            align={bodyAlign}
+            className="text-textSecondary"
+          >
+            {p}
+          </Typography>
+        </div>
       ))}
     </div>
   );
 
   if (componentLayout) {
     const headingTypography = getComponentLayoutTypography(componentLayout, "heading");
-    const bodyTypography = getComponentLayoutTypography(componentLayout, "body");
+    const bodyItemTypography = getComponentLayoutTypography(
+      componentLayout,
+      "body.item",
+    );
+    const slotLayoutProps = getRepeatedSlotLayoutProps(
+      componentLayout,
+      "body.item",
+      "heading",
+    );
+    const layoutParagraphContentItems =
+      React.Children.toArray(paragraphsContent);
     return (
-      <section className={`w-full ${getComponentSectionProfileClassName(componentLayout)}`}>
+      <section
+        className={`w-full ${getComponentSectionProfileClassName(componentLayout)}`}
+        style={getComponentSectionStyle(componentLayout)}
+      >
         <div className="grid-container items-start">
           <ComponentLayoutNode layout={componentLayout} nodeId="heading">
             <Typography
@@ -97,35 +275,64 @@ export default function TextSplitLayout({
               {heading}
             </Typography>
           </ComponentLayoutNode>
-          <ComponentLayoutNode
-            gapFrom="heading"
-            layout={componentLayout}
-            nodeId="body"
-            className="grid"
-          >
-            {paragraphsContent ? (
-              <div data-component-lab-node="body.item">{paragraphsContent}</div>
-            ) : (
-              paragraphs.map((paragraph, index) => (
+          {layoutParagraphContentItems.length > 0 ? (
+            layoutParagraphContentItems.map((child, occurrence) =>
+              isPuckSlotElement(child)
+                ? React.cloneElement(child, {
+                  as: RepeatedBodySlotRoot,
+                  className: [
+                    child.props.className ?? "",
+                    slotLayoutProps.className,
+                  ].filter(Boolean).join(" "),
+                  componentLabAnnotations:
+                    componentLayout.componentLabAnnotations,
+                  style: {
+                    ...child.props.style,
+                    ...slotLayoutProps.style,
+                  },
+                })
+                : (
+                  <ComponentLayoutNode
+                    key={React.isValidElement(child) && child.key !== null
+                      ? child.key
+                      : occurrence}
+                    gapFrom={occurrence === 0 ? "heading" : "body.item"}
+                    layout={componentLayout}
+                    nodeId="body.item"
+                  >
+                    {child}
+                  </ComponentLayoutNode>
+                )
+            )
+          ) : (
+            paragraphs.map((paragraph, index) => (
+              <ComponentLayoutNode
+                key={index}
+                gapFrom={index === 0 ? "heading" : "body.item"}
+                layout={componentLayout}
+                nodeId="body.item"
+              >
                 <Typography
-                  key={index}
                   as="p"
-                  preset={bodyTypography?.preset ?? "sans-body"}
-                  size={bodyTypography?.size ?? "body"}
+                  preset={bodyItemTypography?.preset ?? "sans-body"}
+                  size={bodyItemTypography?.size ?? "body"}
                   weight="semantic"
-                  wrapPolicy={bodyTypography?.wrap ?? "prose"}
-                  align={getComponentLayoutAlignment(componentLayout, "body", bodyAlign)}
+                  wrapPolicy={bodyItemTypography?.wrap ?? "prose"}
+                  align={getComponentLayoutAlignment(
+                    componentLayout,
+                    "body.item",
+                    bodyAlign,
+                  )}
                   className="text-textSecondary"
-                  data-component-lab-node="body.item"
                 >
                   {paragraph}
                 </Typography>
-              ))
-            )}
-          </ComponentLayoutNode>
+              </ComponentLayoutNode>
+            ))
+          )}
           {imageSrc ? (
             <ComponentLayoutNode
-              gapFrom="body"
+              gapFrom="body.item"
               layout={componentLayout}
               nodeId="media"
             >

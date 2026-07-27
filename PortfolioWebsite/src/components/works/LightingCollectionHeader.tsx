@@ -18,6 +18,7 @@ import {
   getResponsiveGridColumnClassName,
   getSpacingRem,
   getComponentSectionProfileClassName,
+  getComponentSectionStyle,
 } from "@/lib/component-design-style";
 import { hasEditableTextContent } from "@/lib/editable-text";
 
@@ -49,7 +50,10 @@ export default function LightingCollectionHeader({
     const titleTypography = getComponentLayoutTypography(componentLayout, "title");
     const descriptionTypography = getComponentLayoutTypography(componentLayout, "description");
     return (
-      <section className={`border-b border-white/10 ${getComponentSectionProfileClassName(componentLayout)}`}>
+      <section
+        className={`border-b border-white/10 ${getComponentSectionProfileClassName(componentLayout)}`}
+        style={getComponentSectionStyle(componentLayout)}
+      >
         <div className="grid-container items-end">
           <ComponentLayoutNode layout={componentLayout} nodeId="backLink">
             <MotionLink

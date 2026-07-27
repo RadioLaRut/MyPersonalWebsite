@@ -12,12 +12,14 @@ import {
   type ComponentDesignOverride,
   resolveComponentDesign,
 } from "@/lib/component-design-runtime";
+import { createNestedComponentVariantLayout } from "@/lib/component-design-nested-grid";
 import {
   createResponsiveGridBounds,
   getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
   getSpacingRem,
   getComponentSectionProfileClassName,
+  getComponentSectionStyle,
 } from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 import type { PublicMediaHint } from "@/lib/media-layout";
@@ -177,17 +179,29 @@ export default function BreakdownTriptych({
       },
     ];
     return (
-      <section className={`relative z-20 w-full bg-black ${getComponentSectionProfileClassName(componentLayout)}`}>
+      <section
+        className={`relative z-20 w-full bg-black ${getComponentSectionProfileClassName(componentLayout)}`}
+        style={getComponentSectionStyle(componentLayout)}
+      >
         <div className="grid-container w-full border-t border-white/10 rhythm-divider-top">
-          {columns.flatMap((column, index) => {
+          {columns.map((column, index) => {
             const prefix = `column${index + 1}`;
+            const columnLayout = createNestedComponentVariantLayout(
+              componentLayout,
+              prefix,
+            );
             const titleTypography = getComponentLayoutTypography(componentLayout, `${prefix}.title`);
             const bodyTypography = getComponentLayoutTypography(componentLayout, `${prefix}.body`);
-            return [
-              hasEditableTextContent(column.title) ? (
+            return (
+              <ComponentLayoutNode
+                key={prefix}
+                className="relative grid grid-cols-12 content-start"
+                layout={componentLayout}
+                nodeId={prefix}
+              >
+                {hasEditableTextContent(column.title) ? (
                 <ComponentLayoutNode
-                  key={`${prefix}.title`}
-                  layout={componentLayout}
+                  layout={columnLayout}
                   nodeId={`${prefix}.title`}
                 >
                   <Typography
@@ -202,12 +216,11 @@ export default function BreakdownTriptych({
                     {column.title}
                   </Typography>
                 </ComponentLayoutNode>
-              ) : null,
-              hasEditableTextContent(column.text) ? (
+                ) : null}
+                {hasEditableTextContent(column.text) ? (
                 <ComponentLayoutNode
-                  key={`${prefix}.body`}
                   gapFrom={`${prefix}.title`}
-                  layout={componentLayout}
+                  layout={columnLayout}
                   nodeId={`${prefix}.body`}
                 >
                   <Typography
@@ -226,12 +239,11 @@ export default function BreakdownTriptych({
                     {column.text}
                   </Typography>
                 </ComponentLayoutNode>
-              ) : null,
-              column.image ? (
+                ) : null}
+                {column.image ? (
                 <ComponentLayoutNode
-                  key={`${prefix}.media`}
                   gapFrom={`${prefix}.body`}
-                  layout={componentLayout}
+                  layout={columnLayout}
                   nodeId={`${prefix}.media`}
                 >
                   <div className="relative w-full overflow-hidden border border-white/10">
@@ -246,8 +258,9 @@ export default function BreakdownTriptych({
                     />
                   </div>
                 </ComponentLayoutNode>
-              ) : null,
-            ];
+                ) : null}
+              </ComponentLayoutNode>
+            );
           })}
         </div>
       </section>

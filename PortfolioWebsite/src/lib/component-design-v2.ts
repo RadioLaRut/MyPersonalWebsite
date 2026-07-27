@@ -89,17 +89,59 @@ export type ComponentNodeTypography = {
   wrap: TypographyWrapPolicy;
 };
 
+export type ComponentDesignRuntimeSectionHeight =
+  | "auto"
+  | "compact"
+  | "normal"
+  | "tall"
+  | "viewport";
+
+export type ComponentDesignRuntimeMediaFrame =
+  | "auto"
+  | "square"
+  | "portrait"
+  | "landscape"
+  | "wide"
+  | "cinematic"
+  | "viewport";
+
+export type ComponentDesignRuntimeNodePositioning =
+  | {
+    gapBefore: ComponentDesignRhythmToken;
+    mode: "flow";
+    order: number;
+  }
+  | {
+    anchor: "top" | "center" | "bottom";
+    anchored?: true;
+    mode: "overlay";
+    offset: number;
+  };
+
+export type ComponentDesignRuntimeSectionLayout = {
+  gap: number;
+  height: ComponentDesignRuntimeSectionHeight;
+  paddingBottom: number;
+  paddingTop: number;
+  profile: ComponentDesignSectionProfile;
+};
+
 export type ComponentLayoutNode = {
   alignment?: ComponentResponsiveValue<TypographyAlignment>;
   bleed?: "none" | "viewport";
+  mediaFrame?: ComponentResponsiveValue<ComponentDesignRuntimeMediaFrame>;
   opticalPull?: ComponentDesignOpticalPullToken;
   placement: ComponentResponsiveValue<ComponentGridPlacement>;
+  positioning?: ComponentResponsiveValue<ComponentDesignRuntimeNodePositioning>;
+  responsiveTypography?: ComponentResponsiveValue<ComponentNodeTypography>;
   typography?: ComponentNodeTypography;
 };
 
 export type ComponentVariantLayout = {
+  componentLabAnnotations?: true;
   gaps: Record<string, ComponentResponsiveValue<ComponentDesignRhythmToken>>;
   nodes: Record<string, ComponentLayoutNode>;
+  section?: ComponentResponsiveValue<ComponentDesignRuntimeSectionLayout>;
   sectionProfile: ComponentDesignSectionProfile;
 };
 
@@ -918,6 +960,130 @@ function normalizeOpticalPull(
     : fallback;
 }
 
+const COMPONENT_DESIGN_RUNTIME_SECTION_HEIGHTS = [
+  "auto",
+  "compact",
+  "normal",
+  "tall",
+  "viewport",
+] as const satisfies readonly ComponentDesignRuntimeSectionHeight[];
+
+const COMPONENT_DESIGN_RUNTIME_MEDIA_FRAMES = [
+  "auto",
+  "square",
+  "portrait",
+  "landscape",
+  "wide",
+  "cinematic",
+  "viewport",
+] as const satisfies readonly ComponentDesignRuntimeMediaFrame[];
+
+function normalizeOptionalResponsiveValue<Value>(
+  value: unknown,
+  normalizeValue: (candidate: unknown) => Value | null,
+): ComponentResponsiveValue<Value> | undefined {
+  if (!isPlainRecord(value)) return undefined;
+  const desktop = normalizeValue(value.desktop);
+  const tablet = normalizeValue(value.tablet);
+  const mobile = normalizeValue(value.mobile);
+  if (desktop === null || tablet === null || mobile === null) return undefined;
+  return { desktop, mobile, tablet };
+}
+
+function normalizeRuntimePositioning(
+  value: unknown,
+): ComponentDesignRuntimeNodePositioning | null {
+  if (!isPlainRecord(value)) return null;
+  if (
+    value.mode === "flow" &&
+    isFiniteInteger(value.order) &&
+    value.order >= 0 &&
+    value.order <= 999 &&
+    typeof value.gapBefore === "number" &&
+    COMPONENT_DESIGN_RHYTHM_TOKENS.includes(
+      value.gapBefore as ComponentDesignRhythmToken,
+    )
+  ) {
+    return {
+      gapBefore: value.gapBefore as ComponentDesignRhythmToken,
+      mode: "flow",
+      order: value.order,
+    };
+  }
+  if (
+    value.mode === "overlay" &&
+    (
+      value.anchor === "top" ||
+      value.anchor === "center" ||
+      value.anchor === "bottom"
+    ) &&
+    isFiniteInteger(value.offset) &&
+    value.offset >= -320 &&
+    value.offset <= 320 &&
+    value.offset % 8 === 0 &&
+    (value.anchored === undefined || value.anchored === true)
+  ) {
+    return {
+      anchor: value.anchor,
+      ...(value.anchored === true ? { anchored: true as const } : {}),
+      mode: "overlay",
+      offset: value.offset,
+    };
+  }
+  return null;
+}
+
+function normalizeRuntimeMediaFrame(
+  value: unknown,
+): ComponentDesignRuntimeMediaFrame | null {
+  return typeof value === "string" &&
+      (COMPONENT_DESIGN_RUNTIME_MEDIA_FRAMES as readonly string[]).includes(
+        value,
+      )
+    ? value as ComponentDesignRuntimeMediaFrame
+    : null;
+}
+
+function normalizeRuntimeSectionSpacing(value: unknown): number | null {
+  return isFiniteInteger(value) &&
+      value >= 0 &&
+      value <= 320 &&
+      value % 8 === 0
+    ? value
+    : null;
+}
+
+function normalizeRuntimeSection(
+  value: unknown,
+): ComponentDesignRuntimeSectionLayout | null {
+  if (!isPlainRecord(value)) return null;
+  const gap = normalizeRuntimeSectionSpacing(value.gap);
+  const paddingBottom = normalizeRuntimeSectionSpacing(value.paddingBottom);
+  const paddingTop = normalizeRuntimeSectionSpacing(value.paddingTop);
+  if (
+    gap === null ||
+    paddingBottom === null ||
+    paddingTop === null ||
+    typeof value.height !== "string" ||
+    !(COMPONENT_DESIGN_RUNTIME_SECTION_HEIGHTS as readonly string[]).includes(
+      value.height,
+    ) ||
+    typeof value.profile !== "string" ||
+    !(COMPONENT_DESIGN_SECTION_PROFILES as readonly string[]).includes(
+      value.profile,
+    )
+  ) {
+    return null;
+  }
+  return {
+    gap,
+    height: value.height as ComponentDesignRuntimeSectionHeight,
+    paddingBottom,
+    paddingTop,
+    profile: value.profile as ComponentDesignSectionProfile,
+  };
+}
+
 function normalizeTypography(
   value: unknown,
   fallback: ComponentNodeTypography,
@@ -952,6 +1118,27 @@ function normalizeNode(
   fallback: ComponentLayoutNode,
 ): ComponentLayoutNode {
   const source = isPlainRecord(value) ? value : {};
+  const mediaFrame = normalizeOptionalResponsiveValue(
+    source.mediaFrame,
+    normalizeRuntimeMediaFrame,
+  );
+  const positioning = normalizeOptionalResponsiveValue(
+    source.positioning,
+    normalizeRuntimePositioning,
+  );
+  const typographyFallback = fallback.typography;
+  const responsiveTypography = typographyFallback
+    ? normalizeOptionalResponsiveValue(
+      source.responsiveTypography,
+      (candidate) => {
+        if (!isPlainRecord(candidate)) return null;
+        const normalized = normalizeTypography(candidate, typographyFallback);
+        return areJsonStructuresEqual(candidate, normalized)
+          ? normalized
+          : null;
+      },
+    )
+    : undefined;
   const bleed = fallback.bleed
     ? source.bleed === "viewport" || source.bleed === "none"
       ? source.bleed
@@ -976,6 +1163,7 @@ function normalizeNode(
       }
       : {}),
     ...(bleed ? { bleed } : {}),
+    ...(mediaFrame ? { mediaFrame } : {}),
     ...(fallback.opticalPull !== undefined
       ? {
         opticalPull: normalizeOpticalPull(
@@ -985,6 +1173,8 @@ function normalizeNode(
       }
       : {}),
     placement: finalPlacement,
+    ...(positioning ? { positioning } : {}),
+    ...(responsiveTypography ? { responsiveTypography } : {}),
     ...(fallback.typography
       ? {
         typography: normalizeTypography(
@@ -1003,6 +1193,10 @@ function normalizeVariant(
   const source = isPlainRecord(value) ? value : {};
   const sourceNodes = isPlainRecord(source.nodes) ? source.nodes : {};
   const sourceGaps = isPlainRecord(source.gaps) ? source.gaps : {};
+  const section = normalizeOptionalResponsiveValue(
+    source.section,
+    normalizeRuntimeSection,
+  );
   const sectionProfile =
     typeof source.sectionProfile === "string" &&
       (COMPONENT_DESIGN_SECTION_PROFILES as readonly string[]).includes(
@@ -1028,6 +1222,7 @@ function normalizeVariant(
         normalizeNode(sourceNodes[nodeId], fallbackNode),
       ]),
     ),
+    ...(section ? { section } : {}),
     sectionProfile,
   };
 }

@@ -14,6 +14,11 @@ import {
   PUCK_COMPONENT_TYPES,
   type PuckComponentType,
 } from "../puck/component-manifest.ts";
+import {
+  COMPONENT_DESIGN_AUTHOR_COMPONENTS,
+  COMPONENT_DESIGN_MANIFEST_BY_COMPONENT,
+  type ComponentDesignAuthorComponent,
+} from "./component-design-manifest.ts";
 
 export const COMPONENT_LAB_PRESET_VERSION = 2 as const;
 export const COMPONENT_LAB_PRESET_FILE = path.resolve(
@@ -31,6 +36,10 @@ export type ComponentLabNode = {
   type: PuckComponentType;
 };
 
+export type ComponentLabVariantSample = {
+  props: Record<string, unknown>;
+};
+
 type DerivedStressSample = {
   instance: ComponentLabInstanceReference;
   kind: "derived";
@@ -46,6 +55,7 @@ export type ComponentLabPresetDocument = {
   components: Record<PuckComponentType, {
     defaultInstance: ComponentLabInstanceReference | null;
     stressSample: DerivedStressSample | StandaloneStressSample;
+    variantSamples: Record<string, ComponentLabVariantSample>;
   }>;
   version: typeof COMPONENT_LAB_PRESET_VERSION;
 };
@@ -64,6 +74,7 @@ export type ComponentLabCatalogEntry = {
   instances: ComponentLabCatalogInstance[];
   preferredInstanceId: string | null;
   stressSample: ComponentLabCatalogInstance;
+  variantSamples: Record<string, ComponentLabNode>;
 };
 
 export type ComponentLabInstanceCatalog = {
@@ -116,6 +127,83 @@ function readNode(value: unknown, pathLabel: string): ComponentLabNode {
   }
 
   return cloneJson(value as ComponentLabNode);
+}
+
+const FORBIDDEN_VARIANT_SAMPLE_PROP =
+  /(?:fitmode|focal[xy]|href|image|link|preset|src)$/i;
+const FORBIDDEN_VARIANT_SAMPLE_PROPS = new Set([
+  "alt",
+  "imageAlt",
+  "initialPosition",
+  "mediaAlt",
+  "nextBg",
+  "nextId",
+  "publicMediaHint",
+  "source",
+]);
+
+function isAuthorComponent(
+  componentKey: PuckComponentType,
+): componentKey is ComponentDesignAuthorComponent {
+  return (COMPONENT_DESIGN_AUTHOR_COMPONENTS as readonly string[]).includes(
+    componentKey,
+  );
+}
+
+function readVariantSamples(
+  componentKey: PuckComponentType,
+  value: unknown,
+  pathLabel: string,
+) {
+  if (!isAuthorComponent(componentKey)) {
+    if (value !== undefined && (!isPlainRecord(value) || Object.keys(value).length > 0)) {
+      throw new ComponentLabPresetError(
+        `${pathLabel} 只能为页面级组件声明版式样例`,
+      );
+    }
+    return {};
+  }
+
+  const variants = COMPONENT_DESIGN_MANIFEST_BY_COMPONENT[componentKey].variants;
+  if (value === undefined) {
+    return Object.fromEntries(
+      variants.map((variant) => [variant.id, { props: {} }]),
+    );
+  }
+  if (!isPlainRecord(value)) {
+    throw new ComponentLabPresetError(`${pathLabel} 必须是版式样例对象`);
+  }
+
+  const expectedIds = variants.map((variant) => variant.id);
+  const actualIds = Object.keys(value);
+  const missing = expectedIds.filter((variant) => !(variant in value));
+  const extra = actualIds.filter((variant) => !expectedIds.includes(variant));
+  if (missing.length > 0 || extra.length > 0) {
+    throw new ComponentLabPresetError(
+      `${pathLabel} 版式清单不一致：缺少 ${missing.join(", ") || "无"}；多出 ${extra.join(", ") || "无"}`,
+    );
+  }
+
+  return Object.fromEntries(expectedIds.map((variant) => {
+    const rawSample = value[variant];
+    if (!isPlainRecord(rawSample) || !isPlainRecord(rawSample.props)) {
+      throw new ComponentLabPresetError(
+        `${pathLabel}.${variant}.props 必须是对象`,
+      );
+    }
+    for (const prop of Object.keys(rawSample.props)) {
+      if (
+        prop === "id" ||
+        FORBIDDEN_VARIANT_SAMPLE_PROPS.has(prop) ||
+        FORBIDDEN_VARIANT_SAMPLE_PROP.test(prop)
+      ) {
+        throw new ComponentLabPresetError(
+          `${pathLabel}.${variant}.props.${prop} 不允许覆盖媒体、链接或节点身份`,
+        );
+      }
+    }
+    return [variant, { props: cloneJson(rawSample.props) }];
+  }));
 }
 
 export function parseComponentLabPresetDocument(
@@ -185,7 +273,13 @@ export function parseComponentLabPresetDocument(
         );
       }
 
-      return [componentKey, { defaultInstance, stressSample }];
+      const variantSamples = readVariantSamples(
+        componentKey,
+        rawEntry.variantSamples,
+        `${entryPath}.variantSamples`,
+      );
+
+      return [componentKey, { defaultInstance, stressSample, variantSamples }];
     }),
   ) as ComponentLabPresetDocument["components"];
 
@@ -378,6 +472,18 @@ export function createComponentLabInstanceCatalog(
         pageSlug: null,
         source: "stress",
       };
+      const variantSamples = Object.fromEntries(
+        Object.entries(preset.variantSamples).map(([variant, sample]) => [
+          variant,
+          createValidatedStressNode(componentKey, {
+            ...cloneJson(stressSample.node),
+            props: {
+              ...cloneJson(stressSample.node.props),
+              ...cloneJson(sample.props),
+            },
+          }),
+        ]),
+      );
 
       return [
         componentKey,
@@ -386,6 +492,7 @@ export function createComponentLabInstanceCatalog(
           instances,
           preferredInstanceId: preferredInstance?.id ?? null,
           stressSample,
+          variantSamples,
         },
       ];
     }),

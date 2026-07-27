@@ -8,6 +8,10 @@ import type {
   ComponentResponsiveGridBounds,
 } from "@/lib/component-design-schema";
 import type {
+  ComponentDesignRuntimeMediaFrame,
+  ComponentDesignRuntimeNodePositioning,
+  ComponentDesignRuntimeSectionHeight,
+  ComponentDesignRuntimeSectionLayout,
   ComponentGridPlacement,
   ComponentLayoutNode,
   ComponentResponsiveValue,
@@ -211,7 +215,36 @@ export function getResponsiveGridPlacementClassName(
 export function getComponentLayoutNodeClassName(
   node: ComponentLayoutNode | undefined,
 ): string {
-  return node ? getResponsiveGridPlacementClassName(node.placement) : "";
+  if (!node) return "";
+  const positioning = node.positioning
+    ? Object.values(node.positioning)
+    : [];
+  const hasFlowPositioning = positioning.some(
+    (value) => value.mode === "flow",
+  );
+  const hasActiveOverlayPositioning = positioning.some(
+    (value) =>
+      value.mode === "overlay" &&
+      (
+        value.anchored === true ||
+        value.anchor !== "center" ||
+        value.offset !== 0
+      ),
+  );
+  const hasMediaFrame = node.mediaFrame
+    ? Object.values(node.mediaFrame).some((frame) => frame !== "auto")
+    : false;
+
+  return [
+    getResponsiveGridPlacementClassName(node.placement),
+    hasFlowPositioning
+      ? "component-layout-node-positioning component-layout-node-positioning--flow"
+      : "",
+    hasActiveOverlayPositioning
+      ? "component-layout-node-positioning component-layout-node-positioning--overlay"
+      : "",
+    hasMediaFrame ? "component-layout-node-media-frame" : "",
+  ].filter(Boolean).join(" ");
 }
 
 type ResponsiveGapStyle = CSSProperties & {
@@ -231,6 +264,151 @@ export function getResponsiveGapStyle(
   };
 }
 
+type ComponentLayoutNodeStyle = CSSProperties & {
+  "--component-media-aspect-desktop"?: string;
+  "--component-media-aspect-mobile"?: string;
+  "--component-media-aspect-tablet"?: string;
+  "--component-media-child-aspect-desktop"?: string;
+  "--component-media-child-aspect-mobile"?: string;
+  "--component-media-child-aspect-tablet"?: string;
+  "--component-media-child-height-desktop"?: string;
+  "--component-media-child-height-mobile"?: string;
+  "--component-media-child-height-tablet"?: string;
+  "--component-media-min-height-desktop"?: string;
+  "--component-media-min-height-mobile"?: string;
+  "--component-media-min-height-tablet"?: string;
+  "--component-node-gap-desktop"?: string;
+  "--component-node-gap-mobile"?: string;
+  "--component-node-gap-tablet"?: string;
+  "--component-node-order-desktop"?: string;
+  "--component-node-order-mobile"?: string;
+  "--component-node-order-tablet"?: string;
+  "--component-node-position-desktop"?: string;
+  "--component-node-position-mobile"?: string;
+  "--component-node-position-tablet"?: string;
+  "--component-node-top-desktop"?: string;
+  "--component-node-top-mobile"?: string;
+  "--component-node-top-tablet"?: string;
+  "--component-node-translate-desktop"?: string;
+  "--component-node-translate-mobile"?: string;
+  "--component-node-translate-tablet"?: string;
+};
+
+function getOverlayPositionStyle(
+  positioning: Extract<
+    ComponentDesignRuntimeNodePositioning,
+    { mode: "overlay" }
+  >,
+) {
+  if (
+    positioning.anchored !== true &&
+    positioning.anchor === "center" &&
+    positioning.offset === 0
+  ) {
+    return {
+      position: "relative",
+      top: "auto",
+      translate: "0 0",
+    };
+  }
+
+  const anchorTop = positioning.anchor === "top"
+    ? "0%"
+    : positioning.anchor === "center"
+      ? "50%"
+      : "100%";
+  const anchorTranslate = positioning.anchor === "top"
+    ? 0
+    : positioning.anchor === "center"
+      ? -50
+      : -100;
+  const translate = positioning.offset === 0
+    ? `0 ${anchorTranslate}%`
+    : `0 calc(${anchorTranslate}% + ${positioning.offset}px)`;
+
+  return {
+    position: "absolute",
+    top: anchorTop,
+    translate,
+  };
+}
+
+function getMediaFrameStyle(frame: ComponentDesignRuntimeMediaFrame) {
+  switch (frame) {
+    case "square":
+      return { aspect: "1 / 1", childAspect: "auto", childHeight: "100%" };
+    case "portrait":
+      return { aspect: "3 / 4", childAspect: "auto", childHeight: "100%" };
+    case "landscape":
+      return { aspect: "4 / 3", childAspect: "auto", childHeight: "100%" };
+    case "wide":
+      return { aspect: "16 / 9", childAspect: "auto", childHeight: "100%" };
+    case "cinematic":
+      return { aspect: "21 / 9", childAspect: "auto", childHeight: "100%" };
+    case "viewport":
+      return {
+        aspect: "auto",
+        childAspect: "auto",
+        childHeight: "100%",
+        minHeight: "calc(var(--site-viewport-unit) * 100)",
+      };
+    case "auto":
+    default:
+      return null;
+  }
+}
+
+function getSectionGap(
+  section: ComponentResponsiveValue<ComponentDesignRuntimeSectionLayout> | undefined,
+  breakpoint: keyof ComponentResponsiveValue<unknown>,
+  positioning: ComponentDesignRuntimeNodePositioning,
+) {
+  return positioning.mode === "flow" && positioning.order > 0
+    ? (section?.[breakpoint].gap ?? 0)
+    : 0;
+}
+
+export function getComponentLayoutNodeStyle(
+  node: ComponentLayoutNode | undefined,
+  section?: ComponentResponsiveValue<ComponentDesignRuntimeSectionLayout>,
+): ComponentLayoutNodeStyle | undefined {
+  if (!node?.positioning && !node?.mediaFrame) return undefined;
+  const style: ComponentLayoutNodeStyle = {};
+  const breakpoints = ["mobile", "tablet", "desktop"] as const;
+
+  for (const breakpoint of breakpoints) {
+    const positioning = node.positioning?.[breakpoint];
+    if (positioning?.mode === "flow") {
+      style[`--component-node-gap-${breakpoint}`] =
+        `${positioning.gapBefore + getSectionGap(section, breakpoint, positioning)}px`;
+      style[`--component-node-order-${breakpoint}`] =
+        String(positioning.order);
+    } else if (positioning?.mode === "overlay") {
+      const overlay = getOverlayPositionStyle(positioning);
+      style[`--component-node-position-${breakpoint}`] = overlay.position;
+      style[`--component-node-top-${breakpoint}`] = overlay.top;
+      style[`--component-node-translate-${breakpoint}`] = overlay.translate;
+    }
+
+    const media = node.mediaFrame
+      ? getMediaFrameStyle(node.mediaFrame[breakpoint])
+      : null;
+    if (media) {
+      style[`--component-media-aspect-${breakpoint}`] = media.aspect;
+      style[`--component-media-child-aspect-${breakpoint}`] =
+        media.childAspect;
+      style[`--component-media-child-height-${breakpoint}`] =
+        media.childHeight;
+      if (media.minHeight) {
+        style[`--component-media-min-height-${breakpoint}`] =
+          media.minHeight;
+      }
+    }
+  }
+
+  return Object.keys(style).length > 0 ? style : undefined;
+}
+
 export function getComponentLayoutGap(
   layout: ComponentVariantLayout | undefined,
   from: string,
@@ -242,7 +420,65 @@ export function getComponentLayoutGap(
 export function getComponentSectionProfileClassName(
   layout: ComponentVariantLayout | undefined,
 ): string {
-  return layout
-    ? `component-section-profile component-section-profile--${layout.sectionProfile}`
-    : "";
+  if (!layout) return "";
+  const hasCustomHeight = layout.section
+    ? Object.values(layout.section).some(({ height }) => height !== "auto")
+    : false;
+  return [
+    "component-section-profile",
+    `component-section-profile--${layout.sectionProfile}`,
+    hasCustomHeight ? "component-section-profile--custom-height" : "",
+  ].filter(Boolean).join(" ");
+}
+
+type ComponentSectionStyle = CSSProperties & {
+  "--component-section-bottom-desktop"?: string;
+  "--component-section-bottom-mobile"?: string;
+  "--component-section-bottom-tablet"?: string;
+  "--component-section-height-desktop"?: string;
+  "--component-section-height-mobile"?: string;
+  "--component-section-height-tablet"?: string;
+  "--component-section-top-desktop"?: string;
+  "--component-section-top-mobile"?: string;
+  "--component-section-top-tablet"?: string;
+};
+
+function getSectionMinHeight(
+  height: ComponentDesignRuntimeSectionHeight,
+): string | undefined {
+  switch (height) {
+    case "compact":
+      return "clamp(20rem, calc(var(--site-viewport-unit) * 45), 30rem)";
+    case "normal":
+      return "clamp(30rem, calc(var(--site-viewport-unit) * 68), 48rem)";
+    case "tall":
+      return "clamp(40rem, calc(var(--site-viewport-unit) * 84), 60rem)";
+    case "viewport":
+      return "calc(var(--site-viewport-unit) * 100)";
+    case "auto":
+    default:
+      return undefined;
+  }
+}
+
+export function getComponentSectionStyle(
+  layout: ComponentVariantLayout | undefined,
+): ComponentSectionStyle | undefined {
+  if (!layout?.section) return undefined;
+  const style: ComponentSectionStyle = {};
+  const breakpoints = ["mobile", "tablet", "desktop"] as const;
+
+  for (const breakpoint of breakpoints) {
+    const section = layout.section[breakpoint];
+    style[`--component-section-bottom-${breakpoint}`] =
+      `${section.paddingBottom}px`;
+    style[`--component-section-top-${breakpoint}`] =
+      `${section.paddingTop}px`;
+    const minHeight = getSectionMinHeight(section.height);
+    if (minHeight) {
+      style[`--component-section-height-${breakpoint}`] = minHeight;
+    }
+  }
+
+  return style;
 }

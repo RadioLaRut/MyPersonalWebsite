@@ -27,6 +27,7 @@ export function resolveComponentDesignProps(
   type: PuckComponentType,
   props: GenericRenderProps = {},
   designDocument?: ComponentDesignDocument,
+  surface: RenderSurface = "public",
 ): Record<string, unknown> | undefined {
   if (!designDocument) return undefined;
   const componentLayout = isAuthorComponent(type)
@@ -39,8 +40,11 @@ export function resolveComponentDesignProps(
     : type === "WorksListEntry"
       ? "default"
     : undefined;
-  return componentLayout
-    ? { componentLayout, componentVariant }
+  const surfaceLayout = componentLayout && surface === "lab"
+    ? { ...componentLayout, componentLabAnnotations: true as const }
+    : componentLayout;
+  return surfaceLayout
+    ? { componentLayout: surfaceLayout, componentVariant }
     : undefined;
 }
 
@@ -66,7 +70,12 @@ export function renderWithAdapter({
     ...(publicMediaHint ? { publicMediaHint } : {}),
   } as Parameters<ComponentConfig["render"]>[0];
   const rendered = render(adaptedProps);
-  const designProps = resolveComponentDesignProps(type, safeProps, designDocument);
+  const designProps = resolveComponentDesignProps(
+    type,
+    safeProps,
+    designDocument,
+    surface,
+  );
 
   if (!designProps || !isValidElement(rendered)) return rendered;
 

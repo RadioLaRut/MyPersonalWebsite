@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  areResponsiveTypographyRenderVariantsEqual,
   getTypographyEdgeScripts,
   isTypographyAutospace,
   isTypographyNumericStyle,
@@ -9,6 +10,7 @@ import {
   isTypographySize,
   isTypographyWeight,
   isTypographyWrapPolicy,
+  resolveResponsiveTypographyRenderVariants,
   segmentTypographyText,
   type TypographyTextRun,
 } from "./typography.ts";
@@ -112,6 +114,77 @@ test("getTypographyEdgeScripts resolves leading and trailing scripts from mixed 
   assert.equal(mixed.trailing, "cjk");
   assert.equal(cjkOnly.leading, "cjk");
   assert.equal(cjkOnly.trailing, "cjk");
+});
+
+test("响应式 Typography 为三个断点生成同内容渲染实例，普通输入维持单实例", () => {
+  assert.equal(resolveResponsiveTypographyRenderVariants({
+    preset: "sans-body",
+    size: "body",
+    wrapPolicy: "prose",
+  }), null);
+
+  assert.deepEqual(resolveResponsiveTypographyRenderVariants({
+    preset: {
+      desktop: "luna-editorial",
+      mobile: "sans-body",
+      tablet: "gothic-editorial",
+    },
+    size: {
+      desktop: "display",
+      mobile: "title-sm",
+      tablet: "label",
+    },
+    wrapPolicy: {
+      desktop: "heading",
+      mobile: "prose",
+      tablet: "nowrap",
+    },
+  }), [
+    {
+      breakpoint: "mobile",
+      preset: "sans-body",
+      size: "title-sm",
+      wrapPolicy: "prose",
+    },
+    {
+      breakpoint: "tablet",
+      preset: "gothic-editorial",
+      size: "label",
+      wrapPolicy: "nowrap",
+    },
+    {
+      breakpoint: "desktop",
+      preset: "luna-editorial",
+      size: "display",
+      wrapPolicy: "heading",
+    },
+  ]);
+});
+
+test("三个断点字体完全相同时可以复用单个 Typography 实例", () => {
+  const variants = resolveResponsiveTypographyRenderVariants({
+    preset: {
+      desktop: "sans-body",
+      mobile: "sans-body",
+      tablet: "sans-body",
+    },
+    size: {
+      desktop: "body",
+      mobile: "body",
+      tablet: "body",
+    },
+    wrapPolicy: {
+      desktop: "prose",
+      mobile: "prose",
+      tablet: "prose",
+    },
+  });
+
+  assert.ok(variants);
+  assert.equal(
+    areResponsiveTypographyRenderVariantsEqual(variants),
+    true,
+  );
 });
 
 test("neutral script resolution keeps left priority and resets at line breaks", () => {

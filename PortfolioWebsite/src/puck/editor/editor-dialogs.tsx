@@ -90,6 +90,70 @@ export function UnsavedChangesDialog({
   );
 }
 
+export function LocalEditorTokenDialog({
+  errorMessage,
+  onClose,
+  onSubmit,
+}: {
+  errorMessage: string | null;
+  onClose: () => void;
+  onSubmit: (token: string) => void;
+}) {
+  const [token, setToken] = useState("");
+
+  const submit = (event: FormEvent) => {
+    event.preventDefault();
+    const normalizedToken = token.trim();
+    if (!normalizedToken) return;
+    onSubmit(normalizedToken);
+  };
+
+  const describedBy = [
+    "local-editor-token-help",
+    errorMessage ? "local-editor-token-error" : null,
+  ].filter(Boolean).join(" ");
+
+  return (
+    <DialogShell onClose={onClose} title="设置本机编辑 Token">
+      <form onSubmit={submit}>
+        <label className={styles.dialogField}>
+          <span>本机编辑 Token</span>
+          <input
+            aria-describedby={describedBy}
+            autoComplete="off"
+            autoFocus
+            onChange={(event) => setToken(event.currentTarget.value)}
+            placeholder="粘贴 .env.local 中允许的 Token"
+            spellCheck={false}
+            type="password"
+            value={token}
+          />
+          <small id="local-editor-token-help">
+            仅保存在当前浏览器与当前站点地址，不会写入页面内容或 Git。
+          </small>
+        </label>
+        {errorMessage && (
+          <p className={styles.dialogError} id="local-editor-token-error" role="alert">
+            {errorMessage}
+          </p>
+        )}
+        <div className={styles.dialogActions}>
+          <button className={styles.ghostButton} onClick={onClose} type="button">
+            取消
+          </button>
+          <button
+            className={styles.saveButton}
+            disabled={!token.trim()}
+            type="submit"
+          >
+            保存 Token 并重试
+          </button>
+        </div>
+      </form>
+    </DialogShell>
+  );
+}
+
 export function CreatePageDialog({
   errorMessage,
   isCreating,

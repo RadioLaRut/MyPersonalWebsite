@@ -3,6 +3,9 @@ import test from "node:test";
 
 import { createDefaultComponentDesignDocument } from "./component-design-v2.ts";
 import {
+  createDefaultComponentDesignDocument as createDefaultComponentDesignDocumentV3,
+} from "./component-design-v3.ts";
+import {
   areComponentDesignDocumentsEqual,
   COMPONENT_DESIGN_COMMIT_MESSAGE_TYPE,
   isCommittedComponentDesignMessage,
@@ -41,6 +44,31 @@ test("保存响应只替换提交时仍未变化的草稿", () => {
       submittedDraft,
     }),
     committedDocument,
+  );
+  assert.strictEqual(
+    reconcileComponentDesignDraftAfterSave({
+      committedDocument,
+      currentDraft: newerDraft,
+      submittedDraft,
+    }),
+    newerDraft,
+  );
+});
+
+test("V3 草稿比较包含样例文字和设备覆盖", () => {
+  const submittedDraft = createDefaultComponentDesignDocumentV3();
+  const committedDocument = structuredClone(submittedDraft);
+  const newerDraft = structuredClone(submittedDraft);
+  newerDraft.components.HeroSection.variants.full.sampleText.title =
+    "尚未提交的新文字";
+
+  assert.equal(
+    areComponentDesignDocumentsEqual(submittedDraft, committedDocument),
+    true,
+  );
+  assert.equal(
+    areComponentDesignDocumentsEqual(submittedDraft, newerDraft),
+    false,
   );
   assert.strictEqual(
     reconcileComponentDesignDraftAfterSave({

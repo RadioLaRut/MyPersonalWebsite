@@ -13,6 +13,7 @@ import {
   type ComponentDesignOverride,
   resolveComponentDesign,
 } from "@/lib/component-design-runtime";
+import { createNestedComponentVariantLayout } from "@/lib/component-design-nested-grid";
 import {
   toParagraphNodes,
   toPlainText,
@@ -23,6 +24,7 @@ import {
   getSectionSpacingClassName,
   getSpacingRem,
   getComponentSectionProfileClassName,
+  getComponentSectionStyle,
 } from "@/lib/component-design-style";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
 import type { PublicMediaHint } from "@/lib/media-layout";
@@ -62,9 +64,16 @@ export default function ContentCard({
 
   if (componentLayout) {
     const headingTypography = getComponentLayoutTypography(componentLayout, "heading");
-    const bodyTypography = getComponentLayoutTypography(componentLayout, "body");
+    const bodyItemTypography = getComponentLayoutTypography(componentLayout, "body.item");
+    const bodyItemLayout = createNestedComponentVariantLayout(
+      componentLayout,
+      "body",
+    );
     return (
-      <section className={`w-full ${getComponentSectionProfileClassName(componentLayout)}`}>
+      <section
+        className={`w-full ${getComponentSectionProfileClassName(componentLayout)}`}
+        style={getComponentSectionStyle(componentLayout)}
+      >
         <div className="grid-container items-start">
           <ComponentLayoutNode layout={componentLayout} nodeId="heading">
             <Typography
@@ -84,22 +93,31 @@ export default function ContentCard({
               gapFrom="heading"
               layout={componentLayout}
               nodeId="body"
-              className="grid"
+              className="relative grid grid-cols-12 content-start"
             >
               {paragraphs.map((paragraph, index) => (
-                <Typography
+                <ComponentLayoutNode
                   key={index}
-                  as="p"
-                  preset={bodyTypography?.preset ?? "sans-body"}
-                  size={bodyTypography?.size ?? "body"}
-                  weight="medium"
-                  wrapPolicy={bodyTypography?.wrap ?? "prose"}
-                  align={getComponentLayoutAlignment(componentLayout, "body", bodyAlign)}
-                  className="text-textSecondary"
-                  data-component-lab-node="body.item"
+                  gapFrom={index === 0 ? "body" : "body.item"}
+                  layout={bodyItemLayout}
+                  nodeId="body.item"
                 >
-                  {paragraph}
-                </Typography>
+                  <Typography
+                    as="p"
+                    preset={bodyItemTypography?.preset ?? "sans-body"}
+                    size={bodyItemTypography?.size ?? "body"}
+                    weight="medium"
+                    wrapPolicy={bodyItemTypography?.wrap ?? "prose"}
+                    align={getComponentLayoutAlignment(
+                      componentLayout,
+                      "body.item",
+                      bodyAlign,
+                    )}
+                    className="text-textSecondary"
+                  >
+                    {paragraph}
+                  </Typography>
+                </ComponentLayoutNode>
               ))}
             </ComponentLayoutNode>
           ) : null}

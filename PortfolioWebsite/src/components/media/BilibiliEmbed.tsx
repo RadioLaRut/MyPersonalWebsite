@@ -15,6 +15,7 @@ import {
 import {
   createResponsiveGridBounds,
   getComponentSectionProfileClassName,
+  getComponentSectionStyle,
   getResponsiveGridColumnClassName,
 } from "@/lib/component-design-style";
 import {
@@ -94,7 +95,10 @@ export default function BilibiliEmbed({
     const captionTypography = getComponentLayoutTypography(componentLayout, "caption");
     const linkTypography = getComponentLayoutTypography(componentLayout, "externalLink");
     return (
-      <section className={`w-full bg-black ${getComponentSectionProfileClassName(componentLayout)}`}>
+      <section
+        className={`w-full bg-black ${getComponentSectionProfileClassName(componentLayout)}`}
+        style={getComponentSectionStyle(componentLayout)}
+      >
         <div className="grid-container items-start">
           <ComponentLayoutNode
             as="figure"

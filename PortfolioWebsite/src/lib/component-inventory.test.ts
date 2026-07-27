@@ -8,7 +8,7 @@ const source = fs.readFileSync(
   "utf8",
 );
 
-test("组件总览编号覆盖 17 个作者组件", () => {
+test("组件总览编号覆盖 17 个页面级组件", () => {
   assert.equal(
     [...source.matchAll(/<article class="component-row">/g)].length,
     17,

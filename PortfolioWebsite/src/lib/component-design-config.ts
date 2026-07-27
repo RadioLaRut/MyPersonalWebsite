@@ -4,11 +4,17 @@ import os from "node:os";
 import path from "node:path";
 
 import {
-  createDefaultComponentDesignDocument,
-  parseCurrentComponentDesignDocument,
-  parseComponentDesignDocument,
-  type ComponentDesignDocument,
+  normalizeComponentDesignDocument as normalizeComponentDesignDocumentV2,
+  type ComponentDesignDocumentV2,
 } from "./component-design-v2.ts";
+import {
+  createDefaultComponentDesignDocument,
+  normalizeComponentDesignDocument as normalizeComponentDesignDocumentV3,
+  parseComponentDesignDocument,
+  parseCurrentComponentDesignDocument,
+  resolveComponentDesignRuntimeDocument,
+  type ComponentDesignDocumentV3,
+} from "./component-design-v3.ts";
 
 export const COMPONENT_DESIGN_CONFIG_ROOT = path.resolve(
   process.cwd(),
@@ -65,9 +71,9 @@ export async function hasComponentDesignConfig(
   }
 }
 
-export async function readComponentDesignConfig(
+export async function readComponentDesignSourceConfig(
   filePath = COMPONENT_DESIGN_CONFIG_FILE,
-): Promise<ComponentDesignDocument> {
+): Promise<ComponentDesignDocumentV3> {
   try {
     const raw = await fs.readFile(filePath, "utf8");
     const parsed = parseComponentDesignDocument(JSON.parse(raw));
@@ -87,8 +93,16 @@ export async function readComponentDesignConfig(
   }
 }
 
-export async function writeComponentDesignConfig(
-  document: ComponentDesignDocument,
+export async function readComponentDesignConfig(
+  filePath = COMPONENT_DESIGN_CONFIG_FILE,
+): Promise<ComponentDesignDocumentV2> {
+  return resolveComponentDesignRuntimeDocument(
+    await readComponentDesignSourceConfig(filePath),
+  );
+}
+
+export async function writeComponentDesignSourceConfig(
+  document: ComponentDesignDocumentV3,
   filePath = COMPONENT_DESIGN_CONFIG_FILE,
 ) {
   const strictDocument = parseCurrentComponentDesignDocument(document);
@@ -103,10 +117,24 @@ export async function writeComponentDesignConfig(
   );
 }
 
+export async function writeComponentDesignConfig(
+  document: ComponentDesignDocumentV2 | ComponentDesignDocumentV3,
+  filePath = COMPONENT_DESIGN_CONFIG_FILE,
+) {
+  const sourceDocument = parseComponentDesignDocument(document);
+  if (!sourceDocument) {
+    throw new TypeError("Invalid component design document");
+  }
+  await writeComponentDesignSourceConfig(sourceDocument, filePath);
+}
+
 export function getComponentDesignRevision(
-  document: ComponentDesignDocument,
+  document: ComponentDesignDocumentV2 | ComponentDesignDocumentV3,
 ): string {
+  const normalized = document.version === 3
+    ? normalizeComponentDesignDocumentV3(document)
+    : normalizeComponentDesignDocumentV2(document);
   return createHash("sha256")
-    .update(JSON.stringify(document))
+    .update(JSON.stringify(normalized))
     .digest("hex");
 }

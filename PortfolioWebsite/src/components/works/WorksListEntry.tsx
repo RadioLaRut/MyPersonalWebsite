@@ -160,14 +160,24 @@ export default function WorksListEntry({
             </ComponentLayoutNode>
           ) : null}
         </div>
-        {!editMode && imageSrc ? (
-          <div data-component-lab-node="item.media">
-            <WorksListEntryActivation
-              imageAlt={plainTitle ?? "Work entry"}
-              imageFitMode={imageFitMode}
-              imagePreset={imagePreset}
-              imageSrc={imageSrc}
-            />
+        {imageSrc ? (
+          <div className="pointer-events-none absolute inset-0 z-0">
+            <div className="grid-container h-full items-center">
+              <ComponentLayoutNode
+                className="pointer-events-auto relative self-center overflow-hidden"
+                layout={componentLayout}
+                nodeId="item.media"
+              >
+                <WorksListEntryActivation
+                  contained
+                  forceVisible={editMode}
+                  imageAlt={plainTitle ?? "Work entry"}
+                  imageFitMode={imageFitMode}
+                  imagePreset={imagePreset}
+                  imageSrc={imageSrc}
+                />
+              </ComponentLayoutNode>
+            </div>
           </div>
         ) : null}
       </MotionLink>

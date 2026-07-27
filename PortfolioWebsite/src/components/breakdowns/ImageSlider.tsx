@@ -18,6 +18,7 @@ import {
   getSectionSpacingClassName,
   getSpacingRem,
   getComponentSectionProfileClassName,
+  getComponentSectionStyle,
 } from "@/lib/component-design-style";
 import {
   hasEditableTextContent,
@@ -208,11 +209,14 @@ export default function ImageSlider({
       : "cursor-ew-resize";
 
   return (
-    <div className={`w-full ${
-      componentLayout
-        ? getComponentSectionProfileClassName(componentLayout)
-        : getSectionSpacingClassName(design.sectionSpacing)
-    } ${className}`}>
+    <div
+      className={`w-full ${
+        componentLayout
+          ? getComponentSectionProfileClassName(componentLayout)
+          : getSectionSpacingClassName(design.sectionSpacing)
+      } ${className}`}
+      style={getComponentSectionStyle(componentLayout)}
+    >
       <div className="grid-container">
         <ComponentLayoutNode
           layout={componentLayout}

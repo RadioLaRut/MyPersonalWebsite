@@ -22,7 +22,10 @@ import type {
   CreatePageRequest,
   PageSummary,
 } from "@/lib/editor-page-contract";
-import { getLocalEditorAccessHeaders } from "@/lib/local-editor-access";
+import {
+  getLocalEditorAccessHeaders,
+  setLocalEditorAccessToken,
+} from "@/lib/local-editor-access";
 import {
   normalizeEditorPathInputToSlugKey,
   toAdminPathFromSlugKey,
@@ -36,6 +39,7 @@ import config from "@/puck/config";
 import { createDesignAwareEditorConfig } from "@/puck/editor/design-aware-config";
 import {
   CreatePageDialog,
+  LocalEditorTokenDialog,
   UnsavedChangesDialog,
 } from "@/puck/editor/editor-dialogs";
 import {
@@ -56,6 +60,7 @@ import {
   AUTO_SAVE_INTERVAL_MS,
   getApiSaveErrorMessage,
   getUnexpectedSaveErrorMessage,
+  isEditorTokenRequired,
   type SaveState,
   type SaveTrigger,
 } from "@/puck/editor/save-status";
@@ -175,6 +180,8 @@ export default function PuckEditorClient({
   const [saveState, setSaveState] = useState<SaveState>("saved");
   const [saveTrigger, setSaveTrigger] = useState<SaveTrigger>("manual");
   const [saveErrorMessage, setSaveErrorMessage] = useState<string | null>(null);
+  const [editorTokenRequired, setEditorTokenRequired] = useState(false);
+  const [showEditorTokenDialog, setShowEditorTokenDialog] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [isSwitchingPage, startPageSwitchTransition] = useTransition();
   const [fontLabSyncState, setFontLabSyncState] = useState<FontLabSyncState>("idle");
@@ -356,6 +363,7 @@ export default function PuckEditorClient({
       if (isActivePage()) {
         setSaveTrigger(trigger);
         setSaveErrorMessage(null);
+        setEditorTokenRequired(false);
         setSaveState("saving");
       }
 
@@ -378,10 +386,19 @@ export default function PuckEditorClient({
           throw new Error(`保存接口返回了无法读取的响应（HTTP ${response.status}）。`);
         }
         if (!response.ok || payload.error) {
+          const tokenRequired = isEditorTokenRequired(payload);
+          if (isActivePage()) {
+            setEditorTokenRequired(tokenRequired);
+            if (tokenRequired && trigger === "manual") {
+              setShowEditorTokenDialog(true);
+            }
+          }
           throw new Error(getApiSaveErrorMessage(payload, response.status));
         }
 
         if (!isActivePage()) return false;
+        setEditorTokenRequired(false);
+        setShowEditorTokenDialog(false);
         const savedLatestRevision = dataRevisionRef.current === revision;
         lastSavedDataRef.current = savePayload;
         setLastSavedAt(new Date());
@@ -427,6 +444,23 @@ export default function PuckEditorClient({
 
   useEffect(() => {
     savePageRef.current = savePage;
+  }, [savePage]);
+
+  const saveEditorTokenAndRetry = useCallback((token: string) => {
+    try {
+      if (!setLocalEditorAccessToken(token)) {
+        setSaveErrorMessage("请输入非空的本地编辑 Token。");
+        return;
+      }
+    } catch (error) {
+      setSaveErrorMessage(getUnexpectedSaveErrorMessage(error));
+      setSaveState("error");
+      return;
+    }
+
+    setEditorTokenRequired(false);
+    setShowEditorTokenDialog(false);
+    void savePage("manual");
   }, [savePage]);
 
   const handleSaveShortcut = useCallback(() => {
@@ -660,14 +694,30 @@ export default function PuckEditorClient({
           sourceSlug={initialSlug}
         />
       )}
+      {showEditorTokenDialog && (
+        <LocalEditorTokenDialog
+          errorMessage={saveErrorMessage}
+          onClose={() => setShowEditorTokenDialog(false)}
+          onSubmit={saveEditorTokenAndRetry}
+        />
+      )}
       {saveState === "error" && saveErrorMessage && (
         <div className={styles.persistentSaveError} role="alert">
           <span>
             <strong>保存失败</strong>
             {saveErrorMessage}
           </span>
-          <button onClick={() => void savePage("manual")} type="button">
-            立即重试
+          <button
+            onClick={() => {
+              if (editorTokenRequired) {
+                setShowEditorTokenDialog(true);
+                return;
+              }
+              void savePage("manual");
+            }}
+            type="button"
+          >
+            {editorTokenRequired ? "设置 Token" : "立即重试"}
           </button>
         </div>
       )}

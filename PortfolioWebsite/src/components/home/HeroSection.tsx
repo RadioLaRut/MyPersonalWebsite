@@ -2,6 +2,7 @@ import React, { type ReactNode } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import ComponentLayoutNode, {
+  getComponentLabNodeAttributes,
   getComponentLayoutAlignment,
   getComponentLayoutTypography,
   type ComponentLayoutProps,
@@ -16,6 +17,7 @@ import {
 } from "@/lib/component-design-runtime";
 import {
   getComponentSectionProfileClassName,
+  getComponentSectionStyle,
   getResponsiveGridColumnClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
@@ -122,7 +124,7 @@ export default function HeroSection({
     const mediaLayer = (
       <div
         className="absolute inset-x-0 -inset-y-[12%] overflow-hidden lg:inset-0"
-        data-component-lab-node="media"
+        {...getComponentLabNodeAttributes(componentLayout, "media")}
         data-public-motion-media={editMode ? undefined : "true"}
       >
         <PresetImage
@@ -151,6 +153,7 @@ export default function HeroSection({
           getComponentSectionProfileClassName(componentLayout)
         }`}
         data-public-motion-kind={editMode ? undefined : "hero"}
+        style={getComponentSectionStyle(componentLayout)}
       >
         {mediaLayer}
         <div className="absolute inset-0 z-20 grid content-center">

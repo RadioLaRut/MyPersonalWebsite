@@ -188,6 +188,25 @@ test("组件开始拖拽时立即取消并清空悬停预览", () => {
   );
 });
 
+test("画布插入按钮先固定组件选区，并隔离 Puck 拖拽事件", () => {
+  assert.match(
+    editorWorkspaceSource,
+    /registerOverlayPortal\(buttonRef\.current,\s*\{\s*disableDrag:\s*true\s*\}\)/,
+  );
+  assert.match(
+    editorWorkspaceSource,
+    /data-puck-insertion-control="true"/,
+  );
+  assert.match(
+    editorWorkspaceSource,
+    /onClick=\{\(event\) => \{[\s\S]*?event\.detail === 0[\s\S]*?onFocus=\{onIntent\}[\s\S]*?onPointerDownCapture=\{\(event\) => \{[\s\S]*?event\.button !== 0[\s\S]*?event\.preventDefault\(\)[\s\S]*?onIntent\(\)[\s\S]*?onInsert\(\)[\s\S]*?onPointerEnter=\{onIntent\}/,
+  );
+  assert.match(
+    editorWorkspaceSource,
+    /const keepInsertionControlsMounted = \(\) => \{[\s\S]*?ui:\s*\{\s*itemSelector:\s*selector\s*\}[\s\S]*?recordHistory:\s*false/,
+  );
+});
+
 test("画布视口模式只控制宽度，预览高度跟随整页内容", () => {
   assert.equal(getPreviewCanvasScale(768, 1440), 0.5);
   assert.equal(getPreviewCanvasScale(768, 820), 720 / 820);
@@ -331,7 +350,7 @@ test("保存错误区分 token、内容校验、存储和网络失败", () => {
   storageError.name = "SecurityError";
   assert.equal(
     getUnexpectedSaveErrorMessage(storageError),
-    "浏览器禁止读取本地编辑 Token。请允许 localhost 使用本地存储后重试。",
+    "浏览器禁止读写本地编辑 Token。请允许 localhost 使用本地存储后重试。",
   );
   assert.equal(
     getUnexpectedSaveErrorMessage(new TypeError("Failed to fetch")),

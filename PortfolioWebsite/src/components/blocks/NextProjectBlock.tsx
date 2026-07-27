@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import ComponentLayoutNode, {
+    getComponentLabNodeAttributes,
     getComponentLayoutAlignment,
     getComponentLayoutTypography,
     type ComponentLayoutProps,
@@ -14,6 +15,7 @@ import {
 import { MotionLink } from "@/components/motion/MotionLink";
 import {
     getComponentSectionProfileClassName,
+    getComponentSectionStyle,
     getGridColumnClassName,
     getResponsiveGridColumnClassName,
     getSpacingRem,
@@ -53,17 +55,31 @@ export default function NextProjectBlock({
         const titleTypography = getComponentLayoutTypography(componentLayout, "title");
         const footerLeftTypography = getComponentLayoutTypography(componentLayout, "footerLeft");
         const footerRightTypography = getComponentLayoutTypography(componentLayout, "footerRight");
+        const mediaHeightClassName = [
+            (componentLayout.section?.mobile.height ?? "auto") === "auto"
+                ? "min-h-[calc(var(--site-viewport-unit)*60)]"
+                : "min-h-0",
+            (componentLayout.section?.tablet.height ?? "auto") === "auto"
+                ? "md:min-h-[calc(var(--site-viewport-unit)*60)]"
+                : "md:min-h-0",
+            (componentLayout.section?.desktop.height ?? "auto") === "auto"
+                ? "lg:min-h-[calc(var(--site-viewport-unit)*60)]"
+                : "lg:min-h-0",
+        ].join(" ");
         return (
-            <footer className={`relative z-20 mt-0 border-t border-white/20 ${getComponentSectionProfileClassName(componentLayout)}`}>
+            <footer
+                className={`relative z-20 mt-0 grid grid-rows-[minmax(0,1fr)_auto] border-t border-white/20 ${getComponentSectionProfileClassName(componentLayout)}`}
+                style={getComponentSectionStyle(componentLayout)}
+            >
                 <MotionLink
                     href={href}
                     disabled={editMode}
                     interactionPreset="blockLink"
-                    className={`group relative block h-[calc(var(--site-viewport-unit)*60)] w-full overflow-hidden bg-black ${editMode ? "cursor-default" : "interactive"}`}
+                    className={`group relative block h-full w-full overflow-hidden bg-black ${mediaHeightClassName} ${editMode ? "cursor-default" : "interactive"}`}
                 >
                     <div
-                        data-component-lab-node="media"
                         className="absolute inset-0 grid place-items-center"
+                        {...getComponentLabNodeAttributes(componentLayout, "media")}
                     >
                         <PresetImage
                             src={nextBg}

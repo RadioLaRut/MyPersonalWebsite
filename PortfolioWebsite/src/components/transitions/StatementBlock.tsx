@@ -13,6 +13,7 @@ import {
 import { Reveal } from "@/components/motion/Reveal";
 import {
   getComponentSectionProfileClassName,
+  getComponentSectionStyle,
   getGridColumnClassName,
 } from "@/lib/component-design-style";
 
@@ -57,11 +58,14 @@ export default function StatementBlock({
   }[minHeight];
 
   return (
-    <section className={`relative z-20 grid w-full ${heightClass} ${bgClass} ${
-      componentLayout
-        ? getComponentSectionProfileClassName(componentLayout)
-        : rhythmClass
-    } content-center`}>
+    <section
+      className={`relative z-20 grid w-full ${heightClass} ${bgClass} ${
+        componentLayout
+          ? getComponentSectionProfileClassName(componentLayout)
+          : rhythmClass
+      } content-center`}
+      style={getComponentSectionStyle(componentLayout)}
+    >
       <div className="grid-container w-full">
         <ComponentLayoutNode
           layout={componentLayout}

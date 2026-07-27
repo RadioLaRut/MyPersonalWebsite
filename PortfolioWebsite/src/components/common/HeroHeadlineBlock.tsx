@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import ComponentLayoutNode, {
+  getComponentLabNodeAttributes,
   getComponentLayoutAlignment,
   getComponentLayoutTypography,
   type ComponentLayoutProps,
@@ -20,6 +21,7 @@ import {
 } from "@/lib/image-presentation";
 import {
   getComponentSectionProfileClassName,
+  getComponentSectionStyle,
   getGridColumnClassName,
 } from "@/lib/component-design-style";
 import type { PublicMediaHint } from "@/lib/media-layout";
@@ -72,13 +74,16 @@ export default function HeroHeadlineBlock({
   const contentBoundsClassName = getGridColumnClassName(resolvedDesign.contentBounds);
 
   return (
-    <header className={`relative flex min-h-[calc(var(--site-viewport-unit)*85)] w-full items-center justify-center overflow-hidden bg-black ${
-      getComponentSectionProfileClassName(componentLayout)
-    }`}>
+    <header
+      className={`relative flex min-h-[calc(var(--site-viewport-unit)*85)] w-full items-center justify-center overflow-hidden bg-black ${
+        getComponentSectionProfileClassName(componentLayout)
+      }`}
+      style={getComponentSectionStyle(componentLayout)}
+    >
       {resolvedHeroImage ? (
         <div
           className="absolute inset-0 flex items-center justify-center"
-          data-component-lab-node="media"
+          {...getComponentLabNodeAttributes(componentLayout, "media")}
         >
           <PresetImage
             src={resolvedHeroImage}

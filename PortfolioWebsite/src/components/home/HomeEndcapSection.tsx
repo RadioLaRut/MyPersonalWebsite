@@ -16,6 +16,7 @@ import {
   getGridColumnClassName,
   getSpacingRem,
   getComponentSectionProfileClassName,
+  getComponentSectionStyle,
 } from "@/lib/component-design-style";
 import { hasEditableTextContent } from "@/lib/editable-text";
 import { isExternalWebHref } from "@/lib/puck-href";
@@ -54,7 +55,10 @@ export default function HomeEndcapSection({
     const descriptionTypography = getComponentLayoutTypography(componentLayout, "description");
     const ctaTypography = getComponentLayoutTypography(componentLayout, "cta");
     return (
-      <section className={`relative isolate grid min-h-[calc(var(--site-viewport-unit)*54)] w-full items-center overflow-hidden border-t border-white/10 bg-black ${getComponentSectionProfileClassName(componentLayout)}`}>
+      <section
+        className={`relative isolate grid min-h-[calc(var(--site-viewport-unit)*54)] w-full items-center overflow-hidden border-t border-white/10 bg-black ${getComponentSectionProfileClassName(componentLayout)}`}
+        style={getComponentSectionStyle(componentLayout)}
+      >
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_45%)]" />
         <div className="grid-container relative z-10">
           {hasEditableTextContent(eyebrow) ? (

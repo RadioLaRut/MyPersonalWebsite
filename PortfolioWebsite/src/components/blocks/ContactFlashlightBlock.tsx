@@ -1,7 +1,14 @@
-import React, { type CSSProperties, type ReactNode } from "react";
+import React, {
+    type ComponentPropsWithRef,
+    type CSSProperties,
+    type ElementType,
+    type ReactElement,
+    type ReactNode,
+} from "react";
 import ContactFlashlightIsland from "./ContactFlashlightIsland";
 import ComponentLayoutNode, {
     getComponentLayoutAlignment,
+    getComponentLayoutNode,
     getComponentLayoutTypography,
     type ComponentLayoutProps,
 } from "@/components/common/ComponentLayoutNode";
@@ -9,8 +16,13 @@ import Typography, {
     type TypographyAlignment,
 } from "@/components/common/Typography";
 import {
+    getComponentLayoutGap,
+    getComponentLayoutNodeClassName,
+    getComponentLayoutNodeStyle,
     getComponentSectionProfileClassName,
+    getComponentSectionStyle,
     getGridColumnClassName,
+    getResponsiveGapStyle,
 } from "@/lib/component-design-style";
 import {
     type ComponentDesignOverride,
@@ -43,6 +55,136 @@ export interface ContactFlashlightBlockProps extends ComponentDesignOverride<"Co
     experienceContent?: ReactNode;
     creativeContent?: ReactNode;
     editMode?: boolean;
+}
+
+type SlotElementProps = {
+    allow?: readonly string[];
+    as?: ElementType;
+    className?: string;
+    componentLabAnnotations?: true;
+    minEmptyHeight?: CSSProperties["minHeight"] | number;
+    style?: CSSProperties;
+};
+
+type RepeatedSlotStyle = CSSProperties & {
+    "--component-gap-desktop"?: string;
+    "--component-gap-mobile"?: string;
+    "--component-gap-tablet"?: string;
+    "--component-repeated-gap-desktop"?: string;
+    "--component-repeated-gap-mobile"?: string;
+    "--component-repeated-gap-tablet"?: string;
+};
+
+function isPuckSlotElement(
+    node: ReactNode,
+): node is ReactElement<SlotElementProps> {
+    if (!React.isValidElement(node) || typeof node.type === "string") {
+        return false;
+    }
+    const props = node.props as SlotElementProps;
+    return props.allow !== undefined || props.minEmptyHeight !== undefined;
+}
+
+function getRepeatedItemStyle(
+    style: CSSProperties | undefined,
+    occurrence: number,
+): RepeatedSlotStyle | undefined {
+    if (occurrence === 0) return style;
+    const repeatedStyle = style as RepeatedSlotStyle | undefined;
+    return {
+        ...style,
+        "--component-gap-desktop":
+            repeatedStyle?.["--component-repeated-gap-desktop"] ?? "0px",
+        "--component-gap-mobile":
+            repeatedStyle?.["--component-repeated-gap-mobile"] ?? "0px",
+        "--component-gap-tablet":
+            repeatedStyle?.["--component-repeated-gap-tablet"] ?? "0px",
+    };
+}
+
+function RepeatedSlotRoot({
+    children,
+    className,
+    componentLabAnnotations,
+    roleId,
+    style,
+    ...rootProps
+}: ComponentPropsWithRef<"div"> & {
+    componentLabAnnotations?: true;
+    roleId: string;
+}) {
+    const items = React.Children.toArray(children);
+    const isPuckEditor = Boolean(
+        (rootProps as Record<string, unknown>)["data-puck-dropzone"],
+    );
+    return (
+        <div
+            {...rootProps}
+            className={isPuckEditor ? className : "contents"}
+            style={isPuckEditor ? style : undefined}
+        >
+            {items.map((child, occurrence) => (
+                <div
+                    key={React.isValidElement(child) && child.key !== null
+                        ? child.key
+                        : occurrence}
+                    className={isPuckEditor ? undefined : className}
+                    {...(componentLabAnnotations
+                        ? {
+                            "data-component-lab-node": roleId,
+                            "data-component-lab-occurrence": occurrence,
+                        }
+                        : {})}
+                    style={isPuckEditor
+                        ? undefined
+                        : getRepeatedItemStyle(style, occurrence)}
+                >
+                    {child}
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function ClientsSlotRoot(props: ComponentPropsWithRef<"div">) {
+    return <RepeatedSlotRoot {...props} roleId="clients.item" />;
+}
+
+function EmploymentSlotRoot(props: ComponentPropsWithRef<"div">) {
+    return <RepeatedSlotRoot {...props} roleId="employment.item" />;
+}
+
+function getRepeatedSlotLayoutProps(
+    layout: NonNullable<ComponentLayoutProps["componentLayout"]>,
+    nodeId: string,
+    gapFrom: string,
+) {
+    const node = getComponentLayoutNode(layout, nodeId);
+    const firstGapStyle = getResponsiveGapStyle(
+        getComponentLayoutGap(layout, gapFrom, nodeId),
+    );
+    const repeatedGapStyle = getResponsiveGapStyle(
+        getComponentLayoutGap(layout, nodeId, nodeId),
+    );
+    const nodeStyle = getComponentLayoutNodeStyle(node, layout.section);
+    const hasGap = Boolean(firstGapStyle || repeatedGapStyle);
+    const style: RepeatedSlotStyle = {
+        ...firstGapStyle,
+        ...nodeStyle,
+        "--component-repeated-gap-desktop":
+            repeatedGapStyle?.["--component-gap-desktop"] ?? "0px",
+        "--component-repeated-gap-mobile":
+            repeatedGapStyle?.["--component-gap-mobile"] ?? "0px",
+        "--component-repeated-gap-tablet":
+            repeatedGapStyle?.["--component-gap-tablet"] ?? "0px",
+    };
+    return {
+        className: [
+            getComponentLayoutNodeClassName(node),
+            hasGap ? "component-layout-node-gap" : "",
+        ].filter(Boolean).join(" "),
+        style,
+    };
 }
 
 export default function ContactFlashlightBlock({
@@ -84,13 +226,81 @@ export default function ContactFlashlightBlock({
         WebkitMaskRepeat: "no-repeat",
         maskRepeat: "no-repeat",
     };
+    const experienceContentItems = React.Children.toArray(experienceContent);
+    const creativeContentItems = React.Children.toArray(creativeContent);
+
+    const renderRepeatedItems = ({
+        contentItems,
+        fallbackItems,
+        gapFrom,
+        layout,
+        roleId,
+        SlotRoot,
+    }: {
+        contentItems: ReactNode[];
+        fallbackItems: ReactNode[];
+        gapFrom: string;
+        layout?: NonNullable<ComponentLayoutProps["componentLayout"]>;
+        roleId: string;
+        SlotRoot: ElementType;
+    }) => {
+        const items = contentItems.length > 0
+            ? contentItems
+            : React.Children.toArray(fallbackItems);
+        const slotLayoutProps = layout
+            ? getRepeatedSlotLayoutProps(layout, roleId, gapFrom)
+            : null;
+        return items.map((child, occurrence) => {
+            if (isPuckSlotElement(child)) {
+                return React.cloneElement(child, {
+                    as: SlotRoot,
+                    className: [
+                        child.props.className ?? "",
+                        slotLayoutProps?.className ?? "",
+                    ].filter(Boolean).join(" "),
+                    componentLabAnnotations:
+                        layout?.componentLabAnnotations,
+                    style: {
+                        ...child.props.style,
+                        ...slotLayoutProps?.style,
+                    },
+                });
+            }
+            if (layout) {
+                return (
+                    <ComponentLayoutNode
+                        key={React.isValidElement(child) && child.key !== null
+                            ? child.key
+                            : occurrence}
+                        gapFrom={occurrence === 0 ? gapFrom : roleId}
+                        layout={layout}
+                        nodeId={roleId}
+                    >
+                        {child}
+                    </ComponentLayoutNode>
+                );
+            }
+            return (
+                <div
+                    key={React.isValidElement(child) && child.key !== null
+                        ? child.key
+                        : occurrence}
+                >
+                    {child}
+                </div>
+            );
+        });
+    };
 
     const renderV2ContentData = (interactive = true) => {
         if (!componentLayout) return null;
         const typography = (nodeId: string) =>
             getComponentLayoutTypography(componentLayout, nodeId);
         return (
-            <div className={`grid-container w-full ${getComponentSectionProfileClassName(componentLayout)}`}>
+            <div
+                className={`grid-container w-full ${getComponentSectionProfileClassName(componentLayout)}`}
+                style={getComponentSectionStyle(componentLayout)}
+            >
                 {hasEditableTextContent(name) ? (
                     <ComponentLayoutNode layout={componentLayout} nodeId="name">
                         <Typography
@@ -163,13 +373,10 @@ export default function ContactFlashlightBlock({
                         </Typography>
                     </ComponentLayoutNode>
                 ) : null}
-                {(experienceContent || experienceHistory.length > 0) ? (
-                    <ComponentLayoutNode
-                        gapFrom="clientsHeading"
-                        layout={componentLayout}
-                        nodeId="clients.item"
-                    >
-                        {experienceContent ?? experienceHistory.map((item, index) => (
+                {(experienceContentItems.length > 0 || experienceHistory.length > 0)
+                  ? renderRepeatedItems({
+                    contentItems: experienceContentItems,
+                    fallbackItems: experienceHistory.map((item, index) => (
                             <div key={index} className="grid gap-1">
                                 <Typography
                                     as="span"
@@ -194,9 +401,13 @@ export default function ContactFlashlightBlock({
                                     {item.role}
                                 </Typography>
                             </div>
-                        ))}
-                    </ComponentLayoutNode>
-                ) : null}
+                        )),
+                    gapFrom: "clientsHeading",
+                    layout: componentLayout,
+                    roleId: "clients.item",
+                    SlotRoot: ClientsSlotRoot,
+                  })
+                  : null}
                 {hasEditableTextContent(employmentHeading) ? (
                     <ComponentLayoutNode layout={componentLayout} nodeId="employmentHeading">
                         <Typography
@@ -212,13 +423,10 @@ export default function ContactFlashlightBlock({
                         </Typography>
                     </ComponentLayoutNode>
                 ) : null}
-                {(creativeContent || creativeDirection.length > 0) ? (
-                    <ComponentLayoutNode
-                        gapFrom="employmentHeading"
-                        layout={componentLayout}
-                        nodeId="employment.item"
-                    >
-                        {creativeContent ?? creativeDirection.map((item, index) => (
+                {(creativeContentItems.length > 0 || creativeDirection.length > 0)
+                  ? renderRepeatedItems({
+                    contentItems: creativeContentItems,
+                    fallbackItems: creativeDirection.map((item, index) => (
                             <div key={index} className="grid gap-1">
                                 <Typography
                                     as="span"
@@ -243,9 +451,13 @@ export default function ContactFlashlightBlock({
                                     {item.subtitle}
                                 </Typography>
                             </div>
-                        ))}
-                    </ComponentLayoutNode>
-                ) : null}
+                        )),
+                    gapFrom: "employmentHeading",
+                    layout: componentLayout,
+                    roleId: "employment.item",
+                    SlotRoot: EmploymentSlotRoot,
+                  })
+                  : null}
                 {hasEditableTextContent(contactHeading) ? (
                     <ComponentLayoutNode layout={componentLayout} nodeId="contactHeading">
                         <Typography
@@ -415,10 +627,9 @@ export default function ContactFlashlightBlock({
                         Experience History
                     </Typography>
                     <div className="mix-blend-normal rhythm-stack-3">
-                        {experienceContent ? (
-                            experienceContent
-                        ) : (
-                            experienceHistory.map((item, i) => (
+                        {renderRepeatedItems({
+                            contentItems: experienceContentItems,
+                            fallbackItems: experienceHistory.map((item, i) => (
                                 <div key={i} className="grid gap-1">
                                     <Typography
                                         as="span"
@@ -441,8 +652,11 @@ export default function ContactFlashlightBlock({
                                         {item.role}
                                     </Typography>
                                 </div>
-                            ))
-                        )}
+                            )),
+                            gapFrom: "clientsHeading",
+                            roleId: "clients.item",
+                            SlotRoot: ClientsSlotRoot,
+                        })}
                     </div>
                 </div>
 
@@ -458,10 +672,9 @@ export default function ContactFlashlightBlock({
                         Creative Direction
                     </Typography>
                     <div className="mix-blend-normal rhythm-stack-3">
-                        {creativeContent ? (
-                            creativeContent
-                        ) : (
-                            creativeDirection.map((item, i) => (
+                        {renderRepeatedItems({
+                            contentItems: creativeContentItems,
+                            fallbackItems: creativeDirection.map((item, i) => (
                                 <div key={i} className="grid gap-1">
                                     <Typography
                                         as="span"
@@ -484,8 +697,11 @@ export default function ContactFlashlightBlock({
                                         {item.subtitle}
                                     </Typography>
                                 </div>
-                            ))
-                        )}
+                            )),
+                            gapFrom: "employmentHeading",
+                            roleId: "employment.item",
+                            SlotRoot: EmploymentSlotRoot,
+                        })}
                     </div>
                 </div>
             </section>

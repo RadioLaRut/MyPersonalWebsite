@@ -51,7 +51,7 @@ test("公开媒体提示只注入公开渲染表面", () => {
   assert.deepEqual(element.props.publicMediaHint, publicMediaHint);
 });
 
-test("统一适配器注入作者组件的 V2 变体布局", () => {
+test("统一适配器只在 Lab 表面启用元素标注", () => {
   const designDocument = createDefaultComponentDesignDocument();
   const hero = renderWithAdapter({
     designDocument,
@@ -67,20 +67,47 @@ test("统一适配器注入作者组件的 V2 变体布局", () => {
     surface: "lab",
     type: "WorksList",
   }) as ReactElement<Record<string, unknown>>;
+  const publicHero = renderWithAdapter({
+    designDocument,
+    props: {},
+    render: render as never,
+    surface: "public",
+    type: "HeroSection",
+  }) as ReactElement<Record<string, unknown>>;
 
-  assert.deepEqual(
-    hero.props.componentLayout,
-    designDocument.components.HeroSection.variants.poster,
+  assert.equal(
+    (
+      hero.props.componentLayout as {
+        componentLabAnnotations?: true;
+      }
+    ).componentLabAnnotations,
+    true,
   );
   assert.equal(hero.props.componentVariant, "poster");
-  assert.deepEqual(
-    worksList.props.componentLayout,
-    designDocument.components.WorksList.variants.default,
+  assert.equal(
+    (
+      worksList.props.componentLayout as {
+        componentLabAnnotations?: true;
+      }
+    ).componentLabAnnotations,
+    true,
   );
   assert.equal(worksList.props.componentVariant, "default");
+  assert.deepEqual(
+    publicHero.props.componentLayout,
+    designDocument.components.HeroSection.variants.poster,
+  );
+  assert.equal(
+    (
+      publicHero.props.componentLayout as {
+        componentLabAnnotations?: true;
+      }
+    ).componentLabAnnotations,
+    undefined,
+  );
 });
 
-test("合并组件只暴露作者组件变体，不创建内部顶层作用域", () => {
+test("合并组件只暴露页面级组件版式，不创建内部顶层作用域", () => {
   const designDocument = createDefaultComponentDesignDocument();
 
   const header = resolveComponentDesignProps(

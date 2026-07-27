@@ -3,6 +3,7 @@
 import {
   Puck,
   createUsePuck,
+  registerOverlayPortal,
   type Overrides,
 } from "@puckeditor/core";
 import {
@@ -1254,6 +1255,50 @@ function Inspector({
   );
 }
 
+function EditorInsertionButton({
+  className,
+  label,
+  onInsert,
+  onIntent,
+}: {
+  className: string;
+  label: string;
+  onInsert: () => void;
+  onIntent: () => void;
+}) {
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    return registerOverlayPortal(buttonRef.current, { disableDrag: true });
+  }, []);
+
+  return (
+    <button
+      aria-label={label}
+      className={className}
+      data-puck-insertion-control="true"
+      onClick={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.detail === 0) onInsert();
+      }}
+      onFocus={onIntent}
+      onPointerDownCapture={(event) => {
+        if (event.button !== 0) return;
+        event.preventDefault();
+        onIntent();
+        onInsert();
+      }}
+      onPointerEnter={onIntent}
+      ref={buttonRef}
+      type="button"
+    >
+      <Plus aria-hidden="true" size={12} />
+      在此添加
+    </button>
+  );
+}
+
 export function EditorComponentOverlay({
   children,
   componentId,
@@ -1261,6 +1306,7 @@ export function EditorComponentOverlay({
   isSelected,
 }: Parameters<NonNullable<Overrides["componentOverlay"]>>[0]) {
   const { hoveredId, openInsertionTarget, setHoveredId } = useContext(InteractionContext);
+  const dispatch = useEditorPuck((state) => state.dispatch);
   const getSelectorForId = useEditorPuck((state) => state.getSelectorForId);
   const selector = getSelectorForId(componentId);
   const visible = hover || isSelected || hoveredId === componentId;
@@ -1270,6 +1316,14 @@ export function EditorComponentOverlay({
     openInsertionTarget({
       zone: selector.zone,
       index: selector.index + offset,
+    });
+  };
+  const keepInsertionControlsMounted = () => {
+    if (!selector || isSelected) return;
+    dispatch({
+      type: "setUi",
+      ui: { itemSelector: selector },
+      recordHistory: false,
     });
   };
 
@@ -1283,32 +1337,18 @@ export function EditorComponentOverlay({
       {children}
       {visible && selector && (
         <>
-          <button
-            aria-label="在此组件前添加"
+          <EditorInsertionButton
             className={styles.addBeforeButton}
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              openAtOffset(0);
-            }}
-            type="button"
-          >
-            <Plus aria-hidden="true" size={12} />
-            在此添加
-          </button>
-          <button
-            aria-label="在此组件后添加"
+            label="在此组件前添加"
+            onInsert={() => openAtOffset(0)}
+            onIntent={keepInsertionControlsMounted}
+          />
+          <EditorInsertionButton
             className={styles.addAfterButton}
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              openAtOffset(1);
-            }}
-            type="button"
-          >
-            <Plus aria-hidden="true" size={12} />
-            在此添加
-          </button>
+            label="在此组件后添加"
+            onInsert={() => openAtOffset(1)}
+            onIntent={keepInsertionControlsMounted}
+          />
         </>
       )}
     </div>

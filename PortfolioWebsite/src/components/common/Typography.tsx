@@ -23,7 +23,13 @@ import {
   type TypographyWeight,
   type TypographyWrapPolicy,
 } from "@/lib/typography-tokens";
-import { getTypographyEdgeScripts, segmentTypographyText } from "@/lib/typography";
+import {
+  areResponsiveTypographyRenderVariantsEqual,
+  getTypographyEdgeScripts,
+  resolveResponsiveTypographyRenderVariants,
+  segmentTypographyText,
+  type ResponsiveTypographyValue,
+} from "@/lib/typography";
 import {
   getTypographyAlignmentStyle,
   type TypographyAlignment,
@@ -47,16 +53,27 @@ type BaseTypographyProps = {
   className?: string;
   lang?: string;
   numericStyle?: TypographyNumericStyle;
-  preset: TypographyPreset;
-  size: TypographySize;
   style?: CSSProperties;
   weight?: TypographyWeightMode;
-  wrapPolicy?: TypographyWrapPolicy;
 };
 
-export type TypographyProps<T extends ElementType = "span"> = BaseTypographyProps & {
-  as?: T;
-};
+type ScalarTypographyProps<T extends ElementType = "span"> =
+  BaseTypographyProps & {
+    as?: T;
+    preset: TypographyPreset;
+    size: TypographySize;
+    wrapPolicy?: TypographyWrapPolicy;
+  };
+
+export type TypographyProps<T extends ElementType = "span"> =
+  BaseTypographyProps & {
+    as?: T;
+    preset: TypographyPreset | ResponsiveTypographyValue<TypographyPreset>;
+    size: TypographySize | ResponsiveTypographyValue<TypographySize>;
+    wrapPolicy?:
+      | TypographyWrapPolicy
+      | ResponsiveTypographyValue<TypographyWrapPolicy>;
+  };
 
 type StyleWithVars = CSSProperties & Record<string, string | number | undefined>;
 
@@ -235,7 +252,7 @@ function processTypographyChildren(
   );
 }
 
-export default function Typography<T extends ElementType = "span">({
+function TypographyScalar<T extends ElementType = "span">({
   as,
   align = "left",
   autospace = "off",
@@ -248,7 +265,7 @@ export default function Typography<T extends ElementType = "span">({
   style,
   weight = "regular",
   wrapPolicy = "prose",
-}: TypographyProps<T>) {
+}: ScalarTypographyProps<T>) {
   const resolvedSize = isTypographySizeSupported(preset, size)
     ? size
     : "display";
@@ -372,5 +389,58 @@ export default function Typography<T extends ElementType = "span">({
         ),
       )}
     </Component>
+  );
+}
+
+export default function Typography<T extends ElementType = "span">(
+  props: TypographyProps<T>,
+) {
+  const wrapPolicy = props.wrapPolicy ?? "prose";
+  const responsiveVariants = resolveResponsiveTypographyRenderVariants({
+    preset: props.preset,
+    size: props.size,
+    wrapPolicy,
+  });
+
+  if (!responsiveVariants) {
+    return (
+      <TypographyScalar
+        {...props}
+        preset={props.preset as TypographyPreset}
+        size={props.size as TypographySize}
+        wrapPolicy={wrapPolicy as TypographyWrapPolicy}
+      />
+    );
+  }
+
+  if (areResponsiveTypographyRenderVariantsEqual(responsiveVariants)) {
+    const firstVariant = responsiveVariants[0]!;
+    return (
+      <TypographyScalar
+        {...props}
+        preset={firstVariant.preset}
+        size={firstVariant.size}
+        wrapPolicy={firstVariant.wrapPolicy}
+      />
+    );
+  }
+
+  return (
+    <>
+      {responsiveVariants.map((variant) => (
+        <TypographyScalar
+          {...props}
+          key={variant.breakpoint}
+          className={twMerge(
+            "typography-responsive-variant",
+            `typography-responsive-variant--${variant.breakpoint}`,
+            props.className,
+          )}
+          preset={variant.preset}
+          size={variant.size}
+          wrapPolicy={variant.wrapPolicy}
+        />
+      ))}
+    </>
   );
 }

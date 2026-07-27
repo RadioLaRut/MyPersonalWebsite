@@ -14,6 +14,7 @@ import {
 } from "@/lib/component-design-runtime";
 import {
   getComponentSectionProfileClassName,
+  getComponentSectionStyle,
   getSectionSpacingClassName,
 } from "@/lib/component-design-style";
 
@@ -38,6 +39,7 @@ export default function RichParagraphBlock({
           ? getComponentSectionProfileClassName(componentLayout)
           : getSectionSpacingClassName(resolvedDesign.sectionSpacing)
       }`}
+      style={getComponentSectionStyle(componentLayout)}
     >
       <div className="grid-container w-full">
         <ComponentLayoutNode

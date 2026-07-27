@@ -90,6 +90,28 @@ body::-webkit-scrollbar {
   height: 12px;
 }
 
+.component-lab-scroll {
+  scrollbar-color: rgba(255, 255, 255, 0.24) transparent;
+  scrollbar-width: thin;
+}
+
+.component-lab-scroll::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.component-lab-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.component-lab-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.component-lab-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.36);
+}
+
 /**
  * 全局统一栅格系统 (12-Column Grid)
  * 用于确保所有页面组件在对齐上保持严丝合缝。
@@ -136,9 +158,49 @@ body::-webkit-scrollbar {
   margin-top: var(--component-gap-mobile, 0);
 }
 
+.component-layout-node-positioning--flow {
+  margin-top: var(
+    --component-node-gap-mobile,
+    var(--component-gap-mobile, 0)
+  );
+  order: var(--component-node-order-mobile, 0);
+}
+
+.component-layout-node-positioning--overlay {
+  position: var(--component-node-position-mobile, relative);
+  top: var(--component-node-top-mobile, auto);
+  translate: var(--component-node-translate-mobile, 0 0);
+}
+
+.grid-container:has(.component-layout-node-positioning--overlay) {
+  position: relative;
+}
+
+.component-layout-node-media-frame {
+  aspect-ratio: var(--component-media-aspect-mobile, revert-layer);
+  min-height: var(--component-media-min-height-mobile, revert-layer);
+  overflow: hidden;
+}
+
+.component-layout-node-media-frame > *,
+.component-layout-node-media-frame .preset-image-frame {
+  aspect-ratio: var(--component-media-child-aspect-mobile, revert-layer);
+  height: var(--component-media-child-height-mobile, revert-layer);
+}
+
 .component-section-profile {
-  padding-bottom: var(--component-section-bottom);
-  padding-top: var(--component-section-top);
+  padding-bottom: var(
+    --component-section-bottom-mobile,
+    var(--component-section-bottom)
+  );
+  padding-top: var(
+    --component-section-top-mobile,
+    var(--component-section-top)
+  );
+}
+
+.component-section-profile--custom-height {
+  min-height: var(--component-section-height-mobile, revert-layer);
 }
 
 .component-section-profile--compact {
@@ -166,6 +228,46 @@ body::-webkit-scrollbar {
     margin-top: var(--component-gap-tablet, 0);
   }
 
+  .component-layout-node-positioning--flow {
+    margin-top: var(
+      --component-node-gap-tablet,
+      var(--component-gap-tablet, 0)
+    );
+    order: var(--component-node-order-tablet, 0);
+  }
+
+  .component-layout-node-positioning--overlay {
+    position: var(--component-node-position-tablet, relative);
+    top: var(--component-node-top-tablet, auto);
+    translate: var(--component-node-translate-tablet, 0 0);
+  }
+
+  .component-layout-node-media-frame {
+    aspect-ratio: var(--component-media-aspect-tablet, revert-layer);
+    min-height: var(--component-media-min-height-tablet, revert-layer);
+  }
+
+  .component-layout-node-media-frame > *,
+  .component-layout-node-media-frame .preset-image-frame {
+    aspect-ratio: var(--component-media-child-aspect-tablet, revert-layer);
+    height: var(--component-media-child-height-tablet, revert-layer);
+  }
+
+  .component-section-profile {
+    padding-bottom: var(
+      --component-section-bottom-tablet,
+      var(--component-section-bottom)
+    );
+    padding-top: var(
+      --component-section-top-tablet,
+      var(--component-section-top)
+    );
+  }
+
+  .component-section-profile--custom-height {
+    min-height: var(--component-section-height-tablet, revert-layer);
+  }
+
   .component-section-profile--compact {
     --component-section-bottom: 64px;
     --component-section-top: 64px;
@@ -190,6 +292,46 @@ body::-webkit-scrollbar {
 @media (min-width: 1024px) {
   .component-layout-node-gap {
     margin-top: var(--component-gap-desktop, 0);
+  }
+
+  .component-layout-node-positioning--flow {
+    margin-top: var(
+      --component-node-gap-desktop,
+      var(--component-gap-desktop, 0)
+    );
+    order: var(--component-node-order-desktop, 0);
+  }
+
+  .component-layout-node-positioning--overlay {
+    position: var(--component-node-position-desktop, relative);
+    top: var(--component-node-top-desktop, auto);
+    translate: var(--component-node-translate-desktop, 0 0);
+  }
+
+  .component-layout-node-media-frame {
+    aspect-ratio: var(--component-media-aspect-desktop, revert-layer);
+    min-height: var(--component-media-min-height-desktop, revert-layer);
+  }
+
+  .component-layout-node-media-frame > *,
+  .component-layout-node-media-frame .preset-image-frame {
+    aspect-ratio: var(--component-media-child-aspect-desktop, revert-layer);
+    height: var(--component-media-child-height-desktop, revert-layer);
+  }
+
+  .component-section-profile {
+    padding-bottom: var(
+      --component-section-bottom-desktop,
+      var(--component-section-bottom)
+    );
+    padding-top: var(
+      --component-section-top-desktop,
+      var(--component-section-top)
+    );
+  }
+
+  .component-section-profile--custom-height {
+    min-height: var(--component-section-height-desktop, revert-layer);
   }
 
   .component-section-profile--compact {
@@ -226,6 +368,13 @@ body::-webkit-scrollbar {
   transform: translateX(var(--typography-translate-mobile, 0));
 }
 
+@media (max-width: 767px) {
+  .typography-responsive-variant--tablet,
+  .typography-responsive-variant--desktop {
+    display: none !important;
+  }
+}
+
 @media (min-width: 768px) {
   .typography-responsive-alignment {
     text-align: var(--typography-align-tablet, left);
@@ -234,11 +383,23 @@ body::-webkit-scrollbar {
   }
 }
 
+@media (min-width: 768px) and (max-width: 1023px) {
+  .typography-responsive-variant--mobile,
+  .typography-responsive-variant--desktop {
+    display: none !important;
+  }
+}
+
 @media (min-width: 1024px) {
   .typography-responsive-alignment {
     text-align: var(--typography-align-desktop, left);
     text-align-last: var(--typography-align-last-desktop, auto);
     transform: translateX(var(--typography-translate-desktop, 0));
+  }
+
+  .typography-responsive-variant--mobile,
+  .typography-responsive-variant--tablet {
+    display: none !important;
   }
 }
 

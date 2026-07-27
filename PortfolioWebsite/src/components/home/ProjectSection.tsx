@@ -1,6 +1,7 @@
 import React, { type ReactNode } from "react";
 import { PresetImage } from "@/components/common/PresetImage";
 import ComponentLayoutNode, {
+  getComponentLabNodeAttributes,
   getComponentLayoutAlignment,
   getComponentLayoutOpticalPull,
   getComponentLayoutTypography,
@@ -14,6 +15,7 @@ import {
 } from "@/lib/component-design-runtime";
 import {
   getComponentSectionProfileClassName,
+  getComponentSectionStyle,
   getResponsiveGridColumnClassName,
   getSpacingRem,
 } from "@/lib/component-design-style";
@@ -63,7 +65,13 @@ export default function ProjectSection({
   const imageAlt = plainTitle ?? PUBLIC_COPY.fallbacks.projectCoverAlt;
   const isLinkEnabled = !editMode && Boolean(link);
   const cursorClass = isLinkEnabled ? "cursor-pointer" : "cursor-default";
-  const sectionClassName = `relative m-0 grid min-h-[calc(var(--site-viewport-unit)*100)] w-full place-items-center overflow-hidden p-0 mix-blend-normal group ${cursorClass}`;
+  const sectionClassName = [
+    "relative m-0 grid min-h-[calc(var(--site-viewport-unit)*100)] w-full place-items-center overflow-hidden p-0 mix-blend-normal group",
+    cursorClass,
+    componentLayout
+      ? getComponentSectionProfileClassName(componentLayout)
+      : "",
+  ].filter(Boolean).join(" ");
   const mediaLayerClassName = "absolute inset-x-0 -inset-y-[10%] grid place-items-center px-0 lg:inset-0";
 
   const shouldAlignRight = align === "right" || (align === "auto" && index % 2 !== 0);
@@ -97,6 +105,29 @@ export default function ProjectSection({
   }))`;
   const subtitleTypography = getComponentLayoutTypography(componentLayout, "subtitle");
   const titleTypography = getComponentLayoutTypography(componentLayout, "title");
+  const titleRowClassName = hasEditableTextContent(subtitle)
+    ? "row-start-2"
+    : "row-start-1";
+  const hasActiveUnderlinePositioning = (
+    breakpoint: "desktop" | "mobile" | "tablet",
+  ) => {
+    const positioning =
+      componentLayout?.nodes.underline?.positioning?.[breakpoint];
+    return positioning?.mode === "overlay" &&
+      (
+        positioning.anchored === true ||
+        positioning.anchor !== "center" ||
+        positioning.offset !== 0
+      );
+  };
+  const underlineDefaultOffsetStyle = {
+    "--project-underline-offset-desktop":
+      hasActiveUnderlinePositioning("desktop") ? "0px" : underlineOffset,
+    "--project-underline-offset-mobile":
+      hasActiveUnderlinePositioning("mobile") ? "0px" : underlineOffset,
+    "--project-underline-offset-tablet":
+      hasActiveUnderlinePositioning("tablet") ? "0px" : underlineOffset,
+  } as React.CSSProperties;
 
   return (
     <MotionLink
@@ -111,10 +142,11 @@ export default function ProjectSection({
       }
       className={sectionClassName}
       data-public-motion-kind={editMode ? undefined : "project"}
+      style={getComponentSectionStyle(componentLayout)}
     >
       <div
         className={`${mediaLayerClassName} bg-[#111]`}
-        data-component-lab-node="media"
+        {...getComponentLabNodeAttributes(componentLayout, "media")}
         data-public-motion-media={editMode ? undefined : "true"}
       >
         {/* Environment ambient gradient/shadow to improve contrast */}
@@ -146,9 +178,7 @@ export default function ProjectSection({
       <div
         data-public-motion-content={editMode ? undefined : "true"}
         className={`absolute inset-0 z-20 grid content-center ${
-          componentLayout
-            ? getComponentSectionProfileClassName(componentLayout)
-            : "rhythm-section-normal"
+          componentLayout ? "" : "rhythm-section-normal"
         } ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}
       >
         <div className="grid-container relative w-full mix-blend-difference">
@@ -177,7 +207,7 @@ export default function ProjectSection({
                 gapFrom={hasEditableTextContent(subtitle) ? "subtitle" : undefined}
                 layout={componentLayout}
                 nodeId="title"
-                className={`relative grid w-fit max-w-full auto-rows-max gap-y-0 ${
+                className={`${titleRowClassName} relative grid w-fit max-w-full auto-rows-max gap-y-0 ${
                   getComponentLayoutAlignment(componentLayout, "title") === "right"
                     ? "justify-self-end justify-items-end"
                     : "justify-self-start justify-items-start"
@@ -198,15 +228,20 @@ export default function ProjectSection({
                 >
                   {title}
                 </Typography>
+              </ComponentLayoutNode>
+              <ComponentLayoutNode
+                className={`${titleRowClassName} pointer-events-none self-end`}
+                layout={componentLayout}
+                nodeId="underline"
+              >
                 <div
                   aria-hidden="true"
-                  data-component-lab-node="underline"
-                  className={`pointer-events-none absolute inset-x-0 flex ${
+                  className={`flex w-full [transform:translateY(var(--project-underline-offset-mobile))] md:[transform:translateY(var(--project-underline-offset-tablet))] lg:[transform:translateY(var(--project-underline-offset-desktop))] ${
                     getComponentLayoutAlignment(componentLayout, "title") === "right"
                       ? "justify-end"
                       : "justify-start"
                   }`}
-                  style={{ top: `calc(100% + ${underlineOffset})` }}
+                  style={underlineDefaultOffsetStyle}
                 >
                   <div className={`h-[2px] ${underlineFillClassName}`} />
                 </div>

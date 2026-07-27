@@ -15,6 +15,7 @@ import { MotionLink } from "@/components/motion/MotionLink";
 import {
   createResponsiveGridBounds,
   getComponentSectionProfileClassName,
+  getComponentSectionStyle,
   getResponsiveGridColumnClassName,
 } from "@/lib/component-design-style";
 import {
@@ -58,7 +59,10 @@ export default function LightingProjectCard({
     const promptTypography = getComponentLayoutTypography(componentLayout, "prompt");
     const titleTypography = getComponentLayoutTypography(componentLayout, "title");
     const card = (
-      <article className={`group relative w-full overflow-hidden ${getComponentSectionProfileClassName(componentLayout)}`}>
+      <article
+        className={`group relative w-full overflow-hidden ${getComponentSectionProfileClassName(componentLayout)}`}
+        style={getComponentSectionStyle(componentLayout)}
+      >
         <div className="grid-container relative min-h-[18rem] items-start md:min-h-[30rem]">
           <ComponentLayoutNode
             layout={componentLayout}

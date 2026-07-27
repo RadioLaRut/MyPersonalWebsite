@@ -5,6 +5,28 @@
         "pageSlug": "index",
         "componentId": "hero-section-1"
       },
+      "variantSamples": {
+        "poster": {
+          "props": {
+            "eyebrow": "LIGHTING / TECH ART / SYSTEM DESIGN",
+            "positioning": "INTERACTIVE NARRATIVE",
+            "subtitle": "PORTFOLIO / 2026",
+            "title": "JIANG\nCHENGYAN",
+            "variant": "poster"
+          }
+        },
+        "full": {
+          "props": {
+            "description": "以灯光、交互和技术系统构建可感知的叙事空间。",
+            "eyebrow": "SELECTED PRACTICE",
+            "primaryCtaLabel": "查看作品",
+            "secondaryCtaLabel": "了解方法",
+            "subtitle": "LIGHTING / INTERACTION / TECH ART",
+            "title": "DESIGNING ATMOSPHERE",
+            "variant": "full"
+          }
+        }
+      },
       "stressSample": {
         "instance": {
           "pageSlug": "index",
@@ -22,6 +44,16 @@
       "defaultInstance": {
         "pageSlug": "works/epic-stage",
         "componentId": "hero-1"
+      },
+      "variantSamples": {
+        "default": {
+          "props": {
+            "eyebrow": "PROJECT",
+            "navLinkLabel": "观看视频",
+            "subtitle": "舞台灯光、交互与环境叙事设计",
+            "title": "EPIC STAGE LIGHTING AND INTERACTIVE ENVIRONMENT"
+          }
+        }
       },
       "stressSample": {
         "instance": {
@@ -45,6 +77,26 @@
       "defaultInstance": {
         "pageSlug": "about",
         "componentId": "about-hero-1"
+      },
+      "variantSamples": {
+        "index": {
+          "props": {
+            "ctaLabel": "查看全部作品",
+            "descriptionLine1": "PRACTICE / PROCESS",
+            "descriptionLine2": "从视觉方向到可交付技术系统，持续校准叙事、约束与体验。",
+            "subtitle": "ART / TECHNOLOGY / INTERACTION",
+            "title": "ABOUT / PROCESS / PRACTICE",
+            "variant": "index"
+          }
+        },
+        "collection": {
+          "props": {
+            "description": "围绕场景照明、构图与技术验证整理的系列作品。",
+            "number": "02",
+            "title": "LIGHTING COLLECTION",
+            "variant": "collection"
+          }
+        }
       },
       "stressSample": {
         "instance": {
@@ -71,6 +123,80 @@
         "pageSlug": "works/holy-tank",
         "componentId": "holytank-card-2"
       },
+      "variantSamples": {
+        "media-left": {
+          "props": {
+            "body": "图像与正文并列呈现，用于说明过程、约束与设计判断。",
+            "bodyMode": "slot",
+            "heading": "SYSTEM CONSTRAINTS",
+            "layout": "media-left",
+            "paragraphs": [
+              {
+                "props": {
+                  "id": "component-lab-editorial-split-left-1",
+                  "text": "第一段用于说明问题背景与设计目标。"
+                },
+                "type": "TextParagraphBlock"
+              },
+              {
+                "props": {
+                  "id": "component-lab-editorial-split-left-2",
+                  "text": "第二段用于说明验证过程与最终结果。"
+                },
+                "type": "TextParagraphBlock"
+              }
+            ]
+          }
+        },
+        "media-right": {
+          "props": {
+            "body": "图像与正文并列呈现，用于说明过程、约束与设计判断。",
+            "bodyMode": "slot",
+            "heading": "HUMAN CONSEQUENCES",
+            "layout": "media-right",
+            "paragraphs": [
+              {
+                "props": {
+                  "id": "component-lab-editorial-split-right-1",
+                  "text": "第一段用于说明问题背景与设计目标。"
+                },
+                "type": "TextParagraphBlock"
+              },
+              {
+                "props": {
+                  "id": "component-lab-editorial-split-right-2",
+                  "text": "第二段用于说明验证过程与最终结果。"
+                },
+                "type": "TextParagraphBlock"
+              }
+            ]
+          }
+        },
+        "stack": {
+          "props": {
+            "body": "上下堆叠用于更长的阅读节奏与完整宽度媒体。",
+            "bodyMode": "slot",
+            "heading": "PROCESS AND OUTCOME",
+            "layout": "stack",
+            "paragraphs": [
+              {
+                "props": {
+                  "id": "component-lab-editorial-split-stack-1",
+                  "text": "第一段用于说明过程。"
+                },
+                "type": "TextParagraphBlock"
+              },
+              {
+                "props": {
+                  "id": "component-lab-editorial-split-stack-2",
+                  "text": "第二段用于说明结果。"
+                },
+                "type": "TextParagraphBlock"
+              }
+            ]
+          }
+        }
+      },
       "stressSample": {
         "instance": {
           "pageSlug": "works/holy-tank",
@@ -93,6 +219,72 @@
       "defaultInstance": {
         "pageSlug": "about",
         "componentId": "about-info-1"
+      },
+      "variantSamples": {
+        "phase": {
+          "props": {
+            "col1Body": "确认叙事目标、制作边界与关键风险。",
+            "col1Items": [
+              {
+                "props": {
+                  "id": "component-lab-phase-1-item-1",
+                  "label": "FOCUS",
+                  "value": "Narrative direction"
+                },
+                "type": "MetadataListItem"
+              },
+              {
+                "props": {
+                  "id": "component-lab-phase-1-item-2",
+                  "label": "OUTPUT",
+                  "value": "Visual prototype"
+                },
+                "type": "MetadataListItem"
+              }
+            ],
+            "col1Label": "PHASE 01",
+            "col1Subtitle": "DISCOVERY",
+            "col1Title": "CONSTRAINTS / DIRECTION",
+            "col2Body": "将视觉判断转化为可复用的制作系统。",
+            "col2Items": [
+              {
+                "props": {
+                  "id": "component-lab-phase-2-item-1",
+                  "label": "FOCUS",
+                  "value": "Production system"
+                },
+                "type": "MetadataListItem"
+              },
+              {
+                "props": {
+                  "id": "component-lab-phase-2-item-2",
+                  "label": "OUTPUT",
+                  "value": "Reusable tools"
+                },
+                "type": "MetadataListItem"
+              }
+            ],
+            "col2Label": "PHASE 02",
+            "col2Subtitle": "PRODUCTION",
+            "col2Title": "SYSTEMS / COLLABORATION",
+            "col3Body": "在真实画面中验证节奏、可读性与性能。",
+            "col3Label": "PHASE 03",
+            "col3Subtitle": "VALIDATION",
+            "col3Title": "ITERATION / DELIVERY",
+            "variant": "phase"
+          }
+        },
+        "triptych": {
+          "props": {
+            "col1Body": "第一组独立图文说明。",
+            "col1Title": "ATMOSPHERE",
+            "col2Body": "第二组独立图文说明。",
+            "col2Title": "INTERACTION",
+            "col3Body": "第三组独立图文说明。",
+            "col3Title": "SYSTEM",
+            "variant": "triptych"
+          }
+        }
       },
       "stressSample": {
         "instance": {
@@ -130,6 +322,26 @@
     },
     "StatementBlock": {
       "defaultInstance": null,
+      "variantSamples": {
+        "small": {
+          "props": {
+            "content": "短陈述用于快速建立章节节奏。",
+            "minHeight": "small"
+          }
+        },
+        "medium": {
+          "props": {
+            "content": "我们连接氛围、交互、制作约束与技术系统，同时保持表达清晰。",
+            "minHeight": "medium"
+          }
+        },
+        "large": {
+          "props": {
+            "content": "长陈述为核心观点保留更充分的停顿、空间与视觉重量。",
+            "minHeight": "large"
+          }
+        }
+      },
       "stressSample": {
         "kind": "standalone",
         "node": {
@@ -148,6 +360,13 @@
         "pageSlug": "works/im-explode",
         "componentId": "explod-desc-1"
       },
+      "variantSamples": {
+        "default": {
+          "props": {
+            "content": "这是一段用于检查中英文混排、自然换行与阅读宽度的 Lab 样例正文。\n\n第二段继续验证长内容的节奏。"
+          }
+        }
+      },
       "stressSample": {
         "instance": {
           "pageSlug": "works/im-explode",
@@ -164,6 +383,26 @@
         "pageSlug": "works/houdini-pcg",
         "componentId": "gallery-img-1"
       },
+      "variantSamples": {
+        "content": {
+          "props": {
+            "caption": "内容宽度图片 / 制作过程图注",
+            "variant": "content"
+          }
+        },
+        "large": {
+          "props": {
+            "caption": "大图展示 / 视觉验证图注",
+            "variant": "large"
+          }
+        },
+        "fullscreen": {
+          "props": {
+            "caption": "全屏图片 / 场景氛围图注",
+            "variant": "fullscreen"
+          }
+        }
+      },
       "stressSample": {
         "instance": {
           "pageSlug": "works/houdini-pcg",
@@ -179,6 +418,14 @@
       "defaultInstance": {
         "componentId": "bilibili-works-im-explode",
         "pageSlug": "works/im-explode"
+      },
+      "variantSamples": {
+        "default": {
+          "props": {
+            "caption": "项目影片 / 完整制作记录",
+            "externalLinkLabel": "在哔哩哔哩观看"
+          }
+        }
       },
       "stressSample": {
         "kind": "standalone",
@@ -198,6 +445,30 @@
       "defaultInstance": {
         "pageSlug": "index",
         "componentId": "proj-1"
+      },
+      "variantSamples": {
+        "card": {
+          "props": {
+            "number": "01",
+            "prompt": "进入项目",
+            "title": "INTERACTIVE LIGHTING SYSTEMS",
+            "variant": "card"
+          }
+        },
+        "immersive-left": {
+          "props": {
+            "subtitle": "Environment / Narrative / Technical Art",
+            "title": "INTERACTIVE LIGHTING SYSTEMS",
+            "variant": "immersive-left"
+          }
+        },
+        "immersive-right": {
+          "props": {
+            "subtitle": "Production / Tools / Collaboration",
+            "title": "SYSTEMS FOR ATMOSPHERE",
+            "variant": "immersive-right"
+          }
+        }
       },
       "stressSample": {
         "instance": {
@@ -225,6 +496,14 @@
         "pageSlug": "works",
         "componentId": "workslist-1"
       },
+      "variantSamples": {
+        "default": {
+          "props": {
+            "heading": "SELECTED WORKS / RESEARCH / PRODUCTION ARCHIVE",
+            "indexSummary": "灯光、交互、叙事与技术系统的完整作品索引。"
+          }
+        }
+      },
       "stressSample": {
         "instance": {
           "pageSlug": "works",
@@ -241,6 +520,30 @@
       "defaultInstance": {
         "pageSlug": "works/epic-stage",
         "componentId": "param-1"
+      },
+      "variantSamples": {
+        "default": {
+          "props": {
+            "mediaLabel": "PROCEDURAL GENERATION PREVIEW",
+            "parameters": [
+              {
+                "name": "Primary Atmosphere Density",
+                "value": "0.175",
+                "description": "控制完整序列中的体积雾响应。"
+              },
+              {
+                "name": "Directional Contrast",
+                "value": "1.85",
+                "description": "平衡主体可读性与背景灯光层级。"
+              },
+              {
+                "name": "Interactive Transition Duration",
+                "value": "2400ms",
+                "description": "验证较长参数名称在网格中的换行。"
+              }
+            ]
+          }
+        }
       },
       "stressSample": {
         "instance": {
@@ -281,6 +584,15 @@
         "pageSlug": "works/lighting-portfolio/collection-2",
         "componentId": "ImageSlider-fc7ebed5-5622-4dbf-abb3-43df8d11cd40"
       },
+      "variantSamples": {
+        "default": {
+          "props": {
+            "leftLabel": "BEFORE / UNLIT",
+            "rightLabel": "AFTER / FINAL",
+            "title": "UNLIT / FINAL LIGHTING / COMPOSITION COMPARISON"
+          }
+        }
+      },
       "stressSample": {
         "instance": {
           "pageSlug": "works/lighting-portfolio/collection-2",
@@ -299,6 +611,22 @@
         "pageSlug": "works/holy-tank",
         "componentId": "holytank-headline-1"
       },
+      "variantSamples": {
+        "chapter": {
+          "props": {
+            "indexLabel": "01",
+            "title": "RESEARCH AND CONSTRAINTS",
+            "variant": "chapter"
+          }
+        },
+        "section": {
+          "props": {
+            "indexLabel": "01.02",
+            "title": "ITERATION AND FINAL SYSTEM",
+            "variant": "section"
+          }
+        }
+      },
       "stressSample": {
         "instance": {
           "pageSlug": "works/holy-tank",
@@ -314,6 +642,16 @@
       "defaultInstance": {
         "pageSlug": "works/epic-stage",
         "componentId": "next-1"
+      },
+      "variantSamples": {
+        "default": {
+          "props": {
+            "eyebrow": "NEXT PROJECT",
+            "footerLeft": "© 2026 江承彦 / JIANG CHENGYAN",
+            "footerRight": "继续浏览",
+            "nextName": "NEXT PROJECT TITLE"
+          }
+        }
       },
       "stressSample": {
         "instance": {
@@ -333,6 +671,16 @@
         "pageSlug": "about",
         "componentId": "about-endcap-1"
       },
+      "variantSamples": {
+        "default": {
+          "props": {
+            "buttonLabel": "查看全部作品",
+            "description": "继续浏览灯光、交互、叙事与技术系统的完整作品档案。",
+            "eyebrow": "SELECTED WORKS",
+            "title": "COMPLETE PRODUCTION ARCHIVE"
+          }
+        }
+      },
       "stressSample": {
         "instance": {
           "pageSlug": "about",
@@ -349,6 +697,21 @@
       "defaultInstance": {
         "pageSlug": "about",
         "componentId": "about-contact-1"
+      },
+      "variantSamples": {
+        "default": {
+          "props": {
+            "clientsHeading": "EXPERIENCE HISTORY",
+            "contactHeading": "WECHAT / SOCIAL",
+            "copyLabel": "点击复制",
+            "emailHeading": "EMAIL / CONTACT",
+            "employmentHeading": "CREATIVE DIRECTION",
+            "name": "JIANG CHENGYAN",
+            "taglineSub": "CUC '2028 / AVAILABLE FOR COLLABORATION",
+            "taglineText": "艺术与科技 / 交互叙事设计 / 技术美术",
+            "wechat": "JIANG_CHENGYAN"
+          }
+        }
       },
       "stressSample": {
         "instance": {

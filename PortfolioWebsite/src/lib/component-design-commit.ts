@@ -1,34 +1,53 @@
 import {
-  normalizeComponentDesignDocument,
-  type ComponentDesignDocument,
+  normalizeComponentDesignDocument as normalizeComponentDesignDocumentV2,
+  type ComponentDesignDocumentV2,
 } from "./component-design-v2.ts";
+import {
+  normalizeComponentDesignDocument as normalizeComponentDesignDocumentV3,
+  type ComponentDesignDocumentV3,
+} from "./component-design-v3.ts";
 
 export const COMPONENT_DESIGN_COMMIT_CHANNEL = "component-design-committed-v2";
 export const COMPONENT_DESIGN_COMMIT_MESSAGE_TYPE = "component-design-committed";
 
 export type CommittedComponentDesignMessage = {
-  document: ComponentDesignDocument;
+  document: ComponentDesignDocumentV2;
   type: typeof COMPONENT_DESIGN_COMMIT_MESSAGE_TYPE;
   version: 2;
 };
 
-export function areComponentDesignDocumentsEqual(
-  left: ComponentDesignDocument,
-  right: ComponentDesignDocument,
+export type ComponentDesignComparableDocument =
+  | ComponentDesignDocumentV2
+  | ComponentDesignDocumentV3;
+
+function normalizeComparableDocument(
+  document: ComponentDesignComparableDocument,
 ) {
-  return JSON.stringify(normalizeComponentDesignDocument(left)) ===
-    JSON.stringify(normalizeComponentDesignDocument(right));
+  return document.version === 3
+    ? normalizeComponentDesignDocumentV3(document)
+    : normalizeComponentDesignDocumentV2(document);
 }
 
-export function reconcileComponentDesignDraftAfterSave({
+export function areComponentDesignDocumentsEqual(
+  left: ComponentDesignComparableDocument,
+  right: ComponentDesignComparableDocument,
+) {
+  return left.version === right.version &&
+    JSON.stringify(normalizeComparableDocument(left)) ===
+      JSON.stringify(normalizeComparableDocument(right));
+}
+
+export function reconcileComponentDesignDraftAfterSave<
+  Document extends ComponentDesignComparableDocument,
+>({
   committedDocument,
   currentDraft,
   submittedDraft,
 }: {
-  committedDocument: ComponentDesignDocument;
-  currentDraft: ComponentDesignDocument;
-  submittedDraft: ComponentDesignDocument;
-}) {
+  committedDocument: Document;
+  currentDraft: Document;
+  submittedDraft: Document;
+}): Document {
   return areComponentDesignDocumentsEqual(currentDraft, submittedDraft)
     ? committedDocument
     : currentDraft;

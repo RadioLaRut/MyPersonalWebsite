@@ -19,6 +19,7 @@ import {
     getSectionSpacingClassName,
     getSpacingRem,
     getComponentSectionProfileClassName,
+    getComponentSectionStyle,
 } from "@/lib/component-design-style";
 import WorksListEntry, {
     type WorksListEntryAlias,
@@ -86,7 +87,10 @@ export default function WorksList({
         const headingTypography = getComponentLayoutTypography(componentLayout, "heading");
         const summaryTypography = getComponentLayoutTypography(componentLayout, "indexSummary");
         return (
-            <section className={`grid w-full content-center text-white ${getComponentSectionProfileClassName(componentLayout)}`}>
+            <section
+                className={`grid w-full content-center text-white ${getComponentSectionProfileClassName(componentLayout)}`}
+                style={getComponentSectionStyle(componentLayout)}
+            >
                 {(hasEditableTextContent(heading) || hasEditableTextContent(indexSummary)) ? (
                     <div className={`grid-container relative z-20 border-b border-white/10 pb-8 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
                         {hasEditableTextContent(heading) ? (

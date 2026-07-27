@@ -23,6 +23,30 @@ export type TypographyEdgeScripts = {
   trailing: TypographyScript | null;
 };
 
+export type ResponsiveTypographyValue<Value> = {
+  desktop: Value;
+  mobile: Value;
+  tablet: Value;
+};
+
+export type ResponsiveTypographyRenderVariant = {
+  breakpoint: keyof ResponsiveTypographyValue<unknown>;
+  preset: TypographyPreset;
+  size: TypographySize;
+  wrapPolicy: TypographyWrapPolicy;
+};
+
+export function areResponsiveTypographyRenderVariantsEqual(
+  variants: readonly ResponsiveTypographyRenderVariant[],
+) {
+  const first = variants[0];
+  return Boolean(first) && variants.every((variant) =>
+    variant.preset === first.preset &&
+    variant.size === first.size &&
+    variant.wrapPolicy === first.wrapPolicy
+  );
+}
+
 const HAN_REGEX = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u;
 const LATIN_REGEX = /[\p{Script=Latin}\p{Nd}]/u;
 const CJK_PUNCTUATION_REGEX = /[\u3000-\u303F\uFF00-\uFFEF]/u;
@@ -169,4 +193,48 @@ export function isTypographyNumericStyle(
   value: string,
 ): value is TypographyNumericStyle {
   return TYPOGRAPHY_NUMERIC_STYLES.includes(value as TypographyNumericStyle);
+}
+
+function isResponsiveTypographyValue<Value>(
+  value: Value | ResponsiveTypographyValue<Value>,
+): value is ResponsiveTypographyValue<Value> {
+  return typeof value === "object" &&
+    value !== null &&
+    "desktop" in value &&
+    "mobile" in value &&
+    "tablet" in value;
+}
+
+function resolveTypographyBreakpointValue<Value>(
+  value: Value | ResponsiveTypographyValue<Value>,
+  breakpoint: keyof ResponsiveTypographyValue<unknown>,
+): Value {
+  return isResponsiveTypographyValue(value) ? value[breakpoint] : value;
+}
+
+export function resolveResponsiveTypographyRenderVariants({
+  preset,
+  size,
+  wrapPolicy,
+}: {
+  preset: TypographyPreset | ResponsiveTypographyValue<TypographyPreset>;
+  size: TypographySize | ResponsiveTypographyValue<TypographySize>;
+  wrapPolicy:
+    | TypographyWrapPolicy
+    | ResponsiveTypographyValue<TypographyWrapPolicy>;
+}): ResponsiveTypographyRenderVariant[] | null {
+  if (
+    !isResponsiveTypographyValue(preset) &&
+    !isResponsiveTypographyValue(size) &&
+    !isResponsiveTypographyValue(wrapPolicy)
+  ) {
+    return null;
+  }
+
+  return (["mobile", "tablet", "desktop"] as const).map((breakpoint) => ({
+    breakpoint,
+    preset: resolveTypographyBreakpointValue(preset, breakpoint),
+    size: resolveTypographyBreakpointValue(size, breakpoint),
+    wrapPolicy: resolveTypographyBreakpointValue(wrapPolicy, breakpoint),
+  }));
 }

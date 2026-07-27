@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { PresetImage } from "@/components/common/PresetImage";
 import ComponentLayoutNode, {
+  getComponentLabNodeAttributes,
   getComponentLayoutAlignment,
   getComponentLayoutTypography,
   type ComponentLayoutProps,
@@ -18,6 +19,7 @@ import {
   getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
   getComponentSectionProfileClassName,
+  getComponentSectionStyle,
 } from "@/lib/component-design-style";
 import {
   hasEditableTextContent,
@@ -36,6 +38,21 @@ export type ImagePanelProps = {
   variant?: "content" | "large" | "fullscreen";
   publicMediaHint?: PublicMediaHint;
 } & ComponentDesignOverride<"ImagePanel"> & ComponentLayoutProps;
+
+function hasActiveOverlayPositioning(
+  componentLayout: ComponentLayoutProps["componentLayout"],
+  nodeId: string,
+  breakpoint: "desktop" | "mobile" | "tablet",
+) {
+  const positioning =
+    componentLayout?.nodes[nodeId]?.positioning?.[breakpoint];
+  return positioning?.mode === "overlay" &&
+    (
+      positioning.anchored === true ||
+      positioning.anchor !== "center" ||
+      positioning.offset !== 0
+    );
+}
 
 export default function ImagePanel({
   src,
@@ -57,6 +74,17 @@ export default function ImagePanel({
 
   if (componentLayout) {
     const captionTypography = getComponentLayoutTypography(componentLayout, "caption");
+    const captionDefaultOffsetClassName = [
+      hasActiveOverlayPositioning(componentLayout, "caption", "mobile")
+        ? "mb-0"
+        : "mb-6",
+      hasActiveOverlayPositioning(componentLayout, "caption", "tablet")
+        ? "md:mb-0"
+        : "md:mb-6",
+      hasActiveOverlayPositioning(componentLayout, "caption", "desktop")
+        ? "lg:mb-0"
+        : "lg:mb-6",
+    ].join(" ");
     const media = (
       <PresetImage
         alt={imageAlt}
@@ -79,35 +107,47 @@ export default function ImagePanel({
     );
     if (variant === "fullscreen") {
       return (
-        <section className={`relative min-h-[calc(var(--site-viewport-unit)*100)] w-full bg-black ${getComponentSectionProfileClassName(componentLayout)}`}>
+        <section
+          className={`relative min-h-[calc(var(--site-viewport-unit)*100)] w-full bg-black ${getComponentSectionProfileClassName(componentLayout)}`}
+          style={getComponentSectionStyle(componentLayout)}
+        >
           <div
             className="absolute inset-0"
-            data-component-lab-node="media"
+            {...getComponentLabNodeAttributes(componentLayout, "media")}
           >
             {media}
           </div>
-          {hasCaption ? (
-            <div className="grid-container absolute inset-x-0 bottom-6 z-10">
-              <ComponentLayoutNode layout={componentLayout} nodeId="caption">
-                <Typography
-                  as="p"
-                  preset={captionTypography?.preset ?? "sans-body"}
-                  size={captionTypography?.size ?? "caption"}
-                  weight="semantic"
-                  wrapPolicy={captionTypography?.wrap ?? "prose"}
-                  align={getComponentLayoutAlignment(componentLayout, "caption", captionAlign)}
-                  className="bg-black/65 px-4 py-2 text-textPrimary"
+          <div className="pointer-events-none absolute inset-0 z-10">
+            <div className="grid-container h-full">
+              {hasCaption ? (
+                <ComponentLayoutNode
+                  className={`pointer-events-auto self-end ${captionDefaultOffsetClassName}`}
+                  layout={componentLayout}
+                  nodeId="caption"
                 >
-                  {caption}
-                </Typography>
-              </ComponentLayoutNode>
+                  <Typography
+                    as="p"
+                    preset={captionTypography?.preset ?? "sans-body"}
+                    size={captionTypography?.size ?? "caption"}
+                    weight="semantic"
+                    wrapPolicy={captionTypography?.wrap ?? "prose"}
+                    align={getComponentLayoutAlignment(componentLayout, "caption", captionAlign)}
+                    className="bg-black/65 px-4 py-2 text-textPrimary"
+                  >
+                    {caption}
+                  </Typography>
+                </ComponentLayoutNode>
+              ) : null}
             </div>
-          ) : null}
+          </div>
         </section>
       );
     }
     return (
-      <section className={`w-full ${getComponentSectionProfileClassName(componentLayout)}`}>
+      <section
+        className={`w-full ${getComponentSectionProfileClassName(componentLayout)}`}
+        style={getComponentSectionStyle(componentLayout)}
+      >
         <div className="grid-container items-start">
           <ComponentLayoutNode
             as="figure"

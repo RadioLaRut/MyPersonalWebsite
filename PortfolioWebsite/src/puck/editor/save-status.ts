@@ -16,8 +16,12 @@ export const AUTO_SAVE_INTERVAL_MS = 180_000;
 export const DEFAULT_SAVE_ERROR_MESSAGE =
   "更改尚未保存。请检查浏览器控制台和本地编辑 Token 后重试。";
 
+export function isEditorTokenRequired(payload: SaveApiPayload) {
+  return payload.error?.code === "EDITOR_TOKEN_REQUIRED";
+}
+
 export function getApiSaveErrorMessage(payload: SaveApiPayload, responseStatus: number) {
-  if (payload.error?.code === "EDITOR_TOKEN_REQUIRED") {
+  if (isEditorTokenRequired(payload)) {
     return "浏览器中的本地编辑 Token 缺失，或不在 .env.local 允许的 Token 列表中。请为这台电脑重新设置 Token 后重试。";
   }
 
@@ -39,7 +43,7 @@ export function getUnexpectedSaveErrorMessage(error: unknown) {
   }
 
   if (error.name === "SecurityError") {
-    return "浏览器禁止读取本地编辑 Token。请允许 localhost 使用本地存储后重试。";
+    return "浏览器禁止读写本地编辑 Token。请允许 localhost 使用本地存储后重试。";
   }
 
   if (/failed to fetch|networkerror|network request failed/i.test(error.message)) {

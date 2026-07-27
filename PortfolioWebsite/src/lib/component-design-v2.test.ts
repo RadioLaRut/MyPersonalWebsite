@@ -15,9 +15,115 @@ import {
   resolveComponentDesignVariant,
 } from "./component-design-v2.ts";
 import {
+  getComponentLayoutNodeClassName,
+  getComponentLayoutNodeStyle,
+} from "./component-design-style.ts";
+import {
   createDefaultComponentDesignDocument as createLegacyComponentDesignDocument,
 } from "./component-design-schema.ts";
 import { isTypographyFontLabSizeSupported } from "./typography-tokens.ts";
+
+test("显式锚定的 center/0 使用绝对定位，旧 center/0 保持流式视觉", () => {
+  const document = createDefaultComponentDesignDocument();
+  const title =
+    document.components.HeroSection.variants.poster.nodes.title;
+  title.positioning = {
+    desktop: { anchor: "center", mode: "overlay", offset: 0 },
+    mobile: { anchor: "center", mode: "overlay", offset: 0 },
+    tablet: { anchor: "center", mode: "overlay", offset: 0 },
+  };
+
+  assert.doesNotMatch(
+    getComponentLayoutNodeClassName(title),
+    /positioning--overlay/,
+  );
+  assert.equal(
+    getComponentLayoutNodeStyle(title)?.["--component-node-position-desktop"],
+    "relative",
+  );
+
+  title.positioning.desktop = {
+    anchor: "center",
+    anchored: true,
+    mode: "overlay",
+    offset: 0,
+  };
+  assert.match(
+    getComponentLayoutNodeClassName(title),
+    /positioning--overlay/,
+  );
+  assert.equal(
+    getComponentLayoutNodeStyle(title)?.["--component-node-position-desktop"],
+    "absolute",
+  );
+  assert.equal(
+    getComponentLayoutNodeStyle(title)?.["--component-node-top-desktop"],
+    "50%",
+  );
+  assert.ok(parseCurrentComponentDesignDocument(document));
+
+  title.positioning.desktop = {
+    anchor: "top",
+    mode: "overlay",
+    offset: 0,
+  };
+  assert.equal(
+    getComponentLayoutNodeStyle(title)?.["--component-node-position-desktop"],
+    "absolute",
+  );
+  assert.ok(parseCurrentComponentDesignDocument(document));
+
+  (
+    title.positioning.desktop as unknown as { anchored: boolean }
+  ).anchored = false;
+  assert.equal(parseCurrentComponentDesignDocument(document), null);
+});
+
+test("V2 默认文档不持久化响应式字体，但规范化会保留合法来源", () => {
+  const document = createDefaultComponentDesignDocument();
+  const title =
+    document.components.HeroSection.variants.poster.nodes.title;
+  assert.equal(title.responsiveTypography, undefined);
+
+  title.responsiveTypography = {
+    desktop: {
+      preset: "luna-editorial",
+      size: "display",
+      wrap: "heading",
+    },
+    mobile: {
+      preset: "sans-body",
+      size: "title-sm",
+      wrap: "prose",
+    },
+    tablet: {
+      preset: "gothic-editorial",
+      size: "label",
+      wrap: "nowrap",
+    },
+  };
+
+  const normalized = normalizeComponentDesignDocument(document);
+  assert.deepEqual(
+    normalized.components.HeroSection.variants.poster.nodes.title
+      .responsiveTypography,
+    title.responsiveTypography,
+  );
+  assert.ok(parseCurrentComponentDesignDocument(document));
+
+  document.components.HeroSection.variants.poster.nodes.title
+    .responsiveTypography!.mobile = {
+      preset: "classical-display",
+      size: "hero",
+      wrap: "heading",
+    };
+  assert.equal(parseCurrentComponentDesignDocument(document), null);
+  assert.equal(
+    normalizeComponentDesignDocument(document).components.HeroSection.variants
+      .poster.nodes.title.responsiveTypography,
+    undefined,
+  );
+});
 
 test("V2 只接受页面 12 格内的整数 start/span，且不保存结束格", () => {
   assert.equal(isGridPlacement({ start: 1, span: 12 }), true);
@@ -151,7 +257,7 @@ test("V1 响应式 base/md/lg 无损迁移为 mobile/tablet/desktop", () => {
   assert.ok(parseCurrentComponentDesignDocument(migrated));
 });
 
-test("结构变体解析只产生 manifest 中的固定变体", () => {
+test("版式解析只产生 manifest 中声明的固定版式", () => {
   assert.equal(
     resolveComponentDesignVariant("HeroSection", { variant: "poster" }),
     "poster",

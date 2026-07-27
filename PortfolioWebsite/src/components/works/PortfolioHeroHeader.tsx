@@ -18,6 +18,7 @@ import {
     getResponsiveGridColumnClassName,
     getSpacingRem,
     getComponentSectionProfileClassName,
+    getComponentSectionStyle,
 } from "@/lib/component-design-style";
 
 type LightingCollectionHeroHeaderProps = {
@@ -57,7 +58,10 @@ export default function LightingCollectionHeroHeader({
         const descriptionTypography = getComponentLayoutTypography(componentLayout, "description");
         const ctaTypography = getComponentLayoutTypography(componentLayout, "cta");
         return (
-            <section className={`border-b border-white/10 ${getComponentSectionProfileClassName(componentLayout)}`}>
+            <section
+                className={`border-b border-white/10 ${getComponentSectionProfileClassName(componentLayout)}`}
+                style={getComponentSectionStyle(componentLayout)}
+            >
                 <div className="grid-container items-end">
                     <ComponentLayoutNode layout={componentLayout} nodeId="title">
                         <Typography

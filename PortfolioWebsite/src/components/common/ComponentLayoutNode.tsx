@@ -7,10 +7,13 @@ import {
 import {
   getComponentLayoutGap,
   getComponentLayoutNodeClassName,
+  getComponentLayoutNodeStyle,
   getResponsiveGapStyle,
 } from "@/lib/component-design-style";
 import type {
   ComponentLayoutNode as ComponentLayoutNodeValue,
+  ComponentNodeTypography,
+  ComponentResponsiveValue,
   ComponentVariantLayout,
 } from "@/lib/component-design-v2";
 import type {
@@ -32,8 +35,30 @@ export function getComponentLayoutNode(
 export function getComponentLayoutTypography(
   layout: ComponentVariantLayout | undefined,
   nodeId: string,
-) {
-  return getComponentLayoutNode(layout, nodeId)?.typography;
+): ComponentNodeTypography | {
+  preset: ComponentResponsiveValue<ComponentNodeTypography["preset"]>;
+  size: ComponentResponsiveValue<ComponentNodeTypography["size"]>;
+  wrap: ComponentResponsiveValue<ComponentNodeTypography["wrap"]>;
+} | undefined {
+  const node = getComponentLayoutNode(layout, nodeId);
+  if (!node?.responsiveTypography) return node?.typography;
+  return {
+    preset: {
+      desktop: node.responsiveTypography.desktop.preset,
+      mobile: node.responsiveTypography.mobile.preset,
+      tablet: node.responsiveTypography.tablet.preset,
+    },
+    size: {
+      desktop: node.responsiveTypography.desktop.size,
+      mobile: node.responsiveTypography.mobile.size,
+      tablet: node.responsiveTypography.tablet.size,
+    },
+    wrap: {
+      desktop: node.responsiveTypography.desktop.wrap,
+      mobile: node.responsiveTypography.mobile.wrap,
+      tablet: node.responsiveTypography.tablet.wrap,
+    },
+  };
 }
 
 export function getComponentLayoutAlignment(
@@ -49,6 +74,21 @@ export function getComponentLayoutOpticalPull(
   nodeId: string,
 ): number {
   return getComponentLayoutNode(layout, nodeId)?.opticalPull ?? 0;
+}
+
+export function getComponentLabNodeAttributes(
+  layout: ComponentVariantLayout | undefined,
+  nodeId: string,
+  occurrence?: number,
+) {
+  return layout?.componentLabAnnotations
+    ? {
+      "data-component-lab-node": nodeId,
+      ...(occurrence === undefined
+        ? {}
+        : { "data-component-lab-occurrence": occurrence }),
+    }
+    : {};
 }
 
 export default function ComponentLayoutNode({
@@ -73,6 +113,7 @@ export default function ComponentLayoutNode({
   const gapStyle = gapFrom
     ? getResponsiveGapStyle(getComponentLayoutGap(layout, gapFrom, nodeId))
     : undefined;
+  const nodeStyle = getComponentLayoutNodeStyle(node, layout?.section);
 
   return (
     <Component
@@ -81,8 +122,8 @@ export default function ComponentLayoutNode({
         gapStyle ? "component-layout-node-gap" : "",
         className ?? "",
       ].filter(Boolean).join(" ")}
-      data-component-lab-node={nodeId}
-      style={{ ...gapStyle, ...style }}
+      {...getComponentLabNodeAttributes(layout, nodeId)}
+      style={{ ...gapStyle, ...nodeStyle, ...style }}
     >
       {children}
     </Component>

@@ -14,6 +14,7 @@ import {
   getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
   getComponentSectionProfileClassName,
+  getComponentSectionStyle,
 } from "@/lib/component-design-style";
 import { hasEditableTextContent } from "@/lib/editable-text";
 
@@ -37,7 +38,10 @@ export default function BreakdownSectionHeadline({
     const indexTypography = getComponentLayoutTypography(componentLayout, "index");
     const titleTypography = getComponentLayoutTypography(componentLayout, "title");
     return (
-      <section className={`w-full ${getComponentSectionProfileClassName(componentLayout)}`}>
+      <section
+        className={`w-full ${getComponentSectionProfileClassName(componentLayout)}`}
+        style={getComponentSectionStyle(componentLayout)}
+      >
         <div className="grid-container">
           {hasEditableTextContent(indexLabel) ? (
             <ComponentLayoutNode layout={componentLayout} nodeId="index">

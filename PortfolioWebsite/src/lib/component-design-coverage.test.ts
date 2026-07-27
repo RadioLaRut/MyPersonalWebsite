@@ -10,7 +10,7 @@ import {
   parseCurrentComponentDesignDocument,
 } from "./component-design-v2.ts";
 
-test("V2 设计文档恰好覆盖 17 个作者组件和全部合法变体", () => {
+test("V2 设计文档恰好覆盖 17 个页面级组件和全部合法版式", () => {
   const document = createDefaultComponentDesignDocument();
 
   assert.deepEqual(
