@@ -6,14 +6,13 @@ import React, {
   type ReactNode,
 } from "react";
 
-import { PresetImage } from "@/components/common/PresetImage";
 import ComponentLayoutNode, {
-  getComponentLabNodeAttributes,
   getComponentLayoutAlignment,
   getComponentLayoutNode,
   getComponentLayoutTypography,
   type ComponentLayoutProps,
 } from "@/components/common/ComponentLayoutNode";
+import { PresetImage } from "@/components/common/PresetImage";
 import Typography, {
   type TypographyAlignment,
 } from "@/components/common/Typography";
@@ -22,16 +21,13 @@ import {
   resolveComponentDesign,
 } from "@/lib/component-design-runtime";
 import {
-  createResponsiveGridBounds,
   getComponentLayoutGap,
   getComponentLayoutNodeClassName,
   getComponentLayoutNodeStyle,
-  getResponsiveGridColumnClassName,
-  getResponsiveGapStyle,
-  getSectionSpacingClassName,
-  getSpacingRem,
   getComponentSectionProfileClassName,
   getComponentSectionStyle,
+  getResponsiveGapStyle,
+  getSectionSpacingClassName,
 } from "@/lib/component-design-style";
 import { toPlainText } from "@/lib/editable-text";
 import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
@@ -48,8 +44,6 @@ type TextSplitLayoutProps = {
   paragraphsContent?: ReactNode;
   publicMediaHint?: PublicMediaHint;
 } & ComponentDesignOverride<"TextSplitLayout"> & ComponentLayoutProps;
-
-type StyleWithVars = CSSProperties & Record<string, string>;
 
 type SlotElementProps = {
   allow?: readonly string[];
@@ -186,295 +180,142 @@ export default function TextSplitLayout({
 }: TextSplitLayoutProps) {
   const resolvedDesign = resolveComponentDesign("TextSplitLayout", design);
   const imageAlt = toPlainText(heading) ?? "TextSplitLayout image";
-  const splitHeadingGapStyle: StyleWithVars = {
-    "--text-split-heading-image-gap": getSpacingRem(resolvedDesign.headingImageGap),
-  };
+  const headingTypography = getComponentLayoutTypography(
+    componentLayout,
+    "heading",
+  );
+  const bodyItemTypography = getComponentLayoutTypography(
+    componentLayout,
+    "body.item",
+  );
+  const slotLayoutProps = componentLayout
+    ? getRepeatedSlotLayoutProps(componentLayout, "body.item", "heading")
+    : undefined;
   const paragraphContentItems = React.Children.toArray(paragraphsContent);
-  const paragraphContent = paragraphContentItems.length > 0
-    ? paragraphContentItems.map((child, occurrence) =>
-      isPuckSlotElement(child)
-        ? React.cloneElement(child, {
+  const sectionClassName = componentLayout
+    ? getComponentSectionProfileClassName(componentLayout)
+    : getSectionSpacingClassName(resolvedDesign.sectionSpacing);
+
+  const bodyContent = paragraphContentItems.length > 0
+    ? paragraphContentItems.map((child, occurrence) => {
+      const key = React.isValidElement(child) && child.key !== null
+        ? child.key
+        : occurrence;
+      if (isPuckSlotElement(child) && componentLayout && slotLayoutProps) {
+        return React.cloneElement(child, {
           as: RepeatedBodySlotRoot,
+          className: [
+            child.props.className ?? "",
+            slotLayoutProps.className,
+          ].filter(Boolean).join(" "),
           componentLabAnnotations:
-            componentLayout?.componentLabAnnotations,
-        })
-        : (
-          <div
-            key={React.isValidElement(child) && child.key !== null
-              ? child.key
-              : occurrence}
-            {...getComponentLabNodeAttributes(
-              componentLayout,
-              "body.item",
-              occurrence,
-            )}
-          >
-            {child}
-          </div>
-        )
-    )
-    : (
-    <div
-      className="grid"
-      style={{ rowGap: getSpacingRem(resolvedDesign.paragraphGap) }}
-    >
-      {paragraphs.map((p, i) => (
-        <div
-          key={i}
-          {...getComponentLabNodeAttributes(
+            componentLayout.componentLabAnnotations,
+          style: {
+            ...child.props.style,
+            ...slotLayoutProps.style,
+          },
+        });
+      }
+      return (
+        <ComponentLayoutNode
+          key={key}
+          className={!componentLayout ? "col-span-12" : undefined}
+          gapFrom={occurrence === 0 ? "heading" : "body.item"}
+          layout={componentLayout}
+        nodeId="body.item"
+        occurrence={occurrence}
+      >
+          {child}
+        </ComponentLayoutNode>
+      );
+    })
+    : paragraphs.map((paragraph, index) => (
+      <ComponentLayoutNode
+        key={index}
+        className={!componentLayout ? "col-span-12" : undefined}
+        gapFrom={index === 0 ? "heading" : "body.item"}
+        layout={componentLayout}
+        nodeId="body.item"
+        occurrence={index}
+      >
+        <Typography
+          as="p"
+          preset={bodyItemTypography?.preset ?? "sans-body"}
+          size={bodyItemTypography?.size ?? resolvedDesign.bodySize}
+          weight="semantic"
+          wrapPolicy={bodyItemTypography?.wrap ??
+            (resolvedDesign.bodyAutoWrap ? "prose" : "nowrap")}
+          align={getComponentLayoutAlignment(
             componentLayout,
             "body.item",
-            i,
+            bodyAlign,
           )}
+          className="text-textSecondary"
+        >
+          {paragraph}
+        </Typography>
+      </ComponentLayoutNode>
+    ));
+
+  return (
+    <section
+      className={`w-full ${sectionClassName}`}
+      style={getComponentSectionStyle(componentLayout)}
+    >
+      <div className="grid-container items-start">
+        <ComponentLayoutNode
+          className={!componentLayout ? "col-span-12" : undefined}
+          layout={componentLayout}
+          nodeId="heading"
         >
           <Typography
-            as="p"
-            preset="sans-body"
-            size={resolvedDesign.bodySize}
-            weight="semantic"
-            wrapPolicy={resolvedDesign.bodyAutoWrap ? "prose" : "nowrap"}
-            align={bodyAlign}
-            className="text-textSecondary"
+            as="h3"
+            preset={headingTypography?.preset ?? "sans-body"}
+            size={headingTypography?.size ??
+              (layoutVariant === "stack"
+                ? resolvedDesign.stackHeadingSize
+                : resolvedDesign.splitHeadingSize)}
+            weight={layoutVariant === "stack" ? "strong" : "light"}
+            wrapPolicy={headingTypography?.wrap ??
+              (resolvedDesign.headingAutoWrap ? "heading" : "nowrap")}
+            align={getComponentLayoutAlignment(
+              componentLayout,
+              "heading",
+              layoutVariant === "split-right" ? "right" : "left",
+            )}
+            className="text-white uppercase"
           >
-            {p}
+            {heading}
           </Typography>
-        </div>
-      ))}
-    </div>
-  );
-
-  if (componentLayout) {
-    const headingTypography = getComponentLayoutTypography(componentLayout, "heading");
-    const bodyItemTypography = getComponentLayoutTypography(
-      componentLayout,
-      "body.item",
-    );
-    const slotLayoutProps = getRepeatedSlotLayoutProps(
-      componentLayout,
-      "body.item",
-      "heading",
-    );
-    const layoutParagraphContentItems =
-      React.Children.toArray(paragraphsContent);
-    return (
-      <section
-        className={`w-full ${getComponentSectionProfileClassName(componentLayout)}`}
-        style={getComponentSectionStyle(componentLayout)}
-      >
-        <div className="grid-container items-start">
-          <ComponentLayoutNode layout={componentLayout} nodeId="heading">
-            <Typography
-              as="h3"
-              preset={headingTypography?.preset ?? "sans-body"}
-              size={headingTypography?.size ?? "title-sm"}
-              weight="semantic"
-              wrapPolicy={headingTypography?.wrap ?? "heading"}
-              align={getComponentLayoutAlignment(componentLayout, "heading")}
-              className="text-white uppercase"
-            >
-              {heading}
-            </Typography>
-          </ComponentLayoutNode>
-          {layoutParagraphContentItems.length > 0 ? (
-            layoutParagraphContentItems.map((child, occurrence) =>
-              isPuckSlotElement(child)
-                ? React.cloneElement(child, {
-                  as: RepeatedBodySlotRoot,
-                  className: [
-                    child.props.className ?? "",
-                    slotLayoutProps.className,
-                  ].filter(Boolean).join(" "),
-                  componentLabAnnotations:
-                    componentLayout.componentLabAnnotations,
-                  style: {
-                    ...child.props.style,
-                    ...slotLayoutProps.style,
-                  },
-                })
-                : (
-                  <ComponentLayoutNode
-                    key={React.isValidElement(child) && child.key !== null
-                      ? child.key
-                      : occurrence}
-                    gapFrom={occurrence === 0 ? "heading" : "body.item"}
-                    layout={componentLayout}
-                    nodeId="body.item"
-                  >
-                    {child}
-                  </ComponentLayoutNode>
-                )
-            )
-          ) : (
-            paragraphs.map((paragraph, index) => (
-              <ComponentLayoutNode
-                key={index}
-                gapFrom={index === 0 ? "heading" : "body.item"}
-                layout={componentLayout}
-                nodeId="body.item"
-              >
-                <Typography
-                  as="p"
-                  preset={bodyItemTypography?.preset ?? "sans-body"}
-                  size={bodyItemTypography?.size ?? "body"}
-                  weight="semantic"
-                  wrapPolicy={bodyItemTypography?.wrap ?? "prose"}
-                  align={getComponentLayoutAlignment(
-                    componentLayout,
-                    "body.item",
-                    bodyAlign,
-                  )}
-                  className="text-textSecondary"
-                >
-                  {paragraph}
-                </Typography>
-              </ComponentLayoutNode>
-            ))
-          )}
-          {imageSrc ? (
-            <ComponentLayoutNode
-              gapFrom="body.item"
-              layout={componentLayout}
-              nodeId="media"
-            >
-              <div className="relative w-full opacity-90">
-                <PresetImage
-                  src={imageSrc}
-                  alt={imageAlt}
-                  preset={imagePreset}
-                  fitMode={imageFitMode}
-                  mediaProfile={layoutVariant === "stack" ? "grid-10" : "grid-6"}
-                  preload={publicMediaHint?.src === imageSrc && publicMediaHint.preload}
-                  sizes={publicMediaHint?.src === imageSrc ? publicMediaHint.sizes : undefined}
-                />
-              </div>
-            </ComponentLayoutNode>
-          ) : null}
-        </div>
-      </section>
-    );
-  }
-
-    return (
-        <div className={`w-full ${getSectionSpacingClassName(resolvedDesign.sectionSpacing)}`}>
-            <div className="grid-container items-start">
-
-                {layoutVariant === 'split-left' && (
-                    <>
-                        <div
-                            className={`mb-[var(--text-split-heading-image-gap)] md:mb-0 ${getResponsiveGridColumnClassName(
-                              createResponsiveGridBounds(
-                                { leftCol: 1, rightCol: 12 },
-                                resolvedDesign.splitLeftHeadingBounds,
-                                resolvedDesign.splitLeftHeadingBounds,
-                              ),
-                            )}`}
-                            style={splitHeadingGapStyle}
-                        >
-                            <Typography as="h3" preset="sans-body" size={resolvedDesign.splitHeadingSize} weight="light" wrapPolicy={resolvedDesign.headingAutoWrap ? "heading" : "nowrap"} className="mb-8 text-white uppercase">
-                                {heading}
-                            </Typography>
-                            {imageSrc && (
-                                <div className="relative w-full opacity-90 transition-opacity duration-700 hover:opacity-100">
-                                    <PresetImage src={imageSrc} alt={imageAlt} preset={imagePreset} fitMode={imageFitMode} mediaProfile="grid-6" preload={publicMediaHint?.src === imageSrc && publicMediaHint.preload} sizes={publicMediaHint?.src === imageSrc ? publicMediaHint.sizes : undefined} />
-                                    <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] pointer-events-none" />
-                                </div>
-                            )}
-                        </div>
-                        <div
-                            className={`grid content-center ${getResponsiveGridColumnClassName(
-                              createResponsiveGridBounds(
-                                { leftCol: 1, rightCol: 12 },
-                                resolvedDesign.splitLeftTextBounds,
-                                resolvedDesign.splitLeftTextBounds,
-                              ),
-                            )}`}
-                        >
-                            <div className="border-l border-white/5 pl-0 lg:pl-8">
-                                {paragraphContent}
-                            </div>
-                        </div>
-                    </>
-                )}
-
-                {layoutVariant === 'split-right' && (
-                    <>
-                        <div
-                            className={`order-2 mt-[var(--text-split-heading-image-gap)] grid content-center md:order-1 md:mb-0 md:mt-0 ${getResponsiveGridColumnClassName(
-                              createResponsiveGridBounds(
-                                { leftCol: 1, rightCol: 12 },
-                                resolvedDesign.splitRightTextBounds,
-                                resolvedDesign.splitRightTextBounds,
-                              ),
-                            )}`}
-                            style={splitHeadingGapStyle}
-                        >
-                            <div className="border-r border-white/5 pr-0 text-right lg:pr-8 lg:text-left">
-                                {paragraphContent}
-                            </div>
-                        </div>
-                        <div
-                            className={`order-1 md:order-2 ${getResponsiveGridColumnClassName(
-                              createResponsiveGridBounds(
-                                { leftCol: 1, rightCol: 12 },
-                                resolvedDesign.splitRightHeadingBounds,
-                                resolvedDesign.splitRightHeadingBounds,
-                              ),
-                            )}`}
-                        >
-                            <Typography as="h3" preset="sans-body" size={resolvedDesign.splitHeadingSize} weight="light" wrapPolicy={resolvedDesign.headingAutoWrap ? "heading" : "nowrap"} align="right" className="mb-8 text-white uppercase">
-                                {heading}
-                            </Typography>
-                            {imageSrc && (
-                                <div className="relative w-full opacity-90 transition-opacity duration-700 hover:opacity-100">
-                                    <PresetImage src={imageSrc} alt={imageAlt} preset={imagePreset} fitMode={imageFitMode} mediaProfile="grid-6" preload={publicMediaHint?.src === imageSrc && publicMediaHint.preload} sizes={publicMediaHint?.src === imageSrc ? publicMediaHint.sizes : undefined} />
-                                    <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] pointer-events-none" />
-                                </div>
-                            )}
-                        </div>
-                    </>
-                )}
-
-                {layoutVariant === 'stack' && (
-                    <div
-                        className={`grid justify-items-center text-center ${getResponsiveGridColumnClassName(
-                          createResponsiveGridBounds(
-                            { leftCol: 1, rightCol: 12 },
-                            { leftCol: 2, rightCol: 11 },
-                            resolvedDesign.stackBounds,
-                          ),
-                        )}`}
-                    >
-                        <Typography
-                            as="h3"
-                            preset="sans-body"
-                            size={resolvedDesign.stackHeadingSize}
-                            weight="strong"
-                            wrapPolicy={resolvedDesign.headingAutoWrap ? "heading" : "nowrap"}
-                            align="center"
-                            className="px-4 text-white uppercase"
-                            style={{ marginBottom: getSpacingRem(resolvedDesign.stackTextTopSpacing) }}
-                        >
-                            {heading}
-                        </Typography>
-                        <div
-                            className="grid max-w-3xl border-t border-white/5"
-                            style={{
-                                paddingTop: getSpacingRem(resolvedDesign.stackTextTopSpacing),
-                                rowGap: getSpacingRem(resolvedDesign.paragraphGap),
-                            }}
-                        >
-                            {paragraphContent}
-                        </div>
-                        {imageSrc && (
-                            <div className="relative w-full opacity-90 transition-opacity duration-700 hover:opacity-100" style={{ marginTop: getSpacingRem(resolvedDesign.stackImageTopSpacing) }}>
-                                <PresetImage src={imageSrc} alt={imageAlt} preset={imagePreset} fitMode={imageFitMode} mediaProfile="grid-10" preload={publicMediaHint?.src === imageSrc && publicMediaHint.preload} sizes={publicMediaHint?.src === imageSrc ? publicMediaHint.sizes : undefined} />
-                                <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] pointer-events-none" />
-                            </div>
-                        )}
-                    </div>
-                )}
-
+        </ComponentLayoutNode>
+        {bodyContent}
+        {imageSrc ? (
+          <ComponentLayoutNode
+            className={!componentLayout ? "col-span-12" : undefined}
+            gapFrom="body.item"
+            layout={componentLayout}
+            nodeId="media"
+          >
+            <div className="relative w-full opacity-90 transition-opacity duration-700 hover:opacity-100">
+              <PresetImage
+                src={imageSrc}
+                alt={imageAlt}
+                preset={imagePreset}
+                fitMode={imageFitMode}
+                mediaProfile={layoutVariant === "stack"
+                  ? "grid-10"
+                  : "grid-6"}
+                preload={publicMediaHint?.src === imageSrc &&
+                  publicMediaHint.preload}
+                sizes={publicMediaHint?.src === imageSrc
+                  ? publicMediaHint.sizes
+                  : undefined}
+              />
+              <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]" />
             </div>
-        </div>
-    );
+          </ComponentLayoutNode>
+        ) : null}
+      </div>
+    </section>
+  );
 }

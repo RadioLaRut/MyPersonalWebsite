@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  constrainComponentLabPlacement,
   getComponentLabDraggedPlacement,
   getComponentLabFlowVerticalOperation,
   getComponentLabKeyboardPlacement,
@@ -87,6 +88,62 @@ test("键盘移动与双边手柄调整始终保持合法格位", () => {
       placement: { span: 1, start: 12 },
     }),
     { span: 1, start: 12 },
+  );
+});
+
+test("composition 锁定与嵌套宿主约束不会产生非法栏位", () => {
+  const currentPlacement = { span: 4, start: 3 };
+  assert.deepEqual(
+    constrainComponentLabPlacement({
+      currentPlacement,
+      lockPlacement: true,
+      lockResize: false,
+      operation: "move",
+      requestedPlacement: { span: 4, start: 7 },
+    }),
+    currentPlacement,
+  );
+  assert.deepEqual(
+    constrainComponentLabPlacement({
+      currentPlacement,
+      lockPlacement: false,
+      lockResize: true,
+      operation: "resize-right",
+      requestedPlacement: { span: 8, start: 3 },
+    }),
+    currentPlacement,
+  );
+  assert.deepEqual(
+    constrainComponentLabPlacement({
+      currentPlacement,
+      lockPlacement: false,
+      lockResize: true,
+      operation: "move",
+      requestedPlacement: { span: 4, start: 6 },
+    }),
+    { span: 4, start: 6 },
+  );
+  assert.deepEqual(
+    constrainComponentLabPlacement({
+      currentPlacement,
+      hostPlacement: { span: 6, start: 3 },
+      lockPlacement: false,
+      lockResize: false,
+      operation: "move",
+      requestedPlacement: { span: 12, start: 1 },
+    }),
+    { span: 6, start: 3 },
+  );
+  assert.deepEqual(
+    constrainComponentLabPlacement({
+      currentPlacement,
+      hostPlacement: { span: 6, start: 3 },
+      lockPlacement: false,
+      lockResize: false,
+      operation: "move",
+      requestedPlacement: { span: 4, start: 10 },
+    }),
+    { span: 1, start: 8 },
   );
 });
 

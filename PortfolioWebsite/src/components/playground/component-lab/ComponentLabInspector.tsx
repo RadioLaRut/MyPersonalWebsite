@@ -18,9 +18,11 @@ import {
   type ComponentDesignSectionHeight,
   type ComponentDesignVariantV3,
 } from "@/lib/component-design-v3";
-import type {
-  ComponentDesignNodeDescriptor,
-  ComponentDesignVariantDescriptor,
+import {
+  getComponentDesignNodePolicyFromVariant,
+  type ComponentDesignNodePolicy,
+  type ComponentDesignNodeDescriptor,
+  type ComponentDesignVariantDescriptor,
 } from "@/lib/component-design-manifest";
 import type { ComponentLabElementSelection } from "./ComponentElementNavigator";
 import {
@@ -324,12 +326,18 @@ export default function ComponentLabInspector({
     ? variantDescriptor.nodes.find((node) => node.id === selected.roleId)
     : null;
   const node = descriptor ? layout.nodes[descriptor.id] : null;
+  const policy = descriptor
+    ? getComponentDesignNodePolicyFromVariant(
+      variantDescriptor,
+      descriptor.id,
+    )
+    : null;
 
   return (
     <aside
       aria-label="当前元素属性"
       data-component-lab-region="inspector"
-      className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)] border-l border-white/10 bg-black"
+      className="grid h-[720px] min-w-0 grid-rows-[auto_minmax(0,1fr)] border-t border-white/10 bg-black md:col-span-2 md:row-start-2 min-[1100px]:col-span-1 min-[1100px]:col-start-3 min-[1100px]:row-start-1 min-[1100px]:h-auto min-[1100px]:min-h-0 min-[1100px]:border-l min-[1100px]:border-t-0"
     >
       <div className="border-b border-white/10 p-3">
         <DeviceRelationship
@@ -356,7 +364,7 @@ export default function ComponentLabInspector({
               拖动画布中的任一选中元素可共同移动。多选不改变尺寸、图层或组件结构。
             </p>
           </div>
-        ) : descriptor && node && selected ? (
+        ) : descriptor && node && selected && policy ? (
           <ElementInspector
             descriptor={descriptor}
             disabled={controlsDisabled}
@@ -367,6 +375,7 @@ export default function ComponentLabInspector({
             onSampleTextCommit={onSampleTextCommit}
             onSampleTextChange={(value) =>
               onSampleTextChange(selected, value)}
+            policy={policy}
             roleId={descriptor.id}
             sampleText={getTextValue(effectiveSampleText, selected)}
           />
@@ -387,6 +396,7 @@ function ElementInspector({
   onLayoutChange,
   onSampleTextCommit,
   onSampleTextChange,
+  policy,
   roleId,
   sampleText,
 }: {
@@ -398,6 +408,7 @@ function ElementInspector({
   onLayoutChange: (layout: ComponentDesignDeviceLayoutV3) => void;
   onSampleTextCommit: () => void;
   onSampleTextChange: (value: string) => void;
+  policy: ComponentDesignNodePolicy;
   roleId: string;
   sampleText: string;
 }) {
@@ -408,7 +419,18 @@ function ElementInspector({
   ) => onLayoutChange(replaceLayoutNode(layout, roleId, updater));
   const typography = node.typography;
   const positioningLocked = descriptor.positioning === "fixed" ||
-    node.bleed === "viewport";
+    node.bleed === "viewport" ||
+    policy.lockPositioning;
+  const placementLocked = node.bleed === "viewport" ||
+    policy.lockPlacement;
+  const alignmentOptions = [
+    { label: "左对齐", value: "left" },
+    { label: "居中", value: "center" },
+    { label: "右对齐", value: "right" },
+    ...(descriptor.kind !== "action" && typography?.wrap === "prose"
+      ? [{ label: "两端对齐", value: "justify" }]
+      : []),
+  ];
   const presetOptions = TYPOGRAPHY_PRESETS
     .filter((preset) => {
       const sizes = fontLabDocument?.presets[preset]?.sizes;
@@ -439,6 +461,11 @@ function ElementInspector({
         <p className="mt-1 text-[11px] text-white/40">
           {descriptor.repeated ? "同类条目共享布局规则" : descriptor.groupLabel}
         </p>
+        {policy.compositionKinds.length > 0 ? (
+          <p className="mt-2 border-l border-white/15 pl-2 text-[10px] leading-4 text-white/35">
+            该元素受组件语义结构约束，不能脱离所属媒体、内容组或父级网格。
+          </p>
+        ) : null}
       </div>
 
       {descriptor.sampleBinding ? (
@@ -460,7 +487,7 @@ function ElementInspector({
 
       <div className="grid grid-cols-2 gap-3">
         <NumberControl
-          disabled={disabled || node.bleed === "viewport"}
+          disabled={disabled || placementLocked}
           label="起始栏"
           value={node.placement.start}
           minimum={1}
@@ -472,7 +499,7 @@ function ElementInspector({
             }))}
         />
         <NumberControl
-          disabled={disabled || node.bleed === "viewport"}
+          disabled={disabled || placementLocked || policy.lockResize}
           label="占用栏数"
           value={node.placement.span}
           minimum={1}
@@ -583,14 +610,9 @@ function ElementInspector({
       {node.alignment ? (
         <SelectControl
           disabled={disabled}
-          label="文字对齐"
+          label={descriptor.kind === "action" ? "元素对齐" : "文字对齐"}
           value={node.alignment}
-          options={[
-            { label: "左对齐", value: "left" },
-            { label: "居中", value: "center" },
-            { label: "右对齐", value: "right" },
-            { label: "两端对齐", value: "justify" },
-          ]}
+          options={alignmentOptions}
           onChange={(alignment) =>
             updateNode((current) => ({
               ...current,

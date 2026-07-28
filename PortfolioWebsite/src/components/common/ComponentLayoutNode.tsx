@@ -17,6 +17,7 @@ import type {
   ComponentVariantLayout,
 } from "@/lib/component-design-v2";
 import type {
+  TypographyAlignment,
   TypographyAlignmentValue,
 } from "@/lib/typography-alignment";
 
@@ -76,6 +77,34 @@ export function getComponentLayoutOpticalPull(
   return getComponentLayoutNode(layout, nodeId)?.opticalPull ?? 0;
 }
 
+type ComponentLayoutBoxAlignmentStyle = CSSProperties & {
+  "--component-box-align-desktop"?: string;
+  "--component-box-align-mobile"?: string;
+  "--component-box-align-tablet"?: string;
+};
+
+function toBoxAlignment(
+  alignment: TypographyAlignment,
+) {
+  if (alignment === "center") return "center";
+  if (alignment === "right") return "end";
+  if (alignment === "justify") return "stretch";
+  return "start";
+}
+
+export function getComponentLayoutBoxAlignmentStyle(
+  layout: ComponentVariantLayout | undefined,
+  nodeId: string,
+): ComponentLayoutBoxAlignmentStyle | undefined {
+  const alignment = getComponentLayoutNode(layout, nodeId)?.alignment;
+  if (!alignment) return undefined;
+  return {
+    "--component-box-align-desktop": toBoxAlignment(alignment.desktop),
+    "--component-box-align-mobile": toBoxAlignment(alignment.mobile),
+    "--component-box-align-tablet": toBoxAlignment(alignment.tablet),
+  };
+}
+
 export function getComponentLabNodeAttributes(
   layout: ComponentVariantLayout | undefined,
   nodeId: string,
@@ -93,19 +122,23 @@ export function getComponentLabNodeAttributes(
 
 export default function ComponentLayoutNode({
   as,
+  alignmentTarget,
   children,
   className,
   gapFrom,
   layout,
   nodeId,
+  occurrence,
   style,
 }: {
   as?: ElementType;
+  alignmentTarget?: "box" | "text";
   children: ReactNode;
   className?: string;
   gapFrom?: string;
   layout?: ComponentVariantLayout;
   nodeId: string;
+  occurrence?: number;
   style?: CSSProperties;
 }) {
   const Component = as ?? "div";
@@ -114,16 +147,20 @@ export default function ComponentLayoutNode({
     ? getResponsiveGapStyle(getComponentLayoutGap(layout, gapFrom, nodeId))
     : undefined;
   const nodeStyle = getComponentLayoutNodeStyle(node, layout?.section);
+  const boxAlignmentStyle = alignmentTarget === "box"
+    ? getComponentLayoutBoxAlignmentStyle(layout, nodeId)
+    : undefined;
 
   return (
     <Component
       className={[
         getComponentLayoutNodeClassName(node),
+        boxAlignmentStyle ? "component-layout-box-alignment" : "",
         gapStyle ? "component-layout-node-gap" : "",
         className ?? "",
       ].filter(Boolean).join(" ")}
-      {...getComponentLabNodeAttributes(layout, nodeId)}
-      style={{ ...gapStyle, ...nodeStyle, ...style }}
+      {...getComponentLabNodeAttributes(layout, nodeId, occurrence)}
+      style={{ ...gapStyle, ...nodeStyle, ...boxAlignmentStyle, ...style }}
     >
       {children}
     </Component>

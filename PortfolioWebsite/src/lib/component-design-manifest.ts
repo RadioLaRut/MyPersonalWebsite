@@ -80,6 +80,24 @@ export type ComponentDesignTypographyDefault = {
   wrap: TypographyWrapPolicy;
 };
 
+export type ComponentDesignCompositionKind =
+  | "edge-pair"
+  | "interactive-overlay"
+  | "nested-grid"
+  | "overlay-host"
+  | "stack";
+
+export type ComponentDesignCompositionDescriptor = {
+  host?: string;
+  id: string;
+  kind: ComponentDesignCompositionKind;
+  label: string;
+  lockPlacement?: boolean;
+  lockPositioning?: boolean;
+  lockResize?: boolean;
+  members: readonly string[];
+};
+
 export type ComponentDesignNodeDescriptor = {
   group: string;
   groupLabel: string;
@@ -99,6 +117,7 @@ export type ComponentDesignNodeDescriptor = {
 };
 
 export type ComponentDesignVariantDescriptor = {
+  composition?: readonly ComponentDesignCompositionDescriptor[];
   id: string;
   label: string;
   nodes: readonly ComponentDesignNodeDescriptor[];
@@ -430,7 +449,86 @@ const defaultVariant = (
   id: string,
   label: string,
   nodes: readonly ComponentDesignNodeDescriptor[],
-): ComponentDesignVariantDescriptor => ({ id, label, nodes });
+  composition?: readonly ComponentDesignCompositionDescriptor[],
+): ComponentDesignVariantDescriptor => ({
+  ...(composition ? { composition } : {}),
+  id,
+  label,
+  nodes,
+});
+
+const overlayHost = (
+  id: string,
+  label: string,
+  host: string,
+  members: readonly string[],
+  options: Pick<
+    ComponentDesignCompositionDescriptor,
+    "lockPlacement" | "lockPositioning" | "lockResize"
+  > = {},
+): ComponentDesignCompositionDescriptor => ({
+  host,
+  id,
+  kind: "overlay-host",
+  label,
+  members,
+  ...options,
+});
+
+const lockedStack = (
+  id: string,
+  label: string,
+  members: readonly string[],
+): ComponentDesignCompositionDescriptor => ({
+  id,
+  kind: "stack",
+  label,
+  lockPositioning: true,
+  members,
+});
+
+const nestedGrid = (
+  id: string,
+  label: string,
+  host: string,
+  members: readonly string[],
+): ComponentDesignCompositionDescriptor => ({
+  host,
+  id,
+  kind: "nested-grid",
+  label,
+  members,
+});
+
+const edgePair = (
+  id: string,
+  label: string,
+  members: readonly string[],
+): ComponentDesignCompositionDescriptor => ({
+  id,
+  kind: "edge-pair",
+  label,
+  lockPlacement: true,
+  lockPositioning: true,
+  lockResize: true,
+  members,
+});
+
+const interactiveOverlay = (
+  id: string,
+  label: string,
+  host: string,
+  members: readonly string[],
+): ComponentDesignCompositionDescriptor => ({
+  host,
+  id,
+  kind: "interactive-overlay",
+  label,
+  lockPlacement: true,
+  lockPositioning: true,
+  lockResize: true,
+  members,
+});
 
 export const COMPONENT_DESIGN_MANIFEST = [
   {
@@ -463,6 +561,13 @@ export const COMPONENT_DESIGN_MANIFEST = [
           optional: true,
           positioning: "overlay",
         }),
+      ], [
+        overlayHost(
+          "hero-poster-overlay",
+          "首屏叠加内容",
+          "media",
+          ["title", "subtitle", "positioning", "eyebrow"],
+        ),
       ]),
       defaultVariant("full", "完整信息", [
         heroMedia,
@@ -501,6 +606,20 @@ export const COMPONENT_DESIGN_MANIFEST = [
           optional: true,
           positioning: "overlay",
         }),
+      ], [
+        overlayHost(
+          "hero-full-overlay",
+          "首屏叠加内容",
+          "media",
+          [
+            "eyebrow",
+            "title",
+            "subtitle",
+            "description",
+            "primaryCta",
+            "secondaryCta",
+          ],
+        ),
       ]),
     ],
   },
@@ -534,6 +653,13 @@ export const COMPONENT_DESIGN_MANIFEST = [
           optional: true,
           positioning: "overlay",
         }),
+      ], [
+        overlayHost(
+          "hero-headline-overlay",
+          "作品首屏叠加内容",
+          "media",
+          ["eyebrow", "title", "subtitle", "navLink"],
+        ),
       ]),
     ],
   },
@@ -554,6 +680,12 @@ export const COMPONENT_DESIGN_MANIFEST = [
           sampleBinding: propBinding("descriptionLine2", "说明"),
         }),
         actionNode("cta", "行动入口", { optional: true }),
+      ], [
+        lockedStack(
+          "editorial-header-index",
+          "索引页头阅读顺序",
+          ["title", "subtitle", "sideEyebrow", "description", "cta"],
+        ),
       ]),
       defaultVariant("collection", "灯光合集", [
         actionNode("backLink", "返回入口", {
@@ -566,6 +698,12 @@ export const COMPONENT_DESIGN_MANIFEST = [
         textNode("number", "编号", sans("label", "label"), { optional: true }),
         textNode("title", "标题", luna("display", "heading")),
         textNode("description", "说明", sans("body", "prose"), { optional: true }),
+      ], [
+        lockedStack(
+          "editorial-header-collection",
+          "合集页头阅读顺序",
+          ["backLink", "number", "title", "description"],
+        ),
       ]),
     ],
   },
@@ -574,9 +712,27 @@ export const COMPONENT_DESIGN_MANIFEST = [
     defaultVariant: "media-right",
     label: "编辑式图文",
     variants: [
-      defaultVariant("media-left", "媒体在左", editorialSplitNodes),
-      defaultVariant("media-right", "媒体在右", editorialSplitNodes),
-      defaultVariant("stack", "上下堆叠", editorialSplitNodes),
+      defaultVariant("media-left", "媒体在左", editorialSplitNodes, [
+        lockedStack(
+          "editorial-split-media-left",
+          "图文阅读顺序",
+          ["media", "heading", "body", "body.item"],
+        ),
+      ]),
+      defaultVariant("media-right", "媒体在右", editorialSplitNodes, [
+        lockedStack(
+          "editorial-split-media-right",
+          "图文阅读顺序",
+          ["media", "heading", "body", "body.item"],
+        ),
+      ]),
+      defaultVariant("stack", "上下堆叠", editorialSplitNodes, [
+        lockedStack(
+          "editorial-split-stack",
+          "堆叠阅读顺序",
+          ["heading", "media", "body", "body.item"],
+        ),
+      ]),
     ],
   },
   {
@@ -584,8 +740,66 @@ export const COMPONENT_DESIGN_MANIFEST = [
     defaultVariant: "phase",
     label: "三栏信息",
     variants: [
-      defaultVariant("phase", "叙事阶段", threeColumnPhaseNodes),
-      defaultVariant("triptych", "独立图文", threeColumnTriptychNodes),
+      defaultVariant("phase", "叙事阶段", threeColumnPhaseNodes, [
+        nestedGrid(
+          "phase-column-1",
+          "第 1 栏内部网格",
+          "column1",
+          [
+            "column1.label",
+            "column1.title",
+            "column1.subtitle",
+            "column1.body",
+            "column1.item.label",
+            "column1.item.value",
+          ],
+        ),
+        nestedGrid(
+          "phase-column-2",
+          "第 2 栏内部网格",
+          "column2",
+          [
+            "column2.label",
+            "column2.title",
+            "column2.subtitle",
+            "column2.body",
+            "column2.item.label",
+            "column2.item.value",
+          ],
+        ),
+        nestedGrid(
+          "phase-column-3",
+          "第 3 栏内部网格",
+          "column3",
+          [
+            "column3.label",
+            "column3.title",
+            "column3.subtitle",
+            "column3.body",
+            "column3.media",
+          ],
+        ),
+      ]),
+      defaultVariant("triptych", "独立图文", threeColumnTriptychNodes, [
+        nestedGrid(
+          "triptych-column-1",
+          "第 1 栏内部网格",
+          "column1",
+          ["column1.title", "column1.body", "column1.media"],
+        ),
+        nestedGrid(
+          "triptych-column-2",
+          "第 2 栏内部网格",
+          "column2",
+          ["column2.title", "column2.body", "column2.media"],
+        ),
+        nestedGrid(
+          "triptych-column-3",
+          "第 3 栏内部网格",
+          "column3",
+          ["column3.title", "column3.body", "column3.media"],
+        ),
+      ]),
     ],
   },
   {
@@ -625,6 +839,13 @@ export const COMPONENT_DESIGN_MANIFEST = [
           optional: true,
           positioning: "overlay",
         }),
+      ], [
+        overlayHost(
+          "fullscreen-caption-overlay",
+          "全屏图片叠加内容",
+          "media",
+          ["caption"],
+        ),
       ]),
     ],
   },
@@ -637,6 +858,12 @@ export const COMPONENT_DESIGN_MANIFEST = [
         mediaNode("player", "播放器"),
         textNode("caption", "图注", sans("caption", "prose"), { optional: true }),
         actionNode("externalLink", "外部播放入口", { optional: true }),
+      ], [
+        lockedStack(
+          "bilibili-content-stack",
+          "播放器阅读顺序",
+          ["player", "caption", "externalLink"],
+        ),
       ]),
     ],
   },
@@ -647,12 +874,52 @@ export const COMPONENT_DESIGN_MANIFEST = [
     variants: [
       defaultVariant("card", "卡片", [
         mediaNode("media", "封面"),
-        textNode("number", "编号", sans("label", "label"), { optional: true }),
-        textNode("prompt", "进入提示", sans("caption", "label"), { optional: true }),
-        textNode("title", "标题", luna("title", "heading")),
+        textNode("number", "编号", sans("label", "label"), {
+          optional: true,
+          positioning: "overlay",
+        }),
+        textNode("prompt", "进入提示", sans("caption", "label"), {
+          optional: true,
+          positioning: "overlay",
+        }),
+        textNode("title", "标题", luna("title", "heading"), {
+          positioning: "overlay",
+        }),
+      ], [
+        overlayHost(
+          "project-card-overlay",
+          "卡片叠加内容",
+          "media",
+          ["number", "prompt", "title"],
+          { lockPositioning: true },
+        ),
       ]),
-      defaultVariant("immersive-left", "沉浸式左侧", projectImmersiveNodes),
-      defaultVariant("immersive-right", "沉浸式右侧", projectImmersiveNodes),
+      defaultVariant(
+        "immersive-left",
+        "沉浸式左侧",
+        projectImmersiveNodes,
+        [
+          overlayHost(
+            "project-immersive-left-overlay",
+            "沉浸式叠加内容",
+            "media",
+            ["subtitle", "title", "underline"],
+          ),
+        ],
+      ),
+      defaultVariant(
+        "immersive-right",
+        "沉浸式右侧",
+        projectImmersiveNodes,
+        [
+          overlayHost(
+            "project-immersive-right-overlay",
+            "沉浸式叠加内容",
+            "media",
+            ["subtitle", "title", "underline"],
+          ),
+        ],
+      ),
     ],
   },
   {
@@ -685,8 +952,26 @@ export const COMPONENT_DESIGN_MANIFEST = [
           group: "item",
           groupLabel: "重复条目",
           optional: true,
+          positioning: "overlay",
           repeated: true,
         }),
+      ], [
+        lockedStack(
+          "works-entry-content",
+          "条目阅读顺序",
+          [
+            "item.number",
+            "item.title",
+            "item.category",
+            "item.description",
+          ],
+        ),
+        interactiveOverlay(
+          "works-active-media",
+          "条目激活媒体",
+          "item.media",
+          ["item.media"],
+        ),
       ]),
     ],
   },
@@ -729,6 +1014,19 @@ export const COMPONENT_DESIGN_MANIFEST = [
             "参数说明",
           ),
         }),
+      ], [
+        overlayHost(
+          "parameter-media-label",
+          "媒体叠加标签",
+          "media",
+          ["mediaLabel"],
+        ),
+        nestedGrid(
+          "parameter-items-grid",
+          "参数条目内部网格",
+          "items",
+          ["item.name", "item.value", "item.description"],
+        ),
       ]),
     ],
   },
@@ -749,14 +1047,27 @@ export const COMPONENT_DESIGN_MANIFEST = [
           group: "media-overlay",
           groupLabel: "媒体叠加内容",
           optional: true,
-          positioning: "overlay",
+          positioning: "flow",
         }),
         textNode("rightLabel", "右侧标签", sans("caption", "label"), {
           group: "media-overlay",
           groupLabel: "媒体叠加内容",
           optional: true,
-          positioning: "overlay",
+          positioning: "flow",
         }),
+      ], [
+        overlayHost(
+          "slider-title-overlay",
+          "对比图叠加标题",
+          "media",
+          ["title"],
+          { lockPositioning: true },
+        ),
+        edgePair(
+          "slider-edge-labels",
+          "对比图左右标签",
+          ["leftLabel", "rightLabel"],
+        ),
       ]),
     ],
   },
@@ -809,6 +1120,18 @@ export const COMPONENT_DESIGN_MANIFEST = [
           groupLabel: "页脚",
           optional: true,
         }),
+      ], [
+        overlayHost(
+          "next-project-overlay",
+          "下一项目叠加内容",
+          "media",
+          ["eyebrow", "title"],
+        ),
+        edgePair(
+          "next-project-footer",
+          "下一项目页脚",
+          ["footerLeft", "footerRight"],
+        ),
       ]),
     ],
   },
@@ -825,6 +1148,12 @@ export const COMPONENT_DESIGN_MANIFEST = [
           optional: true,
           sampleBinding: propBinding("buttonLabel", "行动按钮"),
         }),
+      ], [
+        lockedStack(
+          "home-endcap-stack",
+          "收束内容中心轴",
+          ["eyebrow", "title", "description", "cta"],
+        ),
       ]),
     ],
   },
@@ -887,6 +1216,25 @@ export const COMPONENT_DESIGN_MANIFEST = [
           optional: true,
           sampleBinding: propBinding("email", "邮箱"),
         }),
+      ], [
+        lockedStack(
+          "contact-content-stack",
+          "联系内容阅读顺序",
+          [
+            "name",
+            "tagline",
+            "taglineSub",
+            "clientsHeading",
+            "clients.item",
+            "employmentHeading",
+            "employment.item",
+            "contactHeading",
+            "emailHeading",
+            "wechat",
+            "copyPrompt",
+            "email",
+          ],
+        ),
       ]),
     ],
   },
@@ -923,5 +1271,54 @@ export function getComponentDesignNodeDescriptor(
 ) {
   return getComponentDesignVariantDescriptor(component, variant).nodes.find(
     (node) => node.id === nodeId,
+  );
+}
+
+export type ComponentDesignNodePolicy = {
+  compositionKinds: readonly ComponentDesignCompositionKind[];
+  constrainToHost?: string;
+  lockPlacement: boolean;
+  lockPositioning: boolean;
+  lockResize: boolean;
+};
+
+export function getComponentDesignNodePolicyFromVariant(
+  descriptor: ComponentDesignVariantDescriptor,
+  nodeId: string,
+): ComponentDesignNodePolicy {
+  const compositions = descriptor.composition ?? [];
+  const memberships = compositions.filter((composition) =>
+    (composition.members as readonly string[]).includes(nodeId)
+  );
+  const hostMembership = memberships.find((composition) =>
+    composition.host &&
+    composition.kind === "nested-grid"
+  );
+
+  return {
+    compositionKinds: memberships.map((composition) => composition.kind),
+    ...(hostMembership?.host
+      ? { constrainToHost: hostMembership.host }
+      : {}),
+    lockPlacement: memberships.some(
+      (composition) => composition.lockPlacement === true,
+    ),
+    lockPositioning: memberships.some(
+      (composition) => composition.lockPositioning === true,
+    ),
+    lockResize: memberships.some(
+      (composition) => composition.lockResize === true,
+    ),
+  };
+}
+
+export function getComponentDesignNodePolicy(
+  component: ComponentDesignAuthorComponent,
+  variant: string,
+  nodeId: string,
+): ComponentDesignNodePolicy {
+  return getComponentDesignNodePolicyFromVariant(
+    getComponentDesignVariantDescriptor(component, variant),
+    nodeId,
   );
 }

@@ -49,7 +49,11 @@ test("WorksListEntry 初始声明懒加载图片且不强制视觉激活", () =>
 
   assert.doesNotMatch(serverSource, /"use client"/);
   assert.doesNotMatch(serverSource, /<PresetImage/);
-  assert.match(serverSource, /!editMode \? \(/);
+  assert.match(
+    serverSource,
+    /forceLabPreview = componentLayout\?\.componentLabAnnotations === true/,
+  );
+  assert.match(serverSource, /forceVisible=\{forceLabPreview\}/);
   assert.match(serverSource, /imageSrc=\{imageSrc\}/);
   assert.match(islandSource, /hovered \|\| focused \|\| centered/);
   assert.match(islandSource, /\{imageSrc \? \(/);

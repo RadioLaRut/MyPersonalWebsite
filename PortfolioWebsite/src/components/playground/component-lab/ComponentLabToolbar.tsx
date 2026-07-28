@@ -60,7 +60,7 @@ export default function ComponentLabToolbar({
       : "已保存";
 
   return (
-    <div className="flex min-h-12 items-center justify-between gap-3 border-b border-white/10 px-3">
+    <div className="flex min-h-12 flex-wrap items-center justify-between gap-3 border-b border-white/10 px-3 py-2">
       <div className="flex items-center border border-white/10">
         {(["desktop", "tablet", "mobile"] as const).map((device) => (
           <button

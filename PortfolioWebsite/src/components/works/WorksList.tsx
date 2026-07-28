@@ -83,107 +83,88 @@ export default function WorksList({
         );
     }
 
-    if (componentLayout) {
-        const headingTypography = getComponentLayoutTypography(componentLayout, "heading");
-        const summaryTypography = getComponentLayoutTypography(componentLayout, "indexSummary");
-        return (
-            <section
-                className={`grid w-full content-center text-white ${getComponentSectionProfileClassName(componentLayout)}`}
-                style={getComponentSectionStyle(componentLayout)}
-            >
-                {(hasEditableTextContent(heading) || hasEditableTextContent(indexSummary)) ? (
-                    <div className={`grid-container relative z-20 border-b border-white/10 pb-8 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
-                        {hasEditableTextContent(heading) ? (
-                            <ComponentLayoutNode layout={componentLayout} nodeId="heading">
-                                <Typography
-                                    as="h1"
-                                    preset={headingTypography?.preset ?? "sans-body"}
-                                    size={headingTypography?.size ?? "title-sm"}
-                                    weight="semantic"
-                                    wrapPolicy={headingTypography?.wrap ?? "heading"}
-                                    align={getComponentLayoutAlignment(componentLayout, "heading")}
-                                    className="text-white"
-                                >
-                                    {heading}
-                                </Typography>
-                            </ComponentLayoutNode>
-                        ) : null}
-                        {hasEditableTextContent(indexSummary) ? (
-                            <ComponentLayoutNode layout={componentLayout} nodeId="indexSummary">
-                                <Typography
-                                    as="p"
-                                    preset={summaryTypography?.preset ?? "sans-body"}
-                                    size={summaryTypography?.size ?? "body-sm"}
-                                    weight="semantic"
-                                    wrapPolicy={summaryTypography?.wrap ?? "prose"}
-                                    align={getComponentLayoutAlignment(componentLayout, "indexSummary", "right")}
-                                    className="text-textMuted"
-                                >
-                                    {indexSummary}
-                                </Typography>
-                            </ComponentLayoutNode>
-                        ) : null}
-                    </div>
-                ) : null}
-                <div className="grid w-full border-t border-white/10">
-                    {editMode && entriesContent
-                      ? entriesContent
-                      : works.map((work, index) => (
-                        <WorksListEntry
-                            key={work.id || index}
-                            id={work.id}
-                            aliases={work.aliases}
-                            number={work.number ?? `0${index + 1}`}
-                            href={work.href ?? `/works/${work.id}`}
-                            title={work.title}
-                            category={work.category}
-                            imageSrc={work.imageSrc}
-                            imagePreset={work.imagePreset}
-                            imageFitMode={work.imageFitMode}
-                            desc={work.desc}
-                            descriptionAlign={work.descriptionAlign}
-                            editMode={editMode}
-                            design={entryDesign}
-                            componentLayout={componentLayout}
-                        />
-                      ))}
-                </div>
-            </section>
-        );
-    }
+    const headingTypography = getComponentLayoutTypography(
+      componentLayout,
+      "heading",
+    );
+    const summaryTypography = getComponentLayoutTypography(
+      componentLayout,
+      "indexSummary",
+    );
+    const headerBounds = getResponsiveGridColumnClassName(
+      createResponsiveGridBounds(
+        { leftCol: 1, rightCol: 12 },
+        { leftCol: 2, rightCol: 11 },
+        resolvedDesign.headingBounds,
+      ),
+    );
 
     return (
-        <div className={`grid w-full content-center text-white ${getSectionSpacingClassName(resolvedDesign.sectionSpacing)}`}>
+        <section
+            className={`grid w-full content-center text-white ${
+              componentLayout
+                ? getComponentSectionProfileClassName(componentLayout)
+                : getSectionSpacingClassName(resolvedDesign.sectionSpacing)
+            }`}
+            style={getComponentSectionStyle(componentLayout)}
+        >
             <div
                 className={`grid-container relative z-20 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}
-                style={{ marginBottom: getSpacingRem(resolvedDesign.headingBottomSpacing) }}
+                style={!componentLayout
+                  ? {
+                    marginBottom: getSpacingRem(
+                      resolvedDesign.headingBottomSpacing,
+                    ),
+                  }
+                  : undefined}
             >
-                <div className={`${getResponsiveGridColumnClassName(createResponsiveGridBounds(
-                  { leftCol: 1, rightCol: 12 },
-                  { leftCol: 2, rightCol: 11 },
-                  resolvedDesign.headingBounds,
-                ))} grid gap-4 border-b border-white/10 pb-8 md:grid-cols-[1fr_auto] md:items-end`}>
+                <div className="col-start-1 col-span-12 grid-subgrid border-b border-white/10 pb-8">
+                  {hasEditableTextContent(heading) ? (
+                    <ComponentLayoutNode
+                      className={!componentLayout ? headerBounds : undefined}
+                      layout={componentLayout}
+                      nodeId="heading"
+                    >
                     <Typography
                         as="h1"
-                        preset="sans-body"
-                        size="title-sm"
+                        preset={headingTypography?.preset ?? "sans-body"}
+                        size={headingTypography?.size ?? "title-sm"}
                         weight="semantic"
-                        wrapPolicy="heading"
+                        wrapPolicy={headingTypography?.wrap ?? "heading"}
+                        align={getComponentLayoutAlignment(
+                          componentLayout,
+                          "heading",
+                        )}
                         className="text-white"
                     >
                         {heading}
                     </Typography>
+                    </ComponentLayoutNode>
+                  ) : null}
                     {hasEditableTextContent(indexSummary) ? (
+                      <ComponentLayoutNode
+                        className={!componentLayout
+                          ? `${headerBounds} md:justify-self-end`
+                          : undefined}
+                        layout={componentLayout}
+                        nodeId="indexSummary"
+                      >
                       <Typography
                         as="p"
-                        preset="sans-body"
-                        size="caption"
+                        preset={summaryTypography?.preset ?? "sans-body"}
+                        size={summaryTypography?.size ?? "caption"}
                         weight="semantic"
-                        wrapPolicy="label"
-                        className="text-textMuted md:text-right"
+                        wrapPolicy={summaryTypography?.wrap ?? "label"}
+                        align={getComponentLayoutAlignment(
+                          componentLayout,
+                          "indexSummary",
+                          "right",
+                        )}
+                        className="text-textMuted"
                       >
                         {indexSummary}
                       </Typography>
+                      </ComponentLayoutNode>
                     ) : null}
                 </div>
             </div>
@@ -208,10 +189,11 @@ export default function WorksList({
                             descriptionAlign={work.descriptionAlign}
                             editMode={editMode}
                             design={entryDesign}
+                            componentLayout={componentLayout}
                         />
                     ))}
                 </div>
             )}
-        </div>
+        </section>
     );
 }

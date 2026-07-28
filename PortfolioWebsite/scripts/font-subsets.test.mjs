@@ -7,6 +7,7 @@ import {
   buildPublicCharacterSet,
   compactUnicodeRanges,
   createFontSubsetInputState,
+  SUBSET_FONT_SOURCES,
   verifyGeneratedFontArtifacts,
 } from "./font-subset-lib.mjs";
 
@@ -30,13 +31,21 @@ test("Unicode range 合并连续码点", () => {
   );
 });
 
-test("许可证清单阻止未授权字体进入子集源", () => {
+test("许可证清单只允许有明确证据的字体进入子集源", () => {
   const state = createFontSubsetInputState(projectRoot);
-  assert.equal(
-    state.inventory.families["source-han-serif-sc"].delivery,
-    "subset",
+  const familyIds = new Set(
+    SUBSET_FONT_SOURCES.map((source) => source.licenseFamily),
   );
-  assert.equal(state.inventory.families["hanyi-qihei"].delivery, "on-demand-full");
+
+  for (const familyId of familyIds) {
+    assert.equal(state.inventory.families[familyId].delivery, "subset");
+    assert.equal(state.inventory.families[familyId].status, "verified");
+    assert.ok(state.inventory.families[familyId].evidence.length > 0);
+  }
+  assert.equal(
+    state.inventory.families["hanyi-qihei"].license,
+    "PROJECT-OWNER-WEB-SUBSET",
+  );
 });
 
 test("已提交字体产物与当前输入哈希一致", () => {
@@ -51,7 +60,8 @@ test("已提交字体产物与当前输入哈希一致", () => {
     ),
   );
   assert.equal(manifest.tool.version, "4.63.0");
-  assert.equal(manifest.generatorVersion, 2);
+  assert.equal(manifest.generatorVersion, 3);
+  assert.equal(manifest.faces.length, SUBSET_FONT_SOURCES.length);
   assert.ok(manifest.faces.every((face) => face.url.endsWith(".woff2")));
   assert.ok(manifest.faces.every((face) => {
     const supported = new Set(face.supportedCodepoints);
@@ -64,6 +74,18 @@ test("已提交字体产物与当前输入哈希一致", () => {
   );
   assert.equal(
     manifest.typographyCoverage["sans-body"].cjk.status,
-    "license-blocked",
+    "verified",
+  );
+  assert.equal(manifest.blockedFamilies.length, 0);
+  assert.deepEqual(
+    [...new Set(manifest.faces.map((face) => face.familyId))].sort(),
+    [
+      "dm-serif-display",
+      "futura",
+      "hanyi-qihei",
+      "itc-serif-gothic",
+      "luna-itc",
+      "source-han-serif-sc",
+    ],
   );
 });

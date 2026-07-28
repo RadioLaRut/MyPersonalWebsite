@@ -78,14 +78,6 @@ export default function ProjectSection({
   const textColumnClassName = shouldAlignRight
     ? "justify-items-end text-right"
     : "justify-items-start";
-  const lockupClassName = shouldAlignRight
-    ? "ml-auto justify-items-end text-right"
-    : "mr-auto justify-items-start text-left";
-  const titleLockupClassName = shouldAlignRight
-    ? "justify-self-end justify-items-end"
-    : "justify-self-start justify-items-start";
-
-  const underlineTrackClassName = shouldAlignRight ? "justify-end" : "justify-start";
   const underlineFillClassName =
     `w-[18%] bg-white/[0.45] ${motionClassNames.projectUnderline} group-hover:w-full group-hover:bg-white/[0.82] group-focus-visible:w-full group-focus-visible:bg-white/[0.82]`;
   const textBoundsClassName = getResponsiveGridColumnClassName(
@@ -182,10 +174,19 @@ export default function ProjectSection({
         } ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}
       >
         <div className="grid-container relative w-full mix-blend-difference">
-          {componentLayout ? (
-            <>
+          <div
+            className={componentLayout
+              ? "contents"
+              : `${textBoundsClassName} grid content-start ${textColumnClassName}`}
+          >
               {hasEditableTextContent(subtitle) ? (
-                <ComponentLayoutNode layout={componentLayout} nodeId="subtitle">
+                <ComponentLayoutNode
+                  layout={componentLayout}
+                  nodeId="subtitle"
+                  style={!componentLayout
+                    ? { marginBottom: lockupGap }
+                    : undefined}
+                >
                   <Typography
                     as="p"
                     preset={subtitleTypography?.preset ?? "sans-body"}
@@ -208,7 +209,11 @@ export default function ProjectSection({
                 layout={componentLayout}
                 nodeId="title"
                 className={`${titleRowClassName} relative grid w-fit max-w-full auto-rows-max gap-y-0 ${
-                  getComponentLayoutAlignment(componentLayout, "title") === "right"
+                  getComponentLayoutAlignment(
+                    componentLayout,
+                    "title",
+                    shouldAlignRight ? "right" : "left",
+                  ) === "right"
                     ? "justify-self-end justify-items-end"
                     : "justify-self-start justify-items-start"
                 }`}
@@ -216,7 +221,7 @@ export default function ProjectSection({
                 <Typography
                   as="h2"
                   preset={titleTypography?.preset ?? "luna-editorial"}
-                  size={titleTypography?.size ?? "display"}
+                  size={titleTypography?.size ?? design.titleSize}
                   weight="semantic"
                   wrapPolicy={titleTypography?.wrap ?? "heading"}
                   align={getComponentLayoutAlignment(
@@ -237,7 +242,11 @@ export default function ProjectSection({
                 <div
                   aria-hidden="true"
                   className={`flex w-full [transform:translateY(var(--project-underline-offset-mobile))] md:[transform:translateY(var(--project-underline-offset-tablet))] lg:[transform:translateY(var(--project-underline-offset-desktop))] ${
-                    getComponentLayoutAlignment(componentLayout, "title") === "right"
+                    getComponentLayoutAlignment(
+                      componentLayout,
+                      "title",
+                      shouldAlignRight ? "right" : "left",
+                    ) === "right"
                       ? "justify-end"
                       : "justify-start"
                   }`}
@@ -246,47 +255,7 @@ export default function ProjectSection({
                   <div className={`h-[2px] ${underlineFillClassName}`} />
                 </div>
               </ComponentLayoutNode>
-            </>
-          ) : (
-          <div className={`${textBoundsClassName} grid content-start ${textColumnClassName}`}>
-            <div className={`grid max-w-full auto-rows-max gap-y-0 ${lockupClassName}`}>
-              {hasEditableTextContent(subtitle) && (
-                <Typography
-                  as="p"
-                  preset="sans-body"
-                  size="label"
-                  weight="semantic"
-                  wrapPolicy="label"
-                  align={shouldAlignRight ? "right" : "left"}
-                  className="text-textPrimary"
-                  style={{ marginBottom: lockupGap }}
-                >
-                  {subtitle}
-                </Typography>
-              )}
-              <div className={`relative grid w-fit max-w-full auto-rows-max gap-y-0 ${titleLockupClassName}`}>
-                <Typography
-                  as="h2"
-                  preset="luna-editorial"
-                  size={design.titleSize}
-                  weight="semantic"
-                  wrapPolicy="heading"
-                  align={shouldAlignRight ? "right" : "left"}
-                  className="max-w-full text-white antialiased uppercase [transform:translateZ(0)] lg:whitespace-nowrap"
-                >
-                  {title}
-                </Typography>
-                <div
-                  aria-hidden="true"
-                  className={`pointer-events-none absolute inset-x-0 flex ${underlineTrackClassName}`}
-                  style={{ top: `calc(100% + ${underlineOffset})` }}
-                >
-                  <div className={`h-[2px] ${underlineFillClassName}`} />
-                </div>
-              </div>
-            </div>
           </div>
-          )}
         </div>
       </div>
     </MotionLink>

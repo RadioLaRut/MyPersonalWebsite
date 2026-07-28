@@ -257,6 +257,19 @@ test("V1 响应式 base/md/lg 无损迁移为 mobile/tablet/desktop", () => {
   assert.ok(parseCurrentComponentDesignDocument(migrated));
 });
 
+test("成对标签和覆盖操作元素保留边缘语义对齐", () => {
+  const document = createDefaultComponentDesignDocument();
+  const card = document.components.ProjectCoverLink.variants.card;
+  const slider = document.components.ImageSlider.variants.default;
+  const next = document.components.NextProjectBlock.variants.default;
+
+  assert.equal(card.nodes.prompt.alignment?.desktop, "right");
+  assert.equal(slider.nodes.rightLabel.alignment?.desktop, "right");
+  assert.equal(next.nodes.eyebrow.alignment?.desktop, "center");
+  assert.equal(next.nodes.title.alignment?.desktop, "center");
+  assert.equal(next.nodes.footerRight.alignment?.desktop, "right");
+});
+
 test("版式解析只产生 manifest 中声明的固定版式", () => {
   assert.equal(
     resolveComponentDesignVariant("HeroSection", { variant: "poster" }),

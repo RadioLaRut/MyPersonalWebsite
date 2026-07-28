@@ -6,6 +6,21 @@ import { PRODUCTION_SECURITY_HEADERS } from "./scripts/security-headers.mjs";
 const isDevelopmentServer = process.env.NODE_ENV === "development";
 const siteMode = process.env.NEXT_PUBLIC_SITE_MODE === "testing" ? "testing" : "normal";
 const projectRoot = dirname(fileURLToPath(import.meta.url));
+const productionToolFontStub = fileURLToPath(
+  new URL("./src/app/fonts/full-fonts.stub.ts", import.meta.url),
+);
+const productionComponentDesignProviderStub = fileURLToPath(
+  new URL(
+    "./src/components/layout/production-stubs/ComponentDesignProvider.tsx",
+    import.meta.url,
+  ),
+);
+const productionFontLabGlobalVarsStub = fileURLToPath(
+  new URL(
+    "./src/components/layout/production-stubs/FontLabGlobalVars.tsx",
+    import.meta.url,
+  ),
+);
 
 const nextConfig = {
   distDir: isDevelopmentServer ? `.next-dev-${siteMode}` : ".next",
@@ -15,6 +30,34 @@ const nextConfig = {
   },
   turbopack: {
     root: projectRoot,
+  },
+  webpack(config, { webpack }) {
+    if (!isDevelopmentServer) {
+      const productionToolReplacements = [
+        {
+          replacement: productionToolFontStub,
+          request:
+            /(?:@\/app\/fonts\/full-fonts|[/\\]src[/\\]app[/\\]fonts[/\\]full-fonts\.ts)$/u,
+        },
+        {
+          replacement: productionComponentDesignProviderStub,
+          request:
+            /(?:@\/components\/layout\/ComponentDesignProvider|[/\\]src[/\\]components[/\\]layout[/\\]ComponentDesignProvider\.tsx)$/u,
+        },
+        {
+          replacement: productionFontLabGlobalVarsStub,
+          request:
+            /(?:@\/components\/layout\/FontLabGlobalVars|[/\\]src[/\\]components[/\\]layout[/\\]FontLabGlobalVars\.tsx)$/u,
+        },
+      ];
+
+      for (const { replacement, request } of productionToolReplacements) {
+        config.plugins.push(
+          new webpack.NormalModuleReplacementPlugin(request, replacement),
+        );
+      }
+    }
+    return config;
   },
   images: {
     formats: ["image/webp", "image/avif"],

@@ -467,7 +467,7 @@ test("关键组件源码保留真实容器与重复布局节点", () => {
   assert.match(contentCardSource, /nodeId="body\.item"/);
   assert.match(
     contentCardSource,
-    /getComponentLayoutTypography\(componentLayout,\s*"body\.item"\)/,
+    /getComponentLayoutTypography\(\s*componentLayout,\s*"body\.item"/,
   );
   assert.doesNotMatch(
     contentCardSource,

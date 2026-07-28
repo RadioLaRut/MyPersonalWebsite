@@ -28,6 +28,12 @@ const manifest = JSON.parse(
   ),
 ) as PublicFontSubsetManifestV1;
 
+function familyFaceIds(familyId: string) {
+  return manifest.faces
+    .filter((face) => face.familyId === familyId)
+    .map((face) => face.id);
+}
+
 test("公开字体提示只投影真实使用字体的首屏文本", () => {
   for (const filePath of ["index.json", "about.json", "works/penguin.json"]) {
     const hints = getPublicFontHints(readPage(filePath), manifest);
@@ -36,23 +42,30 @@ test("公开字体提示只投影真实使用字体的首屏文本", () => {
     assert.ok(hints.every((hint) => hint.href.endsWith(".woff2")));
   }
 
-  assert.deepEqual(getFirstViewportFontFaceIds(readPage("index.json"), manifest), []);
-  assert.deepEqual(getFirstViewportFontFaceIds(readPage("about.json"), manifest), []);
-  assert.deepEqual(getFirstViewportFontFaceIds(readPage("works.json"), manifest), []);
+  assert.deepEqual(
+    getFirstViewportFontFaceIds(readPage("index.json"), manifest),
+    familyFaceIds("luna-itc"),
+  );
+  assert.ok(
+    getFirstViewportFontFaceIds(readPage("about.json"), manifest).length > 0,
+  );
+  assert.ok(
+    getFirstViewportFontFaceIds(readPage("works.json"), manifest).length > 0,
+  );
   assert.deepEqual(
     getFirstViewportFontFaceIds(readPage("works/penguin.json"), manifest),
     ["source-han-serif-sc"],
   );
 });
 
-test("只有编辑衬线标题中的中文才触发思源宋体预加载", () => {
+test("首屏字体提示按 Typography 文本脚本投影对应子集字面", () => {
   const homepage = readPage("index.json");
   const chineseSansCopyOnly = structuredClone(homepage);
   chineseSansCopyOnly.content[0].props.title = "JIANG CHENGYAN";
   chineseSansCopyOnly.content[0].props.positioning = "这段中文使用 sans-body";
   assert.deepEqual(
     getFirstViewportFontFaceIds(chineseSansCopyOnly, manifest),
-    [],
+    familyFaceIds("luna-itc"),
   );
 
   const chineseEditorialTitle = structuredClone(homepage);

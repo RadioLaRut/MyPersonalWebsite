@@ -34,9 +34,13 @@ import {
 } from "@/lib/component-design-commit";
 import {
   COMPONENT_DESIGN_MANIFEST_BY_COMPONENT,
+  getComponentDesignNodePolicy,
   getComponentDesignVariantDescriptor,
   type ComponentDesignAuthorComponent,
 } from "@/lib/component-design-manifest";
+import {
+  constrainComponentLabPlacement,
+} from "@/lib/component-lab-grid-interaction";
 import type {
   ComponentDesignBreakpoint,
 } from "@/lib/component-design-v2";
@@ -205,12 +209,33 @@ function setDeviceLayout(
 function applyPlacementInteraction(
   layout: ComponentDesignDeviceLayoutV3,
   message: ComponentLabPreviewPlacementMessage,
+  component: ComponentDesignAuthorComponent,
+  variant: string,
 ) {
   const next = structuredClone(layout);
   message.targets.forEach((target) => {
     const node = next.nodes[target.roleId];
     if (!node) return;
-    node.placement = structuredClone(target.placement);
+    const policy = getComponentDesignNodePolicy(
+      component,
+      variant,
+      target.roleId,
+    );
+    node.placement = constrainComponentLabPlacement({
+      currentPlacement: node.placement,
+      hostPlacement: policy.constrainToHost
+        ? next.nodes[policy.constrainToHost]?.placement
+        : undefined,
+      lockPlacement: policy.lockPlacement,
+      lockResize: policy.lockResize,
+      operation: message.operation === "resize"
+        ? message.resizeEdge === "left"
+          ? "resize-left"
+          : "resize-right"
+        : "move",
+      requestedPlacement: target.placement,
+    });
+    if (policy.lockPositioning) return;
     if (target.vertical?.mode === "flow") {
       node.positioning = {
         gapBefore: target.vertical.gapBefore,
@@ -779,7 +804,12 @@ export default function ComponentLabClient({
       return setDeviceLayout(
         value,
         activeDevice,
-        applyPlacementInteraction(layout, placementMessage),
+        applyPlacementInteraction(
+          layout,
+          placementMessage,
+          component,
+          variant,
+        ),
       );
     });
   }, [
@@ -1059,31 +1089,31 @@ export default function ComponentLabClient({
   ]);
 
   return (
-    <main className="h-screen min-w-[1100px] overflow-hidden bg-black text-white">
+    <main className="min-h-screen overflow-x-hidden bg-black text-white min-[1100px]:h-screen min-[1100px]:overflow-hidden">
       <header className="flex h-14 items-center justify-between border-b border-white/10 px-4">
         <div className="flex min-w-0 items-baseline gap-3">
           <h1 className="text-sm font-medium tracking-tight text-white">
             ComponentLab
           </h1>
-          <p className="truncate text-[11px] text-white/35">
+          <p className="hidden truncate text-[11px] text-white/35 sm:block">
             直接编辑组件内部文字、图片与按钮的共享版式
           </p>
         </div>
         <button
           type="button"
           onClick={() => router.push("/playground")}
-          className="flex min-h-8 items-center gap-2 border border-white/12 px-3 text-xs text-white/65 hover:border-white/30 hover:text-white"
+          className="flex min-h-8 shrink-0 items-center gap-2 border border-white/12 px-3 text-xs text-white/65 hover:border-white/30 hover:text-white"
         >
           <ArrowLeft aria-hidden="true" className="size-3.5" />
           返回 Playground
         </button>
       </header>
 
-      <div className="grid h-[calc(100vh-3.5rem)] grid-cols-[260px_minmax(0,1fr)_300px]">
+      <div className="grid min-h-[calc(100vh-3.5rem)] grid-cols-1 md:grid-cols-[220px_minmax(0,1fr)] min-[1100px]:h-[calc(100vh-3.5rem)] min-[1100px]:min-h-0 min-[1100px]:grid-cols-[260px_minmax(0,1fr)_300px]">
         <nav
           aria-label="组件版式与元素"
           data-component-lab-region="navigation"
-          className="grid min-h-0 grid-rows-[minmax(230px,42%)_minmax(0,1fr)] border-r border-white/10 bg-black"
+          className="grid h-[640px] min-w-0 grid-rows-[minmax(230px,42%)_minmax(0,1fr)] border-b border-white/10 bg-black md:col-start-1 md:row-start-1 md:h-[720px] md:border-b-0 md:border-r min-[1100px]:h-auto min-[1100px]:min-h-0"
         >
           <ComponentVariantPicker
             selection={selectionScope}
@@ -1104,7 +1134,7 @@ export default function ComponentLabClient({
         <section
           aria-label="ComponentLab 实际页面预览"
           data-component-lab-region="canvas"
-          className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)] bg-[#050505]"
+          className="grid h-[720px] min-w-0 grid-rows-[auto_minmax(0,1fr)] border-b border-white/10 bg-[#050505] md:col-start-2 md:row-start-1 min-[1100px]:h-auto min-[1100px]:min-h-0 min-[1100px]:border-b-0"
         >
           <ComponentLabToolbar
             activeDevice={activeDevice}

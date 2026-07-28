@@ -16,32 +16,32 @@
       "note": "Google Fonts 官方 DM Fonts 仓库明确说明全部字体采用 SIL Open Font License。"
     },
     "hanyi-qihei": {
-      "delivery": "on-demand-full",
-      "license": null,
-      "status": "unverified",
-      "evidence": "字体 name 记录仅指向 http://hanyi.com.cn/law.php，仓库内没有网页子集授权文本。",
-      "note": "保留完整原文件并按需加载，不生成衍生字体。"
+      "delivery": "subset",
+      "license": "PROJECT-OWNER-WEB-SUBSET",
+      "status": "verified",
+      "evidence": "项目所有者于 2026-07-28 在本项目 Codex 任务中明确授权制作 Web 子集。",
+      "note": "公开站生成 WOFF2 子集；后台保留完整原文件。"
     },
     "futura": {
-      "delivery": "on-demand-full",
-      "license": null,
-      "status": "unverified",
-      "evidence": "仓库内没有许可证文件。",
-      "note": "保留完整原文件并按需加载，不生成衍生字体。"
+      "delivery": "subset",
+      "license": "PROJECT-OWNER-WEB-SUBSET",
+      "status": "verified",
+      "evidence": "项目所有者于 2026-07-28 在本项目 Codex 任务中明确授权制作 Web 子集。",
+      "note": "公开站生成 WOFF2 子集；后台保留完整原文件。"
     },
     "luna-itc": {
-      "delivery": "on-demand-full",
-      "license": null,
-      "status": "unverified",
-      "evidence": "字体 name 记录包含 All rights reserved，仓库内没有子集授权文本。",
-      "note": "保留完整原文件并按需加载，不生成衍生字体。"
+      "delivery": "subset",
+      "license": "PROJECT-OWNER-WEB-SUBSET",
+      "status": "verified",
+      "evidence": "项目所有者于 2026-07-28 在本项目 Codex 任务中明确授权制作 Web 子集。",
+      "note": "公开站生成 WOFF2 子集；后台保留完整原文件。"
     },
     "itc-serif-gothic": {
-      "delivery": "on-demand-full",
-      "license": null,
-      "status": "unverified",
-      "evidence": "字体 name 记录包含 All Rights Reserved，仓库内没有子集授权文本。",
-      "note": "保留完整原文件并按需加载，不生成衍生字体。"
+      "delivery": "subset",
+      "license": "PROJECT-OWNER-WEB-SUBSET",
+      "status": "verified",
+      "evidence": "项目所有者于 2026-07-28 在本项目 Codex 任务中明确授权制作 Web 子集。",
+      "note": "公开站生成 WOFF2 子集；后台保留完整原文件。"
     }
   }
 }

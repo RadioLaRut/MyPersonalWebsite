@@ -79,110 +79,23 @@ export default function WorksListEntry({
       design.sidebarBounds.lg,
     ),
   );
-
-  if (componentLayout) {
-    const numberTypography = getComponentLayoutTypography(componentLayout, "item.number");
-    const titleTypography = getComponentLayoutTypography(componentLayout, "item.title");
-    const categoryTypography = getComponentLayoutTypography(componentLayout, "item.category");
-    const descriptionTypography = getComponentLayoutTypography(componentLayout, "item.description");
-    return (
-      <MotionLink
-        href={href || "#"}
-        disabled={!isLinkEnabled}
-        disabledElement="div"
-        interactionPreset="blockLink"
-        className={`group relative grid min-h-[calc(var(--site-viewport-unit)*30)] w-full content-center border-b border-white/10 ${cursorClass}`}
-        data-active="false"
-        data-works-entry=""
-      >
-        <div className={`grid-container relative z-10 items-baseline py-8 md:py-12 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
-          <ComponentLayoutNode layout={componentLayout} nodeId="item.number">
-            <Typography
-              preset={numberTypography?.preset ?? "sans-body"}
-              size={numberTypography?.size ?? "label"}
-              weight="semantic"
-              wrapPolicy={numberTypography?.wrap ?? "label"}
-              align={getComponentLayoutAlignment(componentLayout, "item.number")}
-              className="text-textMuted"
-            >
-              {resolvedNumber}
-            </Typography>
-          </ComponentLayoutNode>
-          <ComponentLayoutNode layout={componentLayout} nodeId="item.title">
-            <Typography
-              as="h2"
-              preset={titleTypography?.preset ?? "luna-editorial"}
-              size={titleTypography?.size ?? "title"}
-              weight="display"
-              wrapPolicy={titleTypography?.wrap ?? "heading"}
-              align={getComponentLayoutAlignment(componentLayout, "item.title")}
-              className="break-words uppercase text-white"
-            >
-              {title}
-            </Typography>
-          </ComponentLayoutNode>
-          {hasEditableTextContent(category) ? (
-            <ComponentLayoutNode layout={componentLayout} nodeId="item.category">
-              <Typography
-                as="p"
-                preset={categoryTypography?.preset ?? "gothic-editorial"}
-                size={categoryTypography?.size ?? "label"}
-                weight="semantic"
-                wrapPolicy={categoryTypography?.wrap ?? "label"}
-                align={getComponentLayoutAlignment(componentLayout, "item.category")}
-                className="text-textSecondary uppercase"
-              >
-                {category}
-              </Typography>
-            </ComponentLayoutNode>
-          ) : null}
-          {hasEditableTextContent(desc) ? (
-            <ComponentLayoutNode
-              gapFrom={hasEditableTextContent(category) ? "item.category" : undefined}
-              layout={componentLayout}
-              nodeId="item.description"
-            >
-              <Typography
-                as="p"
-                preset={descriptionTypography?.preset ?? "sans-body"}
-                size={descriptionTypography?.size ?? "body-sm"}
-                weight="light"
-                wrapPolicy={descriptionTypography?.wrap ?? "prose"}
-                align={getComponentLayoutAlignment(
-                  componentLayout,
-                  "item.description",
-                  descriptionAlign,
-                )}
-                className="text-textSecondary"
-              >
-                {desc}
-              </Typography>
-            </ComponentLayoutNode>
-          ) : null}
-        </div>
-        {imageSrc ? (
-          <div className="pointer-events-none absolute inset-0 z-0">
-            <div className="grid-container h-full items-center">
-              <ComponentLayoutNode
-                className="pointer-events-auto relative self-center overflow-hidden"
-                layout={componentLayout}
-                nodeId="item.media"
-              >
-                <WorksListEntryActivation
-                  contained
-                  forceVisible={editMode}
-                  imageAlt={plainTitle ?? "Work entry"}
-                  imageFitMode={imageFitMode}
-                  imagePreset={imagePreset}
-                  imageSrc={imageSrc}
-                />
-              </ComponentLayoutNode>
-            </div>
-          </div>
-        ) : null}
-      </MotionLink>
-    );
-  }
+  const numberTypography = getComponentLayoutTypography(
+    componentLayout,
+    "item.number",
+  );
+  const titleTypography = getComponentLayoutTypography(
+    componentLayout,
+    "item.title",
+  );
+  const categoryTypography = getComponentLayoutTypography(
+    componentLayout,
+    "item.category",
+  );
+  const descriptionTypography = getComponentLayoutTypography(
+    componentLayout,
+    "item.description",
+  );
+  const forceLabPreview = componentLayout?.componentLabAnnotations === true;
 
   return (
     <MotionLink
@@ -200,13 +113,23 @@ export default function WorksListEntry({
       }
     >
       <div className={`grid-container relative z-10 items-baseline py-8 md:py-12 lg:py-16 ${editMode ? "pointer-events-auto" : "pointer-events-none"}`}>
-        <div className="col-start-1 col-span-2 self-baseline md:hidden">
+        <ComponentLayoutNode
+          className={!componentLayout
+            ? `${numberBoundsClassName} self-baseline`
+            : "self-baseline"}
+          layout={componentLayout}
+          nodeId="item.number"
+        >
           <div className="relative grid w-fit">
             <Typography
-              preset="sans-body"
-              size="label"
+              preset={numberTypography?.preset ?? "sans-body"}
+              size={numberTypography?.size ?? "label"}
               weight="semantic"
-              wrapPolicy="label"
+              wrapPolicy={numberTypography?.wrap ?? "label"}
+              align={getComponentLayoutAlignment(
+                componentLayout,
+                "item.number",
+              )}
               className="text-textMuted transition-colors duration-700 ease-out group-data-[active=true]:text-white/[0.76]"
             >
               {resolvedNumber}
@@ -216,69 +139,87 @@ export default function WorksListEntry({
               aria-hidden="true"
             />
           </div>
-        </div>
+        </ComponentLayoutNode>
 
-        <div className={`hidden self-baseline lg:block ${numberBoundsClassName}`}>
-          <div className="relative grid w-fit content-center">
-            <Typography
-              preset="sans-body"
-              size="title-sm"
-              weight="semantic"
-              wrapPolicy="label"
-              className="text-textMuted transition-colors duration-700 ease-out group-data-[active=true]:text-white/[0.76]"
-            >
-              {resolvedNumber}
-            </Typography>
-            <span
-              className="absolute top-full mt-3 h-px w-0 bg-white/60 opacity-0 transition-[width,opacity] duration-700 ease-out group-data-[active=true]:w-4 group-data-[active=true]:opacity-100"
-              aria-hidden="true"
-            />
-          </div>
-        </div>
-
-        <div className={`${titleBoundsClassName} grid self-baseline content-center py-4`}>
+        <ComponentLayoutNode
+          className={`${!componentLayout ? titleBoundsClassName : ""} grid self-baseline content-center py-4`}
+          layout={componentLayout}
+          nodeId="item.title"
+        >
           <Typography
             as="h2"
-            preset="luna-editorial"
-            size="title"
+            preset={titleTypography?.preset ?? "luna-editorial"}
+            size={titleTypography?.size ?? "title"}
             weight="display"
-            wrapPolicy="heading"
+            wrapPolicy={titleTypography?.wrap ?? "heading"}
+            align={getComponentLayoutAlignment(
+              componentLayout,
+              "item.title",
+            )}
             className="break-words py-2 uppercase text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.42)] transition-all duration-700 ease-out group-data-[active=true]:text-white/[0.92] group-data-[active=true]:[-webkit-text-stroke:1px_rgba(255,255,255,0)]"
           >
             {title}
           </Typography>
-        </div>
+        </ComponentLayoutNode>
 
-        <div className={`${sidebarBoundsClassName} mt-4 grid self-center content-center md:mt-0 md:pl-6 lg:pl-8`}>
+        <ComponentLayoutNode
+          className={`${!componentLayout ? sidebarBoundsClassName : ""} mt-4 grid self-center content-center md:mt-0 md:pl-6 lg:pl-8`}
+          layout={componentLayout}
+          nodeId="item.category"
+        >
           <div className="grid gap-1">
-            <Typography
-              as="p"
-              preset="gothic-editorial"
-              size="label"
-              weight="semantic"
-              wrapPolicy="prose"
-              className="text-textSecondary uppercase transition-colors duration-700 ease-out group-data-[active=true]:text-textPrimary"
-            >
-              {category}
-            </Typography>
-            <div className="-translate-x-2.5 opacity-0 transition-[opacity,transform] duration-700 ease-out group-data-[active=true]:translate-x-0 group-data-[active=true]:opacity-100">
+            {hasEditableTextContent(category) ? (
               <Typography
                 as="p"
-                preset="sans-body"
-                size="body-sm"
-                weight="light"
-                wrapPolicy="prose"
-                align={descriptionAlign}
-                className="mt-4 text-textSecondary"
+                preset={categoryTypography?.preset ?? "gothic-editorial"}
+                size={categoryTypography?.size ?? "label"}
+                weight="semantic"
+                wrapPolicy={categoryTypography?.wrap ?? "prose"}
+                align={getComponentLayoutAlignment(
+                  componentLayout,
+                  "item.category",
+                )}
+                className="text-textSecondary uppercase transition-colors duration-700 ease-out group-data-[active=true]:text-textPrimary"
               >
-                {desc}
+                {category}
               </Typography>
-            </div>
+            ) : null}
+            {hasEditableTextContent(desc) ? (
+              <ComponentLayoutNode
+                layout={componentLayout}
+                nodeId="item.description"
+                style={{ position: "relative", top: "auto", translate: "none" }}
+              >
+                <div
+                  className={`-translate-x-2.5 transition-[opacity,transform] duration-700 ease-out group-data-[active=true]:translate-x-0 group-data-[active=true]:opacity-100 ${
+                    forceLabPreview ? "translate-x-0 opacity-100" : "opacity-0"
+                  }`}
+                >
+                  <Typography
+                    as="p"
+                    preset={descriptionTypography?.preset ?? "sans-body"}
+                    size={descriptionTypography?.size ?? "body-sm"}
+                    weight="light"
+                    wrapPolicy={descriptionTypography?.wrap ?? "prose"}
+                    align={getComponentLayoutAlignment(
+                      componentLayout,
+                      "item.description",
+                      descriptionAlign,
+                    )}
+                    className="mt-4 text-textSecondary"
+                  >
+                    {desc}
+                  </Typography>
+                </div>
+              </ComponentLayoutNode>
+            ) : null}
           </div>
-        </div>
+        </ComponentLayoutNode>
       </div>
-      {!editMode ? (
+      {imageSrc ? (
         <WorksListEntryActivation
+          componentLabAnnotations={forceLabPreview}
+          forceVisible={forceLabPreview}
           imageAlt={plainTitle ?? "Work entry"}
           imageFitMode={imageFitMode}
           imagePreset={imagePreset}

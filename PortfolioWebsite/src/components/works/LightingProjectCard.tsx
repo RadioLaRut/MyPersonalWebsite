@@ -52,107 +52,23 @@ export default function LightingProjectCard({
 }: LightingProjectCardProps) {
   const resolvedDesign = resolveComponentDesign("LightingProjectCard", design);
   const hasTitle = hasEditableTextContent(title);
+  const resolvedPrompt = hasEditableTextContent(prompt) ? prompt : "Enter";
+  const hasCollectionPrefix = /^collection(?:\s|$)/i.test(
+    toPlainText(number)?.trim() ?? "",
+  );
   const imageAlt = toPlainText(title) ?? `Lighting collection ${toPlainText(number) ?? ""}`;
-
-  if (componentLayout) {
-    const numberTypography = getComponentLayoutTypography(componentLayout, "number");
-    const promptTypography = getComponentLayoutTypography(componentLayout, "prompt");
-    const titleTypography = getComponentLayoutTypography(componentLayout, "title");
-    const card = (
-      <article
-        className={`group relative w-full overflow-hidden ${getComponentSectionProfileClassName(componentLayout)}`}
-        style={getComponentSectionStyle(componentLayout)}
-      >
-        <div className="grid-container relative min-h-[18rem] items-start md:min-h-[30rem]">
-          <ComponentLayoutNode
-            layout={componentLayout}
-            nodeId="media"
-            className="relative row-span-3 h-full min-h-[18rem] overflow-hidden border border-white/10 md:min-h-[30rem]"
-          >
-            <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/10 to-black/80" />
-            {coverImage ? (
-              <PresetImage
-                src={coverImage}
-                alt={imageAlt}
-                preload={publicMediaHint?.src === coverImage && publicMediaHint.preload}
-                mediaProfile="grid-10"
-                sizes={publicMediaHint?.src === coverImage ? publicMediaHint.sizes : undefined}
-                preset={imagePreset === "native" ? "ratio-16-9" : imagePreset}
-                fitMode={imageFitMode}
-                lockFrame={false}
-                frameClassName="h-full w-full"
-              />
-            ) : null}
-          </ComponentLayoutNode>
-          {hasEditableTextContent(number) ? (
-            <ComponentLayoutNode
-              layout={componentLayout}
-              nodeId="number"
-              className="relative z-20 self-start pt-5"
-            >
-              <Typography
-                preset={numberTypography?.preset ?? "sans-body"}
-                size={numberTypography?.size ?? "label"}
-                weight="semantic"
-                wrapPolicy={numberTypography?.wrap ?? "label"}
-                align={getComponentLayoutAlignment(componentLayout, "number")}
-                className="text-white/48"
-              >
-                {number}
-              </Typography>
-            </ComponentLayoutNode>
-          ) : null}
-          {hasEditableTextContent(prompt) ? (
-            <ComponentLayoutNode
-              layout={componentLayout}
-              nodeId="prompt"
-              className="relative z-20 self-start pt-5"
-            >
-              <Typography
-                preset={promptTypography?.preset ?? "sans-body"}
-                size={promptTypography?.size ?? "caption"}
-                weight="semantic"
-                wrapPolicy={promptTypography?.wrap ?? "label"}
-                align={getComponentLayoutAlignment(componentLayout, "prompt")}
-                className="text-white/48"
-              >
-                {prompt}
-              </Typography>
-            </ComponentLayoutNode>
-          ) : null}
-          {hasTitle ? (
-            <ComponentLayoutNode
-              layout={componentLayout}
-              nodeId="title"
-              className="relative z-20 self-end pb-5"
-            >
-              <Typography
-                as="h2"
-                preset={titleTypography?.preset ?? "luna-editorial"}
-                size={titleTypography?.size ?? "title"}
-                weight="display"
-                wrapPolicy={titleTypography?.wrap ?? "heading"}
-                align={getComponentLayoutAlignment(componentLayout, "title")}
-                className="text-white"
-              >
-                {title}
-              </Typography>
-            </ComponentLayoutNode>
-          ) : null}
-        </div>
-      </article>
-    );
-    return href ? (
-      <MotionLink
-        href={href}
-        disabled={editMode}
-        interactionPreset="blockLink"
-        className={editMode ? "block cursor-default" : "interactive block"}
-      >
-        {card}
-      </MotionLink>
-    ) : card;
-  }
+  const numberTypography = getComponentLayoutTypography(
+    componentLayout,
+    "number",
+  );
+  const promptTypography = getComponentLayoutTypography(
+    componentLayout,
+    "prompt",
+  );
+  const titleTypography = getComponentLayoutTypography(
+    componentLayout,
+    "title",
+  );
 
   const content = (
     <article className="group glass-panel relative h-full w-full overflow-hidden rounded-none">
@@ -175,41 +91,81 @@ export default function LightingProjectCard({
       ) : null}
 
       <div className="relative z-20 aspect-video md:aspect-[21/9]">
-        <div className="absolute left-0 top-0 px-5 py-5 md:px-6 md:py-6">
-          <Typography
-            preset="sans-body"
-            size="caption"
-            weight="semantic"
-            wrapPolicy="label"
-            className="text-white/48"
-          >
-            Collection {number}
-          </Typography>
+        <div className="absolute inset-x-0 top-0 px-5 py-5 md:px-6 md:py-6">
+          <div className="grid-subgrid">
+            <ComponentLayoutNode
+              className={!componentLayout ? "col-start-1 col-span-5" : undefined}
+              layout={componentLayout}
+              nodeId="number"
+              style={{ position: "relative", top: "auto", translate: "none" }}
+            >
+              <Typography
+                preset={numberTypography?.preset ?? "sans-body"}
+                size={numberTypography?.size ?? "caption"}
+                weight="semantic"
+                wrapPolicy={numberTypography?.wrap ?? "label"}
+                align={getComponentLayoutAlignment(
+                  componentLayout,
+                  "number",
+                )}
+                className="text-white/48"
+              >
+                {hasCollectionPrefix ? number : <>Collection {number}</>}
+              </Typography>
+            </ComponentLayoutNode>
+          </div>
         </div>
-        <div className="absolute right-0 top-0 py-5 pr-[0.55rem] md:py-6 md:pr-[0.7rem]">
-          <Typography
-            preset="sans-body"
-            size="caption"
-            weight="semantic"
-            wrapPolicy="label"
-            className="text-right text-white/[0.42] transition-colors duration-500 group-hover:text-white/[0.66] group-focus-visible:text-white/[0.66]"
-          >
-            Enter
-          </Typography>
+        <div className="absolute inset-x-0 top-0 px-5 py-5 md:px-6 md:py-6">
+          <div className="grid-subgrid">
+            <ComponentLayoutNode
+              className={!componentLayout ? "col-start-8 col-span-5" : undefined}
+              layout={componentLayout}
+              nodeId="prompt"
+              style={{ position: "relative", top: "auto", translate: "none" }}
+            >
+              <Typography
+                preset={promptTypography?.preset ?? "sans-body"}
+                size={promptTypography?.size ?? "caption"}
+                weight="semantic"
+                wrapPolicy={promptTypography?.wrap ?? "label"}
+                align={getComponentLayoutAlignment(
+                  componentLayout,
+                  "prompt",
+                  "right",
+                )}
+                className="text-right text-white/[0.42] transition-colors duration-500 group-hover:text-white/[0.66] group-focus-visible:text-white/[0.66]"
+              >
+                {resolvedPrompt}
+              </Typography>
+            </ComponentLayoutNode>
+          </div>
         </div>
 
         {hasTitle ? (
           <div className="absolute inset-x-0 bottom-0 px-5 pb-5 md:px-6 md:pb-6">
-            <Typography
-              as="h2"
-              preset="luna-editorial"
-              size="title"
-              weight="display"
-              wrapPolicy="heading"
-              className="text-white"
-            >
-              {title}
-            </Typography>
+            <div className="grid-subgrid">
+              <ComponentLayoutNode
+                className={!componentLayout ? "col-start-1 col-span-12" : undefined}
+                layout={componentLayout}
+                nodeId="title"
+                style={{ position: "relative", top: "auto", translate: "none" }}
+              >
+                <Typography
+                  as="h2"
+                  preset={titleTypography?.preset ?? "luna-editorial"}
+                  size={titleTypography?.size ?? "title"}
+                  weight="display"
+                  wrapPolicy={titleTypography?.wrap ?? "heading"}
+                  align={getComponentLayoutAlignment(
+                    componentLayout,
+                    "title",
+                  )}
+                  className="text-white"
+                >
+                  {title}
+                </Typography>
+              </ComponentLayoutNode>
+            </div>
           </div>
         ) : null}
       </div>
@@ -217,30 +173,43 @@ export default function LightingProjectCard({
   );
 
   return (
-    <section className="w-full py-4 md:py-6 lg:py-8">
+    <section
+      className={`w-full ${
+        componentLayout
+          ? getComponentSectionProfileClassName(componentLayout)
+          : "py-4 md:py-6 lg:py-8"
+      }`}
+      style={getComponentSectionStyle(componentLayout)}
+    >
       <div className="grid-container">
+        <ComponentLayoutNode
+          className={!componentLayout
+            ? getResponsiveGridColumnClassName(createResponsiveGridBounds(
+              { leftCol: 1, rightCol: 12 },
+              { leftCol: 2, rightCol: 11 },
+              resolvedDesign.contentBounds,
+            ))
+            : undefined}
+          layout={componentLayout}
+          nodeId="media"
+        >
         {href ? (
           <MotionLink
             href={href}
             disabled={editMode}
             interactionPreset="blockLink"
-            className={`${getResponsiveGridColumnClassName(createResponsiveGridBounds(
-              { leftCol: 1, rightCol: 12 },
-              { leftCol: 2, rightCol: 11 },
-              resolvedDesign.contentBounds,
-            ))} block w-full ${editMode ? "cursor-default" : "interactive"}`}
+            className={`block w-full ${
+              editMode ? "cursor-default" : "interactive"
+            }`}
           >
             {content}
           </MotionLink>
         ) : (
-          <div className={`${getResponsiveGridColumnClassName(createResponsiveGridBounds(
-            { leftCol: 1, rightCol: 12 },
-            { leftCol: 2, rightCol: 11 },
-            resolvedDesign.contentBounds,
-          ))} w-full`}>
+          <div className="w-full">
             {content}
           </div>
         )}
+        </ComponentLayoutNode>
       </div>
     </section>
   );

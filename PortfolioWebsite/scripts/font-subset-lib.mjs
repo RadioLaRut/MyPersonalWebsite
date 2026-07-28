@@ -5,11 +5,17 @@ import path from "node:path";
 import { collectPublicCopyStrings } from "../src/lib/public-copy.ts";
 
 export const FONT_TOOLS_VERSION = "4.63.0";
-export const FONT_SUBSET_GENERATOR_VERSION = 2;
+export const FONT_SUBSET_GENERATOR_VERSION = 3;
+
+const VERIFIED_SUBSET_LICENSES = new Set([
+  "OFL-1.1",
+  "PROJECT-OWNER-WEB-SUBSET",
+]);
 
 export const SUBSET_FONT_SOURCES = Object.freeze([
   {
     family: "Source Han Serif SC Public Subset",
+    familyId: "source-han-serif-sc",
     id: "source-han-serif-sc",
     licenseFamily: "source-han-serif-sc",
     source: "src/app/fonts/SourceHanSerifSC-VF.otf",
@@ -19,7 +25,140 @@ export const SUBSET_FONT_SOURCES = Object.freeze([
     weight: "200 900",
   },
   {
+    family: "Hanyi QiHei Public Subset",
+    familyId: "hanyi-qihei",
+    id: "hanyi-qihei-400",
+    licenseFamily: "hanyi-qihei",
+    source: "src/app/fonts/HYQiHei_40S.ttf",
+    style: "normal",
+    strategy: "static",
+    variable: false,
+    weight: "400",
+  },
+  {
+    family: "Hanyi QiHei Public Subset",
+    familyId: "hanyi-qihei",
+    id: "hanyi-qihei-500",
+    licenseFamily: "hanyi-qihei",
+    source: "src/app/fonts/HYQiHei_50S.ttf",
+    style: "normal",
+    strategy: "static",
+    variable: false,
+    weight: "500",
+  },
+  {
+    family: "Hanyi QiHei Public Subset",
+    familyId: "hanyi-qihei",
+    id: "hanyi-qihei-700",
+    licenseFamily: "hanyi-qihei",
+    source: "src/app/fonts/HYQiHei_70S.ttf",
+    style: "normal",
+    strategy: "static",
+    variable: false,
+    weight: "700",
+  },
+  {
+    family: "Futura Public Subset",
+    familyId: "futura",
+    id: "futura-300",
+    licenseFamily: "futura",
+    source: "src/app/fonts/Futura Light.otf",
+    style: "normal",
+    strategy: "static",
+    variable: false,
+    weight: "300",
+  },
+  {
+    family: "Futura Public Subset",
+    familyId: "futura",
+    id: "futura-400",
+    licenseFamily: "futura",
+    source: "src/app/fonts/Futura Regular.ttf",
+    style: "normal",
+    strategy: "static",
+    variable: false,
+    weight: "400",
+  },
+  {
+    family: "Futura Public Subset",
+    familyId: "futura",
+    id: "futura-500",
+    licenseFamily: "futura",
+    source: "src/app/fonts/Futura Medium.otf",
+    style: "normal",
+    strategy: "static",
+    variable: false,
+    weight: "500",
+  },
+  {
+    family: "Luna ITC Public Subset",
+    familyId: "luna-itc",
+    id: "luna-itc-400",
+    licenseFamily: "luna-itc",
+    source: "src/app/fonts/LunaITCStd.otf",
+    style: "normal",
+    strategy: "static",
+    variable: false,
+    weight: "400",
+  },
+  {
+    family: "Luna ITC Public Subset",
+    familyId: "luna-itc",
+    id: "luna-itc-700",
+    licenseFamily: "luna-itc",
+    source: "src/app/fonts/LunaITCStd-Bold.otf",
+    style: "normal",
+    strategy: "static",
+    variable: false,
+    weight: "700",
+  },
+  {
+    family: "ITC Serif Gothic Public Subset",
+    familyId: "itc-serif-gothic",
+    id: "itc-serif-gothic-300",
+    licenseFamily: "itc-serif-gothic",
+    source: "src/app/fonts/itc-serif-gothic-light-588cee8a0bfb1.otf",
+    style: "normal",
+    strategy: "static",
+    variable: false,
+    weight: "300",
+  },
+  {
+    family: "ITC Serif Gothic Public Subset",
+    familyId: "itc-serif-gothic",
+    id: "itc-serif-gothic-400",
+    licenseFamily: "itc-serif-gothic",
+    source: "src/app/fonts/itc-serif-gothic-regular-588cef4e7134b.otf",
+    style: "normal",
+    strategy: "static",
+    variable: false,
+    weight: "400",
+  },
+  {
+    family: "ITC Serif Gothic Public Subset",
+    familyId: "itc-serif-gothic",
+    id: "itc-serif-gothic-800",
+    licenseFamily: "itc-serif-gothic",
+    source: "src/app/fonts/itc-serif-gothic-extra-bold-588cef7e1f5d9.otf",
+    style: "normal",
+    strategy: "static",
+    variable: false,
+    weight: "800",
+  },
+  {
+    family: "ITC Serif Gothic Public Subset",
+    familyId: "itc-serif-gothic",
+    id: "itc-serif-gothic-900",
+    licenseFamily: "itc-serif-gothic",
+    source: "src/app/fonts/itc-serif-gothic-heavy-588d443a778f2.otf",
+    style: "normal",
+    strategy: "static",
+    variable: false,
+    weight: "900",
+  },
+  {
     family: "DM Serif Display Public Subset",
+    familyId: "dm-serif-display",
     id: "dm-serif-display",
     licenseFamily: "dm-serif-display",
     source: "src/app/fonts/DMSerifDisplay-Regular.ttf",
@@ -172,14 +311,19 @@ export function readAndValidateLicenseInventory(projectRoot) {
     throw new Error("字体许可证清单格式无效");
   }
 
-  for (const source of SUBSET_FONT_SOURCES) {
-    const license = inventory.families[source.licenseFamily];
+  const subsetFamilyIds = new Set(
+    SUBSET_FONT_SOURCES.map((source) => source.licenseFamily),
+  );
+  for (const familyId of subsetFamilyIds) {
+    const license = inventory.families[familyId];
     if (
       license?.status !== "verified" ||
       license?.delivery !== "subset" ||
-      license?.license !== "OFL-1.1"
+      !VERIFIED_SUBSET_LICENSES.has(license?.license) ||
+      typeof license?.evidence !== "string" ||
+      license.evidence.trim().length === 0
     ) {
-      throw new Error(`${source.id} 没有经过验证的子集授权`);
+      throw new Error(`${familyId} 没有经过验证的子集授权`);
     }
   }
 
@@ -227,12 +371,30 @@ export function createPublicFontCss(manifest) {
     "",
   ]);
 
+  const familyNames = new Map(
+    manifest.faces.map((face) => [face.familyId, face.family]),
+  );
+  const requiredFamilies = [
+    ["--font-noto-serif", "source-han-serif-sc"],
+    ["--font-han-yi-qi-hei", "hanyi-qihei"],
+    ["--font-futura", "futura"],
+    ["--font-luna", "luna-itc"],
+    ["--font-gothic", "itc-serif-gothic"],
+    ["--font-dm-serif", "dm-serif-display"],
+  ];
+  const variables = requiredFamilies.map(([variable, familyId]) => {
+    const family = familyNames.get(familyId);
+    if (!family) {
+      throw new Error(`公开字体 manifest 缺少 ${familyId}`);
+    }
+    return `  ${variable}: "${family}";`;
+  });
+
   return [
     "/* 此文件由 scripts/generate-font-subsets.mjs 自动生成，请勿手动修改。 */",
     ...faces,
     ".public-font-scope {",
-    '  --font-noto-serif: "Source Han Serif SC Public Subset";',
-    '  --font-dm-serif: "DM Serif Display Public Subset";',
+    ...variables,
     "}",
     "",
   ].join("\n");

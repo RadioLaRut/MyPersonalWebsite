@@ -14,14 +14,14 @@ import {
 import { subscribeViewportRaf } from "@/lib/motion/viewport-raf";
 
 export default function WorksListEntryActivation({
-  contained = false,
+  componentLabAnnotations = false,
   forceVisible = false,
   imageAlt,
   imageFitMode,
   imagePreset,
   imageSrc,
 }: {
-  contained?: boolean;
+  componentLabAnnotations?: boolean;
   forceVisible?: boolean;
   imageAlt: string;
   imageFitMode: ImageFitMode;
@@ -95,20 +95,17 @@ export default function WorksListEntryActivation({
     <>
       {imageSrc ? (
         <div
-          className={`${
-            contained
-              ? "pointer-events-none relative z-0 w-full overflow-hidden"
-              : "pointer-events-none absolute inset-0 z-0 overflow-hidden"
-          } ${
+          data-component-lab-node={componentLabAnnotations
+            ? "item.media"
+            : undefined}
+          className={`pointer-events-none absolute inset-0 z-0 overflow-hidden ${
             forceVisible
               ? "opacity-100"
               : "opacity-0 transition-opacity duration-700 ease-out group-data-[active=true]:opacity-100"
           }`}
         >
           <div className="absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.4)_0%,rgba(0,0,0,0.52)_40%,rgba(0,0,0,0.8)_100%)]" />
-          <div
-            className={`${contained ? "w-full" : "h-full w-full"} scale-[1.025] transition-transform duration-[5000ms] ease-out group-data-[active=true]:scale-100`}
-          >
+          <div className="h-full w-full scale-[1.025] transition-transform duration-[5000ms] ease-out group-data-[active=true]:scale-100">
             <PresetImage
               src={imageSrc}
               alt={imageAlt}
@@ -120,8 +117,8 @@ export default function WorksListEntryActivation({
                 base: imagePreset === "native" ? "x" : "cover",
                 lg: imageFitMode,
               }}
-              lockFrame={contained ? undefined : false}
-              frameClassName={contained ? "w-full" : "h-full w-full"}
+              lockFrame={false}
+              frameClassName="h-full w-full"
             />
           </div>
         </div>

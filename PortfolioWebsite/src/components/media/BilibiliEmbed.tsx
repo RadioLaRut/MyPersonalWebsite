@@ -43,6 +43,9 @@ export default function BilibiliEmbed({
 }: BilibiliEmbedProps) {
   const video = parseBilibiliVideoSource(source);
   const accessibleTitle = resolveBilibiliEmbedTitle(toPlainText(title));
+  const resolvedExternalLinkLabel = hasEditableTextContent(externalLinkLabel)
+    ? externalLinkLabel
+    : "在哔哩哔哩观看";
   const contentBoundsClassName = getResponsiveGridColumnClassName(
     createResponsiveGridBounds(
       { leftCol: 1, rightCol: 12 },
@@ -53,7 +56,6 @@ export default function BilibiliEmbed({
 
   if (!video) {
     if (!editMode) return null;
-
     return (
       <section className="w-full bg-black py-8 md:py-12">
         <div className="grid-container">
@@ -91,20 +93,30 @@ export default function BilibiliEmbed({
     );
   }
 
-  if (componentLayout) {
-    const captionTypography = getComponentLayoutTypography(componentLayout, "caption");
-    const linkTypography = getComponentLayoutTypography(componentLayout, "externalLink");
-    return (
-      <section
-        className={`w-full bg-black ${getComponentSectionProfileClassName(componentLayout)}`}
-        style={getComponentSectionStyle(componentLayout)}
-      >
-        <div className="grid-container items-start">
+  const captionTypography = getComponentLayoutTypography(
+    componentLayout,
+    "caption",
+  );
+  const linkTypography = getComponentLayoutTypography(
+    componentLayout,
+    "externalLink",
+  );
+
+  return (
+    <section
+      className={`w-full bg-black ${
+        componentLayout
+          ? getComponentSectionProfileClassName(componentLayout)
+          : "py-8 md:py-12 lg:py-16"
+      }`}
+      style={getComponentSectionStyle(componentLayout)}
+    >
+      <div className="grid-container items-start">
+        <figure className="contents">
           <ComponentLayoutNode
-            as="figure"
+            className={`${componentLayout ? "" : contentBoundsClassName} aspect-video w-full overflow-hidden bg-[#111]`}
             layout={componentLayout}
             nodeId="player"
-            className="aspect-video w-full overflow-hidden bg-[#111]"
           >
             <iframe
               src={video.embedUrl}
@@ -113,94 +125,43 @@ export default function BilibiliEmbed({
               allow="autoplay; fullscreen; picture-in-picture"
               allowFullScreen
               referrerPolicy="strict-origin-when-cross-origin"
-              className="pointer-events-none h-full w-full border-0"
+              className={`h-full w-full border-0 ${
+                editMode ? "pointer-events-none" : ""
+              }`}
             />
           </ComponentLayoutNode>
           {hasEditableTextContent(caption) ? (
             <ComponentLayoutNode
+              as="figcaption"
               gapFrom="player"
               layout={componentLayout}
               nodeId="caption"
+              className={!componentLayout ? contentBoundsClassName : undefined}
             >
               <Typography
                 as="p"
                 preset={captionTypography?.preset ?? "sans-body"}
-                size={captionTypography?.size ?? "caption"}
+                size={captionTypography?.size ?? "body-sm"}
                 weight="semantic"
                 wrapPolicy={captionTypography?.wrap ?? "prose"}
-                align={getComponentLayoutAlignment(componentLayout, "caption", captionAlign)}
-                className="text-textSecondary"
+                align={getComponentLayoutAlignment(
+                  componentLayout,
+                  "caption",
+                  captionAlign,
+                )}
+                className="border-t border-white/10 py-4 text-textSecondary"
               >
                 {caption}
               </Typography>
             </ComponentLayoutNode>
           ) : null}
-          {hasEditableTextContent(externalLinkLabel) ? (
-            <ComponentLayoutNode
-              gapFrom={hasEditableTextContent(caption) ? "caption" : "player"}
-              layout={componentLayout}
-              nodeId="externalLink"
-            >
-              <a
-                href={editMode ? undefined : video.watchUrl}
-                target={editMode ? undefined : "_blank"}
-                rel={editMode ? undefined : "noopener noreferrer"}
-                aria-disabled={editMode || undefined}
-                className={editMode
-                  ? "cursor-default text-white/45"
-                  : "interactive text-white/55 transition-colors hover:text-white"}
-              >
-                <Typography
-                  as="span"
-                  preset={linkTypography?.preset ?? "sans-body"}
-                  size={linkTypography?.size ?? "label"}
-                  weight="semantic"
-                  wrapPolicy={linkTypography?.wrap ?? "label"}
-                  align={getComponentLayoutAlignment(componentLayout, "externalLink")}
-                  className="text-inherit"
-                >
-                  {externalLinkLabel}
-                </Typography>
-              </a>
-            </ComponentLayoutNode>
-          ) : null}
-        </div>
-      </section>
-    );
-  }
-
-  return (
-    <section className="w-full bg-black py-8 md:py-12 lg:py-16">
-      <div className="grid-container">
-        <figure className={`${contentBoundsClassName} w-full`}>
-          <div className="aspect-video w-full overflow-hidden bg-[#111]">
-            <iframe
-              src={video.embedUrl}
-              title={accessibleTitle}
-              loading="lazy"
-              allow="autoplay; fullscreen; picture-in-picture"
-              allowFullScreen
-              referrerPolicy="strict-origin-when-cross-origin"
-              className={`h-full w-full border-0 ${editMode ? "pointer-events-none" : ""}`}
-            />
-          </div>
-
-          <figcaption className="grid gap-3 border-t border-white/10 py-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
-            {hasEditableTextContent(caption) ? (
-              <Typography
-                as="p"
-                preset="sans-body"
-                size="body-sm"
-                weight="semantic"
-                wrapPolicy="prose"
-                align={captionAlign}
-                className="text-textSecondary"
-              >
-                {caption}
-              </Typography>
-            ) : (
-              <span aria-hidden="true" />
-            )}
+          <ComponentLayoutNode
+            alignmentTarget="box"
+            gapFrom={hasEditableTextContent(caption) ? "caption" : "player"}
+            layout={componentLayout}
+            nodeId="externalLink"
+            className={!componentLayout ? contentBoundsClassName : undefined}
+          >
             <a
               href={editMode ? undefined : video.watchUrl}
               target={editMode ? undefined : "_blank"}
@@ -212,16 +173,17 @@ export default function BilibiliEmbed({
             >
               <Typography
                 as="span"
-                preset="sans-body"
-                size="label"
+                preset={linkTypography?.preset ?? "sans-body"}
+                size={linkTypography?.size ?? "label"}
                 weight="semantic"
-                wrapPolicy="label"
+                wrapPolicy={linkTypography?.wrap ?? "label"}
+                align="center"
                 className="text-inherit"
               >
-                在哔哩哔哩观看
+                {resolvedExternalLinkLabel}
               </Typography>
             </a>
-          </figcaption>
+          </ComponentLayoutNode>
         </figure>
       </div>
     </section>

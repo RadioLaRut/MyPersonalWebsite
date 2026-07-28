@@ -1,7 +1,6 @@
 import DeferredPublicRuntime from "@/components/layout/DeferredPublicRuntime";
 import Navigation from "@/components/layout/Navigation";
 import { SiteOpening } from "@/components/layout/SiteOpening";
-import { PUBLIC_ON_DEMAND_FONT_VARIABLE_CLASS_NAME } from "@/app/fonts/public-on-demand-fonts";
 import {
   COMPONENT_DESIGN_COMMIT_CHANNEL,
   COMPONENT_DESIGN_COMMIT_MESSAGE_TYPE,
@@ -56,7 +55,7 @@ export default function SiteLayout({ children }: Readonly<{ children: React.Reac
       </noscript>
       <div
         id={PUBLIC_SITE_ROOT_ID}
-        className={`public-font-scope ${PUBLIC_ON_DEMAND_FONT_VARIABLE_CLASS_NAME}`}
+        className="public-font-scope"
         data-font-scope="public"
         data-site-opening-state="loading"
       >

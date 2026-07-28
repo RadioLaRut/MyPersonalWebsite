@@ -30,6 +30,7 @@ import {
   type ComponentLabPreviewVerticalOperation,
 } from "@/lib/component-lab-preview-messages";
 import {
+  constrainComponentLabPlacement,
   getComponentLabDraggedPlacement,
   getComponentLabFlowVerticalOperation,
   getComponentLabKeyboardPlacement,
@@ -56,6 +57,7 @@ import {
   type ComponentGridPlacement,
 } from "@/lib/component-design-v2";
 import {
+  getComponentDesignNodePolicy,
   getComponentDesignNodeDescriptor,
   getComponentDesignVariantDescriptor,
 } from "@/lib/component-design-manifest";
@@ -263,9 +265,13 @@ function getNodeRect(
   };
 }
 
-function getClosestGridRoot(element: HTMLElement) {
-  const grid = element.closest<HTMLElement>(".grid-container") ??
+function getClosestGridElement(element: HTMLElement) {
+  return element.closest<HTMLElement>(".grid-subgrid, .grid-container") ??
     document.querySelector<HTMLElement>(".grid-container");
+}
+
+function getClosestGridRoot(element: HTMLElement) {
+  const grid = getClosestGridElement(element);
   if (!grid) return null;
   const rect = grid.getBoundingClientRect();
   return {
@@ -550,11 +556,14 @@ function NodeOverlay({
         const nextActual = descriptor.nodes
           .slice(descriptorIndex + 1)
           .flatMap((candidate) => actualByRole.get(candidate.id) ?? [])[0];
-        const correspondingGrid = (
+        const referenceElement = (
           actual[occurrence] ??
           previousActual ??
           nextActual
-        )?.closest<HTMLElement>(".grid-container") ?? grid;
+        );
+        const correspondingGrid = referenceElement
+          ? getClosestGridElement(referenceElement) ?? grid
+          : grid;
         const gridRect = correspondingGrid.getBoundingClientRect();
         const gridStyles = getComputedStyle(correspondingGrid);
         const gridGap = Number.parseFloat(gridStyles.columnGap) || 0;
@@ -848,7 +857,12 @@ function NodeOverlay({
     useOrigin = false,
   ): ComponentLabPreviewInteractionTarget[] => {
     const movedTargets = dragState.origins.map((origin) => {
-      const placement = useOrigin
+      const policy = getComponentDesignNodePolicy(
+        component,
+        variant,
+        origin.target.roleId,
+      );
+      const requestedPlacement = useOrigin
         ? origin.placement
         : getComponentLabDraggedPlacement({
           clientX,
@@ -858,9 +872,19 @@ function NodeOverlay({
           originClientX: dragState.originClientX,
           originPlacement: origin.placement,
         });
+      const placement = constrainComponentLabPlacement({
+        currentPlacement: origin.placement,
+        hostPlacement: policy.constrainToHost
+          ? getPlacement(policy.constrainToHost)
+          : undefined,
+        lockPlacement: policy.lockPlacement,
+        lockResize: policy.lockResize,
+        operation: dragState.mode,
+        requestedPlacement,
+      });
       let vertical: ComponentLabPreviewVerticalOperation | undefined;
       if (dragState.mode === "move") {
-        if (useOrigin) {
+        if (useOrigin || policy.lockPositioning) {
           vertical = origin.position;
         } else if (origin.position.mode === "overlay") {
           vertical = getComponentLabOverlayVerticalOperation({
@@ -943,8 +967,10 @@ function NodeOverlay({
     });
     return [...normalizedMovedTargets, ...shiftedTargets];
   }, [
+    component,
     getPlacement,
     getPosition,
+    variant,
   ]);
 
   const createDragPreviewRects = useCallback((
@@ -1121,8 +1147,27 @@ function NodeOverlay({
       variant,
       primary.roleId,
     );
+    const primaryPolicy = getComponentDesignNodePolicy(
+      component,
+      variant,
+      primary.roleId,
+    );
     const primaryPlacement = getPlacement(primary.roleId);
-    if (!primaryPlacement || primaryDescriptor?.bleed === "viewport") return;
+    if (
+      !primaryPlacement ||
+      primaryDescriptor?.bleed === "viewport" ||
+      (
+        mode === "move" &&
+        primaryPolicy.lockPlacement &&
+        primaryPolicy.lockPositioning
+      ) ||
+      (
+        mode !== "move" &&
+        (primaryPolicy.lockPlacement || primaryPolicy.lockResize)
+      )
+    ) {
+      return;
+    }
 
     event.preventDefault();
     const effectiveTargets = mode === "move"
@@ -1136,10 +1181,24 @@ function NodeOverlay({
         variant,
         target.roleId,
       );
+      const policy = getComponentDesignNodePolicy(
+        component,
+        variant,
+        target.roleId,
+      );
       if (
         !element ||
         !placement ||
-        descriptor?.bleed === "viewport"
+        descriptor?.bleed === "viewport" ||
+        (
+          mode === "move" &&
+          policy.lockPlacement &&
+          policy.lockPositioning
+        ) ||
+        (
+          mode !== "move" &&
+          (policy.lockPlacement || policy.lockResize)
+        )
       ) {
         return [];
       }
@@ -1167,8 +1226,9 @@ function NodeOverlay({
       event.clientY,
       eventElement ?? primaryElement,
     );
-    const grid = primaryElement?.closest<HTMLElement>(".grid-container") ??
-      document.querySelector<HTMLElement>(".grid-container");
+    const grid = primaryElement
+      ? getClosestGridElement(primaryElement)
+      : document.querySelector<HTMLElement>(".grid-container");
     if (!grid) return;
     const gridRect = grid.getBoundingClientRect();
     const gridStyles = getComputedStyle(grid);
@@ -1431,7 +1491,22 @@ function NodeOverlay({
       operation,
       placement,
     });
-    if (!isGridPlacement(nextPlacement)) return;
+    const policy = getComponentDesignNodePolicy(
+      component,
+      variant,
+      target.roleId,
+    );
+    const constrainedPlacement = constrainComponentLabPlacement({
+      currentPlacement: placement,
+      hostPlacement: policy.constrainToHost
+        ? getPlacement(policy.constrainToHost)
+        : undefined,
+      lockPlacement: policy.lockPlacement,
+      lockResize: policy.lockResize,
+      operation,
+      requestedPlacement: nextPlacement,
+    });
+    if (!isGridPlacement(constrainedPlacement)) return;
     const element = resolveTargetElement(target);
     if (!element) return;
     const origin: DragOrigin = {
@@ -1464,8 +1539,10 @@ function NodeOverlay({
     };
     reportInteraction(dragState, "commit", [{
       ...target,
-      placement: nextPlacement,
-      ...(operation === "move" ? { vertical: origin.position } : {}),
+      placement: constrainedPlacement,
+      ...(operation === "move" || policy.lockPositioning
+        ? { vertical: origin.position }
+        : {}),
     }]);
   }
 
@@ -1495,7 +1572,12 @@ function NodeOverlay({
     ? getComponentDesignNodeDescriptor(component, variant, primary.roleId)
     : undefined;
   const primaryPlacement = primary ? getPlacement(primary.roleId) : undefined;
-  const placementLocked = primaryDescriptor?.bleed === "viewport";
+  const primaryPolicy = primary
+    ? getComponentDesignNodePolicy(component, variant, primary.roleId)
+    : undefined;
+  const placementLocked = primaryDescriptor?.bleed === "viewport" ||
+    primaryPolicy?.lockPlacement ||
+    primaryPolicy?.lockResize;
 
   return (
     <div

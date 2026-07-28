@@ -19,6 +19,7 @@ import {
   getSpacingRem,
   getComponentSectionProfileClassName,
   getComponentSectionStyle,
+  getResponsiveGapStyle,
 } from "@/lib/component-design-style";
 import {
   hasEditableTextContent,
@@ -119,6 +120,11 @@ export default function ImageSlider({
   const titleTypography = getComponentLayoutTypography(componentLayout, "title");
   const leftLabelTypography = getComponentLayoutTypography(componentLayout, "leftLabel");
   const rightLabelTypography = getComponentLayoutTypography(componentLayout, "rightLabel");
+  const labelsGapStyle = componentLayout
+    ? getResponsiveGapStyle(
+      componentLayout.gaps["media>leftLabel"],
+    )
+    : undefined;
 
   const updatePosition = (clientX: number) => {
     const container = containerRef.current;
@@ -245,20 +251,29 @@ export default function ImageSlider({
             <span id={sliderDescriptionId} className="sr-only">
               使用左右或上下方向键微调，Page Up 和 Page Down 大幅调整，Home 和 End 跳到两端。
             </span>
-            {visibleTitle && !componentLayout ? (
+            {visibleTitle ? (
               <div className="pointer-events-none absolute left-5 top-5 z-20 md:left-6 md:top-6">
-                <div className="border border-white/12 bg-black/58 px-3 py-2 backdrop-blur-sm">
+                <ComponentLayoutNode
+                  layout={componentLayout}
+                  nodeId="title"
+                  className="border border-white/12 bg-black/58 px-3 py-2 backdrop-blur-sm"
+                  style={{ position: "relative", top: "auto", translate: "none" }}
+                >
                   <Typography
                     as="span"
-                    preset="sans-body"
-                    size="label"
+                    preset={titleTypography?.preset ?? "sans-body"}
+                    size={titleTypography?.size ?? "label"}
                     weight="semantic"
-                    wrapPolicy="label"
+                    wrapPolicy={titleTypography?.wrap ?? "label"}
+                    align={getComponentLayoutAlignment(
+                      componentLayout,
+                      "title",
+                    )}
                     className="text-white/88"
                   >
                     {visibleTitle}
                   </Typography>
-                </div>
+                </ComponentLayoutNode>
               </div>
             ) : null}
 
@@ -327,94 +342,65 @@ export default function ImageSlider({
             </div>
           </div>
 
-          {!componentLayout &&
-          (hasEditableTextContent(leftLabel) || hasEditableTextContent(rightLabel)) ? (
+          {hasEditableTextContent(leftLabel) || hasEditableTextContent(rightLabel) ? (
             <div
-              className="flex items-start justify-between gap-6"
-              style={{ marginTop: getSpacingRem(design.labelsTopSpacing) }}
+              className={`flex items-start justify-between gap-6 ${
+                labelsGapStyle ? "component-layout-node-gap" : ""
+              }`}
+              style={labelsGapStyle ?? {
+                marginTop: getSpacingRem(design.labelsTopSpacing),
+              }}
             >
               {hasEditableTextContent(leftLabel) ? (
-                <Typography
-                  as="span"
-                  preset="sans-body"
-                  size="body-sm"
-                  weight="medium"
-                  wrapPolicy="label"
-                  className="text-white/82"
+                <ComponentLayoutNode
+                  layout={componentLayout}
+                  nodeId="leftLabel"
+                  style={{ position: "relative", top: "auto", translate: "none" }}
                 >
-                  {leftLabel}
-                </Typography>
+                  <Typography
+                    as="span"
+                    preset={leftLabelTypography?.preset ?? "sans-body"}
+                    size={leftLabelTypography?.size ?? "body-sm"}
+                    weight="medium"
+                    wrapPolicy={leftLabelTypography?.wrap ?? "label"}
+                    align={getComponentLayoutAlignment(
+                      componentLayout,
+                      "leftLabel",
+                    )}
+                    className="text-white/82"
+                  >
+                    {leftLabel}
+                  </Typography>
+                </ComponentLayoutNode>
               ) : (
                 <span />
               )}
               {hasEditableTextContent(rightLabel) ? (
-                <Typography
-                  as="span"
-                  preset="sans-body"
-                  size="body-sm"
-                  weight="medium"
-                  wrapPolicy="label"
-                  className="text-right text-white/82"
+                <ComponentLayoutNode
+                  layout={componentLayout}
+                  nodeId="rightLabel"
+                  style={{ position: "relative", top: "auto", translate: "none" }}
                 >
-                  {rightLabel}
-                </Typography>
+                  <Typography
+                    as="span"
+                    preset={rightLabelTypography?.preset ?? "sans-body"}
+                    size={rightLabelTypography?.size ?? "body-sm"}
+                    weight="medium"
+                    wrapPolicy={rightLabelTypography?.wrap ?? "label"}
+                    align={getComponentLayoutAlignment(
+                      componentLayout,
+                      "rightLabel",
+                      "right",
+                    )}
+                    className="text-right text-white/82"
+                  >
+                    {rightLabel}
+                  </Typography>
+                </ComponentLayoutNode>
               ) : null}
             </div>
           ) : null}
         </ComponentLayoutNode>
-        {componentLayout && visibleTitle ? (
-          <ComponentLayoutNode layout={componentLayout} nodeId="title">
-            <Typography
-              as="span"
-              preset={titleTypography?.preset ?? "sans-body"}
-              size={titleTypography?.size ?? "title-sm"}
-              weight="semantic"
-              wrapPolicy={titleTypography?.wrap ?? "heading"}
-              align={getComponentLayoutAlignment(componentLayout, "title")}
-              className="text-white/88"
-            >
-              {visibleTitle}
-            </Typography>
-          </ComponentLayoutNode>
-        ) : null}
-        {componentLayout && hasEditableTextContent(leftLabel) ? (
-          <ComponentLayoutNode
-            gapFrom="media"
-            layout={componentLayout}
-            nodeId="leftLabel"
-          >
-            <Typography
-              as="span"
-              preset={leftLabelTypography?.preset ?? "sans-body"}
-              size={leftLabelTypography?.size ?? "caption"}
-              weight="semantic"
-              wrapPolicy={leftLabelTypography?.wrap ?? "label"}
-              align={getComponentLayoutAlignment(componentLayout, "leftLabel")}
-              className="text-white/82"
-            >
-              {leftLabel}
-            </Typography>
-          </ComponentLayoutNode>
-        ) : null}
-        {componentLayout && hasEditableTextContent(rightLabel) ? (
-          <ComponentLayoutNode
-            gapFrom="media"
-            layout={componentLayout}
-            nodeId="rightLabel"
-          >
-            <Typography
-              as="span"
-              preset={rightLabelTypography?.preset ?? "sans-body"}
-              size={rightLabelTypography?.size ?? "caption"}
-              weight="semantic"
-              wrapPolicy={rightLabelTypography?.wrap ?? "label"}
-              align={getComponentLayoutAlignment(componentLayout, "rightLabel", "right")}
-              className="text-white/82"
-            >
-              {rightLabel}
-            </Typography>
-          </ComponentLayoutNode>
-        ) : null}
       </div>
     </div>
   );

@@ -19,6 +19,32 @@ import {
   resolveComponentDesignRuntimeDocument,
 } from "./component-design-v3.ts";
 
+test("仓库 component-design.json 始终满足严格 V3 契约", async () => {
+  const document = await readComponentDesignSourceConfig();
+
+  assert.equal(document.version, 3);
+  assert.deepEqual(
+    document.components.WorksList.variants.default.desktop.nodes["item.media"]
+      .placement,
+    { span: 12, start: 1 },
+  );
+  assert.equal(
+    document.components.WorksList.variants.default.desktop.nodes["item.media"]
+      .positioning.mode,
+    "overlay",
+  );
+  assert.deepEqual(
+    document.components.ImageSlider.variants.default.desktop.nodes.leftLabel
+      .placement,
+    { span: 5, start: 2 },
+  );
+  assert.deepEqual(
+    document.components.ImageSlider.variants.default.desktop.nodes.rightLabel
+      .placement,
+    { span: 5, start: 7 },
+  );
+});
+
 test("readComponentDesignConfig falls back to defaults when file is missing", async () => {
   const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "component-design-read-"));
   const filePath = path.join(tempRoot, "component-design.json");

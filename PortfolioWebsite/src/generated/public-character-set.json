@@ -1251,9 +1251,9 @@
   "characterCount": 1245,
   "charsetHash": "cd4357c133deb10382b2070af303c332b83a60604710a8d9d109a952778d80f6",
   "sourceHashes": {
-    "content/component-design/component-design.json": "a14babb5eb5fe7c38db52768c8e3580e31f9b134fdf1b24286cd013a1e7e3f11",
+    "content/component-design/component-design.json": "ab7c59297e4cdc7868b4073092ea0a7b61ed18bfc9bd5798b44f309dbea732b9",
     "content/component-design/component-lab-presets.json": "809e6542f6f0dd53cec15272639ad24a20c58cc1306994c28122af374dac23d6",
-    "content/component-design/editor-empty-state.json": "f72e6213ed5e3430b60ce21d0ed874d8b3102b874dd74a08ece1641b1822da66",
+    "content/component-design/editor-empty-state.json": "bccec9a6d9bd0ee7a507875a5f66bd7c6d8e0bf15aa24d3c1772b340f0df98e2",
     "content/font-lab/font-presets.json": "228944a4ae54ccaf838bc3abecb645e4bab9692c7546d9aec017bef3f1dc37be",
     "content/pages/about.json": "63a572de00baa57c3654f87c792f83122cd72773bc22628e4c1b1c5350747fa3",
     "content/pages/index.json": "400683c58a52b2a23b8c8d4ed4352cca70e572bae1e7d83a4f9693508918d360",

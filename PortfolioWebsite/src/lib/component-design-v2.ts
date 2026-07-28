@@ -687,9 +687,28 @@ function migrateSimpleComponents(
   const slider = document.components.ImageSlider.variants.default;
   setNodePlacement(
     slider,
-    Object.keys(slider.nodes),
+    ["media", "title"],
     sharedBounds(sliderSource.contentBounds),
   );
+  const sliderSpan =
+    sliderSource.contentBounds.rightCol -
+    sliderSource.contentBounds.leftCol +
+    1;
+  const sliderLeftSpan = Math.ceil(sliderSpan / 2);
+  setNodePlacement(
+    slider,
+    ["leftLabel"],
+    shared(placement(sliderSource.contentBounds.leftCol, sliderLeftSpan)),
+  );
+  setNodePlacement(
+    slider,
+    ["rightLabel"],
+    shared(placement(
+      sliderSource.contentBounds.leftCol + sliderLeftSpan,
+      sliderSpan - sliderLeftSpan,
+    )),
+  );
+  setNodeAlignment(slider, ["rightLabel"], "right");
   slider.sectionProfile = legacySectionToProfile(sliderSource.sectionSpacing);
   setGap(
     slider,
@@ -721,11 +740,30 @@ function migrateProjectCoverLink(
 ) {
   const cardSource = legacy.components.LightingProjectCard;
   const card = document.components.ProjectCoverLink.variants.card;
-  setNodePlacement(card, ["media"], shared(placement(1, 12)));
   setNodePlacement(
     card,
-    ["number", "prompt", "title"],
-    sharedBounds(cardSource.contentBounds),
+    ["media"],
+    responsive(
+      placement(1, 12),
+      placement(2, 10),
+      fromBounds(cardSource.contentBounds),
+    ),
+  );
+  setNodePlacement(
+    card,
+    ["number"],
+    shared(placement(1, 4)),
+  );
+  setNodePlacement(
+    card,
+    ["prompt"],
+    shared(placement(9, 4)),
+  );
+  setNodeAlignment(card, ["prompt"], "right");
+  setNodePlacement(
+    card,
+    ["title"],
+    shared(placement(1, 12)),
   );
   card.sectionProfile = "normal";
 
@@ -767,16 +805,24 @@ function migrateWorksAndParameters(
   legacy: LegacyComponentDesignDocument,
 ) {
   const worksSource = legacy.components.WorksList;
-  const entrySource = legacy.components.WorksListEntry;
   const works = document.components.WorksList.variants.default;
   setNodePlacement(works, ["heading", "indexSummary"], sharedBounds(worksSource.headingBounds));
-  setNodePlacement(works, ["item.number"], fromResponsiveBounds(entrySource.numberBounds));
-  setNodePlacement(works, ["item.title"], fromResponsiveBounds(entrySource.titleBounds));
   setNodePlacement(
     works,
-    ["item.category", "item.description", "item.media"],
-    fromResponsiveBounds(entrySource.sidebarBounds),
+    ["item.number"],
+    responsive(placement(1, 2), placement(1, 1), placement(1, 1)),
   );
+  setNodePlacement(
+    works,
+    ["item.title"],
+    responsive(placement(3, 10), placement(2, 7), placement(2, 7)),
+  );
+  setNodePlacement(
+    works,
+    ["item.category", "item.description"],
+    responsive(placement(3, 10), placement(9, 4), placement(9, 4)),
+  );
+  setNodePlacement(works, ["item.media"], shared(placement(1, 12)));
   works.sectionProfile = legacySectionToProfile(worksSource.sectionSpacing);
   setGap(
     works,
@@ -789,15 +835,10 @@ function migrateWorksAndParameters(
   const parameters = document.components.ParameterGrid.variants.default;
   setNodePlacement(parameters, ["media", "mediaLabel"], shared(placement(1, 12)));
   setNodePlacement(parameters, ["items"], sharedBounds(parameterSource.parametersBounds));
-  const parameterStart = parameterSource.parametersBounds.leftCol;
-  const parameterSpan = Math.min(
-    parameterSource.itemSpan,
-    parameterSource.parametersBounds.rightCol - parameterStart + 1,
-  );
   setNodePlacement(
     parameters,
     ["item.name", "item.value", "item.description"],
-    shared(placement(parameterStart, parameterSpan)),
+    shared(placement(1, 12)),
   );
   parameters.sectionProfile = legacySectionToProfile(
     parameterSource.sectionSpacing,
@@ -820,6 +861,8 @@ function migrateEndingComponents(
   setNodePlacement(next, ["eyebrow", "title"], sharedBounds(nextSource.overlayBounds));
   setNodePlacement(next, ["footerLeft"], fromResponsiveBounds(nextSource.footerLeftBounds));
   setNodePlacement(next, ["footerRight"], fromResponsiveBounds(nextSource.footerRightBounds));
+  setNodeAlignment(next, ["eyebrow", "title"], "center");
+  setNodeAlignment(next, ["footerRight"], "right");
   next.sectionProfile = "hero";
   setGap(
     next,

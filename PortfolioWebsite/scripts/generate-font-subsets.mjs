@@ -189,6 +189,7 @@ if (checkOnly) {
     faces.push({
       id: source.id,
       family: source.family,
+      familyId: source.familyId,
       source: source.source,
       sourceHash: inputState.sourceHashes[source.id],
       style: source.style,
@@ -221,29 +222,36 @@ if (checkOnly) {
       reason: value.note,
     }))
     .sort((left, right) => left.id.localeCompare(right.id));
-  const faceById = new Map(faces.map((face) => [face.id, face]));
+  const facesByFamilyId = new Map();
+  for (const face of faces) {
+    const familyFaces = facesByFamilyId.get(face.familyId) ?? [];
+    familyFaces.push(face);
+    facesByFamilyId.set(face.familyId, familyFaces);
+  }
   const typographyCoverage = Object.fromEntries(
     Object.entries(TYPOGRAPHY_FONT_STACKS).map(([preset, scripts]) => [
       preset,
       Object.fromEntries(
         Object.entries(scripts).map(([script, fontId]) => {
-          const face = faceById.get(fontId);
-          const supported = face
-            ? new Set(face.supportedCodepoints)
-            : null;
+          const familyFaces = facesByFamilyId.get(fontId) ?? [];
           return [
             script,
-            face
+            familyFaces.length > 0
               ? {
                   delivery: "subset",
+                  faceIds: familyFaces.map((face) => face.id),
                   fontId,
                   preservedSourceCodepoints:
-                    face.sourceSupportedCodepoints.every((codepoint) =>
-                      supported.has(codepoint)),
+                    familyFaces.every((face) => {
+                      const supported = new Set(face.supportedCodepoints);
+                      return face.sourceSupportedCodepoints.every((codepoint) =>
+                        supported.has(codepoint));
+                    }),
                   status: "verified",
                 }
               : {
                   delivery: "on-demand-full",
+                  faceIds: [],
                   fontId,
                   preservedSourceCodepoints: null,
                   status: "license-blocked",

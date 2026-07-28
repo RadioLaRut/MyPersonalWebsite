@@ -170,10 +170,10 @@ export default function HeroHeadlineBlock({
             ) : null}
             {navLink ? (
               <ComponentLayoutNode
+                alignmentTarget="box"
                 gapFrom="subtitle"
                 layout={componentLayout}
                 nodeId="navLink"
-                className="w-full"
               >
                 <a
                   href={editMode ? undefined : navLink}
@@ -188,7 +188,7 @@ export default function HeroHeadlineBlock({
                     size={getComponentLayoutTypography(componentLayout, "navLink")?.size ?? "label"}
                     weight="semantic"
                     wrapPolicy={getComponentLayoutTypography(componentLayout, "navLink")?.wrap ?? "label"}
-                    align={getComponentLayoutAlignment(componentLayout, "navLink", "center")}
+                    align="center"
                     className="text-current tracking-widest uppercase"
                   >
                     {navLinkLabel}

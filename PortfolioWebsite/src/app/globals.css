@@ -172,6 +172,10 @@ body::-webkit-scrollbar {
   translate: var(--component-node-translate-mobile, 0 0);
 }
 
+.component-layout-box-alignment {
+  justify-self: var(--component-box-align-mobile, start);
+}
+
 .grid-container:has(.component-layout-node-positioning--overlay) {
   position: relative;
 }
@@ -242,6 +246,10 @@ body::-webkit-scrollbar {
     translate: var(--component-node-translate-tablet, 0 0);
   }
 
+  .component-layout-box-alignment {
+    justify-self: var(--component-box-align-tablet, start);
+  }
+
   .component-layout-node-media-frame {
     aspect-ratio: var(--component-media-aspect-tablet, revert-layer);
     min-height: var(--component-media-min-height-tablet, revert-layer);
@@ -306,6 +314,10 @@ body::-webkit-scrollbar {
     position: var(--component-node-position-desktop, relative);
     top: var(--component-node-top-desktop, auto);
     translate: var(--component-node-translate-desktop, 0 0);
+  }
+
+  .component-layout-box-alignment {
+    justify-self: var(--component-box-align-desktop, start);
   }
 
   .component-layout-node-media-frame {

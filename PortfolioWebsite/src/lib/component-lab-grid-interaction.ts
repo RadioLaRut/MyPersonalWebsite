@@ -48,6 +48,43 @@ function clamp(value: number, minimum: number, maximum: number) {
   return Math.min(maximum, Math.max(minimum, value));
 }
 
+export function constrainComponentLabPlacement({
+  currentPlacement,
+  hostPlacement,
+  lockPlacement,
+  lockResize,
+  operation,
+  requestedPlacement,
+}: {
+  currentPlacement: ComponentGridPlacement;
+  hostPlacement?: ComponentGridPlacement;
+  lockPlacement: boolean;
+  lockResize: boolean;
+  operation: ComponentLabGridOperation;
+  requestedPlacement: ComponentGridPlacement;
+}): ComponentGridPlacement {
+  if (
+    lockPlacement ||
+    (lockResize && operation !== "move")
+  ) {
+    return currentPlacement;
+  }
+  if (!hostPlacement) return requestedPlacement;
+
+  const hostEnd = hostPlacement.start + hostPlacement.span - 1;
+  const start = clamp(
+    requestedPlacement.start,
+    hostPlacement.start,
+    hostEnd,
+  );
+  const span = clamp(
+    requestedPlacement.span,
+    1,
+    hostEnd - start + 1,
+  );
+  return { span, start };
+}
+
 function snapToRhythm(value: number): ComponentDesignRhythmToken {
   const normalized = clamp(value, RHYTHM_TOKENS[0], RHYTHM_TOKENS.at(-1) ?? 64);
   return RHYTHM_TOKENS.reduce((closest, candidate) =>

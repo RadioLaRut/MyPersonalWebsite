@@ -1,8 +1,10 @@
 import {
   COMPONENT_DESIGN_AUTHOR_COMPONENTS,
+  getComponentDesignNodePolicyFromVariant,
   getComponentDesignVariantDescriptor,
   type ComponentDesignAuthorComponent,
   type ComponentDesignNodeDescriptor,
+  type ComponentDesignVariantDescriptor,
 } from "./component-design-manifest.ts";
 import {
   COMPONENT_DESIGN_OPTICAL_PULL_TOKENS,
@@ -418,11 +420,60 @@ function normalizeSection(
 function normalizeDeviceLayout(
   value: unknown,
   fallback: ComponentDesignDeviceLayoutV3,
-  descriptors: readonly ComponentDesignNodeDescriptor[],
+  descriptor: ComponentDesignVariantDescriptor,
 ): ComponentDesignDeviceLayoutV3 {
   const source = isPlainRecord(value) ? value : {};
   const sourceGaps = isPlainRecord(source.gaps) ? source.gaps : {};
   const sourceNodes = isPlainRecord(source.nodes) ? source.nodes : {};
+  const nodes = Object.fromEntries(
+    Object.entries(fallback.nodes).map(([nodeId, fallbackNode]) => {
+      const nodeDescriptor = descriptor.nodes.find(
+        (candidate) => candidate.id === nodeId,
+      )!;
+      const policy = getComponentDesignNodePolicyFromVariant(
+        descriptor,
+        nodeId,
+      );
+      const normalized = normalizeNode(
+        sourceNodes[nodeId],
+        fallbackNode,
+        nodeDescriptor,
+      );
+      return [
+        nodeId,
+        {
+          ...normalized,
+          ...(policy.lockPlacement
+            ? { placement: clone(fallbackNode.placement) }
+            : {}),
+          ...(policy.lockPositioning
+            ? { positioning: clone(fallbackNode.positioning) }
+            : {}),
+        },
+      ];
+    }),
+  ) as ComponentDesignDeviceLayoutV3["nodes"];
+
+  for (const nodeDescriptor of descriptor.nodes) {
+    const policy = getComponentDesignNodePolicyFromVariant(
+      descriptor,
+      nodeDescriptor.id,
+    );
+    if (!policy.constrainToHost) continue;
+    const node = nodes[nodeDescriptor.id];
+    const host = nodes[policy.constrainToHost];
+    if (!node || !host) continue;
+    const hostEnd = host.placement.start + host.placement.span - 1;
+    const start = Math.min(
+      hostEnd,
+      Math.max(host.placement.start, node.placement.start),
+    );
+    node.placement = {
+      span: Math.min(node.placement.span, hostEnd - start + 1),
+      start,
+    };
+  }
+
   return {
     gaps: Object.fromEntries(
       Object.entries(fallback.gaps).map(([key, fallbackValue]) => [
@@ -430,16 +481,7 @@ function normalizeDeviceLayout(
         isRhythmToken(sourceGaps[key]) ? sourceGaps[key] : fallbackValue,
       ]),
     ),
-    nodes: Object.fromEntries(
-      Object.entries(fallback.nodes).map(([nodeId, fallbackNode]) => [
-        nodeId,
-        normalizeNode(
-          sourceNodes[nodeId],
-          fallbackNode,
-          descriptors.find((descriptor) => descriptor.id === nodeId)!,
-        ),
-      ]),
-    ),
+    nodes,
     section: normalizeSection(source.section, fallback.section),
   };
 }
@@ -470,14 +512,14 @@ function normalizeSampleText(
 function normalizeDeviceOverride(
   value: unknown,
   fallback: ComponentDesignDeviceOverrideV3,
-  descriptors: readonly ComponentDesignNodeDescriptor[],
+  descriptor: ComponentDesignVariantDescriptor,
 ): ComponentDesignDeviceOverrideV3 {
   const source = isPlainRecord(value) ? value : {};
   return {
     custom: normalizeDeviceLayout(
       source.custom,
       fallback.custom,
-      descriptors,
+      descriptor,
     ),
     customInitialized: typeof source.customInitialized === "boolean"
       ? source.customInitialized
@@ -493,25 +535,25 @@ function normalizeDeviceOverride(
 function normalizeVariant(
   value: unknown,
   fallback: ComponentDesignVariantV3,
-  descriptors: readonly ComponentDesignNodeDescriptor[],
+  descriptor: ComponentDesignVariantDescriptor,
 ): ComponentDesignVariantV3 {
   const source = isPlainRecord(value) ? value : {};
   return {
     desktop: normalizeDeviceLayout(
       source.desktop,
       fallback.desktop,
-      descriptors,
+      descriptor,
     ),
     mobile: normalizeDeviceOverride(
       source.mobile,
       fallback.mobile,
-      descriptors,
+      descriptor,
     ),
-    sampleText: normalizeSampleText(source.sampleText, descriptors),
+    sampleText: normalizeSampleText(source.sampleText, descriptor.nodes),
     tablet: normalizeDeviceOverride(
       source.tablet,
       fallback.tablet,
-      descriptors,
+      descriptor,
     ),
   };
 }
@@ -629,7 +671,7 @@ export function migrateComponentDesignDocumentV2ToV3(
   document: ComponentDesignDocumentV2,
 ): ComponentDesignDocumentV3 {
   const source = normalizeComponentDesignDocumentV2(document);
-  return {
+  const migrated = {
     components: Object.fromEntries(
       COMPONENT_DESIGN_AUTHOR_COMPONENTS.map((component) => [
         component,
@@ -675,6 +717,32 @@ export function migrateComponentDesignDocumentV2ToV3(
     ) as ComponentDesignDocumentV3["components"],
     version: COMPONENT_DESIGN_SCHEMA_VERSION,
   };
+  const projectCard = migrated.components.ProjectCoverLink.variants.card;
+  for (const cardLayout of [
+    projectCard.desktop,
+    projectCard.tablet.custom,
+    projectCard.mobile.custom,
+  ]) {
+    cardLayout.nodes.number.positioning = {
+      anchor: "top",
+      anchored: true,
+      mode: "overlay",
+      offset: 0,
+    };
+    cardLayout.nodes.prompt.positioning = {
+      anchor: "top",
+      anchored: true,
+      mode: "overlay",
+      offset: 0,
+    };
+    cardLayout.nodes.title.positioning = {
+      anchor: "bottom",
+      anchored: true,
+      mode: "overlay",
+      offset: 0,
+    };
+  }
+  return migrated;
 }
 
 export function createDefaultComponentDesignDocument():
@@ -682,6 +750,50 @@ export function createDefaultComponentDesignDocument():
   const document = migrateComponentDesignDocumentV2ToV3(
     createDefaultComponentDesignDocumentV2(),
   );
+  const projectCard =
+    document.components.ProjectCoverLink.variants.card;
+  projectCard.desktop.section = {
+    ...projectCard.desktop.section,
+    paddingBottom: 32,
+    paddingTop: 32,
+    profile: "compact",
+  };
+  projectCard.tablet.custom.section = {
+    ...projectCard.tablet.custom.section,
+    paddingBottom: 24,
+    paddingTop: 24,
+    profile: "compact",
+  };
+  projectCard.mobile.custom.section = {
+    ...projectCard.mobile.custom.section,
+    paddingBottom: 16,
+    paddingTop: 16,
+    profile: "compact",
+  };
+  for (const cardLayout of [
+    projectCard.desktop,
+    projectCard.tablet.custom,
+    projectCard.mobile.custom,
+  ]) {
+    cardLayout.nodes.number.positioning = {
+      anchor: "top",
+      anchored: true,
+      mode: "overlay",
+      offset: 0,
+    };
+    cardLayout.nodes.prompt.positioning = {
+      anchor: "top",
+      anchored: true,
+      mode: "overlay",
+      offset: 0,
+    };
+    cardLayout.nodes.title.positioning = {
+      anchor: "bottom",
+      anchored: true,
+      mode: "overlay",
+      offset: 0,
+    };
+  }
   for (const component of COMPONENT_DESIGN_AUTHOR_COMPONENTS) {
     for (
       const variant of Object.values(
@@ -729,7 +841,7 @@ export function normalizeComponentDesignDocument(
                     getComponentDesignVariantDescriptor(
                       component,
                       variant,
-                    ).nodes,
+                    ),
                   ),
                 ],
               ),

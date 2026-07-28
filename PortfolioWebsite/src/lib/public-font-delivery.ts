@@ -17,6 +17,7 @@ export type PublicCharacterSetV1 = {
 export type PublicFontSubsetFaceV1 = {
   id: string;
   family: string;
+  familyId: string;
   source: string;
   sourceHash: string;
   style: "normal";
@@ -54,6 +55,7 @@ export type PublicFontSubsetManifestV1 = {
   };
   typographyCoverage: Record<string, Record<string, {
     delivery: "subset" | "on-demand-full";
+    faceIds: string[];
     fontId: string;
     preservedSourceCodepoints: boolean | null;
     status: "verified" | "license-blocked";
@@ -129,7 +131,7 @@ export function getFirstViewportFontFaceIds(
     for (const script of scripts) {
       const coverage = manifest.typographyCoverage[usage.preset]?.[script];
       if (coverage?.delivery === "subset") {
-        faceIds.add(coverage.fontId);
+        coverage.faceIds.forEach((faceId) => faceIds.add(faceId));
       }
     }
   }

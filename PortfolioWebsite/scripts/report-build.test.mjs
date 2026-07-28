@@ -100,7 +100,7 @@ function writeFixture(nextRoot, {
   );
 }
 
-test("current Next output fixture produces schema v3 from concrete HTML resources", (t) => {
+test("current Next output fixture produces schema v4 from concrete HTML resources", (t) => {
   const nextRoot = makeTempRoot(t);
   writeFixture(nextRoot);
 
@@ -109,7 +109,7 @@ test("current Next output fixture produces schema v3 from concrete HTML resource
     nextRoot,
   });
 
-  assert.equal(report.schemaVersion, 3);
+  assert.equal(report.schemaVersion, 4);
   assert.equal(report.generatedAt, "2026-07-23T00:00:00.000Z");
   assert.deepEqual(report.prerenderedRoutes, ["/"]);
   assert.equal(report.routes["/"].entryChunks.length, 1);
@@ -119,9 +119,69 @@ test("current Next output fixture produces schema v3 from concrete HTML resource
   assert.equal(report.routes["/"].fonts.preloadCount, 1);
   assert.equal(report.routes["/"].images.preloadCount, 1);
   assert.equal(report.routes["/"].performanceBudget.imagePreloadCount.pass, true);
+  assert.equal(
+    report.routes["/"].performanceBudget.toolingClientModuleCount.pass,
+    true,
+  );
+  assert.deepEqual(report.routes["/"].toolingClientModules, []);
   assert.equal(report.budgetFailures.length, 0);
   assert.ok(report.routes["/"].rawBytes > 0);
   assert.ok(report.routes["/"].gzipBytes > 0);
+});
+
+test("公开路由引用后台控制模块时构建预算失败", (t) => {
+  const nextRoot = makeTempRoot(t);
+  writeFixture(nextRoot, {
+    clientSource: clientManifestSource(ROUTE_KEY, {
+      clientModules: {
+        "[project]/src/components/layout/Navigation.tsx": {
+          chunks: ["1", "static/chunks/app/home.js"],
+        },
+        "[project]/src/components/playground/ComponentLabClient.tsx": {
+          chunks: ["1", "static/chunks/app/home.js"],
+        },
+      },
+    }),
+  });
+
+  const report = createBuildReport({ nextRoot });
+  assert.deepEqual(report.routes["/"].toolingClientModules, [
+    "src/components/playground/ComponentLabClient.tsx",
+  ]);
+  assert.equal(
+    report.routes["/"].performanceBudget.toolingClientModuleCount.pass,
+    false,
+  );
+  assert.deepEqual(report.budgetFailures, [{
+    actual: 1,
+    budget: "toolingClientModuleCount",
+    limit: 0,
+    route: "/",
+  }]);
+});
+
+test("公开图片加载协调器不属于后台控制模块", (t) => {
+  const nextRoot = makeTempRoot(t);
+  writeFixture(nextRoot, {
+    clientSource: clientManifestSource(ROUTE_KEY, {
+      clientModules: {
+        "[project]/src/components/layout/Navigation.tsx": {
+          chunks: ["1", "static/chunks/app/home.js"],
+        },
+        "[project]/src/components/layout/ImageLoadCoordinator.tsx": {
+          chunks: ["1", "static/chunks/app/home.js"],
+        },
+      },
+    }),
+  });
+
+  const report = createBuildReport({ nextRoot });
+  assert.deepEqual(report.routes["/"].toolingClientModules, []);
+  assert.equal(
+    report.routes["/"].performanceBudget.toolingClientModuleCount.pass,
+    true,
+  );
+  assert.equal(report.budgetFailures.length, 0);
 });
 
 test("HTML resource projection follows actual tags and ignores unrelated assets", () => {

@@ -14,6 +14,7 @@ export const PUBLIC_PERFORMANCE_BUDGETS = Object.freeze({
   fontPreloadBytes: 2.5 * 1024 * 1024,
   fontPreloadCount: 4,
   imagePreloadCount: 1,
+  toolingClientModuleCount: 0,
 });
 
 export class BuildReportCompatibilityError extends Error {
@@ -419,6 +420,37 @@ function collectInitialClientComponents(manifest, manifestKey, initialChunkPaths
   )].sort();
 }
 
+const PUBLIC_TOOLING_CLIENT_MODULE_PATTERNS = [
+  /[/\\]src[/\\]app[/\\]\(tools\)[/\\]/u,
+  /[/\\]src[/\\]components[/\\]playground[/\\]/u,
+  /[/\\]src[/\\]puck[/\\]editor[/\\]/u,
+  /[/\\]node_modules[/\\]@puckeditor[/\\]/u,
+  /[/\\]src[/\\]components[/\\]layout[/\\](?:ComponentDesignProvider|FontLabGlobalVars)\.tsx/u,
+];
+
+function collectInitialToolingClientModules(
+  manifest,
+  manifestKey,
+  initialChunkPaths,
+) {
+  const chunks = new Set(initialChunkPaths);
+  const pathsByModule = collectModuleChunkPaths(manifest, manifestKey);
+
+  return [...new Set(
+    [...pathsByModule.entries()]
+      .filter(([moduleName, moduleChunks]) => (
+        PUBLIC_TOOLING_CLIENT_MODULE_PATTERNS.some((pattern) =>
+          pattern.test(moduleName)) &&
+        moduleChunks.some((chunkPath) => chunks.has(chunkPath))
+      ))
+      .map(([moduleName]) => moduleName
+        .replace(/ <module evaluation>$/u, "")
+        .replace(/^.*[/\\]src[/\\]/u, "src/")
+        .replace(/^.*[/\\]node_modules[/\\]/u, "node_modules/")
+        .replaceAll("\\", "/")),
+  )].sort();
+}
+
 function routeStemFromDataRoute(dataRoute) {
   if (
     typeof dataRoute !== "string" ||
@@ -524,13 +556,19 @@ function readConcreteRouteReport({
   const initialGzipBytes =
     nonFontInitialGzipBytes + addSummaries(fontPreloads, "gzipBytes");
   const initialChunkPaths = scripts.map((script) => script.path);
+  const clientComponents = collectInitialClientComponents(
+    manifest,
+    manifestKey,
+    initialChunkPaths,
+  );
+  const toolingClientModules = collectInitialToolingClientModules(
+    manifest,
+    manifestKey,
+    initialChunkPaths,
+  );
 
   return {
-    clientComponents: collectInitialClientComponents(
-      manifest,
-      manifestKey,
-      initialChunkPaths,
-    ),
+    clientComponents,
     css: {
       files: styles,
       gzipBytes: cssGzipBytes,
@@ -575,10 +613,18 @@ function readConcreteRouteReport({
           htmlResources.imagePreloads.length <=
           PUBLIC_PERFORMANCE_BUDGETS.imagePreloadCount,
       },
+      toolingClientModuleCount: {
+        actual: toolingClientModules.length,
+        limit: PUBLIC_PERFORMANCE_BUDGETS.toolingClientModuleCount,
+        pass:
+          toolingClientModules.length <=
+          PUBLIC_PERFORMANCE_BUDGETS.toolingClientModuleCount,
+      },
     },
     rawBytes: scriptRawBytes,
     routePattern: toPublicRoute(manifestKey),
     rsc,
+    toolingClientModules,
   };
 }
 
@@ -694,7 +740,7 @@ export function createBuildReport({
     prerenderedRoutes: Object.keys(prerenderManifest.routes).sort(),
     proxyTraceFileCount: assertProxyTraceDoesNotShipContent(nextRoot, limits),
     routes: routeReports,
-    schemaVersion: 3,
+    schemaVersion: 4,
   };
 }
 

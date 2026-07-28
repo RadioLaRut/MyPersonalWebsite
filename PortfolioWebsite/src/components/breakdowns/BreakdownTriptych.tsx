@@ -1,32 +1,33 @@
 import type { CSSProperties, ReactNode } from "react";
-import { PresetImage } from "@/components/common/PresetImage";
+
 import ComponentLayoutNode, {
   getComponentLayoutAlignment,
   getComponentLayoutTypography,
   type ComponentLayoutProps,
 } from "@/components/common/ComponentLayoutNode";
+import { PresetImage } from "@/components/common/PresetImage";
 import Typography, {
   type TypographyAlignment,
 } from "@/components/common/Typography";
+import { createNestedComponentVariantLayout } from "@/lib/component-design-nested-grid";
 import {
   type ComponentDesignOverride,
   resolveComponentDesign,
 } from "@/lib/component-design-runtime";
-import { createNestedComponentVariantLayout } from "@/lib/component-design-nested-grid";
 import {
   createResponsiveGridBounds,
+  getComponentSectionProfileClassName,
+  getComponentSectionStyle,
   getResponsiveGridColumnClassName,
   getSectionSpacingClassName,
   getSpacingRem,
-  getComponentSectionProfileClassName,
-  getComponentSectionStyle,
 } from "@/lib/component-design-style";
-import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
-import type { PublicMediaHint } from "@/lib/media-layout";
 import {
   hasEditableTextContent,
   toPlainText,
 } from "@/lib/editable-text";
+import { type ImageFitMode, type ImagePreset } from "@/lib/image-presentation";
+import type { PublicMediaHint } from "@/lib/media-layout";
 
 type BreakdownTriptychProps = {
   col1Title: ReactNode;
@@ -50,64 +51,6 @@ type BreakdownTriptychProps = {
   rhythm?: "aligned" | "staggered";
   publicMediaHint?: PublicMediaHint;
 } & ComponentDesignOverride<"BreakdownTriptych"> & ComponentLayoutProps;
-
-function TriptychColumn({
-  title,
-  text,
-  bodyAlign,
-  img,
-  alt,
-  boundsClassName,
-  preset = "ratio-16-9",
-  fitMode = "x",
-  className = "",
-  style,
-  publicMediaHint,
-}: {
-  title: ReactNode;
-  text: ReactNode;
-  bodyAlign: TypographyAlignment;
-  img: string;
-  alt: string;
-  boundsClassName: string;
-  preset?: ImagePreset;
-  fitMode?: ImageFitMode;
-  className?: string;
-  style?: CSSProperties;
-  publicMediaHint?: PublicMediaHint;
-}) {
-  const hasTitle = hasEditableTextContent(title);
-  const hasText = hasEditableTextContent(text);
-  if (!hasTitle && !hasText && !img) return null;
-
-  return (
-    <div className={`${boundsClassName} space-y-4 ${className}`} style={style}>
-      {hasTitle && (
-        <Typography as="h4" preset="sans-body" size="label" weight="strong" wrapPolicy="label" className="border-l-2 pl-3 border-white/80 text-white">
-          {title}
-        </Typography>
-      )}
-      {hasText && (
-        <Typography as="p" preset="sans-body" size="body" weight="medium" wrapPolicy="prose" align={bodyAlign} className="text-textPrimary">
-          {text}
-        </Typography>
-      )}
-      {img && (
-        <div className="w-full relative overflow-hidden mt-6 border border-white/10">
-          <PresetImage
-            src={img}
-            alt={alt}
-            preset={preset}
-            fitMode={fitMode}
-            preload={publicMediaHint?.src === img && publicMediaHint.preload}
-            mediaProfile="grid-4"
-            sizes={publicMediaHint?.src === img ? publicMediaHint.sizes : undefined}
-          />
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function BreakdownTriptych({
   col1Title,
@@ -134,91 +77,126 @@ export default function BreakdownTriptych({
   design,
 }: BreakdownTriptychProps) {
   const resolvedDesign = resolveComponentDesign("BreakdownTriptych", design);
-  const col1Alt = toPlainText(col1Title) ?? "Breakdown image 1";
-  const col2Alt = toPlainText(col2Title) ?? "Breakdown image 2";
-  const col3Alt = toPlainText(col3Title) ?? "Breakdown image 3";
-  const col2Style = {
-    "--triptych-col-top-spacing": rhythm === "staggered"
-      ? getSpacingRem(resolvedDesign.col2TopSpacing)
-      : "0rem",
-  } as CSSProperties;
-  const col3Style = {
-    "--triptych-col-top-spacing": rhythm === "staggered"
-      ? getSpacingRem(resolvedDesign.col3TopSpacing)
-      : "0rem",
-  } as CSSProperties;
+  const columns = [
+    {
+      alt: toPlainText(col1Title) ?? "Breakdown image 1",
+      bodyAlign: col1BodyAlign,
+      fallbackBounds: createResponsiveGridBounds(
+        { leftCol: 1, rightCol: 12 },
+        { leftCol: 1, rightCol: 6 },
+        resolvedDesign.col1Bounds,
+      ),
+      fitMode: col1FitMode,
+      image: col1Img,
+      preset: col1Preset,
+      text: col1Text,
+      title: col1Title,
+    },
+    {
+      alt: toPlainText(col2Title) ?? "Breakdown image 2",
+      bodyAlign: col2BodyAlign,
+      fallbackBounds: createResponsiveGridBounds(
+        { leftCol: 1, rightCol: 12 },
+        { leftCol: 7, rightCol: 12 },
+        resolvedDesign.col2Bounds,
+      ),
+      fitMode: col2FitMode,
+      image: col2Img,
+      preset: col2Preset,
+      text: col2Text,
+      title: col2Title,
+    },
+    {
+      alt: toPlainText(col3Title) ?? "Breakdown image 3",
+      bodyAlign: col3BodyAlign,
+      fallbackBounds: createResponsiveGridBounds(
+        { leftCol: 1, rightCol: 12 },
+        { leftCol: 1, rightCol: 12 },
+        resolvedDesign.col3Bounds,
+      ),
+      fitMode: col3FitMode,
+      image: col3Img,
+      preset: col3Preset,
+      text: col3Text,
+      title: col3Title,
+    },
+  ];
+  const sectionClassName = componentLayout
+    ? getComponentSectionProfileClassName(componentLayout)
+    : getSectionSpacingClassName(resolvedDesign.sectionSpacing);
 
-  if (componentLayout) {
-    const columns = [
-      {
-        alt: col1Alt,
-        bodyAlign: col1BodyAlign,
-        fitMode: col1FitMode,
-        image: col1Img,
-        preset: col1Preset,
-        text: col1Text,
-        title: col1Title,
-      },
-      {
-        alt: col2Alt,
-        bodyAlign: col2BodyAlign,
-        fitMode: col2FitMode,
-        image: col2Img,
-        preset: col2Preset,
-        text: col2Text,
-        title: col2Title,
-      },
-      {
-        alt: col3Alt,
-        bodyAlign: col3BodyAlign,
-        fitMode: col3FitMode,
-        image: col3Img,
-        preset: col3Preset,
-        text: col3Text,
-        title: col3Title,
-      },
-    ];
-    return (
-      <section
-        className={`relative z-20 w-full bg-black ${getComponentSectionProfileClassName(componentLayout)}`}
-        style={getComponentSectionStyle(componentLayout)}
-      >
-        <div className="grid-container w-full border-t border-white/10 rhythm-divider-top">
-          {columns.map((column, index) => {
-            const prefix = `column${index + 1}`;
-            const columnLayout = createNestedComponentVariantLayout(
-              componentLayout,
-              prefix,
-            );
-            const titleTypography = getComponentLayoutTypography(componentLayout, `${prefix}.title`);
-            const bodyTypography = getComponentLayoutTypography(componentLayout, `${prefix}.body`);
-            return (
-              <ComponentLayoutNode
-                key={prefix}
-                className="relative grid grid-cols-12 content-start"
-                layout={componentLayout}
-                nodeId={prefix}
-              >
-                {hasEditableTextContent(column.title) ? (
+  return (
+    <section
+      className={`relative z-20 w-full bg-black ${sectionClassName}`}
+      style={getComponentSectionStyle(componentLayout)}
+    >
+      <div className="grid-container w-full border-t border-white/10 rhythm-divider-top">
+        {columns.map((column, index) => {
+          const prefix = `column${index + 1}`;
+          const columnLayout = componentLayout
+            ? createNestedComponentVariantLayout(componentLayout, prefix)
+            : undefined;
+          const titleTypography = getComponentLayoutTypography(
+            componentLayout,
+            `${prefix}.title`,
+          );
+          const bodyTypography = getComponentLayoutTypography(
+            componentLayout,
+            `${prefix}.body`,
+          );
+          const staggerStyle = index > 0 && rhythm === "staggered"
+            ? {
+              "--triptych-col-top-spacing": getSpacingRem(
+                index === 1
+                  ? resolvedDesign.col2TopSpacing
+                  : resolvedDesign.col3TopSpacing,
+              ),
+            } as CSSProperties
+            : undefined;
+          const staggerClassName = index === 1
+            ? "mt-[var(--triptych-col-top-spacing)] md:mt-0"
+            : index === 2
+              ? "mt-[var(--triptych-col-top-spacing)] lg:mt-0"
+              : "";
+          return (
+            <ComponentLayoutNode
+              key={prefix}
+              className={`relative grid grid-cols-12 content-start ${
+                componentLayout
+                  ? ""
+                  : getResponsiveGridColumnClassName(
+                    column.fallbackBounds,
+                  )
+              } ${staggerClassName}`}
+              layout={componentLayout}
+              nodeId={prefix}
+              style={staggerStyle}
+            >
+              {hasEditableTextContent(column.title) ? (
                 <ComponentLayoutNode
+                  className={!columnLayout ? "col-span-12" : undefined}
                   layout={columnLayout}
                   nodeId={`${prefix}.title`}
                 >
                   <Typography
                     as="h4"
                     preset={titleTypography?.preset ?? "sans-body"}
-                    size={titleTypography?.size ?? "title-sm"}
-                    weight="semantic"
-                    wrapPolicy={titleTypography?.wrap ?? "heading"}
-                    align={getComponentLayoutAlignment(componentLayout, `${prefix}.title`)}
+                    size={titleTypography?.size ?? "label"}
+                    weight="strong"
+                    wrapPolicy={titleTypography?.wrap ?? "label"}
+                    align={getComponentLayoutAlignment(
+                      componentLayout,
+                      `${prefix}.title`,
+                    )}
                     className="border-l-2 border-white/80 pl-3 text-white"
                   >
                     {column.title}
                   </Typography>
                 </ComponentLayoutNode>
-                ) : null}
-                {hasEditableTextContent(column.text) ? (
+              ) : null}
+              {hasEditableTextContent(column.text) ? (
                 <ComponentLayoutNode
+                  className={!columnLayout ? "col-span-12" : undefined}
                   gapFrom={`${prefix}.title`}
                   layout={columnLayout}
                   nodeId={`${prefix}.body`}
@@ -239,86 +217,33 @@ export default function BreakdownTriptych({
                     {column.text}
                   </Typography>
                 </ComponentLayoutNode>
-                ) : null}
-                {column.image ? (
+              ) : null}
+              {column.image ? (
                 <ComponentLayoutNode
+                  className={!columnLayout ? "col-span-12" : undefined}
                   gapFrom={`${prefix}.body`}
                   layout={columnLayout}
                   nodeId={`${prefix}.media`}
                 >
-                  <div className="relative w-full overflow-hidden border border-white/10">
+                  <div className="relative mt-6 w-full overflow-hidden border border-white/10">
                     <PresetImage
                       src={column.image}
                       alt={column.alt}
                       preset={column.preset}
                       fitMode={column.fitMode}
-                      preload={publicMediaHint?.src === column.image && publicMediaHint.preload}
+                      preload={publicMediaHint?.src === column.image &&
+                        publicMediaHint.preload}
                       mediaProfile="grid-4"
-                      sizes={publicMediaHint?.src === column.image ? publicMediaHint.sizes : undefined}
+                      sizes={publicMediaHint?.src === column.image
+                        ? publicMediaHint.sizes
+                        : undefined}
                     />
                   </div>
                 </ComponentLayoutNode>
-                ) : null}
-              </ComponentLayoutNode>
-            );
-          })}
-        </div>
-      </section>
-    );
-  }
-
-  return (
-    <section className={`relative z-20 w-full bg-black ${getSectionSpacingClassName(resolvedDesign.sectionSpacing)}`}>
-      <div className="grid-container w-full border-t border-white/10 rhythm-divider-top">
-        <TriptychColumn
-          title={col1Title}
-          text={col1Text}
-          bodyAlign={col1BodyAlign}
-          img={col1Img}
-          alt={col1Alt}
-          boundsClassName={getResponsiveGridColumnClassName(createResponsiveGridBounds(
-            { leftCol: 1, rightCol: 12 },
-            { leftCol: 1, rightCol: 6 },
-            resolvedDesign.col1Bounds,
-          ))}
-          preset={col1Preset}
-          fitMode={col1FitMode}
-          publicMediaHint={publicMediaHint}
-        />
-        <TriptychColumn
-          title={col2Title}
-          text={col2Text}
-          bodyAlign={col2BodyAlign}
-          img={col2Img}
-          alt={col2Alt}
-          boundsClassName={getResponsiveGridColumnClassName(createResponsiveGridBounds(
-            { leftCol: 1, rightCol: 12 },
-            { leftCol: 7, rightCol: 12 },
-            resolvedDesign.col2Bounds,
-          ))}
-          preset={col2Preset}
-          fitMode={col2FitMode}
-          className="mt-[var(--triptych-col-top-spacing)] md:mt-0"
-          style={col2Style}
-          publicMediaHint={publicMediaHint}
-        />
-        <TriptychColumn
-          title={col3Title}
-          text={col3Text}
-          bodyAlign={col3BodyAlign}
-          img={col3Img}
-          alt={col3Alt}
-          boundsClassName={getResponsiveGridColumnClassName(createResponsiveGridBounds(
-            { leftCol: 1, rightCol: 12 },
-            { leftCol: 1, rightCol: 12 },
-            resolvedDesign.col3Bounds,
-          ))}
-          preset={col3Preset}
-          fitMode={col3FitMode}
-          className="mt-[var(--triptych-col-top-spacing)] lg:mt-0"
-          style={col3Style}
-          publicMediaHint={publicMediaHint}
-        />
+              ) : null}
+            </ComponentLayoutNode>
+          );
+        })}
       </div>
     </section>
   );

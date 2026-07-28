@@ -8,6 +8,102 @@
 }
 
 @font-face {
+  font-family: "Hanyi QiHei Public Subset";
+  src: url("/fonts/generated/hanyi-qihei-400.ebc7e8f93f70.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Hanyi QiHei Public Subset";
+  src: url("/fonts/generated/hanyi-qihei-500.ce87eaf8694e.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Hanyi QiHei Public Subset";
+  src: url("/fonts/generated/hanyi-qihei-700.c5112cd05ea6.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Futura Public Subset";
+  src: url("/fonts/generated/futura-300.5c7b0335fc6e.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Futura Public Subset";
+  src: url("/fonts/generated/futura-400.c095386f470d.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Futura Public Subset";
+  src: url("/fonts/generated/futura-500.68ee3e1465db.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Luna ITC Public Subset";
+  src: url("/fonts/generated/luna-itc-400.5542178effe1.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Luna ITC Public Subset";
+  src: url("/fonts/generated/luna-itc-700.001099b27dce.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ITC Serif Gothic Public Subset";
+  src: url("/fonts/generated/itc-serif-gothic-300.dc8e3f3fad3c.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ITC Serif Gothic Public Subset";
+  src: url("/fonts/generated/itc-serif-gothic-400.ac109f6933bd.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ITC Serif Gothic Public Subset";
+  src: url("/fonts/generated/itc-serif-gothic-800.2fdeaf2f1ec8.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ITC Serif Gothic Public Subset";
+  src: url("/fonts/generated/itc-serif-gothic-900.7f1b3e9e1885.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "DM Serif Display Public Subset";
   src: url("/fonts/generated/dm-serif-display.3ba602144a7e.woff2") format("woff2");
   font-style: normal;
@@ -17,5 +113,9 @@
 
 .public-font-scope {
   --font-noto-serif: "Source Han Serif SC Public Subset";
+  --font-han-yi-qi-hei: "Hanyi QiHei Public Subset";
+  --font-futura: "Futura Public Subset";
+  --font-luna: "Luna ITC Public Subset";
+  --font-gothic: "ITC Serif Gothic Public Subset";
   --font-dm-serif: "DM Serif Display Public Subset";
 }
