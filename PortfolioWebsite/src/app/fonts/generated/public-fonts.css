@@ -1,7 +1,7 @@
 /* 此文件由 scripts/generate-font-subsets.mjs 自动生成，请勿手动修改。 */
 @font-face {
   font-family: "Source Han Serif SC Public Subset";
-  src: url("/fonts/generated/source-han-serif-sc.125b1d15930d.woff2") format("woff2");
+  src: url("/fonts/generated/source-han-serif-sc.95f0d6b8c4d0.woff2") format("woff2");
   font-style: normal;
   font-weight: 200 900;
   font-display: swap;
@@ -9,7 +9,7 @@
 
 @font-face {
   font-family: "Hanyi QiHei Public Subset";
-  src: url("/fonts/generated/hanyi-qihei-400.ebc7e8f93f70.woff2") format("woff2");
+  src: url("/fonts/generated/hanyi-qihei-400.18b2e1516616.woff2") format("woff2");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -17,7 +17,7 @@
 
 @font-face {
   font-family: "Hanyi QiHei Public Subset";
-  src: url("/fonts/generated/hanyi-qihei-500.ce87eaf8694e.woff2") format("woff2");
+  src: url("/fonts/generated/hanyi-qihei-500.a10164183c05.woff2") format("woff2");
   font-style: normal;
   font-weight: 500;
   font-display: swap;
@@ -25,7 +25,7 @@
 
 @font-face {
   font-family: "Hanyi QiHei Public Subset";
-  src: url("/fonts/generated/hanyi-qihei-700.c5112cd05ea6.woff2") format("woff2");
+  src: url("/fonts/generated/hanyi-qihei-700.8b70b01b1902.woff2") format("woff2");
   font-style: normal;
   font-weight: 700;
   font-display: swap;
