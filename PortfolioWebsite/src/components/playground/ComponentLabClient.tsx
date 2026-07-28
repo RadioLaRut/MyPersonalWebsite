@@ -34,9 +34,10 @@ import {
 } from "@/lib/component-design-commit";
 import {
   COMPONENT_DESIGN_MANIFEST_BY_COMPONENT,
-  getComponentDesignNodePolicy,
+  getComponentDesignNodePolicyFromComposition,
   getComponentDesignVariantDescriptor,
   type ComponentDesignAuthorComponent,
+  type ComponentDesignCompositionDescriptor,
 } from "@/lib/component-design-manifest";
 import {
   constrainComponentLabPlacement,
@@ -47,14 +48,14 @@ import type {
 import {
   cloneComponentDesignDocument,
   enableComponentDesignDeviceOverride,
-  migrateComponentDesignDocumentV2ToV3,
+  migrateComponentDesignDocumentV2ToV4,
   normalizeComponentDesignDocument,
   resolveComponentDesignDeviceLayout,
   resolveComponentDesignRuntimeDocument,
-  type ComponentDesignDeviceLayoutV3,
-  type ComponentDesignDocumentV3,
-  type ComponentDesignVariantV3,
-} from "@/lib/component-design-v3";
+  type ComponentDesignDeviceLayoutV4,
+  type ComponentDesignDocumentV4,
+  type ComponentDesignVariantV4,
+} from "@/lib/component-design-v4";
 import type { ComponentLabInstanceCatalog } from "@/lib/component-lab-presets";
 import {
   createVariantSampleNode,
@@ -89,7 +90,7 @@ import {
 } from "@/lib/preview-viewports";
 
 type ComponentDesignApiPayload = {
-  config?: ComponentDesignDocumentV3;
+  config?: ComponentDesignDocumentV4;
   error?: { code: string; message: string };
   operationId?: string;
   path?: string;
@@ -103,19 +104,19 @@ type FontLabApiPayload = {
 type SaveJob = {
   component: ComponentDesignAuthorComponent;
   operationId: string;
-  submittedAgainst: ComponentDesignVariantV3;
-  value: ComponentDesignVariantV3;
+  submittedAgainst: ComponentDesignVariantV4;
+  value: ComponentDesignVariantV4;
   variant: string;
 };
 
 type ConflictState = {
   job: SaveJob;
   revision: string;
-  serverDocument: ComponentDesignDocumentV3;
+  serverDocument: ComponentDesignDocumentV4;
 };
 
 type TextTransaction = {
-  before: ComponentDesignVariantV3;
+  before: ComponentDesignVariantV4;
   component: ComponentDesignAuthorComponent;
   key: string;
   timer: ReturnType<typeof setTimeout>;
@@ -134,13 +135,13 @@ function scopeKey(component: ComponentDesignAuthorComponent, variant: string) {
   return `${component}/${variant}`;
 }
 
-function cloneVariant(variant: ComponentDesignVariantV3) {
+function cloneVariant(variant: ComponentDesignVariantV4) {
   return structuredClone(variant);
 }
 
 function variantsEqual(
-  left: ComponentDesignVariantV3,
-  right: ComponentDesignVariantV3,
+  left: ComponentDesignVariantV4,
+  right: ComponentDesignVariantV4,
 ) {
   return JSON.stringify(left) === JSON.stringify(right);
 }
@@ -166,7 +167,7 @@ function createPreviewData(
       ...node,
       props: {
         ...node.props,
-        id: `component-lab-v3-${component}`,
+        id: `component-lab-v4-${component}`,
       },
     }],
     root: {
@@ -182,10 +183,10 @@ function createPreviewData(
 }
 
 function updateVariantInDocument(
-  document: ComponentDesignDocumentV3,
+  document: ComponentDesignDocumentV4,
   component: ComponentDesignAuthorComponent,
   variant: string,
-  value: ComponentDesignVariantV3,
+  value: ComponentDesignVariantV4,
 ) {
   const next = cloneComponentDesignDocument(document);
   next.components[component].variants[variant] = cloneVariant(value);
@@ -193,9 +194,9 @@ function updateVariantInDocument(
 }
 
 function setDeviceLayout(
-  variant: ComponentDesignVariantV3,
+  variant: ComponentDesignVariantV4,
   device: ComponentDesignBreakpoint,
-  layout: ComponentDesignDeviceLayoutV3,
+  layout: ComponentDesignDeviceLayoutV4,
 ) {
   const next = cloneVariant(variant);
   if (device === "desktop") {
@@ -207,18 +208,16 @@ function setDeviceLayout(
 }
 
 function applyPlacementInteraction(
-  layout: ComponentDesignDeviceLayoutV3,
+  layout: ComponentDesignDeviceLayoutV4,
   message: ComponentLabPreviewPlacementMessage,
-  component: ComponentDesignAuthorComponent,
-  variant: string,
+  composition: readonly ComponentDesignCompositionDescriptor[],
 ) {
   const next = structuredClone(layout);
   message.targets.forEach((target) => {
     const node = next.nodes[target.roleId];
     if (!node) return;
-    const policy = getComponentDesignNodePolicy(
-      component,
-      variant,
+    const policy = getComponentDesignNodePolicyFromComposition(
+      composition,
       target.roleId,
     );
     node.placement = constrainComponentLabPlacement({
@@ -255,7 +254,7 @@ function applyPlacementInteraction(
 }
 
 function updateSampleTextValue(
-  variant: ComponentDesignVariantV3,
+  variant: ComponentDesignVariantV4,
   effectiveSampleText: Record<string, string | string[]>,
   selection: ComponentLabElementSelection,
   value: string,
@@ -283,7 +282,7 @@ export default function ComponentLabClient({
   const router = useRouter();
   const providerDocument = useComponentDesignDocument();
   const initialDocument = useMemo(
-    () => migrateComponentDesignDocumentV2ToV3(providerDocument),
+    () => migrateComponentDesignDocumentV2ToV4(providerDocument),
     [providerDocument],
   );
   const [document, setDocument] = useState(initialDocument);
@@ -326,7 +325,7 @@ export default function ComponentLabClient({
   const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const processSaveQueueRef = useRef<() => void>(() => undefined);
   const historiesRef = useRef(
-    new Map<string, ComponentLabHistoryState<ComponentDesignVariantV3>>(),
+    new Map<string, ComponentLabHistoryState<ComponentDesignVariantV4>>(),
   );
   const lastSelectionRef = useRef(
     new Map<string, ComponentLabElementSelection[]>(),
@@ -391,13 +390,13 @@ export default function ComponentLabClient({
   const scaledWidth = viewport.width * previewScale;
   const scaledHeight = canvasHeight * previewScale;
 
-  const setCurrentDocument = useCallback((next: ComponentDesignDocumentV3) => {
+  const setCurrentDocument = useCallback((next: ComponentDesignDocumentV4) => {
     documentRef.current = next;
     setDocument(next);
   }, []);
 
   const mergeRemoteDocument = useCallback((
-    remoteDocument: ComponentDesignDocumentV3,
+    remoteDocument: ComponentDesignDocumentV4,
     conflictScope?: ComponentLabSaveScope | null,
   ) => {
     const activeConflictScope = conflictScope === undefined
@@ -415,7 +414,7 @@ export default function ComponentLabClient({
   }, [setCurrentDocument]);
 
   const publishCommittedDocument = useCallback(
-    (nextDocument: ComponentDesignDocumentV3) => {
+    (nextDocument: ComponentDesignDocumentV4) => {
       ignoreNextBroadcastRef.current = true;
       dispatchComponentDesignUpdated(
         resolveComponentDesignRuntimeDocument(nextDocument),
@@ -595,8 +594,8 @@ export default function ComponentLabClient({
   const enqueueSave = useCallback((
     targetComponent: ComponentDesignAuthorComponent,
     targetVariant: string,
-    value: ComponentDesignVariantV3,
-    submittedAgainst: ComponentDesignVariantV3,
+    value: ComponentDesignVariantV4,
+    submittedAgainst: ComponentDesignVariantV4,
   ) => {
     saveQueueRef.current.push({
       component: targetComponent,
@@ -612,12 +611,12 @@ export default function ComponentLabClient({
   const recordHistory = useCallback((
     targetComponent: ComponentDesignAuthorComponent,
     targetVariant: string,
-    before: ComponentDesignVariantV3,
-    after: ComponentDesignVariantV3,
+    before: ComponentDesignVariantV4,
+    after: ComponentDesignVariantV4,
   ) => {
     const key = scopeKey(targetComponent, targetVariant);
     const current = historiesRef.current.get(key) ??
-      createComponentLabHistory<ComponentDesignVariantV3>();
+      createComponentLabHistory<ComponentDesignVariantV4>();
     historiesRef.current.set(
       key,
       pushComponentLabHistory({
@@ -664,7 +663,7 @@ export default function ComponentLabClient({
   const commitVariant = useCallback((
     targetComponent: ComponentDesignAuthorComponent,
     targetVariant: string,
-    updater: (value: ComponentDesignVariantV3) => ComponentDesignVariantV3,
+    updater: (value: ComponentDesignVariantV4) => ComponentDesignVariantV4,
   ) => {
     flushTextTransaction();
     const before = documentRef.current.components[targetComponent]
@@ -773,7 +772,7 @@ export default function ComponentLabClient({
   }, []);
 
   const updateDeviceLayout = useCallback((
-    layout: ComponentDesignDeviceLayoutV3,
+    layout: ComponentDesignDeviceLayoutV4,
   ) => {
     commitVariant(component, variant, (value) =>
       setDeviceLayout(value, activeDevice, layout));
@@ -807,8 +806,7 @@ export default function ComponentLabClient({
         applyPlacementInteraction(
           layout,
           placementMessage,
-          component,
-          variant,
+          value.composition,
         ),
       );
     });
@@ -825,7 +823,7 @@ export default function ComponentLabClient({
     flushTextTransaction();
     const key = scopeKey(component, variant);
     const currentHistory = historiesRef.current.get(key) ??
-      createComponentLabHistory<ComponentDesignVariantV3>();
+      createComponentLabHistory<ComponentDesignVariantV4>();
     const result = undoComponentLabHistory(currentHistory);
     if (!result.value) return;
     historiesRef.current.set(key, result.history);
@@ -852,7 +850,7 @@ export default function ComponentLabClient({
     flushTextTransaction();
     const key = scopeKey(component, variant);
     const currentHistory = historiesRef.current.get(key) ??
-      createComponentLabHistory<ComponentDesignVariantV3>();
+      createComponentLabHistory<ComponentDesignVariantV4>();
     const result = redoComponentLabHistory(currentHistory);
     if (!result.value) return;
     historiesRef.current.set(key, result.history);
@@ -996,7 +994,7 @@ export default function ComponentLabClient({
 
   useEffect(() => {
     const current = historiesRef.current.get(scopeKey(component, variant)) ??
-      createComponentLabHistory<ComponentDesignVariantV3>();
+      createComponentLabHistory<ComponentDesignVariantV4>();
     setHistoryAvailability({
       canRedo: current.future.length > 0,
       canUndo: current.past.length > 0,
@@ -1069,7 +1067,7 @@ export default function ComponentLabClient({
     );
     historiesRef.current.set(
       scopeKey(conflict.job.component, conflict.job.variant),
-      createComponentLabHistory<ComponentDesignVariantV3>(),
+      createComponentLabHistory<ComponentDesignVariantV4>(),
     );
     setHistoryRevision((value) => value + 1);
     committedDocumentRef.current = conflict.serverDocument;
@@ -1219,6 +1217,7 @@ export default function ComponentLabClient({
                 >
                   <ComponentLabPreviewFrame
                     component={component}
+                    composition={currentVariant.composition}
                     data={previewData}
                     device={activeDevice}
                     editingEnabled={editingEnabled}

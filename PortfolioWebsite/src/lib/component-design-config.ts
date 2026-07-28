@@ -4,17 +4,18 @@ import os from "node:os";
 import path from "node:path";
 
 import {
-  normalizeComponentDesignDocument as normalizeComponentDesignDocumentV2,
   type ComponentDesignDocumentV2,
 } from "./component-design-v2.ts";
 import {
+  type ComponentDesignDocumentV3,
+} from "./component-design-v3.ts";
+import {
   createDefaultComponentDesignDocument,
-  normalizeComponentDesignDocument as normalizeComponentDesignDocumentV3,
   parseComponentDesignDocument,
   parseCurrentComponentDesignDocument,
   resolveComponentDesignRuntimeDocument,
-  type ComponentDesignDocumentV3,
-} from "./component-design-v3.ts";
+  type ComponentDesignDocumentV4,
+} from "./component-design-v4.ts";
 
 export const COMPONENT_DESIGN_CONFIG_ROOT = path.resolve(
   process.cwd(),
@@ -73,7 +74,7 @@ export async function hasComponentDesignConfig(
 
 export async function readComponentDesignSourceConfig(
   filePath = COMPONENT_DESIGN_CONFIG_FILE,
-): Promise<ComponentDesignDocumentV3> {
+): Promise<ComponentDesignDocumentV4> {
   try {
     const raw = await fs.readFile(filePath, "utf8");
     const parsed = parseComponentDesignDocument(JSON.parse(raw));
@@ -102,7 +103,7 @@ export async function readComponentDesignConfig(
 }
 
 export async function writeComponentDesignSourceConfig(
-  document: ComponentDesignDocumentV3,
+  document: ComponentDesignDocumentV4,
   filePath = COMPONENT_DESIGN_CONFIG_FILE,
 ) {
   const strictDocument = parseCurrentComponentDesignDocument(document);
@@ -118,7 +119,10 @@ export async function writeComponentDesignSourceConfig(
 }
 
 export async function writeComponentDesignConfig(
-  document: ComponentDesignDocumentV2 | ComponentDesignDocumentV3,
+  document:
+    | ComponentDesignDocumentV2
+    | ComponentDesignDocumentV3
+    | ComponentDesignDocumentV4,
   filePath = COMPONENT_DESIGN_CONFIG_FILE,
 ) {
   const sourceDocument = parseComponentDesignDocument(document);
@@ -129,11 +133,15 @@ export async function writeComponentDesignConfig(
 }
 
 export function getComponentDesignRevision(
-  document: ComponentDesignDocumentV2 | ComponentDesignDocumentV3,
+  document:
+    | ComponentDesignDocumentV2
+    | ComponentDesignDocumentV3
+    | ComponentDesignDocumentV4,
 ): string {
-  const normalized = document.version === 3
-    ? normalizeComponentDesignDocumentV3(document)
-    : normalizeComponentDesignDocumentV2(document);
+  const normalized = parseComponentDesignDocument(document);
+  if (!normalized) {
+    throw new TypeError("Invalid component design document");
+  }
   return createHash("sha256")
     .update(JSON.stringify(normalized))
     .digest("hex");

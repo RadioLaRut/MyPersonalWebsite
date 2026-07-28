@@ -14,9 +14,12 @@ import type {
   ComponentDesignDocument as ComponentDesignRuntimeDocument,
 } from "@/lib/component-design-v2";
 import type {
-  ComponentDesignDeviceLayoutV3,
-} from "@/lib/component-design-v3";
-import type { ComponentDesignAuthorComponent } from "@/lib/component-design-manifest";
+  ComponentDesignDeviceLayoutV4,
+} from "@/lib/component-design-v4";
+import type {
+  ComponentDesignAuthorComponent,
+  ComponentDesignCompositionDescriptor,
+} from "@/lib/component-design-manifest";
 import {
   COMPONENT_LAB_PREVIEW_PROTOCOL_VERSION,
   COMPONENT_LAB_PREVIEW_READY_MESSAGE,
@@ -30,6 +33,7 @@ import {
 
 export default function ComponentLabPreviewFrame({
   component,
+  composition,
   data,
   device,
   editingEnabled = true,
@@ -47,11 +51,12 @@ export default function ComponentLabPreviewFrame({
   viewportWidth,
 }: {
   component: ComponentDesignAuthorComponent;
+  composition: readonly ComponentDesignCompositionDescriptor[];
   data: Data;
   device: ComponentDesignBreakpoint;
   editingEnabled?: boolean;
   height: number;
-  layout: ComponentDesignDeviceLayoutV3;
+  layout: ComponentDesignDeviceLayoutV4;
   onContentHeight: (height: number) => void;
   onInteraction: (message: ComponentLabPreviewInteractionMessage) => void;
   onSelection: (
@@ -90,6 +95,7 @@ export default function ComponentLabPreviewFrame({
     return {
       activeBreakpoint: device,
       component,
+      composition,
       data,
       designDocument: runtimeDocument,
       device,
@@ -107,6 +113,7 @@ export default function ComponentLabPreviewFrame({
     };
   }, [
     component,
+    composition,
     data,
     device,
     editingEnabled,

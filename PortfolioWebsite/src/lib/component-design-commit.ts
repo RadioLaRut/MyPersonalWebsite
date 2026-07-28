@@ -1,11 +1,13 @@
 import {
-  normalizeComponentDesignDocument as normalizeComponentDesignDocumentV2,
   type ComponentDesignDocumentV2,
 } from "./component-design-v2.ts";
 import {
-  normalizeComponentDesignDocument as normalizeComponentDesignDocumentV3,
   type ComponentDesignDocumentV3,
 } from "./component-design-v3.ts";
+import {
+  parseComponentDesignDocument,
+  type ComponentDesignDocumentV4,
+} from "./component-design-v4.ts";
 
 export const COMPONENT_DESIGN_COMMIT_CHANNEL = "component-design-committed-v2";
 export const COMPONENT_DESIGN_COMMIT_MESSAGE_TYPE = "component-design-committed";
@@ -18,14 +20,13 @@ export type CommittedComponentDesignMessage = {
 
 export type ComponentDesignComparableDocument =
   | ComponentDesignDocumentV2
-  | ComponentDesignDocumentV3;
+  | ComponentDesignDocumentV3
+  | ComponentDesignDocumentV4;
 
 function normalizeComparableDocument(
   document: ComponentDesignComparableDocument,
 ) {
-  return document.version === 3
-    ? normalizeComponentDesignDocumentV3(document)
-    : normalizeComponentDesignDocumentV2(document);
+  return parseComponentDesignDocument(document);
 }
 
 export function areComponentDesignDocumentsEqual(

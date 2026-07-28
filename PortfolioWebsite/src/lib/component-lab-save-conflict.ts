@@ -3,8 +3,8 @@ import type {
 } from "./component-design-manifest.ts";
 import {
   cloneComponentDesignDocument,
-  type ComponentDesignDocumentV3,
-} from "./component-design-v3.ts";
+  type ComponentDesignDocumentV4,
+} from "./component-design-v4.ts";
 
 export type ComponentLabSaveConflictResolution =
   | "already-committed"
@@ -51,11 +51,11 @@ export function mergeComponentLabRemoteDocument({
   textTransactionScope = null,
 }: {
   conflictScope?: ComponentLabSaveScope | null;
-  localDocument: ComponentDesignDocumentV3;
+  localDocument: ComponentDesignDocumentV4;
   pendingScopes: readonly ComponentLabSaveScope[];
-  remoteDocument: ComponentDesignDocumentV3;
+  remoteDocument: ComponentDesignDocumentV4;
   textTransactionScope?: ComponentLabSaveScope | null;
-}): ComponentDesignDocumentV3 {
+}): ComponentDesignDocumentV4 {
   const merged = cloneComponentDesignDocument(remoteDocument);
   const localScopes = new Map<string, ComponentLabSaveScope>();
 

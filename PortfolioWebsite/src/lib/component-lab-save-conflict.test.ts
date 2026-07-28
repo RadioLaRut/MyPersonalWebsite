@@ -7,7 +7,7 @@ import {
 } from "./component-lab-save-conflict.ts";
 import {
   createDefaultComponentDesignDocument,
-} from "./component-design-v3.ts";
+} from "./component-design-v4.ts";
 
 const isEqual = (left: { value: number }, right: { value: number }) =>
   left.value === right.value;

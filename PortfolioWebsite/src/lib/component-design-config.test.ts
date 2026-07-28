@@ -5,6 +5,7 @@ import path from "node:path";
 import test from "node:test";
 
 import {
+  COMPONENT_DESIGN_CONFIG_FILE,
   getComponentDesignRevision,
   readComponentDesignConfig,
   readComponentDesignSourceConfig,
@@ -15,14 +16,25 @@ import {
   createDefaultComponentDesignDocument as createDefaultComponentDesignDocumentV2,
 } from "./component-design-v2.ts";
 import {
-  createDefaultComponentDesignDocument,
-  resolveComponentDesignRuntimeDocument,
+  createDefaultComponentDesignDocument as createDefaultComponentDesignDocumentV3,
 } from "./component-design-v3.ts";
+import {
+  createDefaultComponentDesignDocument,
+  parseCurrentComponentDesignDocument,
+  resolveComponentDesignRuntimeDocument,
+} from "./component-design-v4.ts";
 
-test("仓库 component-design.json 始终满足严格 V3 契约", async () => {
+test("仓库 component-design.json 始终满足严格 V4 契约", async () => {
+  const persisted = JSON.parse(
+    await fs.readFile(COMPONENT_DESIGN_CONFIG_FILE, "utf8"),
+  );
   const document = await readComponentDesignSourceConfig();
 
-  assert.equal(document.version, 3);
+  assert.ok(parseCurrentComponentDesignDocument(persisted));
+  assert.equal(document.version, 4);
+  assert.ok(
+    document.components.WorksList.variants.default.composition.length > 0,
+  );
   assert.deepEqual(
     document.components.WorksList.variants.default.desktop.nodes["item.media"]
       .placement,
@@ -95,7 +107,10 @@ test("writeComponentDesignConfig persists normalized JSON", async () => {
       .opticalPull,
     8,
   );
-  assert.equal(source.version, 3);
+  assert.equal(source.version, 4);
+  assert.ok(
+    source.components.HeroSection.variants.full.composition.length > 0,
+  );
   assert.equal(
     source.components.HeroSection.variants.full.tablet.mode,
     "custom",
@@ -117,7 +132,7 @@ test("readComponentDesignSourceConfig migrates V2 in memory without rewriting", 
   const migrated = await readComponentDesignSourceConfig(filePath);
   const persisted = JSON.parse(await fs.readFile(filePath, "utf8"));
 
-  assert.equal(migrated.version, 3);
+  assert.equal(migrated.version, 4);
   assert.equal(migrated.components.HeroSection.variants.full.tablet.mode, "custom");
   assert.deepEqual(
     migrated.components.HeroSection.variants.full.tablet.custom.nodes.title
@@ -128,7 +143,30 @@ test("readComponentDesignSourceConfig migrates V2 in memory without rewriting", 
   await fs.rm(tempRoot, { force: true, recursive: true });
 });
 
-test("writeComponentDesignSourceConfig rejects a normalized but incomplete V3 draft", async () => {
+test("readComponentDesignSourceConfig migrates V3 in memory without rewriting", async () => {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "component-design-v3-"));
+  const filePath = path.join(tempRoot, "component-design.json");
+  const legacy = createDefaultComponentDesignDocumentV3();
+  legacy.components.HeroSection.variants.full.sampleText.title =
+    "V3 保留标题";
+  await fs.writeFile(filePath, JSON.stringify(legacy), "utf8");
+
+  const migrated = await readComponentDesignSourceConfig(filePath);
+  const persisted = JSON.parse(await fs.readFile(filePath, "utf8"));
+
+  assert.equal(migrated.version, 4);
+  assert.equal(
+    migrated.components.HeroSection.variants.full.sampleText.title,
+    "V3 保留标题",
+  );
+  assert.ok(
+    migrated.components.HeroSection.variants.full.composition.length > 0,
+  );
+  assert.equal(persisted.version, 3);
+  await fs.rm(tempRoot, { force: true, recursive: true });
+});
+
+test("writeComponentDesignSourceConfig rejects a normalized but incomplete V4 draft", async () => {
   const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "component-design-strict-"));
   const filePath = path.join(tempRoot, "component-design.json");
   const invalid = structuredClone(

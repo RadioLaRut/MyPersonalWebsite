@@ -3,6 +3,9 @@ import test from "node:test";
 
 import { createDefaultComponentDesignDocument } from "./component-design-v2.ts";
 import {
+  getComponentDesignVariantDescriptor,
+} from "./component-design-manifest.ts";
+import {
   COMPONENT_LAB_PREVIEW_HEIGHT_MESSAGE,
   COMPONENT_LAB_PREVIEW_PLACEMENT_MESSAGE,
   COMPONENT_LAB_PREVIEW_PROTOCOL_VERSION,
@@ -30,6 +33,10 @@ function createRenderMessage(
     },
     activeBreakpoint: "desktop",
     component: "HeroSection",
+    composition: structuredClone(
+      getComponentDesignVariantDescriptor("HeroSection", "poster")
+        .composition ?? [],
+    ),
     designDocument: createDefaultComponentDesignDocument(),
     device: "desktop",
     layoutMode: true,
@@ -60,9 +67,13 @@ function createResponseContext() {
   } as const;
 }
 
-test("V3 渲染消息要求完整会话上下文，仍兼容未声明版本的旧载荷", () => {
+test("V4 渲染消息要求完整会话和 canonical composition，仍兼容旧载荷", () => {
   const message = createRenderMessage();
   assert.equal(isComponentLabPreviewRenderMessage(message), true);
+  assert.equal(isComponentLabPreviewRenderMessage({
+    ...message,
+    composition: [],
+  }), false);
   assert.equal(isComponentLabPreviewRenderMessage({
     ...message,
     activeBreakpoint: "tablet",
@@ -106,6 +117,7 @@ test("V3 渲染消息要求完整会话上下文，仍兼容未声明版本的�
   delete legacy.protocolVersion;
   delete legacy.renderSessionId;
   delete legacy.seq;
+  delete legacy.composition;
   assert.equal(isComponentLabPreviewRenderMessage(legacy), true);
 });
 
@@ -154,6 +166,7 @@ test("渲染守卫拒绝重复、乱序和已经退休的会话", () => {
   delete legacy.protocolVersion;
   delete legacy.renderSessionId;
   delete legacy.seq;
+  delete legacy.composition;
   assert.equal(isComponentLabPreviewRenderMessage(legacy), true);
   assert.equal(
     guardComponentLabPreviewRenderMessage(
@@ -164,7 +177,7 @@ test("渲染守卫拒绝重复、乱序和已经退休的会话", () => {
   );
 });
 
-test("高度消息拒绝无效高度和不完整的 V3 会话", () => {
+test("高度消息拒绝无效高度和不完整的 V4 会话", () => {
   assert.equal(isComponentLabPreviewHeightMessage({
     height: 960,
     type: COMPONENT_LAB_PREVIEW_HEIGHT_MESSAGE,

@@ -12,9 +12,9 @@ import {
   mergeComponentDesignVariantPatch,
   parseComponentDesignDocument,
   parseCurrentComponentDesignDocument,
-  type ComponentDesignDocumentV3,
-  type ComponentDesignVariantPatchV3,
-} from "./component-design-v3.ts";
+  type ComponentDesignDocumentV4,
+  type ComponentDesignVariantPatchV4,
+} from "./component-design-v4.ts";
 import type { ComponentDesignAuthorComponent } from "./component-design-manifest.ts";
 import { isPlainRecord } from "./json-utils.ts";
 import { CONTENT_BUDGET_PROFILE_V1 } from "./content-budget.ts";
@@ -42,8 +42,8 @@ function serializeComponentDesignWrite<T>(task: () => Promise<T>) {
 export type ComponentDesignRepository = {
   configPath: string;
   hasSaved: () => Promise<boolean>;
-  read: () => Promise<ComponentDesignDocumentV3>;
-  write: (document: ComponentDesignDocumentV3) => Promise<void>;
+  read: () => Promise<ComponentDesignDocumentV4>;
+  write: (document: ComponentDesignDocumentV4) => Promise<void>;
 };
 
 const defaultRepository: ComponentDesignRepository = {
@@ -81,12 +81,12 @@ export type ComponentDesignPatchRequest = {
   componentKey: ComponentDesignAuthorComponent;
   operationId: string;
   variantKey: string;
-  variantPatch: ComponentDesignVariantPatchV3;
+  variantPatch: ComponentDesignVariantPatchV4;
 };
 
 export type ComponentDesignFullDocumentRequest = {
   baseRevision: string;
-  config: ComponentDesignDocumentV3;
+  config: ComponentDesignDocumentV4;
 };
 
 function parseBaseRevision(payload: Record<string, unknown>) {
@@ -125,7 +125,7 @@ function parsePatchRequest(
     componentKey: payload.componentKey,
     operationId,
     variantKey: payload.variantKey,
-    variantPatch: payload.variantPatch as ComponentDesignVariantPatchV3,
+    variantPatch: payload.variantPatch as ComponentDesignVariantPatchV4,
   };
 }
 

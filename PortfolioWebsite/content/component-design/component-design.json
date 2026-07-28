@@ -316,7 +316,21 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "host": "media",
+              "id": "hero-poster-overlay",
+              "kind": "overlay-host",
+              "label": "首屏叠加内容",
+              "members": [
+                "title",
+                "subtitle",
+                "positioning",
+                "eyebrow"
+              ]
+            }
+          ]
         },
         "full": {
           "desktop": {
@@ -750,7 +764,23 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "host": "media",
+              "id": "hero-full-overlay",
+              "kind": "overlay-host",
+              "label": "首屏叠加内容",
+              "members": [
+                "eyebrow",
+                "title",
+                "subtitle",
+                "description",
+                "primaryCta",
+                "secondaryCta"
+              ]
+            }
+          ]
         }
       }
     },
@@ -1065,7 +1095,21 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "host": "media",
+              "id": "hero-headline-overlay",
+              "kind": "overlay-host",
+              "label": "作品首屏叠加内容",
+              "members": [
+                "eyebrow",
+                "title",
+                "subtitle",
+                "navLink"
+              ]
+            }
+          ]
         }
       }
     },
@@ -1404,7 +1448,22 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "id": "editorial-header-index",
+              "kind": "stack",
+              "label": "索引页头阅读顺序",
+              "lockPositioning": true,
+              "members": [
+                "title",
+                "subtitle",
+                "sideEyebrow",
+                "description",
+                "cta"
+              ]
+            }
+          ]
         },
         "collection": {
           "desktop": {
@@ -1670,7 +1729,21 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "id": "editorial-header-collection",
+              "kind": "stack",
+              "label": "合集页头阅读顺序",
+              "lockPositioning": true,
+              "members": [
+                "backLink",
+                "number",
+                "title",
+                "description"
+              ]
+            }
+          ]
         }
       }
     },
@@ -1928,7 +2001,21 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "id": "editorial-split-media-left",
+              "kind": "stack",
+              "label": "图文阅读顺序",
+              "lockPositioning": true,
+              "members": [
+                "media",
+                "heading",
+                "body",
+                "body.item"
+              ]
+            }
+          ]
         },
         "media-right": {
           "desktop": {
@@ -2182,7 +2269,21 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "id": "editorial-split-media-right",
+              "kind": "stack",
+              "label": "图文阅读顺序",
+              "lockPositioning": true,
+              "members": [
+                "media",
+                "heading",
+                "body",
+                "body.item"
+              ]
+            }
+          ]
         },
         "stack": {
           "desktop": {
@@ -2439,7 +2540,21 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "id": "editorial-split-stack",
+              "kind": "stack",
+              "label": "堆叠阅读顺序",
+              "lockPositioning": true,
+              "members": [
+                "heading",
+                "media",
+                "body",
+                "body.item"
+              ]
+            }
+          ]
         }
       }
     },
@@ -3678,7 +3793,50 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "host": "column1",
+              "id": "phase-column-1",
+              "kind": "nested-grid",
+              "label": "第 1 栏内部网格",
+              "members": [
+                "column1.label",
+                "column1.title",
+                "column1.subtitle",
+                "column1.body",
+                "column1.item.label",
+                "column1.item.value"
+              ]
+            },
+            {
+              "host": "column2",
+              "id": "phase-column-2",
+              "kind": "nested-grid",
+              "label": "第 2 栏内部网格",
+              "members": [
+                "column2.label",
+                "column2.title",
+                "column2.subtitle",
+                "column2.body",
+                "column2.item.label",
+                "column2.item.value"
+              ]
+            },
+            {
+              "host": "column3",
+              "id": "phase-column-3",
+              "kind": "nested-grid",
+              "label": "第 3 栏内部网格",
+              "members": [
+                "column3.label",
+                "column3.title",
+                "column3.subtitle",
+                "column3.body",
+                "column3.media"
+              ]
+            }
+          ]
         },
         "triptych": {
           "desktop": {
@@ -4319,7 +4477,42 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "host": "column1",
+              "id": "triptych-column-1",
+              "kind": "nested-grid",
+              "label": "第 1 栏内部网格",
+              "members": [
+                "column1.title",
+                "column1.body",
+                "column1.media"
+              ]
+            },
+            {
+              "host": "column2",
+              "id": "triptych-column-2",
+              "kind": "nested-grid",
+              "label": "第 2 栏内部网格",
+              "members": [
+                "column2.title",
+                "column2.body",
+                "column2.media"
+              ]
+            },
+            {
+              "host": "column3",
+              "id": "triptych-column-3",
+              "kind": "nested-grid",
+              "label": "第 3 栏内部网格",
+              "members": [
+                "column3.title",
+                "column3.body",
+                "column3.media"
+              ]
+            }
+          ]
         }
       }
     },
@@ -4421,7 +4614,8 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": []
         },
         "medium": {
           "desktop": {
@@ -4519,7 +4713,8 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": []
         },
         "large": {
           "desktop": {
@@ -4617,7 +4812,8 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": []
         }
       }
     },
@@ -4719,7 +4915,8 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": []
         }
       }
     },
@@ -4866,7 +5063,8 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": []
         },
         "large": {
           "desktop": {
@@ -5009,7 +5207,8 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": []
         },
         "fullscreen": {
           "desktop": {
@@ -5152,7 +5351,18 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "host": "media",
+              "id": "fullscreen-caption-overlay",
+              "kind": "overlay-host",
+              "label": "全屏图片叠加内容",
+              "members": [
+                "caption"
+              ]
+            }
+          ]
         }
       }
     },
@@ -5353,7 +5563,20 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "id": "bilibili-content-stack",
+              "kind": "stack",
+              "label": "播放器阅读顺序",
+              "lockPositioning": true,
+              "members": [
+                "player",
+                "caption",
+                "externalLink"
+              ]
+            }
+          ]
         }
       }
     },
@@ -5623,7 +5846,21 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "host": "media",
+              "id": "project-card-overlay",
+              "kind": "overlay-host",
+              "label": "卡片叠加内容",
+              "members": [
+                "number",
+                "prompt",
+                "title"
+              ],
+              "lockPositioning": true
+            }
+          ]
         },
         "immersive-left": {
           "desktop": {
@@ -5862,7 +6099,20 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "host": "media",
+              "id": "project-immersive-left-overlay",
+              "kind": "overlay-host",
+              "label": "沉浸式叠加内容",
+              "members": [
+                "subtitle",
+                "title",
+                "underline"
+              ]
+            }
+          ]
         },
         "immersive-right": {
           "desktop": {
@@ -6101,7 +6351,20 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "host": "media",
+              "id": "project-immersive-right-overlay",
+              "kind": "overlay-host",
+              "label": "沉浸式叠加内容",
+              "members": [
+                "subtitle",
+                "title",
+                "underline"
+              ]
+            }
+          ]
         }
       }
     },
@@ -6542,7 +6805,33 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "id": "works-entry-content",
+              "kind": "stack",
+              "label": "条目阅读顺序",
+              "lockPositioning": true,
+              "members": [
+                "item.number",
+                "item.title",
+                "item.category",
+                "item.description"
+              ]
+            },
+            {
+              "host": "item.media",
+              "id": "works-active-media",
+              "kind": "interactive-overlay",
+              "label": "条目激活媒体",
+              "lockPlacement": true,
+              "lockPositioning": true,
+              "lockResize": true,
+              "members": [
+                "item.media"
+              ]
+            }
+          ]
         }
       }
     },
@@ -6899,7 +7188,29 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "host": "media",
+              "id": "parameter-media-label",
+              "kind": "overlay-host",
+              "label": "媒体叠加标签",
+              "members": [
+                "mediaLabel"
+              ]
+            },
+            {
+              "host": "items",
+              "id": "parameter-items-grid",
+              "kind": "nested-grid",
+              "label": "参数条目内部网格",
+              "members": [
+                "item.name",
+                "item.value",
+                "item.description"
+              ]
+            }
+          ]
         }
       }
     },
@@ -7160,7 +7471,31 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "host": "media",
+              "id": "slider-title-overlay",
+              "kind": "overlay-host",
+              "label": "对比图叠加标题",
+              "members": [
+                "title"
+              ],
+              "lockPositioning": true
+            },
+            {
+              "id": "slider-edge-labels",
+              "kind": "edge-pair",
+              "label": "对比图左右标签",
+              "lockPlacement": true,
+              "lockPositioning": true,
+              "lockResize": true,
+              "members": [
+                "leftLabel",
+                "rightLabel"
+              ]
+            }
+          ]
         }
       }
     },
@@ -7319,7 +7654,8 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": []
         },
         "section": {
           "desktop": {
@@ -7474,7 +7810,8 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": []
         }
       }
     },
@@ -7786,7 +8123,31 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "host": "media",
+              "id": "next-project-overlay",
+              "kind": "overlay-host",
+              "label": "下一项目叠加内容",
+              "members": [
+                "eyebrow",
+                "title"
+              ]
+            },
+            {
+              "id": "next-project-footer",
+              "kind": "edge-pair",
+              "label": "下一项目页脚",
+              "lockPlacement": true,
+              "lockPositioning": true,
+              "lockResize": true,
+              "members": [
+                "footerLeft",
+                "footerRight"
+              ]
+            }
+          ]
         }
       }
     },
@@ -8056,7 +8417,21 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "id": "home-endcap-stack",
+              "kind": "stack",
+              "label": "收束内容中心轴",
+              "lockPositioning": true,
+              "members": [
+                "eyebrow",
+                "title",
+                "description",
+                "cta"
+              ]
+            }
+          ]
         }
       }
     },
@@ -8926,10 +9301,32 @@
             },
             "customInitialized": true,
             "mode": "custom"
-          }
+          },
+          "composition": [
+            {
+              "id": "contact-content-stack",
+              "kind": "stack",
+              "label": "联系内容阅读顺序",
+              "lockPositioning": true,
+              "members": [
+                "name",
+                "tagline",
+                "taglineSub",
+                "clientsHeading",
+                "clients.item",
+                "employmentHeading",
+                "employment.item",
+                "contactHeading",
+                "emailHeading",
+                "wechat",
+                "copyPrompt",
+                "email"
+              ]
+            }
+          ]
         }
       }
     }
   },
-  "version": 3
+  "version": 4
 }

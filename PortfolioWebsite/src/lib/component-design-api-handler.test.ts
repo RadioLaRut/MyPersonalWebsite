@@ -11,8 +11,11 @@ import {
   createDefaultComponentDesignDocument as createDefaultComponentDesignDocumentV2,
 } from "./component-design-v2.ts";
 import {
-  createDefaultComponentDesignDocument,
+  createDefaultComponentDesignDocument as createDefaultComponentDesignDocumentV3,
 } from "./component-design-v3.ts";
+import {
+  createDefaultComponentDesignDocument,
+} from "./component-design-v4.ts";
 import {
   LOCAL_EDITOR_ACCESS_HEADER,
   LOCAL_EDITOR_ACCESS_TOKEN_ENV,
@@ -72,7 +75,7 @@ function createRepository(
   };
 }
 
-test("ComponentDesign GET returns the current V3 source document and revision", async () => {
+test("ComponentDesign GET returns the current V4 source document and revision", async () => {
   await withEditorEnvironment(async () => {
     const document = createDefaultComponentDesignDocument();
     const response = await handleComponentDesignGet(
@@ -82,7 +85,11 @@ test("ComponentDesign GET returns the current V3 source document and revision", 
     const payload = await response.json();
 
     assert.equal(response.status, 200);
-    assert.equal(payload.config.version, 3);
+    assert.equal(payload.config.version, 4);
+    assert.ok(
+      payload.config.components.HeroSection.variants.poster.composition.length >
+        0,
+    );
     assert.equal(payload.revision, getComponentDesignRevision(document));
     assert.equal(response.headers.get("cache-control"), "no-store");
   });
@@ -118,7 +125,7 @@ test("ComponentDesign POST returns 409 and never writes over a newer revision", 
   });
 });
 
-test("ComponentDesign POST keeps whole-document compatibility and writes V3", async () => {
+test("ComponentDesign POST keeps whole-document compatibility and writes V4", async () => {
   await withEditorEnvironment(async () => {
     const current = createDefaultComponentDesignDocument();
     const draft = structuredClone(current);
@@ -201,7 +208,7 @@ test("ComponentDesign POST merges only the requested variant patch", async () =>
   });
 });
 
-test("ComponentDesign POST rejects a full V3 document that bypasses manifest capabilities", async () => {
+test("ComponentDesign POST rejects a full V4 document that bypasses manifest capabilities", async () => {
   await withEditorEnvironment(async () => {
     const current = createDefaultComponentDesignDocument();
     const draft = structuredClone(current);
@@ -261,7 +268,35 @@ test("ComponentDesign POST rejects a variant patch that bypasses manifest capabi
   });
 });
 
-test("ComponentDesign POST accepts a legacy V2 full document and persists V3", async () => {
+test("ComponentDesign POST rejects a variant patch that attempts to change composition", async () => {
+  await withEditorEnvironment(async () => {
+    const current = createDefaultComponentDesignDocument();
+    let writeCount = 0;
+
+    const response = await handleComponentDesignPost(
+      postRequest({
+        baseRevision: getComponentDesignRevision(current),
+        componentKey: "HeroSection",
+        operationId: "invalid-composition",
+        variantKey: "poster",
+        variantPatch: {
+          composition: [],
+        },
+      }),
+      createRepository({
+        read: async () => current,
+        write: async () => {
+          writeCount += 1;
+        },
+      }),
+    );
+
+    assert.equal(response.status, 400);
+    assert.equal(writeCount, 0);
+  });
+});
+
+test("ComponentDesign POST accepts a legacy V2 full document and persists V4", async () => {
   await withEditorEnvironment(async () => {
     const current = createDefaultComponentDesignDocument();
     const legacyDraft = createDefaultComponentDesignDocumentV2();
@@ -280,10 +315,42 @@ test("ComponentDesign POST accepts a legacy V2 full document and persists V3", a
     );
 
     assert.equal(response.status, 200);
-    assert.equal(written.version, 3);
+    assert.equal(written.version, 4);
     assert.equal(
       written.components.HeroSection.variants.full.tablet.mode,
       "custom",
+    );
+  });
+});
+
+test("ComponentDesign POST accepts a legacy V3 full document and persists V4", async () => {
+  await withEditorEnvironment(async () => {
+    const current = createDefaultComponentDesignDocument();
+    const legacyDraft = createDefaultComponentDesignDocumentV3();
+    legacyDraft.components.HeroSection.variants.full.sampleText.title =
+      "V3 接口迁移标题";
+    let written = current;
+    const response = await handleComponentDesignPost(
+      postRequest({
+        baseRevision: getComponentDesignRevision(current),
+        config: legacyDraft,
+      }),
+      createRepository({
+        read: async () => current,
+        write: async (document) => {
+          written = document;
+        },
+      }),
+    );
+
+    assert.equal(response.status, 200);
+    assert.equal(written.version, 4);
+    assert.equal(
+      written.components.HeroSection.variants.full.sampleText.title,
+      "V3 接口迁移标题",
+    );
+    assert.ok(
+      written.components.HeroSection.variants.full.composition.length > 0,
     );
   });
 });

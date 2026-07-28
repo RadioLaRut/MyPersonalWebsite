@@ -155,6 +155,32 @@ test("ComponentLab 工作台外壳不会强制桌面宽度并保留三档响应�
   assert.match(toolbar, /flex-wrap/);
 });
 
+test("Inspector 与 iframe 从 V4 文档消费持久化 composition", () => {
+  const client = readSource(
+    "src/components/playground/ComponentLabClient.tsx",
+  );
+  const inspector = readSource(
+    "src/components/playground/component-lab/ComponentLabInspector.tsx",
+  );
+  const preview = readSource(
+    "src/components/playground/ComponentLabPreviewClient.tsx",
+  );
+  const frame = readSource(
+    "src/components/playground/component-lab/ComponentLabPreviewFrame.tsx",
+  );
+
+  assert.match(client, /composition=\{currentVariant\.composition\}/);
+  assert.match(
+    inspector,
+    /getComponentDesignNodePolicyFromComposition\(\s*variant\.composition/,
+  );
+  assert.match(preview, /message\.composition/);
+  assert.match(preview, /getComponentDesignNodePolicyFromComposition/);
+  assert.doesNotMatch(preview, /\bgetComponentDesignNodePolicy\(/);
+  assert.match(frame, /composition,\s*data,/);
+  assert.match(frame, /composition: readonly ComponentDesignCompositionDescriptor/);
+});
+
 test("组件只保留一棵 canonical render tree", () => {
   const sources = [
     "src/components/blocks/ContactFlashlightBlock.tsx",

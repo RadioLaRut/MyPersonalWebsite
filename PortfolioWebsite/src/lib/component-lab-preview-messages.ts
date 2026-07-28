@@ -8,20 +8,23 @@ import type {
 } from "./component-design-v2.ts";
 import {
   COMPONENT_DESIGN_AUTHOR_COMPONENTS,
+  COMPONENT_DESIGN_MANIFEST_BY_COMPONENT,
   type ComponentDesignAuthorComponent,
+  type ComponentDesignCompositionDescriptor,
 } from "./component-design-manifest.ts";
+import { areJsonStructuresEqual } from "./json-utils.ts";
 
-export const COMPONENT_LAB_PREVIEW_PROTOCOL_VERSION = 3 as const;
+export const COMPONENT_LAB_PREVIEW_PROTOCOL_VERSION = 4 as const;
 
-export const COMPONENT_LAB_PREVIEW_RENDER_MESSAGE = "component-lab-preview-render-v3";
-export const COMPONENT_LAB_PREVIEW_READY_MESSAGE = "component-lab-preview-ready-v3";
-export const COMPONENT_LAB_PREVIEW_HEIGHT_MESSAGE = "component-lab-preview-height-v3";
-export const COMPONENT_LAB_PREVIEW_SELECT_NODE_MESSAGE = "component-lab-preview-select-node-v3";
+export const COMPONENT_LAB_PREVIEW_RENDER_MESSAGE = "component-lab-preview-render-v4";
+export const COMPONENT_LAB_PREVIEW_READY_MESSAGE = "component-lab-preview-ready-v4";
+export const COMPONENT_LAB_PREVIEW_HEIGHT_MESSAGE = "component-lab-preview-height-v4";
+export const COMPONENT_LAB_PREVIEW_SELECT_NODE_MESSAGE = "component-lab-preview-select-node-v4";
 export const COMPONENT_LAB_PREVIEW_INTERACTION_MESSAGE =
-  "component-lab-preview-interaction-v3";
+  "component-lab-preview-interaction-v4";
 
 /**
- * 旧调用方仍然通过 placement 常量监听横向格位变化。V3 将格位、纵向语义
+ * 旧调用方仍然通过 placement 常量监听横向格位变化。V4 将格位、纵向语义
  * 和文字修改统一为 interaction 消息，同时保留旧导出，便于分阶段接入。
  */
 export const COMPONENT_LAB_PREVIEW_PLACEMENT_MESSAGE =
@@ -82,6 +85,7 @@ export type ComponentLabPreviewLayoutOperation =
 export type ComponentLabPreviewRenderMessage = {
   activeBreakpoint?: ComponentDesignBreakpoint;
   component?: ComponentDesignAuthorComponent;
+  composition?: readonly ComponentDesignCompositionDescriptor[];
   data: Data;
   designDocument: ComponentDesignDocument;
   device?: ComponentDesignBreakpoint;
@@ -300,17 +304,36 @@ function hasResponseContext(
     isNonEmptyString(value.occurrenceId);
 }
 
-export function hasComponentLabPreviewV3RenderContext(
+function hasCanonicalComposition(
+  value: Record<string, unknown> & {
+    component: ComponentDesignAuthorComponent;
+    variant: string;
+  },
+): value is typeof value & {
+  composition: readonly ComponentDesignCompositionDescriptor[];
+} {
+  const variant = COMPONENT_DESIGN_MANIFEST_BY_COMPONENT[value.component]
+    .variants.find((candidate) => candidate.id === value.variant);
+  return Boolean(
+    variant &&
+    Array.isArray(value.composition) &&
+    areJsonStructuresEqual(value.composition, variant.composition ?? []),
+  );
+}
+
+export function hasComponentLabPreviewV4RenderContext(
   value: ComponentLabPreviewRenderMessage,
 ): value is ComponentLabPreviewRenderMessage & {
   component: ComponentDesignAuthorComponent;
+  composition: readonly ComponentDesignCompositionDescriptor[];
   device: ComponentDesignBreakpoint;
   protocolVersion: typeof COMPONENT_LAB_PREVIEW_PROTOCOL_VERSION;
   renderSessionId: string;
   seq: number;
   variant: string;
 } {
-  return hasStrictRenderContext(value as unknown as Record<string, unknown>);
+  const record = value as unknown as Record<string, unknown>;
+  return hasStrictRenderContext(record) && hasCanonicalComposition(record);
 }
 
 export function isComponentLabPreviewRenderMessage(
@@ -362,9 +385,11 @@ export function isComponentLabPreviewRenderMessage(
     return false;
   }
 
-  // 不带 protocolVersion 的消息是过渡期旧载荷；显式声明 V3 时必须完整。
+  // 不带 protocolVersion 的消息是过渡期旧载荷；显式声明 V4 时必须完整。
   if (value.protocolVersion === undefined) return true;
-  return hasStrictRenderContext(value);
+  return hasComponentLabPreviewV4RenderContext(
+    value as ComponentLabPreviewRenderMessage,
+  );
 }
 
 export function isComponentLabPreviewHeightMessage(
@@ -477,7 +502,7 @@ export function guardComponentLabPreviewRenderMessage(
   message: ComponentLabPreviewRenderMessage,
   state: ComponentLabPreviewRenderGuardState,
 ): ComponentLabPreviewRenderGuardResult {
-  if (!hasComponentLabPreviewV3RenderContext(message)) {
+  if (!hasComponentLabPreviewV4RenderContext(message)) {
     return {
       accepted: state.activeRenderSessionId === null,
       state,

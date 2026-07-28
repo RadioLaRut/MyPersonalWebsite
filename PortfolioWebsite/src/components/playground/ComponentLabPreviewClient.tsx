@@ -18,7 +18,7 @@ import {
   COMPONENT_LAB_PREVIEW_SELECT_NODE_MESSAGE,
   COMPONENT_LAB_PREVIEW_TEXT_CHANGE_MESSAGE,
   guardComponentLabPreviewRenderMessage,
-  hasComponentLabPreviewV3RenderContext,
+  hasComponentLabPreviewV4RenderContext,
   isComponentLabPreviewRenderMessage,
   type ComponentLabPreviewFlowPosition,
   type ComponentLabPreviewInteractionPhase,
@@ -57,7 +57,7 @@ import {
   type ComponentGridPlacement,
 } from "@/lib/component-design-v2";
 import {
-  getComponentDesignNodePolicy,
+  getComponentDesignNodePolicyFromComposition,
   getComponentDesignNodeDescriptor,
   getComponentDesignVariantDescriptor,
 } from "@/lib/component-design-manifest";
@@ -333,6 +333,17 @@ function NodeOverlay({
   const component = message.component!;
   const editingEnabled = message.editingEnabled ?? true;
   const variant = message.variant!;
+  const composition = useMemo(
+    () => message.composition ??
+      getComponentDesignVariantDescriptor(component, variant).composition ??
+      [],
+    [component, message.composition, variant],
+  );
+  const getNodePolicy = useCallback(
+    (roleId: string) =>
+      getComponentDesignNodePolicyFromComposition(composition, roleId),
+    [composition],
+  );
   const [selection, setSelection] =
     useState<ComponentLabPreviewSelectionTarget[]>(
       () => getInitialSelection(message),
@@ -857,11 +868,7 @@ function NodeOverlay({
     useOrigin = false,
   ): ComponentLabPreviewInteractionTarget[] => {
     const movedTargets = dragState.origins.map((origin) => {
-      const policy = getComponentDesignNodePolicy(
-        component,
-        variant,
-        origin.target.roleId,
-      );
+      const policy = getNodePolicy(origin.target.roleId);
       const requestedPlacement = useOrigin
         ? origin.placement
         : getComponentLabDraggedPlacement({
@@ -967,10 +974,9 @@ function NodeOverlay({
     });
     return [...normalizedMovedTargets, ...shiftedTargets];
   }, [
-    component,
+    getNodePolicy,
     getPlacement,
     getPosition,
-    variant,
   ]);
 
   const createDragPreviewRects = useCallback((
@@ -1147,11 +1153,7 @@ function NodeOverlay({
       variant,
       primary.roleId,
     );
-    const primaryPolicy = getComponentDesignNodePolicy(
-      component,
-      variant,
-      primary.roleId,
-    );
+    const primaryPolicy = getNodePolicy(primary.roleId);
     const primaryPlacement = getPlacement(primary.roleId);
     if (
       !primaryPlacement ||
@@ -1181,11 +1183,7 @@ function NodeOverlay({
         variant,
         target.roleId,
       );
-      const policy = getComponentDesignNodePolicy(
-        component,
-        variant,
-        target.roleId,
-      );
+      const policy = getNodePolicy(target.roleId);
       if (
         !element ||
         !placement ||
@@ -1252,6 +1250,7 @@ function NodeOverlay({
     editingEnabled,
     getFlowCandidates,
     getLogicalPointerCoordinates,
+    getNodePolicy,
     getPlacement,
     getPosition,
     variant,
@@ -1491,11 +1490,7 @@ function NodeOverlay({
       operation,
       placement,
     });
-    const policy = getComponentDesignNodePolicy(
-      component,
-      variant,
-      target.roleId,
-    );
+    const policy = getNodePolicy(target.roleId);
     const constrainedPlacement = constrainComponentLabPlacement({
       currentPlacement: placement,
       hostPlacement: policy.constrainToHost
@@ -1573,7 +1568,7 @@ function NodeOverlay({
     : undefined;
   const primaryPlacement = primary ? getPlacement(primary.roleId) : undefined;
   const primaryPolicy = primary
-    ? getComponentDesignNodePolicy(component, variant, primary.roleId)
+    ? getNodePolicy(primary.roleId)
     : undefined;
   const placementLocked = primaryDescriptor?.bleed === "viewport" ||
     primaryPolicy?.lockPlacement ||
@@ -1867,7 +1862,7 @@ export default function ComponentLabPreviewClient() {
           type: COMPONENT_LAB_PREVIEW_HEIGHT_MESSAGE,
         };
         window.parent.postMessage(
-          hasComponentLabPreviewV3RenderContext(message)
+          hasComponentLabPreviewV4RenderContext(message)
             ? {
               ...base,
               component: message.component,

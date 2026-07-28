@@ -1282,34 +1282,43 @@ export type ComponentDesignNodePolicy = {
   lockResize: boolean;
 };
 
-export function getComponentDesignNodePolicyFromVariant(
-  descriptor: ComponentDesignVariantDescriptor,
+export function getComponentDesignNodePolicyFromComposition(
+  composition: readonly ComponentDesignCompositionDescriptor[],
   nodeId: string,
 ): ComponentDesignNodePolicy {
-  const compositions = descriptor.composition ?? [];
-  const memberships = compositions.filter((composition) =>
-    (composition.members as readonly string[]).includes(nodeId)
+  const memberships = composition.filter((descriptor) =>
+    (descriptor.members as readonly string[]).includes(nodeId)
   );
-  const hostMembership = memberships.find((composition) =>
-    composition.host &&
-    composition.kind === "nested-grid"
+  const hostMembership = memberships.find((descriptor) =>
+    descriptor.host &&
+    descriptor.kind === "nested-grid"
   );
 
   return {
-    compositionKinds: memberships.map((composition) => composition.kind),
+    compositionKinds: memberships.map((descriptor) => descriptor.kind),
     ...(hostMembership?.host
       ? { constrainToHost: hostMembership.host }
       : {}),
     lockPlacement: memberships.some(
-      (composition) => composition.lockPlacement === true,
+      (descriptor) => descriptor.lockPlacement === true,
     ),
     lockPositioning: memberships.some(
-      (composition) => composition.lockPositioning === true,
+      (descriptor) => descriptor.lockPositioning === true,
     ),
     lockResize: memberships.some(
-      (composition) => composition.lockResize === true,
+      (descriptor) => descriptor.lockResize === true,
     ),
   };
+}
+
+export function getComponentDesignNodePolicyFromVariant(
+  descriptor: ComponentDesignVariantDescriptor,
+  nodeId: string,
+): ComponentDesignNodePolicy {
+  return getComponentDesignNodePolicyFromComposition(
+    descriptor.composition ?? [],
+    nodeId,
+  );
 }
 
 export function getComponentDesignNodePolicy(

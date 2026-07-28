@@ -12,14 +12,14 @@ import {
   COMPONENT_DESIGN_SECTION_HEIGHTS,
   resolveComponentDesignDeviceLayout,
   type ComponentDesignDevice,
-  type ComponentDesignDeviceLayoutV3,
+  type ComponentDesignDeviceLayoutV4,
   type ComponentDesignMediaFrame,
   type ComponentDesignOverlayAnchor,
   type ComponentDesignSectionHeight,
-  type ComponentDesignVariantV3,
-} from "@/lib/component-design-v3";
+  type ComponentDesignVariantV4,
+} from "@/lib/component-design-v4";
 import {
-  getComponentDesignNodePolicyFromVariant,
+  getComponentDesignNodePolicyFromComposition,
   type ComponentDesignNodePolicy,
   type ComponentDesignNodeDescriptor,
   type ComponentDesignVariantDescriptor,
@@ -155,7 +155,7 @@ function DeviceRelationship({
   device: ComponentDesignDevice;
   onEnableDevice: () => void;
   onRestoreDevice: () => void;
-  variant: ComponentDesignVariantV3;
+  variant: ComponentDesignVariantV4;
 }) {
   if (device === "desktop") {
     return (
@@ -183,11 +183,11 @@ function DeviceRelationship({
 }
 
 function replaceLayoutNode(
-  layout: ComponentDesignDeviceLayoutV3,
+  layout: ComponentDesignDeviceLayoutV4,
   roleId: string,
   updater: (
-    node: ComponentDesignDeviceLayoutV3["nodes"][string],
-  ) => ComponentDesignDeviceLayoutV3["nodes"][string],
+    node: ComponentDesignDeviceLayoutV4["nodes"][string],
+  ) => ComponentDesignDeviceLayoutV4["nodes"][string],
 ) {
   return {
     ...layout,
@@ -204,11 +204,11 @@ function SectionInspector({
   onLayoutChange,
 }: {
   disabled: boolean;
-  layout: ComponentDesignDeviceLayoutV3;
-  onLayoutChange: (layout: ComponentDesignDeviceLayoutV3) => void;
+  layout: ComponentDesignDeviceLayoutV4;
+  onLayoutChange: (layout: ComponentDesignDeviceLayoutV4) => void;
 }) {
   const updateSection = (
-    patch: Partial<ComponentDesignDeviceLayoutV3["section"]>,
+    patch: Partial<ComponentDesignDeviceLayoutV4["section"]>,
   ) => onLayoutChange({
     ...layout,
     section: { ...layout.section, ...patch },
@@ -306,7 +306,7 @@ export default function ComponentLabInspector({
   effectiveSampleText: Record<string, string | string[]>;
   fontLabDocument: FontLabDocument | null;
   onEnableDevice: () => void;
-  onLayoutChange: (layout: ComponentDesignDeviceLayoutV3) => void;
+  onLayoutChange: (layout: ComponentDesignDeviceLayoutV4) => void;
   onRestoreDevice: () => void;
   onSampleTextCommit: () => void;
   onSampleTextChange: (
@@ -314,7 +314,7 @@ export default function ComponentLabInspector({
     value: string,
   ) => void;
   selection: ComponentLabElementSelection[];
-  variant: ComponentDesignVariantV3;
+  variant: ComponentDesignVariantV4;
   variantDescriptor: ComponentDesignVariantDescriptor;
 }) {
   const layout = resolveComponentDesignDeviceLayout(variant, activeDevice);
@@ -327,8 +327,8 @@ export default function ComponentLabInspector({
     : null;
   const node = descriptor ? layout.nodes[descriptor.id] : null;
   const policy = descriptor
-    ? getComponentDesignNodePolicyFromVariant(
-      variantDescriptor,
+    ? getComponentDesignNodePolicyFromComposition(
+      variant.composition,
       descriptor.id,
     )
     : null;
@@ -403,9 +403,9 @@ function ElementInspector({
   descriptor: ComponentDesignNodeDescriptor;
   disabled: boolean;
   fontLabDocument: FontLabDocument | null;
-  layout: ComponentDesignDeviceLayoutV3;
-  node: ComponentDesignDeviceLayoutV3["nodes"][string];
-  onLayoutChange: (layout: ComponentDesignDeviceLayoutV3) => void;
+  layout: ComponentDesignDeviceLayoutV4;
+  node: ComponentDesignDeviceLayoutV4["nodes"][string];
+  onLayoutChange: (layout: ComponentDesignDeviceLayoutV4) => void;
   onSampleTextCommit: () => void;
   onSampleTextChange: (value: string) => void;
   policy: ComponentDesignNodePolicy;
@@ -414,8 +414,8 @@ function ElementInspector({
 }) {
   const updateNode = (
     updater: (
-      current: ComponentDesignDeviceLayoutV3["nodes"][string],
-    ) => ComponentDesignDeviceLayoutV3["nodes"][string],
+      current: ComponentDesignDeviceLayoutV4["nodes"][string],
+    ) => ComponentDesignDeviceLayoutV4["nodes"][string],
   ) => onLayoutChange(replaceLayoutNode(layout, roleId, updater));
   const typography = node.typography;
   const positioningLocked = descriptor.positioning === "fixed" ||

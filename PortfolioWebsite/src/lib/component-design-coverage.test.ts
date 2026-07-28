@@ -9,9 +9,9 @@ import {
 import {
   createDefaultComponentDesignDocument,
   parseCurrentComponentDesignDocument,
-} from "./component-design-v2.ts";
+} from "./component-design-v4.ts";
 
-test("V2 设计文档恰好覆盖 17 个页面级组件和全部合法版式", () => {
+test("V4 设计文档恰好覆盖 17 个页面级组件和全部合法版式", () => {
   const document = createDefaultComponentDesignDocument();
 
   assert.deepEqual(
@@ -28,7 +28,7 @@ test("V2 设计文档恰好覆盖 17 个页面级组件和全部合法版式", (
   assert.ok(parseCurrentComponentDesignDocument(document));
 });
 
-test("内部 Slot 组件不出现在 V2 顶层作用域", () => {
+test("内部 Slot 组件不出现在 V4 顶层作用域", () => {
   const keys = Object.keys(createDefaultComponentDesignDocument().components);
   assert.equal(keys.includes("WorksListEntry"), false);
   assert.equal(keys.includes("MetadataListItem"), false);

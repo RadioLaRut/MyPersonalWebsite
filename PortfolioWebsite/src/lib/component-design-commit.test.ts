@@ -3,8 +3,8 @@ import test from "node:test";
 
 import { createDefaultComponentDesignDocument } from "./component-design-v2.ts";
 import {
-  createDefaultComponentDesignDocument as createDefaultComponentDesignDocumentV3,
-} from "./component-design-v3.ts";
+  createDefaultComponentDesignDocument as createDefaultComponentDesignDocumentV4,
+} from "./component-design-v4.ts";
 import {
   areComponentDesignDocumentsEqual,
   COMPONENT_DESIGN_COMMIT_MESSAGE_TYPE,
@@ -55,8 +55,8 @@ test("保存响应只替换提交时仍未变化的草稿", () => {
   );
 });
 
-test("V3 草稿比较包含样例文字和设备覆盖", () => {
-  const submittedDraft = createDefaultComponentDesignDocumentV3();
+test("V4 草稿比较包含样例文字、设备覆盖和 composition", () => {
+  const submittedDraft = createDefaultComponentDesignDocumentV4();
   const committedDocument = structuredClone(submittedDraft);
   const newerDraft = structuredClone(submittedDraft);
   newerDraft.components.HeroSection.variants.full.sampleText.title =
@@ -68,6 +68,15 @@ test("V3 草稿比较包含样例文字和设备覆盖", () => {
   );
   assert.equal(
     areComponentDesignDocumentsEqual(submittedDraft, newerDraft),
+    false,
+  );
+  const invalidCompositionDraft = structuredClone(submittedDraft);
+  invalidCompositionDraft.components.HeroSection.variants.full.composition = [];
+  assert.equal(
+    areComponentDesignDocumentsEqual(
+      submittedDraft,
+      invalidCompositionDraft,
+    ),
     false,
   );
   assert.strictEqual(
